@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gridiron Franchise - Game Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-card: #1c1c1f;
+            --border: #27272a;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --error: #ef4444;
+            --success: #22c55e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Mobile Container matching Auth Mockup */
+        .phone-frame {
+            width: 100%;
+            max-width: 390px;
+            height: 844px;
+            margin: 20px auto;
+            background: var(--bg-primary);
+            border-radius: 40px;
+            border: 8px solid #333;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 450px) {
+            .phone-frame {
+                margin: 0;
+                border: none;
+                border-radius: 0;
+                height: 100vh;
+            }
+        }
+
+        .screen {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 60px 24px 40px;
+        }
+
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .logo-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--accent) 0%, #1d4ed8 100%);
+            border-radius: 16px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .logo-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .logo-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Menu Buttons */
+        .menu-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .btn-menu-primary {
+            width: 100%;
+            padding: 20px;
+            background: var(--accent);
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-menu-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .btn-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .btn-subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-icon {
+            font-size: 24px;
+            color: white;
+        }
+
+        .btn-menu-secondary {
+            width: 100%;
+            padding: 18px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-align: left;
+        }
+
+        .btn-menu-secondary:hover {
+            background: var(--bg-card);
+            border-color: var(--text-muted);
+        }
+
+        .btn-sec-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-secondary);
+        }
+
+        .btn-sec-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Footer Actions */
+        .footer-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: auto;
+            padding-top: 24px;
+        }
+
+        .btn-footer {
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+
+        .btn-footer:hover {
+            color: var(--text-primary);
+        }
+
+        /* Version */
+        .version-tag {
+            text-align: center;
+            font-size: 12px;
+            color: #333;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="phone-frame">
+        <div class="screen">
+
+            <!-- Logo -->
+            <div class="logo-section">
+                <div class="logo-icon">🏈</div>
+                <h1 class="logo-title">Gridiron Franchise</h1>
+                <p class="logo-subtitle">Manage your team. Build a dynasty.</p>
+            </div>
+
+            <!-- Main Menu -->
+            <div class="menu-container">
+
+                <!-- Continue (Primary) -->
+                <button class="btn-menu-primary">
+                    <div class="btn-content">
+                        <span class="btn-title">Continue Career</span>
+                        <span class="btn-subtitle">Week 4 vs. Miami Sharks</span>
+                    </div>
+                    <div class="btn-icon">▶</div>
+                </button>
+
+                <!-- New Game -->
+                <button class="btn-menu-secondary">
+                    <div class="btn-sec-icon">⊕</div>
+                    <span class="btn-sec-text">New Career</span>
+                </button>
+
+                <!-- Load Game -->
+                <button class="btn-menu-secondary">
+                    <div class="btn-sec-icon">📂</div>
+                    <span class="btn-sec-text">Load Career</span>
+                </button>
+
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="footer-actions">
+                <button class="btn-footer">
+                    <span>⚙️</span> Settings
+                </button>
+                <button class="btn-footer">
+                    <span>ℹ️</span> Credits
+                </button>
+            </div>
+
+            <div class="version-tag">v0.1.0-alpha</div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>
