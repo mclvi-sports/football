@@ -1,0 +1,218 @@
+{
+  "project": {
+    "name": "Gridiron Franchise Simulator",
+    "description": "American football franchise simulation game built as a mobile-first PWA",
+    "version": "0.1.0"
+  },
+  "phase": {
+    "id": 1,
+    "name": "Project Initialization & Dependencies",
+    "status": "pending",
+    "description": "Set up the foundational project structure with all required technologies"
+  },
+  "stack": {
+    "framework": "Next.js 15 (latest stable)",
+    "database": "Supabase (Cloud)",
+    "styling": "Tailwind CSS v4",
+    "language": "TypeScript",
+    "components": "shadcn/ui",
+    "type": "PWA (Mobile-First)"
+  },
+  "supabase": {
+    "projectUrl": "https://jyjvpirtpfupjhpupedf.supabase.co",
+    "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5anZwaXJ0cGZ1cGpocHVwZWRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1MDk1MzMsImV4cCI6MjA4MDA4NTUzM30.Fbpm7I-yNAzAW-wVuzRxgjnTyLzMtbN5o9Lg1bVezjU",
+    "serviceRoleKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5anZwaXJ0cGZ1cGpocHVwZWRmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDUwOTUzMywiZXhwIjoyMDgwMDg1NTMzfQ.pZ3IoryAfaQHqrW1ESgmmAvfBWGNKcEv-GIclR4Y0gg"
+  },
+  "git": {
+    "email": "my.sim.email1156@gmail.com",
+    "name": "football",
+    "remote": "https://github.com/mclvi-sports/football.git",
+    "note": "Local git config for this project only"
+  },
+  "tasks": [
+    {
+      "id": "1.0",
+      "name": "Configure Git for Project",
+      "status": "completed",
+      "description": "Set up local Git configuration for this project with the correct email",
+      "commands": [
+        "git init",
+        "git config user.email \"my.sim.email1156@gmail.com\"",
+        "git config user.name \"football\""
+      ],
+      "notes": "Local config only - won't affect other projects"
+    },
+    {
+      "id": "1.1",
+      "name": "Create Next.js Project",
+      "status": "pending",
+      "description": "Initialize Next.js 15 with TypeScript, Tailwind CSS, ESLint, and App Router",
+      "commands": [
+        "npx create-next-app@latest gridiron-franchise --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\""
+      ],
+      "notes": "Next.js 16 does not exist yet. Using Next.js 15 (latest stable). Will update when 16 releases."
+    },
+    {
+      "id": "1.2",
+      "name": "Initialize shadcn/ui",
+      "status": "pending",
+      "description": "Set up shadcn/ui component library with default configuration",
+      "commands": [
+        "cd gridiron-franchise",
+        "npx shadcn@latest init"
+      ],
+      "config": {
+        "style": "default",
+        "baseColor": "slate",
+        "cssVariables": true
+      }
+    },
+    {
+      "id": "1.3",
+      "name": "Install Core shadcn Components",
+      "status": "pending",
+      "description": "Add essential UI components for the application",
+      "commands": [
+        "npx shadcn@latest add button card dialog dropdown-menu input label select tabs toast scroll-area separator badge progress sheet"
+      ]
+    },
+    {
+      "id": "1.4",
+      "name": "Install Supabase Dependencies",
+      "status": "pending",
+      "description": "Add Supabase client libraries for authentication and database",
+      "commands": [
+        "npm install @supabase/supabase-js @supabase/ssr"
+      ]
+    },
+    {
+      "id": "1.5",
+      "name": "Install PWA Dependencies",
+      "status": "pending",
+      "description": "Add next-pwa for Progressive Web App functionality",
+      "commands": [
+        "npm install next-pwa"
+      ],
+      "files": [
+        "next.config.ts (PWA configuration)",
+        "public/manifest.json",
+        "public/icons/ (app icons)"
+      ]
+    },
+    {
+      "id": "1.6",
+      "name": "Install Additional Dependencies",
+      "status": "pending",
+      "description": "Add utility libraries for state management, forms, and validation",
+      "commands": [
+        "npm install zustand zod react-hook-form @hookform/resolvers lucide-react clsx tailwind-merge"
+      ],
+      "packages": {
+        "zustand": "Lightweight state management",
+        "zod": "Schema validation",
+        "react-hook-form": "Form handling",
+        "@hookform/resolvers": "Zod integration for forms",
+        "lucide-react": "Icon library",
+        "clsx": "Conditional classNames",
+        "tailwind-merge": "Merge Tailwind classes"
+      }
+    },
+    {
+      "id": "1.7",
+      "name": "Create Environment Configuration",
+      "status": "pending",
+      "description": "Set up environment variables for Supabase connection",
+      "files": [
+        ".env.local",
+        ".env.example"
+      ],
+      "variables": [
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY"
+      ]
+    },
+    {
+      "id": "1.8",
+      "name": "Configure PWA Manifest",
+      "status": "pending",
+      "description": "Create PWA manifest and configure next.config.ts for service worker",
+      "deliverables": [
+        "public/manifest.json",
+        "public/icons/icon-192x192.png",
+        "public/icons/icon-512x512.png",
+        "next.config.ts with PWA settings"
+      ]
+    },
+    {
+      "id": "1.9",
+      "name": "Set Up Supabase Client",
+      "status": "pending",
+      "description": "Create Supabase client utilities for server and client components",
+      "files": [
+        "src/lib/supabase/client.ts",
+        "src/lib/supabase/server.ts",
+        "src/lib/supabase/middleware.ts"
+      ]
+    },
+    {
+      "id": "1.10",
+      "name": "Create Base Project Structure",
+      "status": "pending",
+      "description": "Establish folder structure following Next.js 15 App Router conventions",
+      "structure": {
+        "src/app": "App Router pages and layouts",
+        "src/components": "Reusable UI components",
+        "src/components/ui": "shadcn components",
+        "src/lib": "Utility functions and configurations",
+        "src/lib/supabase": "Supabase client setup",
+        "src/hooks": "Custom React hooks",
+        "src/stores": "Zustand state stores",
+        "src/types": "TypeScript type definitions",
+        "src/game": "Game engine and simulation logic",
+        "public": "Static assets and PWA files"
+      }
+    },
+    {
+      "id": "1.11",
+      "name": "Configure Mobile-First Defaults",
+      "status": "pending",
+      "description": "Update Tailwind config and globals.css for mobile-first approach",
+      "changes": [
+        "Set base font sizes for mobile",
+        "Configure touch-friendly spacing",
+        "Add viewport meta tags",
+        "Set up dark mode support"
+      ]
+    },
+    {
+      "id": "1.12",
+      "name": "Verify Installation",
+      "status": "pending",
+      "description": "Run development server and confirm all dependencies work correctly",
+      "commands": [
+        "npm run dev",
+        "npm run build",
+        "npm run lint"
+      ],
+      "acceptance": [
+        "Dev server starts without errors",
+        "Build completes successfully",
+        "No lint errors",
+        "PWA manifest loads correctly"
+      ]
+    }
+  ],
+  "outputDirectory": "gridiron-franchise",
+  "estimatedFiles": 25,
+  "nextPhase": {
+    "id": 2,
+    "name": "Database Schema & Supabase Setup",
+    "preview": [
+      "Design franchise data models",
+      "Create Supabase tables",
+      "Set up Row Level Security",
+      "Implement authentication flow"
+    ]
+  }
+}
