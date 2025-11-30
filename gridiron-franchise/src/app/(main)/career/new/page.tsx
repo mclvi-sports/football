@@ -18,12 +18,12 @@ export default function NewCareerPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-200px)] min-h-[500px]">
+    <div className="flex flex-col h-[calc(100vh-40px)]">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 py-4">
         <Link
           href="/"
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-foreground transition-colors text-xl"
         >
           ←
         </Link>
