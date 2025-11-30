@@ -1,335 +1,531 @@
 <!DOCTYPE html>
 <html lang="en">
-<div class="phone-frame">
-    <div class="screen">
 
-        <!-- Header -->
-        <div class="header">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gridiron Franchise - New Career</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-            <h1 class="header-title">Select Team</h1>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-card: #1c1c1f;
+            --border: #27272a;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --error: #ef4444;
+            --success: #22c55e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .phone-frame {
+            width: 100%;
+            max-width: 390px;
+            height: 844px;
+            margin: 20px auto;
+            background: var(--bg-primary);
+            border-radius: 40px;
+            border: 8px solid #333;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 450px) {
+            .phone-frame {
+                margin: 0;
+                border: none;
+                border-radius: 0;
+                height: 100vh;
+            }
+        }
+
+        .screen {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-top: 20px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* Team List */
+        .team-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 80px;
+            /* Space for footer */
+            display: grid;
+            gap: 12px;
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .team-list::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        .team-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .team-card:hover {
+            background: var(--bg-card);
+            transform: translateY(-1px);
+        }
+
+        .team-card.selected {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .team-logo-placeholder {
+            width: 52px;
+            height: 52px;
+            background: #333;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-info {
+            flex: 1;
+        }
+
+        .team-city {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .team-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .team-division {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(255, 255, 255, 0.05);
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(to top, var(--bg-primary) 80%, transparent);
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-next {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-next:disabled {
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="phone-frame">
+        <div class="screen">
+
+            <!-- Header -->
+            <div class="header">
+                <h1 class="header-title">Select Team</h1>
+            </div>
+
+            <!-- Team List -->
+            <div class="team-list" id="teamList">
+
+                <!-- Atlantic North -->
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #0A2240; color: #A8A9AD;">B</div>
+                    <div class="team-info">
+                        <div class="team-city">Boston</div>
+                        <div class="team-name">Rebels</div>
+                        <div class="team-division">Atlantic North</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #5A5A5A; color: #B7410E;">P</div>
+                    <div class="team-info">
+                        <div class="team-city">Philadelphia</div>
+                        <div class="team-name">Ironworks</div>
+                        <div class="team-division">Atlantic North</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #101820; color: #FFB612;">P</div>
+                    <div class="team-info">
+                        <div class="team-city">Pittsburgh</div>
+                        <div class="team-name">Riverhawks</div>
+                        <div class="team-division">Atlantic North</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #4B0082; color: #CFB53B;">B</div>
+                    <div class="team-info">
+                        <div class="team-city">Baltimore</div>
+                        <div class="team-name">Knights</div>
+                        <div class="team-division">Atlantic North</div>
+                    </div>
+                </div>
+
+                <!-- Atlantic South -->
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #008E97; color: #FF6F61;">M</div>
+                    <div class="team-info">
+                        <div class="team-city">Miami</div>
+                        <div class="team-name">Sharks</div>
+                        <div class="team-division">Atlantic South</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #0057B8; color: #FFFFFF;">O</div>
+                    <div class="team-info">
+                        <div class="team-city">Orlando</div>
+                        <div class="team-name">Thunder</div>
+                        <div class="team-division">Atlantic South</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #CE1141; color: #FDBB30;">A</div>
+                    <div class="team-info">
+                        <div class="team-city">Atlanta</div>
+                        <div class="team-name">Firebirds</div>
+                        <div class="team-division">Atlantic South</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #5C2D91; color: #C0C0C0;">C</div>
+                    <div class="team-info">
+                        <div class="team-city">Charlotte</div>
+                        <div class="team-name">Crowns</div>
+                        <div class="team-division">Atlantic South</div>
+                    </div>
+                </div>
+
+                <!-- Atlantic East -->
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #0C2340; color: #FF5F00;">N</div>
+                    <div class="team-info">
+                        <div class="team-city">New York</div>
+                        <div class="team-name">Empire</div>
+                        <div class="team-division">Atlantic East</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #FFD100; color: #1A1A1A;">B</div>
+                    <div class="team-info">
+                        <div class="team-city">Brooklyn</div>
+                        <div class="team-name">Bolts</div>
+                        <div class="team-division">Atlantic East</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #154734; color: #A8A9AD;">N</div>
+                    <div class="team-info">
+                        <div class="team-city">Newark</div>
+                        <div class="team-name">Sentinels</div>
+                        <div class="team-division">Atlantic East</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #F5F5F5; color: #002244;">W</div>
+                    <div class="team-info">
+                        <div class="team-city">Washington</div>
+                        <div class="team-name">Monuments</div>
+                        <div class="team-division">Atlantic East</div>
+                    </div>
+                </div>
+
+                <!-- Atlantic West -->
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #FF6720; color: #1A1A1A;">C</div>
+                    <div class="team-info">
+                        <div class="team-city">Chicago</div>
+                        <div class="team-name">Blaze</div>
+                        <div class="team-division">Atlantic West</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #0076B6; color: #B0B7BC;">D</div>
+                    <div class="team-info">
+                        <div class="team-city">Detroit</div>
+                        <div class="team-name">Engines</div>
+                        <div class="team-division">Atlantic West</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #EB3300; color: #4C2600;">C</div>
+                    <div class="team-info">
+                        <div class="team-city">Cleveland</div>
+                        <div class="team-name">Forge</div>
+                        <div class="team-division">Atlantic West</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #003DA5; color: #FFFFFF;">I</div>
+                    <div class="team-info">
+                        <div class="team-city">Indianapolis</div>
+                        <div class="team-name">Stampede</div>
+                        <div class="team-division">Atlantic West</div>
+                    </div>
+                </div>
+
+                <!-- Pacific North -->
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #006B77; color: #69FF47;">S</div>
+                    <div class="team-info">
+                        <div class="team-city">Seattle</div>
+                        <div class="team-name">Storm</div>
+                        <div class="team-division">Pacific North</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #00482B; color: #EBE5D5;">P</div>
+                    <div class="team-info">
+                        <div class="team-city">Portland</div>
+                        <div class="team-name">Timbers</div>
+                        <div class="team-division">Pacific North</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #3D291A; color: #A5D8E6;">V</div>
+                    <div class="team-info">
+                        <div class="team-city">Vancouver</div>
+                        <div class="team-name">Grizzlies</div>
+                        <div class="team-division">Pacific North</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #5DADE2; color: #FFFFFF;">D</div>
+                    <div class="team-info">
+                        <div class="team-city">Denver</div>
+                        <div class="team-name">Summit</div>
+                        <div class="team-division">Pacific North</div>
+                    </div>
+                </div>
+
+                <!-- Pacific South -->
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #FFC72C; color: #1A1A1A;">L</div>
+                    <div class="team-info">
+                        <div class="team-city">Los Angeles</div>
+                        <div class="team-name">Legends</div>
+                        <div class="team-division">Pacific South</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #0077BE; color: #C9B037;">S</div>
+                    <div class="team-info">
+                        <div class="team-city">San Diego</div>
+                        <div class="team-name">Surf</div>
+                        <div class="team-division">Pacific South</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #1A1A1A; color: #C5B358;">L</div>
+                    <div class="team-info">
+                        <div class="team-city">Las Vegas</div>
+                        <div class="team-name">Aces</div>
+                        <div class="team-division">Pacific South</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #C41E3A; color: #C2B280;">P</div>
+                    <div class="team-info">
+                        <div class="team-city">Phoenix</div>
+                        <div class="team-name">Scorpions</div>
+                        <div class="team-division">Pacific South</div>
+                    </div>
+                </div>
+
+                <!-- Pacific East -->
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #1A1A1A; color: #BF5700;">A</div>
+                    <div class="team-info">
+                        <div class="team-city">Austin</div>
+                        <div class="team-name">Outlaws</div>
+                        <div class="team-division">Pacific East</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #002D62; color: #CC0000;">H</div>
+                    <div class="team-info">
+                        <div class="team-city">Houston</div>
+                        <div class="team-name">Marshals</div>
+                        <div class="team-division">Pacific East</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #8A8D8F; color: #002B5C;">D</div>
+                    <div class="team-info">
+                        <div class="team-city">Dallas</div>
+                        <div class="team-name">Lone Stars</div>
+                        <div class="team-division">Pacific East</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #1A1A1A; color: #E31C79;">S</div>
+                    <div class="team-info">
+                        <div class="team-city">San Antonio</div>
+                        <div class="team-name">Bandits</div>
+                        <div class="team-division">Pacific East</div>
+                    </div>
+                </div>
+
+                <!-- Pacific West -->
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #FFB81C; color: #B3002D;">S</div>
+                    <div class="team-info">
+                        <div class="team-city">San Francisco</div>
+                        <div class="team-name">Gold Rush</div>
+                        <div class="team-division">Pacific West</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #A5ACAF; color: #1A1A1A;">O</div>
+                    <div class="team-info">
+                        <div class="team-city">Oakland</div>
+                        <div class="team-name">Raiders</div>
+                        <div class="team-division">Pacific West</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #5A2D82; color: #8E9093;">S</div>
+                    <div class="team-info">
+                        <div class="team-city">Sacramento</div>
+                        <div class="team-name">Kings</div>
+                        <div class="team-division">Pacific West</div>
+                    </div>
+                </div>
+
+                <div class="team-card" onclick="selectTeam(this)">
+                    <div class="team-logo-placeholder" style="background: #CF1020; color: #1A1A1A;">H</div>
+                    <div class="team-info">
+                        <div class="team-city">Honolulu</div>
+                        <div class="team-name">Volcanoes</div>
+                        <div class="team-division">Pacific West</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <button class="btn-next" id="nextBtn" disabled>Next</button>
+            </div>
+
         </div>
-
-        <!-- Team List -->
-        <div class="team-list" id="teamList">
-
-            <!-- Atlantic North -->
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #0A2240; color: #A8A9AD;">B</div>
-                <div class="team-info">
-                    <div class="team-city">Boston</div>
-                    <div class="team-name">Rebels</div>
-                    <div class="team-division">Atlantic North</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #5A5A5A; color: #B7410E;">P</div>
-                <div class="team-info">
-                    <div class="team-city">Philadelphia</div>
-                    <div class="team-name">Ironworks</div>
-                    <div class="team-division">Atlantic North</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #101820; color: #FFB612;">P</div>
-                <div class="team-info">
-                    <div class="team-city">Pittsburgh</div>
-                    <div class="team-name">Riverhawks</div>
-                    <div class="team-division">Atlantic North</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #4B0082; color: #CFB53B;">B</div>
-                <div class="team-info">
-                    <div class="team-city">Baltimore</div>
-                    <div class="team-name">Knights</div>
-                    <div class="team-division">Atlantic North</div>
-                </div>
-            </div>
-
-            <!-- Atlantic South -->
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #008E97; color: #FF6F61;">M</div>
-                <div class="team-info">
-                    <div class="team-city">Miami</div>
-                    <div class="team-name">Sharks</div>
-                    <div class="team-division">Atlantic South</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #0057B8; color: #FFFFFF;">O</div>
-                <div class="team-info">
-                    <div class="team-city">Orlando</div>
-                    <div class="team-name">Thunder</div>
-                    <div class="team-division">Atlantic South</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #CE1141; color: #FDBB30;">A</div>
-                <div class="team-info">
-                    <div class="team-city">Atlanta</div>
-                    <div class="team-name">Firebirds</div>
-                    <div class="team-division">Atlantic South</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #5C2D91; color: #C0C0C0;">C</div>
-                <div class="team-info">
-                    <div class="team-city">Charlotte</div>
-                    <div class="team-name">Crowns</div>
-                    <div class="team-division">Atlantic South</div>
-                </div>
-            </div>
-
-            <!-- Atlantic East -->
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #0C2340; color: #FF5F00;">N</div>
-                <div class="team-info">
-                    <div class="team-city">New York</div>
-                    <div class="team-name">Empire</div>
-                    <div class="team-division">Atlantic East</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #FFD100; color: #1A1A1A;">B</div>
-                <div class="team-info">
-                    <div class="team-city">Brooklyn</div>
-                    <div class="team-name">Bolts</div>
-                    <div class="team-division">Atlantic East</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #154734; color: #A8A9AD;">N</div>
-                <div class="team-info">
-                    <div class="team-city">Newark</div>
-                    <div class="team-name">Sentinels</div>
-                    <div class="team-division">Atlantic East</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #F5F5F5; color: #002244;">W</div>
-                <div class="team-info">
-                    <div class="team-city">Washington</div>
-                    <div class="team-name">Monuments</div>
-                    <div class="team-division">Atlantic East</div>
-                </div>
-            </div>
-
-            <!-- Atlantic West -->
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #FF6720; color: #1A1A1A;">C</div>
-                <div class="team-info">
-                    <div class="team-city">Chicago</div>
-                    <div class="team-name">Blaze</div>
-                    <div class="team-division">Atlantic West</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #0076B6; color: #B0B7BC;">D</div>
-                <div class="team-info">
-                    <div class="team-city">Detroit</div>
-                    <div class="team-name">Engines</div>
-                    <div class="team-division">Atlantic West</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #EB3300; color: #4C2600;">C</div>
-                <div class="team-info">
-                    <div class="team-city">Cleveland</div>
-                    <div class="team-name">Forge</div>
-                    <div class="team-division">Atlantic West</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #003DA5; color: #FFFFFF;">I</div>
-                <div class="team-info">
-                    <div class="team-city">Indianapolis</div>
-                    <div class="team-name">Stampede</div>
-                    <div class="team-division">Atlantic West</div>
-                </div>
-            </div>
-
-            <!-- Pacific North -->
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #006B77; color: #69FF47;">S</div>
-                <div class="team-info">
-                    <div class="team-city">Seattle</div>
-                    <div class="team-name">Storm</div>
-                    <div class="team-division">Pacific North</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #00482B; color: #EBE5D5;">P</div>
-                <div class="team-info">
-                    <div class="team-city">Portland</div>
-                    <div class="team-name">Timbers</div>
-                    <div class="team-division">Pacific North</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #3D291A; color: #A5D8E6;">V</div>
-                <div class="team-info">
-                    <div class="team-city">Vancouver</div>
-                    <div class="team-name">Grizzlies</div>
-                    <div class="team-division">Pacific North</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #5DADE2; color: #FFFFFF;">D</div>
-                <div class="team-info">
-                    <div class="team-city">Denver</div>
-                    <div class="team-name">Summit</div>
-                    <div class="team-division">Pacific North</div>
-                </div>
-            </div>
-
-            <!-- Pacific South -->
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #FFC72C; color: #1A1A1A;">L</div>
-                <div class="team-info">
-                    <div class="team-city">Los Angeles</div>
-                    <div class="team-name">Legends</div>
-                    <div class="team-division">Pacific South</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #0077BE; color: #C9B037;">S</div>
-                <div class="team-info">
-                    <div class="team-city">San Diego</div>
-                    <div class="team-name">Surf</div>
-                    <div class="team-division">Pacific South</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #1A1A1A; color: #C5B358;">L</div>
-                <div class="team-info">
-                    <div class="team-city">Las Vegas</div>
-                    <div class="team-name">Aces</div>
-                    <div class="team-division">Pacific South</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #C41E3A; color: #C2B280;">P</div>
-                <div class="team-info">
-                    <div class="team-city">Phoenix</div>
-                    <div class="team-name">Scorpions</div>
-                    <div class="team-division">Pacific South</div>
-                </div>
-            </div>
-
-            <!-- Pacific East -->
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #1A1A1A; color: #BF5700;">A</div>
-                <div class="team-info">
-                    <div class="team-city">Austin</div>
-                    <div class="team-name">Outlaws</div>
-                    <div class="team-division">Pacific East</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #002D62; color: #CC0000;">H</div>
-                <div class="team-info">
-                    <div class="team-city">Houston</div>
-                    <div class="team-name">Marshals</div>
-                    <div class="team-division">Pacific East</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #8A8D8F; color: #002B5C;">D</div>
-                <div class="team-info">
-                    <div class="team-city">Dallas</div>
-                    <div class="team-name">Lone Stars</div>
-                    <div class="team-division">Pacific East</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #1A1A1A; color: #E31C79;">S</div>
-                <div class="team-info">
-                    <div class="team-city">San Antonio</div>
-                    <div class="team-name">Bandits</div>
-                    <div class="team-division">Pacific East</div>
-                </div>
-            </div>
-
-            <!-- Pacific West -->
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #FFB81C; color: #B3002D;">S</div>
-                <div class="team-info">
-                    <div class="team-city">San Francisco</div>
-                    <div class="team-name">Gold Rush</div>
-                    <div class="team-division">Pacific West</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #A5ACAF; color: #1A1A1A;">O</div>
-                <div class="team-info">
-                    <div class="team-city">Oakland</div>
-                    <div class="team-name">Raiders</div>
-                    <div class="team-division">Pacific West</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #5A2D82; color: #8E9093;">S</div>
-                <div class="team-info">
-                    <div class="team-city">Sacramento</div>
-                    <div class="team-name">Kings</div>
-                    <div class="team-division">Pacific West</div>
-                </div>
-            </div>
-
-            <div class="team-card" onclick="selectTeam(this)">
-                <div class="team-logo-placeholder" style="background: #CF1020; color: #1A1A1A;">H</div>
-                <div class="team-info">
-                    <div class="team-city">Honolulu</div>
-                    <div class="team-name">Volcanoes</div>
-                    <div class="team-division">Pacific West</div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <button class="btn-next" id="nextBtn" disabled>Next</button>
-        </div>
-
     </div>
-</div>
 
-<script>
-    function selectTeam(card) {
-        // Deselect all
-        document.querySelectorAll('.team-card').forEach(c => c.classList.remove('selected'));
+    <script>
+        function selectTeam(card) {
+            // Deselect all
+            document.querySelectorAll('.team-card').forEach(c => c.classList.remove('selected'));
 
-        // Select clicked
-        card.classList.add('selected');
+            // Select clicked
+            card.classList.add('selected');
 
-        // Enable next button
-        document.getElementById('nextBtn').disabled = false;
-    }
-</script>
+            // Enable next button
+            document.getElementById('nextBtn').disabled = false;
+        }
+    </script>
 
 </body>
 

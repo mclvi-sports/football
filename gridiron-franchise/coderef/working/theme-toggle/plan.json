@@ -1,0 +1,91 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "theme-toggle",
+    "version": "1.0.0",
+    "status": "approved",
+    "workorder_id": "WO-THEME-TOGGLE-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "1_executive_summary": {
+      "feature_name": "Theme Toggle",
+      "description": "Add dark/light mode toggle using next-themes with dark as default",
+      "goal": "Enable users to switch between dark and light themes via Settings page",
+      "estimated_complexity": "Low",
+      "estimated_loc": 120
+    },
+    "2_risk_assessment": {
+      "overall_risk": "Low",
+      "risks": []
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        "src/components/theme-provider.tsx",
+        "src/components/theme-toggle.tsx"
+      ],
+      "files_to_modify": [
+        "src/app/layout.tsx",
+        "src/app/(main)/settings/page.tsx"
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-THEME-TOGGLE-001",
+        "name": "Theme Toggle",
+        "feature_dir": "coderef/working/theme-toggle"
+      },
+      "prefix": "THEME",
+      "tasks": [
+        {
+          "id": "THEME-001",
+          "workorder_id": "WO-THEME-TOGGLE-001",
+          "description": "Create ThemeProvider wrapper component",
+          "file": "src/components/theme-provider.tsx",
+          "estimated_loc": 20
+        },
+        {
+          "id": "THEME-002",
+          "workorder_id": "WO-THEME-TOGGLE-001",
+          "description": "Add ThemeProvider to root layout with dark default",
+          "file": "src/app/layout.tsx",
+          "estimated_loc": 10
+        },
+        {
+          "id": "THEME-003",
+          "workorder_id": "WO-THEME-TOGGLE-001",
+          "description": "Create ThemeToggle component with light/dark/system options",
+          "file": "src/components/theme-toggle.tsx",
+          "estimated_loc": 50
+        },
+        {
+          "id": "THEME-004",
+          "workorder_id": "WO-THEME-TOGGLE-001",
+          "description": "Add theme toggle to Settings page",
+          "file": "src/app/(main)/settings/page.tsx",
+          "estimated_loc": 40
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Provider Setup",
+          "tasks": ["THEME-001", "THEME-002"]
+        },
+        {
+          "phase": 2,
+          "name": "Toggle UI",
+          "tasks": ["THEME-003", "THEME-004"]
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "App defaults to dark mode on first visit",
+        "Theme toggle in Settings switches between light/dark/system",
+        "Theme persists across page refreshes",
+        "No flash of wrong theme on page load"
+      ]
+    }
+  }
+}

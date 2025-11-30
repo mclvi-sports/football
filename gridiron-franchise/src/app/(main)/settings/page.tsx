@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function SettingsPage() {
   return (
@@ -9,14 +10,23 @@ export default function SettingsPage() {
           <span className="text-3xl">⚙️</span>
         </div>
         <h2 className="text-xl font-bold">Settings</h2>
-        <p className="text-muted-foreground mt-2">Coming soon</p>
+        <p className="text-muted-foreground mt-2">Customize your experience</p>
       </div>
 
-      {/* Placeholder Content */}
-      <div className="space-y-4">
-        <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-xl">
+      {/* Settings Sections */}
+      <div className="space-y-6">
+        {/* Theme Setting */}
+        <div className="space-y-3">
+          <label className="text-sm font-medium text-foreground">
+            Appearance
+          </label>
+          <ThemeToggle />
+        </div>
+
+        {/* Placeholder for future settings */}
+        <div className="p-4 bg-muted/50 border border-border rounded-xl">
           <p className="text-sm text-muted-foreground">
-            Game settings, audio controls, and account management will be available here.
+            More settings coming soon: audio controls, notifications, and account management.
           </p>
         </div>
       </div>
