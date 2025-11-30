@@ -1,0 +1,44 @@
+{
+  "workorder_id": "WO-GAME-MENU-001",
+  "feature_name": "game-menu",
+  "status": "Complete",
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Foundation",
+      "status": "completed",
+      "tasks": [
+        { "id": "MENU-001", "name": "Create main app layout with logo branding", "status": "completed", "file": "src/app/(main)/layout.tsx" },
+        { "id": "MENU-002", "name": "Create MenuButtonPrimary component", "status": "completed", "file": "src/components/menu/menu-button-primary.tsx" },
+        { "id": "MENU-003", "name": "Create MenuButtonSecondary component", "status": "completed", "file": "src/components/menu/menu-button-secondary.tsx" },
+        { "id": "MENU-004", "name": "Create MenuFooter component", "status": "completed", "file": "src/components/menu/menu-footer.tsx" }
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Main Menu Page",
+      "status": "completed",
+      "tasks": [
+        { "id": "MENU-005", "name": "Create main menu page", "status": "completed", "file": "src/app/(main)/page.tsx" },
+        { "id": "MENU-006", "name": "Add auth redirect on login", "status": "completed", "file": "src/components/auth/sign-in-form.tsx (already implemented)" }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Placeholder Pages",
+      "status": "completed",
+      "tasks": [
+        { "id": "MENU-007", "name": "Create Settings placeholder page", "status": "completed", "file": "src/app/(main)/settings/page.tsx" },
+        { "id": "MENU-008", "name": "Create Credits placeholder page", "status": "completed", "file": "src/app/(main)/credits/page.tsx" }
+      ]
+    }
+  ],
+  "metrics": {
+    "estimated_loc": 350,
+    "actual_loc": 280,
+    "commits": 1,
+    "time_elapsed": "single session"
+  },
+  "created_at": "2025-11-30",
+  "completed_at": "2025-11-30"
+}

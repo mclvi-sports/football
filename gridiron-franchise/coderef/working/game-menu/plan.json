@@ -1,0 +1,224 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "game-menu",
+    "version": "1.0.0",
+    "status": "approved",
+    "generated_by": "Lloyd (AI Project Coordinator)",
+    "has_context": true,
+    "has_analysis": true,
+    "workorder_id": "WO-GAME-MENU-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "reference_documents": [
+        "context/game-menu-mockup.html",
+        "coderef/working/auth-ui/IMPLEMENTATION.md"
+      ],
+      "reference_components": [
+        "src/app/auth/layout.tsx",
+        "src/components/ui/button.tsx"
+      ],
+      "technology_stack": {
+        "framework": "Next.js 16 App Router",
+        "ui_library": "shadcn/ui",
+        "styling": "Tailwind CSS v4",
+        "language": "TypeScript"
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Game Menu",
+      "description": "Main game menu screen shown after user authentication. Provides navigation to Continue Career, New Career, Load Career, Settings, and Credits.",
+      "goal": "Create the post-login landing page that serves as the main hub for career mode navigation",
+      "estimated_complexity": "Low",
+      "estimated_loc": 350
+    },
+    "2_risk_assessment": {
+      "overall_risk": "Low",
+      "risks": [
+        {
+          "risk": "No career data available yet",
+          "mitigation": "Use placeholder/mock data for Continue Career state",
+          "severity": "Low"
+        },
+        {
+          "risk": "Settings/Credits pages not implemented",
+          "mitigation": "Create placeholder pages or disable buttons with tooltips",
+          "severity": "Low"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        "src/app/(main)/page.tsx",
+        "src/app/(main)/layout.tsx",
+        "src/components/menu/menu-button-primary.tsx",
+        "src/components/menu/menu-button-secondary.tsx",
+        "src/components/menu/menu-footer.tsx"
+      ],
+      "files_to_modify": [
+        "src/components/auth/sign-in-form.tsx"
+      ],
+      "dependencies": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Main Menu Layout",
+          "description": "Shared layout for main app screens with logo branding"
+        },
+        {
+          "id": "F2",
+          "name": "Continue Career Button",
+          "description": "Primary CTA showing current game state (week, opponent)"
+        },
+        {
+          "id": "F3",
+          "name": "Career Navigation",
+          "description": "New Career and Load Career secondary buttons"
+        },
+        {
+          "id": "F4",
+          "name": "Footer Actions",
+          "description": "Settings and Credits footer buttons with version tag"
+        },
+        {
+          "id": "F5",
+          "name": "Auth Redirect",
+          "description": "Redirect authenticated users from /auth to main menu"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-GAME-MENU-001",
+        "name": "Game Menu",
+        "feature_dir": "coderef/working/game-menu"
+      },
+      "prefix": "MENU",
+      "tasks": [
+        {
+          "id": "MENU-001",
+          "workorder_id": "WO-GAME-MENU-001",
+          "feature_id": "F1",
+          "description": "Create main app layout with logo branding",
+          "file": "src/app/(main)/layout.tsx",
+          "estimated_loc": 40
+        },
+        {
+          "id": "MENU-002",
+          "workorder_id": "WO-GAME-MENU-001",
+          "feature_id": "F2",
+          "description": "Create MenuButtonPrimary component for Continue Career",
+          "file": "src/components/menu/menu-button-primary.tsx",
+          "estimated_loc": 50
+        },
+        {
+          "id": "MENU-003",
+          "workorder_id": "WO-GAME-MENU-001",
+          "feature_id": "F3",
+          "description": "Create MenuButtonSecondary component for New/Load Career",
+          "file": "src/components/menu/menu-button-secondary.tsx",
+          "estimated_loc": 40
+        },
+        {
+          "id": "MENU-004",
+          "workorder_id": "WO-GAME-MENU-001",
+          "feature_id": "F4",
+          "description": "Create MenuFooter component with Settings, Credits, version",
+          "file": "src/components/menu/menu-footer.tsx",
+          "estimated_loc": 50
+        },
+        {
+          "id": "MENU-005",
+          "workorder_id": "WO-GAME-MENU-001",
+          "feature_id": "F1,F2,F3,F4",
+          "description": "Create main menu page assembling all components",
+          "file": "src/app/(main)/page.tsx",
+          "estimated_loc": 80
+        },
+        {
+          "id": "MENU-006",
+          "workorder_id": "WO-GAME-MENU-001",
+          "feature_id": "F5",
+          "description": "Add redirect logic from /auth on successful login",
+          "file": "src/components/auth/sign-in-form.tsx",
+          "estimated_loc": 10
+        },
+        {
+          "id": "MENU-007",
+          "workorder_id": "WO-GAME-MENU-001",
+          "feature_id": "F4",
+          "description": "Create placeholder Settings page",
+          "file": "src/app/(main)/settings/page.tsx",
+          "estimated_loc": 40
+        },
+        {
+          "id": "MENU-008",
+          "workorder_id": "WO-GAME-MENU-001",
+          "feature_id": "F4",
+          "description": "Create placeholder Credits page",
+          "file": "src/app/(main)/credits/page.tsx",
+          "estimated_loc": 40
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Foundation",
+          "description": "Create layout and reusable menu components",
+          "tasks": ["MENU-001", "MENU-002", "MENU-003", "MENU-004"]
+        },
+        {
+          "phase": 2,
+          "name": "Main Menu Page",
+          "description": "Assemble main menu and add auth redirect",
+          "tasks": ["MENU-005", "MENU-006"]
+        },
+        {
+          "phase": 3,
+          "name": "Placeholder Pages",
+          "description": "Create Settings and Credits placeholder pages",
+          "tasks": ["MENU-007", "MENU-008"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [],
+      "integration_tests": [],
+      "manual_tests": [
+        "Verify menu displays correctly on mobile (390px)",
+        "Verify all buttons are clickable and show hover states",
+        "Verify redirect from /auth after login works",
+        "Verify Settings and Credits navigation works"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "Main menu matches mockup design",
+        "All navigation buttons functional",
+        "Consistent styling with auth screens",
+        "Mobile-responsive layout",
+        "Build passes without errors"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] MENU-001: Main app layout created",
+        "[ ] MENU-002: MenuButtonPrimary component created",
+        "[ ] MENU-003: MenuButtonSecondary component created",
+        "[ ] MENU-004: MenuFooter component created"
+      ],
+      "phase_2": [
+        "[ ] MENU-005: Main menu page assembled",
+        "[ ] MENU-006: Auth redirect implemented"
+      ],
+      "phase_3": [
+        "[ ] MENU-007: Settings placeholder page created",
+        "[ ] MENU-008: Credits placeholder page created"
+      ]
+    }
+  }
+}
