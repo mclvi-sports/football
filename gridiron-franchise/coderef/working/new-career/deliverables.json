@@ -1,0 +1,34 @@
+{
+  "workorder_id": "WO-NEW-CAREER-001",
+  "feature_name": "new-career",
+  "status": "Not Started",
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Data & Components",
+      "status": "pending",
+      "tasks": [
+        { "id": "CAREER-001", "name": "Create teams data file", "status": "pending", "file": "src/data/teams.ts" },
+        { "id": "CAREER-002", "name": "Create TeamCard component", "status": "pending", "file": "src/components/career/team-card.tsx" },
+        { "id": "CAREER-003", "name": "Create TeamList component", "status": "pending", "file": "src/components/career/team-list.tsx" }
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Pages",
+      "status": "pending",
+      "tasks": [
+        { "id": "CAREER-004", "name": "Create team selection page", "status": "pending", "file": "src/app/(main)/career/new/page.tsx" },
+        { "id": "CAREER-005", "name": "Create confirmation page", "status": "pending", "file": "src/app/(main)/career/new/confirm/page.tsx" }
+      ]
+    }
+  ],
+  "metrics": {
+    "estimated_loc": 450,
+    "actual_loc": null,
+    "commits": null,
+    "time_elapsed": null
+  },
+  "created_at": "2025-11-30",
+  "completed_at": null
+}

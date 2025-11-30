@@ -1,0 +1,33 @@
+{
+  "feature_name": "new-career",
+  "description": "New Career flow allowing users to select a team from 32 available teams across 8 divisions and start a new franchise career mode.",
+  "goal": "Enable users to start a new career by selecting their team from a scrollable list of all 32 franchise teams",
+  "requirements": [
+    "Team selection page at /career/new",
+    "Display 32 teams in scrollable list",
+    "TeamCard component showing logo, city, name, division",
+    "Team cards have selectable state with visual feedback",
+    "Next button disabled until team selected",
+    "Team data structure with colors and division info",
+    "Navigation to career confirmation/start after selection"
+  ],
+  "out_of_scope": [
+    "Database persistence of career",
+    "Career simulation logic",
+    "Roster management",
+    "Schedule generation"
+  ],
+  "constraints": [
+    "Use theme-aware colors (no hardcoded zinc/gray)",
+    "Mobile-first responsive design (390px base)",
+    "Follow existing component patterns",
+    "UI only for now - no database integration yet"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-NEW-CAREER-001",
+    "workorder_assigned_at": "2025-11-30T22:08:10.558804+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

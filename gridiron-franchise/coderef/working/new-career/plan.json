@@ -1,0 +1,127 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "new-career",
+    "version": "1.0.0",
+    "status": "approved",
+    "workorder_id": "WO-NEW-CAREER-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "1_executive_summary": {
+      "feature_name": "New Career",
+      "description": "Team selection flow for starting a new franchise career. Users select from 32 teams across 8 divisions.",
+      "goal": "Enable users to start a new career by selecting their team",
+      "estimated_complexity": "Medium",
+      "estimated_loc": 450
+    },
+    "2_risk_assessment": {
+      "overall_risk": "Low",
+      "risks": [
+        {
+          "risk": "Large team data set (32 teams)",
+          "mitigation": "Store as static data file, lazy load if needed",
+          "severity": "Low"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        "src/data/teams.ts",
+        "src/components/career/team-card.tsx",
+        "src/components/career/team-list.tsx",
+        "src/app/(main)/career/new/page.tsx"
+      ],
+      "files_to_modify": []
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-NEW-CAREER-001",
+        "name": "New Career",
+        "feature_dir": "coderef/working/new-career"
+      },
+      "prefix": "CAREER",
+      "tasks": [
+        {
+          "id": "CAREER-001",
+          "workorder_id": "WO-NEW-CAREER-001",
+          "description": "Create teams data file with all 32 teams",
+          "file": "src/data/teams.ts",
+          "estimated_loc": 200
+        },
+        {
+          "id": "CAREER-002",
+          "workorder_id": "WO-NEW-CAREER-001",
+          "description": "Create TeamCard component with selection state",
+          "file": "src/components/career/team-card.tsx",
+          "estimated_loc": 60
+        },
+        {
+          "id": "CAREER-003",
+          "workorder_id": "WO-NEW-CAREER-001",
+          "description": "Create TeamList component with scrollable grid",
+          "file": "src/components/career/team-list.tsx",
+          "estimated_loc": 40
+        },
+        {
+          "id": "CAREER-004",
+          "workorder_id": "WO-NEW-CAREER-001",
+          "description": "Create team selection page at /career/new",
+          "file": "src/app/(main)/career/new/page.tsx",
+          "estimated_loc": 80
+        },
+        {
+          "id": "CAREER-005",
+          "workorder_id": "WO-NEW-CAREER-001",
+          "description": "Create career confirmation page at /career/new/confirm",
+          "file": "src/app/(main)/career/new/confirm/page.tsx",
+          "estimated_loc": 70
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Data & Components",
+          "description": "Create team data and reusable components",
+          "tasks": ["CAREER-001", "CAREER-002", "CAREER-003"]
+        },
+        {
+          "phase": 2,
+          "name": "Pages",
+          "description": "Create selection and confirmation pages",
+          "tasks": ["CAREER-004", "CAREER-005"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Verify all 32 teams display correctly",
+        "Verify team selection highlights card",
+        "Verify Next button enables on selection",
+        "Verify navigation to confirmation page",
+        "Verify theme compatibility (light/dark)"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "All 32 teams displayed in scrollable list",
+        "Team cards show logo, city, name, division",
+        "Selection state visually indicated",
+        "Next button disabled until selection made",
+        "Works in both light and dark themes",
+        "Build passes without errors"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] CAREER-001: Teams data file with 32 teams",
+        "[ ] CAREER-002: TeamCard component",
+        "[ ] CAREER-003: TeamList component"
+      ],
+      "phase_2": [
+        "[ ] CAREER-004: Team selection page",
+        "[ ] CAREER-005: Confirmation page"
+      ]
+    }
+  }
+}
