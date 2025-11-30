@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Profile - M. Williams</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(to bottom, #020617, #0f172a, #000000);
+            color: #ffffff;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(to bottom right, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.9));
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .back-button {
+            font-size: 20px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-button {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-button.primary {
+            background: linear-gradient(to right, #2563eb, #16a34a);
+            border: none;
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+        }
+
+        .action-button.danger {
+            background: rgba(220, 38, 38, 0.2);
+            border-color: rgba(220, 38, 38, 0.5);
+            color: #f87171;
+        }
+
+        /* Coach Hero */
+        .coach-hero {
+            padding: 20px 16px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .coach-avatar-large {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #9333ea, #7c3aed);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 900;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 30px rgba(147, 51, 234, 0.3);
+        }
+
+        .coach-name-large {
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .coach-position-large {
+            display: inline-block;
+            background: rgba(147, 51, 234, 0.3);
+            border: 1px solid rgba(147, 51, 234, 0.5);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #c084fc;
+            margin-bottom: 12px;
+        }
+
+        .coach-overall-large {
+            font-size: 64px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+            margin-bottom: 8px;
+        }
+
+        .coach-tier {
+            font-size: 12px;
+            color: #4ade80;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 16px;
+            background: rgba(2, 6, 23, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .quick-stat {
+            text-align: center;
+        }
+
+        .quick-stat-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .quick-stat-value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .quick-stat-value.green {
+            color: #4ade80;
+        }
+
+        /* Tabs */
+        .tabs {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 68px;
+            z-index: 90;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-list {
+            display: flex;
+            padding: 0 16px;
+            min-width: max-content;
+        }
+
+        .tab {
+            padding: 14px 20px;
+            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.6);
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #ffffff;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(to right, #2563eb, #16a34a) 1;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Content */
+        .content {
+            padding: 16px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .card {
+            background: linear-gradient(to bottom right, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.9));
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        /* Attributes Grid */
+        .attributes-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .attribute-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .attribute-name {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .attribute-value {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .attribute-bar {
+            width: 80px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .attribute-fill {
+            height: 100%;
+            background: linear-gradient(to right, #9333ea, #7c3aed);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .attribute-number {
+            font-size: 16px;
+            font-weight: 700;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        .attribute-number.elite {
+            color: #fbbf24;
+        }
+
+        .attribute-number.great {
+            color: #4ade80;
+        }
+
+        .attribute-number.good {
+            color: #60a5fa;
+        }
+
+        .attribute-number.avg {
+            color: #a1a1aa;
+        }
+
+        /* Scheme Card */
+        .scheme-card {
+            background: rgba(147, 51, 234, 0.1);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .scheme-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .scheme-name {
+            font-size: 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            color: #c084fc;
+        }
+
+        .scheme-philosophy {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 16px;
+        }
+
+        .scheme-details {
+            display: grid;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .scheme-detail {
+            font-size: 12px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .scheme-label {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 4px;
+        }
+
+        .scheme-value {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        /* Perks Grid */
+        .perks-grid {
+            display: grid;
+            gap: 8px;
+        }
+
+        .perk-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .perk-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            flex-shrink: 0;
+            background: rgba(147, 51, 234, 0.2);
+            border: 1px solid rgba(147, 51, 234, 0.4);
+        }
+
+        .perk-info {
+            flex: 1;
+        }
+
+        .perk-name {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .perk-tier {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .perk-effect {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Contract Info */
+        .contract-details {
+            display: grid;
+            gap: 12px;
+        }
+
+        .contract-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .contract-row:last-child {
+            border-bottom: none;
+        }
+
+        .contract-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+        }
+
+        .contract-value {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Record Table */
+        .record-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .record-table th {
+            text-align: left;
+            padding: 12px 8px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .record-table td {
+            padding: 12px 8px;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .record-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .stat-highlight {
+            font-weight: 700;
+            color: #4ade80;
+        }
+
+        /* Bio */
+        .bio-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .bio-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+
+        .bio-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+        }
+
+        .bio-value {
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            padding: 8px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #ffffff;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Philosophy Badge */
+        .philosophy-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .philosophy-badge.aggressive {
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid rgba(220, 38, 38, 0.5);
+            color: #f87171;
+        }
+
+        .philosophy-badge.balanced {
+            background: rgba(37, 99, 235, 0.2);
+            border: 1px solid rgba(37, 99, 235, 0.5);
+            color: #60a5fa;
+        }
+
+        .philosophy-badge.conservative {
+            background: rgba(22, 163, 74, 0.2);
+            border: 1px solid rgba(22, 163, 74, 0.5);
+            color: #4ade80;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-nav">
+            <div class="back-button">←</div>
+            <div class="header-actions">
+                <button class="action-button primary">UPGRADE</button>
+                <button class="action-button">EXTEND</button>
+                <button class="action-button danger">FIRE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coach Hero -->
+    <div class="coach-hero">
+        <div class="coach-avatar-large">MW</div>
+        <div class="coach-name-large">MIKE WILLIAMS</div>
+        <div class="coach-position-large">HEAD COACH</div>
+        <div class="coach-overall-large">85</div>
+        <div class="coach-tier">GREAT TIER</div>
+        <div class="philosophy-badge balanced">BALANCED PHILOSOPHY</div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+        <div class="quick-stat">
+            <div class="quick-stat-label">Age</div>
+            <div class="quick-stat-value">52</div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-label">Exp</div>
+            <div class="quick-stat-value">12yr</div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-label">Record</div>
+            <div class="quick-stat-value green">84-48</div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-label">Salary</div>
+            <div class="quick-stat-value">$8M</div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab-list">
+            <div class="tab active" data-tab="attributes">Attributes</div>
+            <div class="tab" data-tab="scheme">Scheme</div>
+            <div class="tab" data-tab="perks">Perks</div>
+            <div class="tab" data-tab="record">Record</div>
+            <div class="tab" data-tab="contract">Contract</div>
+            <div class="tab" data-tab="bio">Bio</div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Attributes Tab -->
+        <div class="tab-content active" id="attributes">
+            <!-- Core Attributes -->
+            <div class="section">
+                <div class="section-title">Core Attributes</div>
+                <div class="card">
+                    <div class="attributes-grid">
+                        <div class="attribute-row">
+                            <span class="attribute-name">Offensive Knowledge</span>
+                            <div class="attribute-value">
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 82%"></div>
+                                </div>
+                                <span class="attribute-number great">82</span>
+                            </div>
+                        </div>
+                        <div class="attribute-row">
+                            <span class="attribute-name">Defensive Knowledge</span>
+                            <div class="attribute-value">
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 80%"></div>
+                                </div>
+                                <span class="attribute-number great">80</span>
+                            </div>
+                        </div>
+                        <div class="attribute-row">
+                            <span class="attribute-name">Special Teams Knowledge</span>
+                            <div class="attribute-value">
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 75%"></div>
+                                </div>
+                                <span class="attribute-number good">75</span>
+                            </div>
+                        </div>
+                        <div class="attribute-row">
+                            <span class="attribute-name">Player Development</span>
+                            <div class="attribute-value">
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 88%"></div>
+                                </div>
+                                <span class="attribute-number great">88</span>
+                            </div>
+                        </div>
+                        <div class="attribute-row">
+                            <span class="attribute-name">Motivation</span>
+                            <div class="attribute-value">
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 90%"></div>
+                                </div>
+                                <span class="attribute-number elite">90</span>
+                            </div>
+                        </div>
+                        <div class="attribute-row">
+                            <span class="attribute-name">Game Planning</span>
+                            <div class="attribute-value">
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 87%"></div>
+                                </div>
+                                <span class="attribute-number great">87</span>
+                            </div>
+                        </div>
+                        <div class="attribute-row">
+                            <span class="attribute-name">Adaptability</span>
+                            <div class="attribute-value">
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 85%"></div>
+                                </div>
+                                <span class="attribute-number great">85</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Head Coach Specific -->
+            <div class="section">
+                <div class="section-title">Head Coach Skills</div>
+                <div class="card">
+                    <div class="attributes-grid">
+                        <div class="attribute-row">
+                            <span class="attribute-name">Leadership</span>
+                            <div class="attribute-value">
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 88%"></div>
+                                </div>
+                                <span class="attribute-number great">88</span>
+                            </div>
+                        </div>
+                        <div class="attribute-row">
+                            <span class="attribute-name">Clock Management</span>
+                            <div class="attribute-value">
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 82%"></div>
+                                </div>
+                                <span class="attribute-number great">82</span>
+                            </div>
+                        </div>
+                        <div class="attribute-row">
+                            <span class="attribute-name">Challenge Success</span>
+                            <div class="attribute-value">
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 78%"></div>
+                                </div>
+                                <span class="attribute-number good">78</span>
+                            </div>
+                        </div>
+                        <div class="attribute-row">
+                            <span class="attribute-name">Discipline</span>
+                            <div class="attribute-value">
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 84%"></div>
+                                </div>
+                                <span class="attribute-number great">84</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Impact Summary -->
+            <div class="section">
+                <div class="section-title">Team Impact</div>
+                <div class="card">
+                    <div style="display: grid; gap: 12px; font-size: 13px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: rgba(255, 255, 255, 0.6);">Team Morale Boost</span>
+                            <span style="font-weight: 700; color: #4ade80;">+15%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: rgba(255, 255, 255, 0.6);">Player XP Boost</span>
+                            <span style="font-weight: 700; color: #4ade80;">+30%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: rgba(255, 255, 255, 0.6);">Game Planning Bonus</span>
+                            <span style="font-weight: 700; color: #4ade80;">+3 OVR</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: rgba(255, 255, 255, 0.6);">Team Penalty Reduction</span>
+                            <span style="font-weight: 700; color: #4ade80;">-40%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scheme Tab -->
+        <div class="tab-content" id="scheme">
+            <div class="section">
+                <div class="section-title">Offensive Scheme</div>
+                <div class="scheme-card">
+                    <div class="scheme-icon">🏈</div>
+                    <div class="scheme-name">PRO STYLE</div>
+                    <div class="scheme-philosophy">Balanced run/pass attack with traditional formations</div>
+                    <div class="scheme-details">
+                        <div class="scheme-detail">
+                            <div class="scheme-label">Best For:</div>
+                            <div class="scheme-value">Pocket QBs, Power RBs, Versatile offense</div>
+                        </div>
+                        <div class="scheme-detail">
+                            <div class="scheme-label">Bonuses:</div>
+                            <div class="scheme-value">+2 to all offensive attributes</div>
+                        </div>
+                        <div class="scheme-detail">
+                            <div class="scheme-label">Penalties:</div>
+                            <div class="scheme-value">None (balanced approach)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Defensive Scheme</div>
+                <div class="scheme-card">
+                    <div class="scheme-icon">🛡️</div>
+                    <div class="scheme-name">4-3 BASE</div>
+                    <div class="scheme-philosophy">Four down linemen, three linebackers</div>
+                    <div class="scheme-details">
+                        <div class="scheme-detail">
+                            <div class="scheme-label">Best For:</div>
+                            <div class="scheme-value">Strong DL, Versatile LBs</div>
+                        </div>
+                        <div class="scheme-detail">
+                            <div class="scheme-label">Bonuses:</div>
+                            <div class="scheme-value">+3 DL pass rush, +2 LB tackling</div>
+                        </div>
+                        <div class="scheme-detail">
+                            <div class="scheme-label">Penalties:</div>
+                            <div class="scheme-value">-2 DB coverage</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Scheme Fit Analysis</div>
+                <div class="card">
+                    <p style="color: rgba(255, 255, 255, 0.6); font-size: 13px; margin-bottom: 12px;">
+                        Current roster has <span style="color: #4ade80; font-weight: 700;">78% scheme fit</span> with coach's preferred schemes.
+                    </p>
+                    <div style="display: grid; gap: 8px; font-size: 12px;">
+                        <div style="display: flex; justify-content: space-between; padding: 8px; background: rgba(255, 255, 255, 0.03); border-radius: 6px;">
+                            <span style="color: rgba(255, 255, 255, 0.6);">Perfect Fit Players</span>
+                            <span style="font-weight: 700; color: #4ade80;">12</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px; background: rgba(255, 255, 255, 0.03); border-radius: 6px;">
+                            <span style="color: rgba(255, 255, 255, 0.6);">Good Fit Players</span>
+                            <span style="font-weight: 700; color: #60a5fa;">25</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px; background: rgba(255, 255, 255, 0.03); border-radius: 6px;">
+                            <span style="color: rgba(255, 255, 255, 0.6);">Poor Fit Players</span>
+                            <span style="font-weight: 700; color: #f87171;">8</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Perks Tab -->
+        <div class="tab-content" id="perks">
+            <div class="section">
+                <div class="section-title">Active Perks</div>
+                <div class="perks-grid">
+                    <div class="perk-item">
+                        <div class="perk-icon">🎖️</div>
+                        <div class="perk-info">
+                            <div class="perk-name">Motivator</div>
+                            <div class="perk-tier">Tier 2</div>
+                            <div class="perk-effect">+20% team morale, players inspired by leadership</div>
+                        </div>
+                    </div>
+                    <div class="perk-item">
+                        <div class="perk-icon">🏆</div>
+                        <div class="perk-info">
+                            <div class="perk-name">Winner's Mentality</div>
+                            <div class="perk-tier">Tier 1</div>
+                            <div class="perk-effect">+2 OVR to all players in playoff games</div>
+                        </div>
+                    </div>
+                    <div class="perk-item">
+                        <div class="perk-icon">⚖️</div>
+                        <div class="perk-info">
+                            <div class="perk-name">Disciplinarian</div>
+                            <div class="perk-tier">Tier 2</div>
+                            <div class="perk-effect">-50% team penalties, elite discipline culture</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Available Upgrades</div>
+                <div class="card">
+                    <p style="color: rgba(255, 255, 255, 0.6); font-size: 13px; text-align: center; padding: 20px;">
+                        Coach has 4,200 XP available. Upgrade existing perks or unlock new ones.
+                    </p>
+                    <button class="action-button primary" style="width: 100%; padding: 12px;">
+                        VIEW UPGRADE OPTIONS
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Record Tab -->
+        <div class="tab-content" id="record">
+            <div class="section">
+                <div class="section-title">Career Record</div>
+                <div class="card">
+                    <table class="record-table">
+                        <thead>
+                            <tr>
+                                <th>SEASON</th>
+                                <th>TEAM</th>
+                                <th style="text-align: center;">RECORD</th>
+                                <th style="text-align: center;">PLAYOFFS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024</td>
+                                <td>Storm</td>
+                                <td style="text-align: center;" class="stat-highlight">6-2</td>
+                                <td style="text-align: center;">TBD</td>
+                            </tr>
+                            <tr>
+                                <td>2023</td>
+                                <td>Storm</td>
+                                <td style="text-align: center;">11-5</td>
+                                <td style="text-align: center;">Div Round</td>
+                            </tr>
+                            <tr>
+                                <td>2022</td>
+                                <td>Storm</td>
+                                <td style="text-align: center;">9-7</td>
+                                <td style="text-align: center;">Wild Card</td>
+                            </tr>
+                            <tr>
+                                <td>2021</td>
+                                <td>Storm</td>
+                                <td style="text-align: center;">10-6</td>
+                                <td style="text-align: center;">Conf Champ</td>
+                            </tr>
+                            <tr>
+                                <td>2020</td>
+                                <td>Thunder</td>
+                                <td style="text-align: center;">12-4</td>
+                                <td style="text-align: center;" class="stat-highlight">Champion</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Career Achievements</div>
+                <div class="card">
+                    <div class="bio-grid">
+                        <div class="bio-row">
+                            <span class="bio-label">Overall Record</span>
+                            <span class="bio-value">84-48 (.636)</span>
+                        </div>
+                        <div class="bio-row">
+                            <span class="bio-label">Playoff Record</span>
+                            <span class="bio-value">6-4</span>
+                        </div>
+                        <div class="bio-row">
+                            <span class="bio-label">Championships</span>
+                            <span class="bio-value">1</span>
+                        </div>
+                        <div class="bio-row">
+                            <span class="bio-label">Playoff Appearances</span>
+                            <span class="bio-value">8</span>
+                        </div>
+                        <div class="bio-row">
+                            <span class="bio-label">Coach of Year Awards</span>
+                            <span class="bio-value">2</span>
+                        </div>
+                        <div class="bio-row">
+                            <span class="bio-label">Division Titles</span>
+                            <span class="bio-value">4</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contract Tab -->
+        <div class="tab-content" id="contract">
+            <div class="section">
+                <div class="section-title">Contract Details</div>
+                <div class="card">
+                    <div class="contract-details">
+                        <div class="contract-row">
+                            <span class="contract-label">Years Remaining</span>
+                            <span class="contract-value">3 years</span>
+                        </div>
+                        <div class="contract-row">
+                            <span class="contract-label">2024 Salary</span>
+                            <span class="contract-value">$8,000,000</span>
+                        </div>
+                        <div class="contract-row">
+                            <span class="contract-label">2025 Salary</span>
+                            <span class="contract-value">$8,500,000</span>
+                        </div>
+                        <div class="contract-row">
+                            <span class="contract-label">2026 Salary</span>
+                            <span class="contract-value">$9,000,000</span>
+                        </div>
+                        <div class="contract-row">
+                            <span class="contract-label">Total Contract Value</span>
+                            <span class="contract-value">$25,500,000</span>
+                        </div>
+                        <div class="contract-row">
+                            <span class="contract-label">Buyout if Fired</span>
+                            <span class="contract-value">$17,500,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Performance Bonuses</div>
+                <div class="card">
+                    <div style="display: grid; gap: 8px; font-size: 12px;">
+                        <div style="display: flex; justify-content: space-between; padding: 8px; background: rgba(255, 255, 255, 0.03); border-radius: 6px;">
+                            <span style="color: rgba(255, 255, 255, 0.6);">Playoff Appearance</span>
+                            <span style="font-weight: 700;">$500,000</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px; background: rgba(255, 255, 255, 0.03); border-radius: 6px;">
+                            <span style="color: rgba(255, 255, 255, 0.6);">Division Title</span>
+                            <span style="font-weight: 700;">$750,000</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px; background: rgba(255, 255, 255, 0.03); border-radius: 6px;">
+                            <span style="color: rgba(255, 255, 255, 0.6);">Conference Championship</span>
+                            <span style="font-weight: 700;">$1,500,000</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px; background: rgba(255, 255, 255, 0.03); border-radius: 6px;">
+                            <span style="color: rgba(255, 255, 255, 0.6);">Championship Win</span>
+                            <span style="font-weight: 700;">$2,500,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bio Tab -->
+        <div class="tab-content" id="bio">
+            <div class="section">
+                <div class="section-title">Background</div>
+                <div class="card">
+                    <div class="bio-grid">
+                        <div class="bio-row">
+                            <span class="bio-label">Age</span>
+                            <span class="bio-value">52 years old</span>
+                        </div>
+                        <div class="bio-row">
+                            <span class="bio-label">Hometown</span>
+                            <span class="bio-value">Chicago, IL</span>
+                        </div>
+                        <div class="bio-row">
+                            <span class="bio-label">College Played</span>
+                            <span class="bio-value">State University (QB)</span>
+                        </div>
+                        <div class="bio-row">
+                            <span class="bio-label">Years Coaching</span>
+                            <span class="bio-value">12 years</span>
+                        </div>
+                        <div class="bio-row">
+                            <span class="bio-label">Previous Teams</span>
+                            <span class="bio-value">Thunder (2018-2020)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Coaching Tree</div>
+                <div class="card">
+                    <div class="bio-grid">
+                        <div class="bio-row">
+                            <span class="bio-label">Mentored By</span>
+                            <span class="bio-value">R. Johnson (HOF Coach)</span>
+                        </div>
+                        <div class="bio-row">
+                            <span class="bio-label">Previous Roles</span>
+                            <span class="bio-value">OC (5 years), QB Coach (3 years)</span>
+                        </div>
+                        <div class="bio-row">
+                            <span class="bio-label">Coaching Philosophy</span>
+                            <span class="bio-value">Player development first, balanced attack</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Notable Players Developed</div>
+                <div class="card">
+                    <div style="display: grid; gap: 8px; font-size: 13px;">
+                        <div style="padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                            <div style="font-weight: 700; margin-bottom: 4px;">J. Williams (QB)</div>
+                            <div style="color: rgba(255, 255, 255, 0.6); font-size: 12px;">75 OVR → 87 OVR, 2x Pro Bowl</div>
+                        </div>
+                        <div style="padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                            <div style="font-weight: 700; margin-bottom: 4px;">M. Davis (WR)</div>
+                            <div style="color: rgba(255, 255, 255, 0.6); font-size: 12px;">78 OVR → 89 OVR, All-Pro</div>
+                        </div>
+                        <div style="padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                            <div style="font-weight: 700; margin-bottom: 4px;">T. Brown (LB)</div>
+                            <div style="color: rgba(255, 255, 255, 0.6); font-size: 12px;">71 OVR → 84 OVR, Defensive POTY</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <div>🏠</div>
+            <div class="nav-label">Home</div>
+        </div>
+        <div class="nav-item active">
+            <div>👥</div>
+            <div class="nav-label">Team</div>
+        </div>
+        <div class="nav-item">
+            <div>🏈</div>
+            <div class="nav-label">Game</div>
+        </div>
+        <div class="nav-item">
+            <div>💼</div>
+            <div class="nav-label">Moves</div>
+        </div>
+        <div class="nav-item">
+            <div>⋯</div>
+            <div class="nav-label">More</div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                this.classList.add('active');
+                const tabId = this.dataset.tab;
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Back button
+        document.querySelector('.back-button').addEventListener('click', () => {
+            console.log('Navigate back to coaching staff');
+        });
+
+        // Action buttons
+        document.querySelectorAll('.action-button').forEach(button => {
+            button.addEventListener('click', function() {
+                console.log('Action:', this.textContent);
+            });
+        });
+    </script>
+</body>
+</html>

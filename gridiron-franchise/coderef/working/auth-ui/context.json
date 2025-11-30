@@ -1,0 +1,30 @@
+{
+  "feature_name": "auth-ui",
+  "description": "Build authentication screens and navigation flow (UI only, no route protection). Includes Sign In/Sign Up tabbed page, Forgot Password page, Check Email confirmation, and Reset Password page.",
+  "goal": "Create a polished, mobile-first authentication UI that integrates with Supabase auth methods, following the approved HTML mockup design.",
+  "requirements": [
+    "Auth page with Sign In / Sign Up tabs",
+    "Forgot Password page",
+    "Check Email confirmation page",
+    "Reset Password page",
+    "Form validation with react-hook-form + zod",
+    "Loading and error states",
+    "Guest mode navigation link",
+    "Supabase auth integration (signUp, signIn, signOut, resetPassword)",
+    "Mobile-first responsive design matching mockup"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "No route protection or middleware in this phase",
+    "No OAuth providers (Google, etc.)",
+    "No email verification enforcement",
+    "UI only - auth state available but not enforced"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-AUTH-UI-001",
+    "workorder_assigned_at": "2025-11-30T21:01:08.138117+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

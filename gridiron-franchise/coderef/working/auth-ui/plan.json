@@ -1,0 +1,323 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "auth-ui",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd (AI Project Coordinator)",
+    "generated_at": "2025-11-30",
+    "has_context": true,
+    "has_analysis": true,
+    "workorder_id": "WO-AUTH-UI-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": ["README.md"],
+      "coding_standards_reviewed": [],
+      "reference_components_identified": ["src/components/ui/*"],
+      "mockups_approved": ["context/auth-screen-mockup.html"],
+      "technology_stack": {
+        "framework": "Next.js 16 (App Router)",
+        "ui_library": "shadcn/ui",
+        "styling": "Tailwind CSS v4",
+        "forms": "react-hook-form + zod",
+        "auth": "Supabase Auth",
+        "state": "Zustand"
+      },
+      "existing_components": [
+        "Button", "Input", "Label", "Card", "Tabs"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_name": "Authentication UI",
+      "description": "Build authentication screens and navigation flow (UI only, no route protection). Includes Sign In/Sign Up tabbed page, Forgot Password page, Check Email confirmation, and Reset Password page.",
+      "goal": "Create a polished, mobile-first authentication UI that integrates with Supabase auth methods, following the approved HTML mockup design.",
+      "scope": "UI and Supabase integration only - no route protection in this phase",
+      "estimated_complexity": "Medium",
+      "estimated_tasks": 10
+    },
+    "2_risk_assessment": {
+      "overall_risk": "Low",
+      "risks": [
+        {
+          "risk": "Supabase email delivery issues",
+          "likelihood": "Medium",
+          "impact": "Low",
+          "mitigation": "Test with real email, check Supabase dashboard for email logs"
+        },
+        {
+          "risk": "Form validation edge cases",
+          "likelihood": "Low",
+          "impact": "Low",
+          "mitigation": "Use zod schema with comprehensive validation rules"
+        },
+        {
+          "risk": "Mobile layout issues",
+          "likelihood": "Low",
+          "impact": "Medium",
+          "mitigation": "Test on multiple viewport sizes, follow mockup precisely"
+        }
+      ],
+      "dependencies": [
+        "Supabase project configured with auth enabled",
+        "shadcn/ui components installed",
+        "Environment variables set (.env.local)"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        "src/app/auth/layout.tsx",
+        "src/app/auth/page.tsx",
+        "src/app/auth/forgot-password/page.tsx",
+        "src/app/auth/check-email/page.tsx",
+        "src/app/auth/reset-password/page.tsx",
+        "src/components/auth/sign-in-form.tsx",
+        "src/components/auth/sign-up-form.tsx",
+        "src/components/auth/password-strength.tsx",
+        "src/lib/validations/auth.ts",
+        "src/lib/supabase/auth.ts"
+      ],
+      "files_to_modify": [],
+      "existing_utilities": [
+        "src/lib/supabase/client.ts",
+        "src/lib/supabase/server.ts"
+      ]
+    },
+    "4_key_features": [
+      {
+        "id": "F1",
+        "name": "Auth Page with Tabs",
+        "description": "Main auth page with Sign In / Sign Up tab switcher",
+        "priority": "P0"
+      },
+      {
+        "id": "F2",
+        "name": "Sign In Form",
+        "description": "Email/password sign in with validation, loading, and error states",
+        "priority": "P0"
+      },
+      {
+        "id": "F3",
+        "name": "Sign Up Form",
+        "description": "Registration form with password strength indicator and confirmation",
+        "priority": "P0"
+      },
+      {
+        "id": "F4",
+        "name": "Forgot Password Flow",
+        "description": "Request reset email and check email confirmation pages",
+        "priority": "P1"
+      },
+      {
+        "id": "F5",
+        "name": "Reset Password Page",
+        "description": "Set new password form accessed via email link",
+        "priority": "P1"
+      },
+      {
+        "id": "F6",
+        "name": "Guest Mode",
+        "description": "Link to bypass auth and access app without account",
+        "priority": "P1"
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-AUTH-UI-001",
+        "name": "Auth UI",
+        "feature_dir": "coderef/working/auth-ui"
+      },
+      "tasks": [
+        {
+          "id": "AUTH-001",
+          "workorder_id": "WO-AUTH-UI-001",
+          "name": "Create Auth Layout",
+          "description": "Shared layout with logo, dark theme, mobile-first container",
+          "feature_id": "F1",
+          "files": ["src/app/auth/layout.tsx"],
+          "estimated_loc": 50,
+          "dependencies": []
+        },
+        {
+          "id": "AUTH-002",
+          "workorder_id": "WO-AUTH-UI-001",
+          "name": "Create Validation Schemas",
+          "description": "Zod schemas for sign in, sign up, forgot password, reset password",
+          "feature_id": "F2",
+          "files": ["src/lib/validations/auth.ts"],
+          "estimated_loc": 60,
+          "dependencies": []
+        },
+        {
+          "id": "AUTH-003",
+          "workorder_id": "WO-AUTH-UI-001",
+          "name": "Create Supabase Auth Helpers",
+          "description": "Wrapper functions for Supabase auth methods",
+          "feature_id": "F2",
+          "files": ["src/lib/supabase/auth.ts"],
+          "estimated_loc": 80,
+          "dependencies": []
+        },
+        {
+          "id": "AUTH-004",
+          "workorder_id": "WO-AUTH-UI-001",
+          "name": "Create Sign In Form Component",
+          "description": "Email/password form with validation, loading, error states",
+          "feature_id": "F2",
+          "files": ["src/components/auth/sign-in-form.tsx"],
+          "estimated_loc": 120,
+          "dependencies": ["AUTH-002", "AUTH-003"]
+        },
+        {
+          "id": "AUTH-005",
+          "workorder_id": "WO-AUTH-UI-001",
+          "name": "Create Password Strength Component",
+          "description": "Visual password strength meter",
+          "feature_id": "F3",
+          "files": ["src/components/auth/password-strength.tsx"],
+          "estimated_loc": 50,
+          "dependencies": []
+        },
+        {
+          "id": "AUTH-006",
+          "workorder_id": "WO-AUTH-UI-001",
+          "name": "Create Sign Up Form Component",
+          "description": "Registration form with password strength and confirmation",
+          "feature_id": "F3",
+          "files": ["src/components/auth/sign-up-form.tsx"],
+          "estimated_loc": 150,
+          "dependencies": ["AUTH-002", "AUTH-003", "AUTH-005"]
+        },
+        {
+          "id": "AUTH-007",
+          "workorder_id": "WO-AUTH-UI-001",
+          "name": "Create Auth Page with Tabs",
+          "description": "Main auth page combining Sign In and Sign Up forms",
+          "feature_id": "F1",
+          "files": ["src/app/auth/page.tsx"],
+          "estimated_loc": 80,
+          "dependencies": ["AUTH-001", "AUTH-004", "AUTH-006"]
+        },
+        {
+          "id": "AUTH-008",
+          "workorder_id": "WO-AUTH-UI-001",
+          "name": "Create Forgot Password Page",
+          "description": "Email input form to request password reset",
+          "feature_id": "F4",
+          "files": ["src/app/auth/forgot-password/page.tsx"],
+          "estimated_loc": 100,
+          "dependencies": ["AUTH-001", "AUTH-002", "AUTH-003"]
+        },
+        {
+          "id": "AUTH-009",
+          "workorder_id": "WO-AUTH-UI-001",
+          "name": "Create Check Email Page",
+          "description": "Confirmation screen after password reset request",
+          "feature_id": "F4",
+          "files": ["src/app/auth/check-email/page.tsx"],
+          "estimated_loc": 60,
+          "dependencies": ["AUTH-001"]
+        },
+        {
+          "id": "AUTH-010",
+          "workorder_id": "WO-AUTH-UI-001",
+          "name": "Create Reset Password Page",
+          "description": "New password form accessed via email link",
+          "feature_id": "F5",
+          "files": ["src/app/auth/reset-password/page.tsx"],
+          "estimated_loc": 120,
+          "dependencies": ["AUTH-001", "AUTH-002", "AUTH-003", "AUTH-005"]
+        }
+      ]
+    },
+    "6_implementation_phases": [
+      {
+        "phase": 1,
+        "name": "Foundation",
+        "description": "Layout, validation schemas, and Supabase helpers",
+        "tasks": ["AUTH-001", "AUTH-002", "AUTH-003"],
+        "deliverables": [
+          "Auth layout with logo and dark theme",
+          "Zod validation schemas for all forms",
+          "Supabase auth wrapper functions"
+        ]
+      },
+      {
+        "phase": 2,
+        "name": "Core Auth Forms",
+        "description": "Sign In and Sign Up components and main auth page",
+        "tasks": ["AUTH-004", "AUTH-005", "AUTH-006", "AUTH-007"],
+        "deliverables": [
+          "Sign In form with validation and Supabase integration",
+          "Password strength indicator component",
+          "Sign Up form with password confirmation",
+          "Tabbed auth page combining both forms"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "Password Reset Flow",
+        "description": "Forgot password, check email, and reset password pages",
+        "tasks": ["AUTH-008", "AUTH-009", "AUTH-010"],
+        "deliverables": [
+          "Forgot password page with email input",
+          "Check email confirmation page",
+          "Reset password page with new password form"
+        ]
+      }
+    ],
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Validation schemas accept valid input",
+        "Validation schemas reject invalid input",
+        "Password strength calculation is correct"
+      ],
+      "integration_tests": [
+        "Sign in form submits to Supabase",
+        "Sign up form creates account",
+        "Forgot password sends reset email",
+        "Reset password updates password"
+      ],
+      "manual_tests": [
+        "Mobile layout matches mockup",
+        "Tab switching works correctly",
+        "Error messages display properly",
+        "Loading states show during submission",
+        "Navigation between auth pages works"
+      ]
+    },
+    "8_success_criteria": [
+      "All 4 auth routes render without errors",
+      "Sign in successfully authenticates user via Supabase",
+      "Sign up successfully creates new user account",
+      "Forgot password sends reset email",
+      "Reset password updates user password",
+      "Form validation prevents invalid submissions",
+      "UI matches approved mockup design",
+      "Mobile-first responsive layout works on all screen sizes",
+      "Guest mode link navigates to home page"
+    ],
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Create src/app/auth/layout.tsx",
+        "[ ] Create src/lib/validations/auth.ts",
+        "[ ] Create src/lib/supabase/auth.ts",
+        "[ ] Verify layout renders correctly"
+      ],
+      "phase_2": [
+        "[ ] Create src/components/auth/sign-in-form.tsx",
+        "[ ] Create src/components/auth/password-strength.tsx",
+        "[ ] Create src/components/auth/sign-up-form.tsx",
+        "[ ] Create src/app/auth/page.tsx",
+        "[ ] Test Sign In flow end-to-end",
+        "[ ] Test Sign Up flow end-to-end"
+      ],
+      "phase_3": [
+        "[ ] Create src/app/auth/forgot-password/page.tsx",
+        "[ ] Create src/app/auth/check-email/page.tsx",
+        "[ ] Create src/app/auth/reset-password/page.tsx",
+        "[ ] Test password reset flow end-to-end",
+        "[ ] Verify all navigation links work"
+      ]
+    }
+  }
+}

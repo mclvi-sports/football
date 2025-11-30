@@ -202,17 +202,4 @@
         "PWA manifest loads correctly"
       ]
     }
-  ],
-  "outputDirectory": "gridiron-franchise",
-  "estimatedFiles": 25,
-  "nextPhase": {
-    "id": 2,
-    "name": "Database Schema & Supabase Setup",
-    "preview": [
-      "Design franchise data models",
-      "Create Supabase tables",
-      "Set up Row Level Security",
-      "Implement authentication flow"
-    ]
   }
-}
