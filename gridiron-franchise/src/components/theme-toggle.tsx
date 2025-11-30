@@ -24,7 +24,7 @@ export function ThemeToggle() {
         {themes.map((t) => (
           <div
             key={t.value}
-            className="h-12 bg-zinc-800 rounded-lg animate-pulse"
+            className="h-12 bg-muted rounded-lg animate-pulse"
           />
         ))}
       </div>
@@ -40,7 +40,7 @@ export function ThemeToggle() {
           className={`flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-lg border transition-colors ${
             theme === t.value
               ? "bg-primary text-primary-foreground border-primary"
-              : "bg-zinc-900 border-zinc-800 hover:bg-zinc-800 hover:border-zinc-700"
+              : "bg-card border-border hover:bg-accent hover:border-accent"
           }`}
         >
           <span className="text-lg">{t.icon}</span>

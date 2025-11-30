@@ -6,7 +6,7 @@ export default function SettingsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-zinc-800 flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-muted flex items-center justify-center">
           <span className="text-3xl">⚙️</span>
         </div>
         <h2 className="text-xl font-bold">Settings</h2>

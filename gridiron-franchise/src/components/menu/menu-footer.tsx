@@ -10,7 +10,7 @@ function FooterButton({ label, icon, href }: FooterButtonProps) {
   return (
     <Link
       href={href}
-      className="py-3 px-4 text-zinc-500 hover:text-foreground text-sm font-medium flex items-center justify-center gap-2 transition-colors"
+      className="py-3 px-4 text-muted-foreground hover:text-foreground text-sm font-medium flex items-center justify-center gap-2 transition-colors"
     >
       <span>{icon}</span>
       {label}
@@ -29,7 +29,7 @@ export function MenuFooter({ version = "v0.1.0-alpha" }: MenuFooterProps) {
         <FooterButton label="Settings" icon="⚙️" href="/settings" />
         <FooterButton label="Credits" icon="ℹ️" href="/credits" />
       </div>
-      <p className="text-center text-xs text-zinc-700 mt-6">{version}</p>
+      <p className="text-center text-xs text-muted-foreground/50 mt-6">{version}</p>
     </div>
   );
 }

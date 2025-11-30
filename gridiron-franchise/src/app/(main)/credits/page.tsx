@@ -5,7 +5,7 @@ export default function CreditsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-zinc-800 flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-muted flex items-center justify-center">
           <span className="text-3xl">ℹ️</span>
         </div>
         <h2 className="text-xl font-bold">Credits</h2>
@@ -14,7 +14,7 @@ export default function CreditsPage() {
 
       {/* Credits Content */}
       <div className="space-y-4">
-        <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-xl space-y-3">
+        <div className="p-4 bg-card border border-border rounded-xl space-y-3">
           <div>
             <p className="text-sm font-medium text-foreground">Development</p>
             <p className="text-sm text-muted-foreground">Your Name Here</p>
@@ -31,7 +31,7 @@ export default function CreditsPage() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-zinc-600">
+        <p className="text-center text-xs text-muted-foreground/70">
           © 2025 Gridiron Franchise. All rights reserved.
         </p>
       </div>
