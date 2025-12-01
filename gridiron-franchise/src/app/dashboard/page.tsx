@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { BottomTabBar } from "@/components/dashboard/bottom-tab-bar";
 import { TeamCard } from "@/components/dashboard/team-card";
+import { NavCard } from "@/components/dashboard/nav-card";
+import { BottomTabBar } from "@/components/dashboard/bottom-tab-bar";
 import { useCareerStore } from "@/stores/career-store";
 
 export default function DashboardPage() {
@@ -27,7 +28,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="pb-20">
+    <div className="pb-24">
       {/* Header */}
       <header className="px-5 pt-12 pb-4">
         <p className="text-sm text-muted-foreground">Season 2025 - Week 1</p>
@@ -35,9 +36,65 @@ export default function DashboardPage() {
       </header>
 
       {/* Content */}
-      <main className="px-5 space-y-4">
+      <main className="px-5 space-y-6">
         {/* Team Card */}
         <TeamCard team={selectedTeam} />
+
+        {/* Navigation Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          <NavCard
+            title="Next Task"
+            icon="NT"
+            href="/dashboard/next-task"
+            variant="highlight"
+          />
+          <NavCard
+            title="Roster"
+            icon="R"
+            href="/dashboard/roster"
+          />
+          <NavCard
+            title="Schedule"
+            icon="S"
+            href="/dashboard/schedule"
+          />
+          <NavCard
+            title="Stats"
+            icon="ST"
+            href="/dashboard/stats"
+          />
+          <NavCard
+            title="Draft"
+            icon="D"
+            href="/dashboard/draft"
+          />
+          <NavCard
+            title="News"
+            icon="N"
+            href="/dashboard/news"
+          />
+          <NavCard
+            title="Facilities"
+            icon="F"
+            href="/dashboard/facilities"
+          />
+          <NavCard
+            title="Staff"
+            icon="ST"
+            href="/dashboard/staff"
+          />
+          <NavCard
+            title="My GM"
+            icon="GM"
+            href="/dashboard/my-gm"
+          />
+          <NavCard
+            title="Dev Tools"
+            icon="DEV"
+            href="/dashboard/dev-tools"
+            description="Test generation"
+          />
+        </div>
       </main>
 
       {/* Bottom Tab Bar */}
