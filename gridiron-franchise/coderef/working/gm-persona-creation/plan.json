@@ -1,0 +1,545 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "gm-persona-creation",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-11-30T00:00:00Z",
+    "has_context": true,
+    "has_analysis": true,
+    "design_document": "context/gm-persona-creation-system.md",
+    "mockup": "context/gm-persona-mockup.html"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_documents": {
+        "design_spec": "context/gm-persona-creation-system.md",
+        "mockup": "context/gm-persona-mockup.html",
+        "reference_components": [
+          "src/components/career/team-card.tsx",
+          "src/components/career/team-list.tsx",
+          "src/app/career/new/page.tsx"
+        ]
+      },
+      "coding_standards": {
+        "framework": "Next.js 14 App Router",
+        "styling": "Tailwind CSS with shadcn/ui components",
+        "state_management": "React useState for local state, Zustand for global career state",
+        "typescript": "Strict mode, explicit types for all data structures"
+      },
+      "existing_patterns": {
+        "card_component": "team-card.tsx - selectable cards with visual feedback",
+        "list_component": "team-list.tsx - scrollable list with selection state",
+        "page_layout": "career/new/page.tsx - header with back button, content area, fixed footer"
+      },
+      "dependencies": {
+        "existing": ["react", "next", "tailwindcss", "@radix-ui/react-*", "class-variance-authority"],
+        "to_add": ["zustand"]
+      }
+    },
+    "1_executive_summary": {
+      "feature_description": "GM Persona Creation System - A multi-step character creation flow where users select their GM's archetype (management philosophy) and background (career path), with synergy bonuses for certain combinations. This affects starting bonuses, skill discounts, and gameplay mechanics throughout the career mode.",
+      "primary_goal": "Create an engaging and informative character creation experience that clearly communicates the gameplay implications of each choice while allowing for strategic synergy combinations.",
+      "scope": {
+        "in_scope": [
+          "3-step creation flow: Archetype → Background → Confirm",
+          "6 archetypes with unique bonuses and starting skills",
+          "6 backgrounds with bonuses and weaknesses",
+          "8 synergy combinations with special bonuses",
+          "TypeScript data models for GM persona",
+          "Zustand store for career state management",
+          "Integration with existing team selection flow"
+        ],
+        "out_of_scope": [
+          "Actual gameplay mechanics implementation (skills system, bonus calculations in-game)",
+          "Database persistence (will be added later)",
+          "GM Skills tree UI (separate feature)"
+        ]
+      },
+      "success_metrics": [
+        "All 6 archetypes selectable with clear visual feedback",
+        "All 6 backgrounds selectable with synergy indicators",
+        "8 synergies correctly detected and displayed",
+        "Confirm screen shows complete persona summary",
+        "Flow integrates seamlessly with team selection"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity_score": 6,
+      "complexity_justification": "Multi-step form flow with state management, but straightforward UI patterns already established in team selection",
+      "risks": [
+        {
+          "risk": "State loss during navigation",
+          "likelihood": "medium",
+          "impact": "high",
+          "mitigation": "Use Zustand persist middleware or sessionStorage"
+        },
+        {
+          "risk": "Synergy detection logic errors",
+          "likelihood": "low",
+          "impact": "medium",
+          "mitigation": "Comprehensive unit tests for all 8 synergy combinations"
+        },
+        {
+          "risk": "Mobile responsiveness issues",
+          "likelihood": "medium",
+          "impact": "medium",
+          "mitigation": "Follow existing mobile-first patterns from team selection"
+        }
+      ],
+      "dependencies_risk": "Low - only adding Zustand which is a simple, well-documented library"
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        {
+          "path": "src/data/gm-personas.ts",
+          "purpose": "Data definitions for archetypes, backgrounds, synergies"
+        },
+        {
+          "path": "src/types/gm-persona.ts",
+          "purpose": "TypeScript interfaces for GM persona system"
+        },
+        {
+          "path": "src/stores/career-store.ts",
+          "purpose": "Zustand store for career state including GM persona"
+        },
+        {
+          "path": "src/components/career/persona/archetype-card.tsx",
+          "purpose": "Card component for archetype selection"
+        },
+        {
+          "path": "src/components/career/persona/archetype-list.tsx",
+          "purpose": "List component for archetypes"
+        },
+        {
+          "path": "src/components/career/persona/background-card.tsx",
+          "purpose": "Card component for background selection with synergy indicator"
+        },
+        {
+          "path": "src/components/career/persona/background-list.tsx",
+          "purpose": "List component for backgrounds"
+        },
+        {
+          "path": "src/components/career/persona/persona-summary.tsx",
+          "purpose": "Summary component showing selected persona"
+        },
+        {
+          "path": "src/components/career/persona/synergy-badge.tsx",
+          "purpose": "Badge component for synergy indicators"
+        },
+        {
+          "path": "src/app/career/new/archetype/page.tsx",
+          "purpose": "Step 1: Archetype selection page"
+        },
+        {
+          "path": "src/app/career/new/background/page.tsx",
+          "purpose": "Step 2: Background selection page"
+        },
+        {
+          "path": "src/app/career/new/persona/page.tsx",
+          "purpose": "Step 3: Persona confirmation page"
+        },
+        {
+          "path": "src/lib/gm-persona-utils.ts",
+          "purpose": "Utility functions for synergy detection, bonus calculation"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "src/app/career/new/page.tsx",
+          "changes": "Redirect to archetype selection, or become archetype selection page"
+        },
+        {
+          "path": "src/app/career/new/confirm/page.tsx",
+          "changes": "Update to receive persona from store, show combined selection"
+        },
+        {
+          "path": "package.json",
+          "changes": "Add zustand dependency"
+        }
+      ],
+      "files_unchanged": [
+        "src/components/career/team-card.tsx",
+        "src/components/career/team-list.tsx",
+        "src/app/career/layout.tsx"
+      ]
+    },
+    "4_key_features": [
+      {
+        "id": "F1",
+        "name": "Archetype Selection",
+        "description": "Select from 6 GM archetypes, each with unique philosophy, starting skill, and bonuses",
+        "requirements": [
+          "Display 6 archetype cards in scrollable list",
+          "Show philosophy quote, description, starting skill, bonuses",
+          "Visual selection feedback (blue border/background)",
+          "Next button enabled only when selection made"
+        ]
+      },
+      {
+        "id": "F2",
+        "name": "Background Selection",
+        "description": "Select from 6 GM backgrounds with synergy detection based on selected archetype",
+        "requirements": [
+          "Show selected archetype badge at top",
+          "Display 6 background cards",
+          "Highlight cards that create synergy with gold border",
+          "Show synergy badge and bonus preview on synergy cards",
+          "Display bonuses and weakness for each background"
+        ]
+      },
+      {
+        "id": "F3",
+        "name": "Persona Confirmation",
+        "description": "Review complete GM persona before proceeding to team selection",
+        "requirements": [
+          "Display archetype and background icons/names",
+          "Show synergy name if applicable",
+          "List all combined strengths",
+          "List all weaknesses",
+          "Show starting skill details",
+          "Show synergy bonus if applicable",
+          "Buttons: Change (go back) and Select Team (proceed)"
+        ]
+      },
+      {
+        "id": "F4",
+        "name": "State Management",
+        "description": "Persist GM persona selection across navigation",
+        "requirements": [
+          "Zustand store for career creation state",
+          "Persist archetype selection when navigating to background",
+          "Persist all selections when navigating to confirm",
+          "Clear state on career creation cancel",
+          "Pass persona to team selection/confirm flow"
+        ]
+      },
+      {
+        "id": "F5",
+        "name": "Synergy System",
+        "description": "Detect and display synergy bonuses for specific archetype+background combinations",
+        "requirements": [
+          "Detect 8 valid synergy combinations",
+          "Show synergy indicator on background cards during selection",
+          "Display synergy bonus details in persona confirmation",
+          "Include synergy in final persona state"
+        ]
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-GM-PERSONA-CREATION-001",
+        "name": "GM Persona Creation",
+        "feature_dir": "coderef/working/gm-persona-creation"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Install Zustand dependency",
+          "feature": "F4",
+          "estimated_complexity": "trivial",
+          "files": ["package.json"]
+        },
+        {
+          "id": "DATA-001",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create TypeScript interfaces for GM persona types",
+          "feature": "F4",
+          "estimated_complexity": "small",
+          "files": ["src/types/gm-persona.ts"]
+        },
+        {
+          "id": "DATA-002",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create GM persona data file with all archetypes, backgrounds, synergies",
+          "feature": "F5",
+          "estimated_complexity": "medium",
+          "files": ["src/data/gm-personas.ts"]
+        },
+        {
+          "id": "DATA-003",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create utility functions for synergy detection and bonus calculation",
+          "feature": "F5",
+          "estimated_complexity": "small",
+          "files": ["src/lib/gm-persona-utils.ts"]
+        },
+        {
+          "id": "STATE-001",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create Zustand store for career creation state",
+          "feature": "F4",
+          "estimated_complexity": "medium",
+          "files": ["src/stores/career-store.ts"]
+        },
+        {
+          "id": "UI-001",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create ArchetypeCard component",
+          "feature": "F1",
+          "estimated_complexity": "medium",
+          "files": ["src/components/career/persona/archetype-card.tsx"]
+        },
+        {
+          "id": "UI-002",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create ArchetypeList component",
+          "feature": "F1",
+          "estimated_complexity": "small",
+          "files": ["src/components/career/persona/archetype-list.tsx"]
+        },
+        {
+          "id": "UI-003",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create SynergyBadge component",
+          "feature": "F5",
+          "estimated_complexity": "trivial",
+          "files": ["src/components/career/persona/synergy-badge.tsx"]
+        },
+        {
+          "id": "UI-004",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create BackgroundCard component with synergy indicator",
+          "feature": "F2",
+          "estimated_complexity": "medium",
+          "files": ["src/components/career/persona/background-card.tsx"]
+        },
+        {
+          "id": "UI-005",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create BackgroundList component",
+          "feature": "F2",
+          "estimated_complexity": "small",
+          "files": ["src/components/career/persona/background-list.tsx"]
+        },
+        {
+          "id": "UI-006",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create PersonaSummary component",
+          "feature": "F3",
+          "estimated_complexity": "medium",
+          "files": ["src/components/career/persona/persona-summary.tsx"]
+        },
+        {
+          "id": "PAGE-001",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create archetype selection page (Step 1)",
+          "feature": "F1",
+          "estimated_complexity": "medium",
+          "files": ["src/app/career/new/archetype/page.tsx"]
+        },
+        {
+          "id": "PAGE-002",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create background selection page (Step 2)",
+          "feature": "F2",
+          "estimated_complexity": "medium",
+          "files": ["src/app/career/new/background/page.tsx"]
+        },
+        {
+          "id": "PAGE-003",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Create persona confirmation page (Step 3)",
+          "feature": "F3",
+          "estimated_complexity": "medium",
+          "files": ["src/app/career/new/persona/page.tsx"]
+        },
+        {
+          "id": "INTEGRATE-001",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Update career/new/page.tsx to redirect to archetype selection",
+          "feature": "F1",
+          "estimated_complexity": "trivial",
+          "files": ["src/app/career/new/page.tsx"]
+        },
+        {
+          "id": "INTEGRATE-002",
+          "workorder_id": "WO-GM-PERSONA-CREATION-001",
+          "description": "Update team confirmation page to show persona info",
+          "feature": "F3",
+          "estimated_complexity": "small",
+          "files": ["src/app/career/new/confirm/page.tsx"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "id": "phase_1",
+          "name": "Foundation",
+          "description": "Set up dependencies, types, data, and state management",
+          "tasks": ["SETUP-001", "DATA-001", "DATA-002", "DATA-003", "STATE-001"],
+          "deliverables": [
+            "Zustand installed",
+            "TypeScript interfaces defined",
+            "All GM persona data defined",
+            "Utility functions for synergy detection",
+            "Career store with persona state"
+          ]
+        },
+        {
+          "id": "phase_2",
+          "name": "UI Components",
+          "description": "Build reusable UI components for persona selection",
+          "tasks": ["UI-001", "UI-002", "UI-003", "UI-004", "UI-005", "UI-006"],
+          "deliverables": [
+            "ArchetypeCard component",
+            "ArchetypeList component",
+            "SynergyBadge component",
+            "BackgroundCard component with synergy",
+            "BackgroundList component",
+            "PersonaSummary component"
+          ],
+          "dependencies": ["phase_1"]
+        },
+        {
+          "id": "phase_3",
+          "name": "Pages & Integration",
+          "description": "Create pages and integrate with existing flow",
+          "tasks": ["PAGE-001", "PAGE-002", "PAGE-003", "INTEGRATE-001", "INTEGRATE-002"],
+          "deliverables": [
+            "Archetype selection page (/career/new/archetype)",
+            "Background selection page (/career/new/background)",
+            "Persona confirmation page (/career/new/persona)",
+            "Updated career/new redirect",
+            "Updated team confirm page with persona"
+          ],
+          "dependencies": ["phase_2"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "target": "src/lib/gm-persona-utils.ts",
+          "tests": [
+            "getSynergy returns correct synergy for all 8 valid combinations",
+            "getSynergy returns null for non-synergy combinations",
+            "calculateBonuses correctly sums archetype and background bonuses",
+            "calculateBonuses includes synergy bonuses when applicable"
+          ]
+        },
+        {
+          "target": "src/data/gm-personas.ts",
+          "tests": [
+            "All 6 archetypes have required fields",
+            "All 6 backgrounds have required fields",
+            "All 8 synergies have required fields",
+            "Synergy keys match valid archetype+background combinations"
+          ]
+        }
+      ],
+      "component_tests": [
+        {
+          "target": "ArchetypeCard",
+          "tests": [
+            "Renders archetype name, philosophy, description",
+            "Shows starting skill info",
+            "Shows selected state when isSelected=true",
+            "Calls onSelect when clicked"
+          ]
+        },
+        {
+          "target": "BackgroundCard",
+          "tests": [
+            "Renders background name, description, bonuses, weakness",
+            "Shows synergy badge when hasSynergy=true",
+            "Shows synergy preview when hasSynergy=true",
+            "Different border color for synergy cards"
+          ]
+        }
+      ],
+      "integration_tests": [
+        {
+          "flow": "Complete persona creation flow",
+          "steps": [
+            "Navigate to /career/new",
+            "Redirect to /career/new/archetype",
+            "Select an archetype",
+            "Click Next, navigate to /career/new/background",
+            "Verify archetype badge shown",
+            "Select a background",
+            "Click Next, navigate to /career/new/persona",
+            "Verify complete persona shown",
+            "Click Select Team, navigate to team selection"
+          ]
+        },
+        {
+          "flow": "Synergy detection flow",
+          "steps": [
+            "Select Analytics Expert archetype",
+            "Navigate to background selection",
+            "Verify Scout Guru shows synergy badge",
+            "Verify Cap Wizard shows synergy badge",
+            "Select Scout Guru",
+            "Verify confirm shows 'The Moneyball' synergy"
+          ]
+        }
+      ],
+      "manual_testing": [
+        "Mobile responsiveness on various screen sizes",
+        "Touch interactions on mobile",
+        "Navigation back/forward behavior",
+        "State persistence after page refresh (if implemented)"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "User can select from all 6 archetypes",
+        "User can select from all 6 backgrounds",
+        "Synergy combinations are correctly detected and displayed",
+        "Persona summary shows all selected information",
+        "Navigation between steps works correctly",
+        "Selection state persists during navigation",
+        "Flow integrates with existing team selection"
+      ],
+      "performance": [
+        "Pages load in under 200ms (client-side navigation)",
+        "No unnecessary re-renders during selection",
+        "Smooth scrolling in card lists"
+      ],
+      "quality": [
+        "No TypeScript errors",
+        "No console errors or warnings",
+        "Consistent styling with existing components",
+        "Mobile-responsive design"
+      ],
+      "acceptance": [
+        "Matches mockup design (context/gm-persona-mockup.html)",
+        "All text content matches design document",
+        "User can complete full flow without errors"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Install zustand with npm install zustand",
+        "[ ] Create src/types/gm-persona.ts with interfaces",
+        "[ ] Create src/data/gm-personas.ts with all data",
+        "[ ] Create src/lib/gm-persona-utils.ts with utilities",
+        "[ ] Create src/stores/career-store.ts with Zustand store",
+        "[ ] Verify TypeScript compiles without errors"
+      ],
+      "phase_2_checklist": [
+        "[ ] Create src/components/career/persona directory",
+        "[ ] Create archetype-card.tsx component",
+        "[ ] Create archetype-list.tsx component",
+        "[ ] Create synergy-badge.tsx component",
+        "[ ] Create background-card.tsx component",
+        "[ ] Create background-list.tsx component",
+        "[ ] Create persona-summary.tsx component",
+        "[ ] Test components in isolation"
+      ],
+      "phase_3_checklist": [
+        "[ ] Create archetype selection page",
+        "[ ] Create background selection page",
+        "[ ] Create persona confirmation page",
+        "[ ] Update career/new/page.tsx redirect",
+        "[ ] Update confirm page to show persona",
+        "[ ] Test complete flow end-to-end",
+        "[ ] Test all synergy combinations",
+        "[ ] Test mobile responsiveness"
+      ]
+    }
+  }
+}

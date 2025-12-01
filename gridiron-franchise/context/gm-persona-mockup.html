@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gridiron Franchise - GM Persona Creation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-card: #1c1c1f;
+            --border: #27272a;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --synergy: #f59e0b;
+            --synergy-bg: rgba(245, 158, 11, 0.1);
+            --strength: #22c55e;
+            --weakness: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .phone-frame {
+            width: 100%;
+            max-width: 390px;
+            height: 844px;
+            margin: 20px auto;
+            background: var(--bg-primary);
+            border-radius: 40px;
+            border: 8px solid #333;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 450px) {
+            .phone-frame {
+                margin: 0;
+                border: none;
+                border-radius: 0;
+                height: 100vh;
+            }
+        }
+
+        .screen {
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-top: 20px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .step-indicator {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        /* Subtitle */
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        /* Selected Badge */
+        .selected-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+        }
+
+        .selected-badge-icon {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            background: var(--bg-card);
+            padding: 4px 6px;
+            border-radius: 6px;
+        }
+
+        .selected-badge-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .selected-badge-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Card List */
+        .card-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 100px;
+            display: grid;
+            gap: 12px;
+            scrollbar-width: none;
+        }
+
+        .card-list::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Option Card */
+        .option-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .option-card:hover {
+            background: var(--bg-card);
+            transform: translateY(-1px);
+        }
+
+        .option-card.selected {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .option-card.has-synergy {
+            border-color: var(--synergy);
+        }
+
+        .option-card.has-synergy.selected {
+            background: var(--synergy-bg);
+            border-color: var(--synergy);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            flex-shrink: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .card-title-section {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .card-philosophy {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .synergy-badge {
+            background: var(--synergy);
+            color: #000;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .card-bonuses {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .bonus-item {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bonus-item::before {
+            content: "•";
+            color: var(--strength);
+        }
+
+        .bonus-item.weakness::before {
+            color: var(--weakness);
+        }
+
+        /* Starting Skill Badge */
+        .starting-skill {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-top: 10px;
+            font-size: 11px;
+        }
+
+        .starting-skill-label {
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .starting-skill-name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Synergy Box */
+        .synergy-box {
+            background: var(--synergy-bg);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .synergy-box-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .synergy-box-icon {
+            font-size: 12px;
+        }
+
+        .synergy-box-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--synergy);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .synergy-box-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .synergy-box-bonus {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(to top, var(--bg-primary) 80%, transparent);
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-primary:disabled {
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card);
+        }
+
+        /* Confirm Screen Styles */
+        .confirm-header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .persona-icons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .persona-icon-large {
+            width: 64px;
+            height: 64px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -0.5px;
+        }
+
+        .persona-plus {
+            font-size: 24px;
+            color: var(--text-muted);
+        }
+
+        .synergy-title {
+            font-size: 14px;
+            color: var(--synergy);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+
+        .persona-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        /* Bonus Sections */
+        .bonus-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .bonus-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bonus-section-title.strength {
+            color: var(--strength);
+        }
+
+        .bonus-section-title.weakness {
+            color: var(--weakness);
+        }
+
+        .bonus-section-title.skill {
+            color: var(--accent);
+        }
+
+        .bonus-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .bonus-row {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .bonus-row-icon {
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .skill-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .skill-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .skill-tier {
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .skill-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Demo Nav Tabs */
+        .demo-nav {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            background: #111;
+            justify-content: center;
+        }
+
+        .demo-nav button {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .demo-nav button.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Demo Navigation -->
+    <div class="demo-nav">
+        <button class="active" onclick="showScreen(1)">1. Archetype</button>
+        <button onclick="showScreen(2)">2. Background</button>
+        <button onclick="showScreen(3)">3. Confirm</button>
+    </div>
+
+    <div class="phone-frame">
+
+        <!-- SCREEN 1: Select Archetype -->
+        <div class="screen active" id="screen1">
+            <div class="header">
+                <button class="back-btn">←</button>
+                <h1 class="header-title">Your Playstyle</h1>
+                <span class="step-indicator">Step 1/3</span>
+            </div>
+
+            <p class="subtitle">How do you build a winner?</p>
+
+            <div class="card-list" id="archetype-list">
+                <!-- Populated by JS -->
+            </div>
+
+            <div class="footer">
+                <button class="btn btn-primary" id="nextBtn1" disabled onclick="goToBackground()">Next</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: Select Background -->
+        <div class="screen" id="screen2">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen(1)">←</button>
+                <h1 class="header-title">Your Background</h1>
+                <span class="step-indicator">Step 2/3</span>
+            </div>
+
+            <div class="selected-badge">
+                <span class="selected-badge-icon" id="selectedArchIcon">SG</span>
+                <span class="selected-badge-text">Archetype: <span class="selected-badge-name" id="selectedArchName">Scout Guru</span></span>
+            </div>
+
+            <p class="subtitle">How did you become a GM?</p>
+
+            <div class="card-list" id="background-list">
+                <!-- Populated by JS -->
+            </div>
+
+            <div class="footer">
+                <button class="btn btn-primary" id="nextBtn2" disabled onclick="goToConfirm()">Next</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: Confirm Persona -->
+        <div class="screen" id="screen3">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen(2)">←</button>
+                <h1 class="header-title">Your GM Profile</h1>
+                <span class="step-indicator">Step 3/3</span>
+            </div>
+
+            <div class="card-list" id="confirm-content">
+                <!-- Populated by JS -->
+            </div>
+
+            <div class="footer">
+                <button class="btn btn-secondary" onclick="showScreen(2)">Change</button>
+                <button class="btn btn-primary" onclick="finishCreation()">Select Team →</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA ---
+        const backgrounds = [
+            {
+                id: 'former_player',
+                name: 'Former Player',
+                icon: 'FP',
+                desc: 'You played in the league before transitioning to the front office. You understand the game from a player\'s perspective.',
+                bonuses: ['+15% player trust', '+10% locker room morale'],
+                weakness: '-10% owner patience'
+            },
+            {
+                id: 'analytics_expert',
+                name: 'Analytics Expert',
+                icon: 'AE',
+                desc: 'You rose through the ranks using data, statistics, and advanced metrics. You see the game through numbers.',
+                bonuses: ['+20% hidden attribute scouting', 'Access to advanced stats'],
+                weakness: '-10% player trust'
+            },
+            {
+                id: 'college_scout',
+                name: 'College Scout',
+                icon: 'CS',
+                desc: 'You spent years evaluating college talent before getting your shot. You know prospects better than anyone.',
+                bonuses: ['+25% prospect scouting accuracy', '+15% sleeper pick identification'],
+                weakness: '-10% free agent evaluation'
+            },
+            {
+                id: 'coaching_tree',
+                name: 'Coaching Tree',
+                icon: 'CT',
+                desc: 'You worked your way up through coaching staffs before moving to the front office. You understand schemes and player development.',
+                bonuses: ['+15% player development speed', 'Coaches are 15% cheaper'],
+                weakness: '-10% contract negotiation'
+            },
+            {
+                id: 'agent_specialist',
+                name: 'Agent / Contract Specialist',
+                icon: 'AS',
+                desc: 'You represented players before switching sides. You know every trick in the negotiation playbook.',
+                bonuses: ['+20% contract negotiation', 'See exact salary demands'],
+                weakness: '-10% scouting accuracy'
+            },
+            {
+                id: 'media_insider',
+                name: 'Media / Front Office Insider',
+                icon: 'MI',
+                desc: 'You covered the league or worked in league operations before becoming a GM. You know how the business works.',
+                bonuses: ['+15% trade acceptance rate', 'See other teams\' needs'],
+                weakness: '-15% player evaluation'
+            }
+        ];
+
+        const archetypes = [
+            {
+                id: 'scout_guru',
+                name: 'Scout Guru',
+                icon: 'SG',
+                philosophy: '"The draft is where championships are built."',
+                desc: 'You believe in building through the draft. Finding diamonds in the rough is your specialty.',
+                bonuses: ['+2 scouting points per prospect', '15% discount: Scouting & Draft skills'],
+                skill: { name: 'Hidden Gem', tier: 'Bronze', desc: 'Reveal true potential of 1 late-round prospect per draft' }
+            },
+            {
+                id: 'cap_wizard',
+                name: 'Cap Wizard',
+                icon: 'CW',
+                philosophy: '"Every dollar matters. Cap space is a resource."',
+                desc: 'You\'re a master of the salary cap. You structure deals and always have cap flexibility.',
+                bonuses: ['+$5M cap space in Year 1', '15% discount: Contracts & Money skills'],
+                skill: { name: 'Salary Cap Wizard', tier: 'Bronze', desc: '+$3M extra cap space each season' }
+            },
+            {
+                id: 'trade_shark',
+                name: 'Trade Shark',
+                icon: 'TS',
+                philosophy: '"The phone is always ringing. Every player has a price."',
+                desc: 'You\'re always looking for the next deal. You believe in acquiring value through trades.',
+                bonuses: ['+1 trade offer per week from other teams', '15% discount: Trades skills'],
+                skill: { name: 'Trade Master', tier: 'Bronze', desc: 'CPU teams 10% more willing to accept fair trades' }
+            },
+            {
+                id: 'player_developer',
+                name: 'Player Developer',
+                icon: 'PD',
+                philosophy: '"Give me potential. I\'ll unlock greatness."',
+                desc: 'You have a gift for developing talent. Raw prospects become stars under your guidance.',
+                bonuses: ['+20% XP gain for all players in Year 1', '15% discount: Player Development skills'],
+                skill: { name: 'Training Boost', tier: 'Bronze', desc: 'All players under 25 gain +1 to development speed' }
+            },
+            {
+                id: 'win_now_executive',
+                name: 'Win-Now Executive',
+                icon: 'WN',
+                philosophy: '"Championships are the only thing that matters."',
+                desc: 'You\'re aggressive. You trade picks for proven talent and sign big free agents.',
+                bonuses: ['+15% chance to sign top free agents', '+20 starting team morale'],
+                skill: { name: 'Free Agent Magnet', tier: 'Bronze', desc: 'Your team gets +5 appeal rating for free agents' }
+            },
+            {
+                id: 'motivator',
+                name: 'Motivator',
+                icon: 'MO',
+                philosophy: '"Culture beats talent. Belief beats ability."',
+                desc: 'You\'re a leader of men. Players play harder for you. Teams exceed the sum of their parts.',
+                bonuses: ['+25% team chemistry in Year 1', 'Players less likely to hold out'],
+                skill: { name: 'Morale Master', tier: 'Bronze', desc: 'Team morale minimum is 60% (never drops below)' }
+            }
+        ];
+
+        const synergies = {
+            'former_player_player_developer': { name: 'The Mentor', bonus: '+25% mentor XP, can mentor 2 players per season' },
+            'analytics_expert_scout_guru': { name: 'The Moneyball', bonus: 'See 3-year statistical projections for all prospects' },
+            'college_scout_scout_guru': { name: 'The Draft Whisperer', bonus: '+35% prospect scouting accuracy, see other teams\' top 3 draft targets' },
+            'agent_specialist_cap_wizard': { name: 'The Dealmaker', bonus: 'All contracts have 10% lower cap hit, players never hold out' },
+            'coaching_tree_player_developer': { name: 'The Academy', bonus: '+40% development speed, rookies adjust to NFL faster' },
+            'media_insider_trade_shark': { name: 'The Insider', bonus: 'See exact trade values, get advance notice when players become available' },
+            'former_player_win_now_executive': { name: 'The Closer', bonus: 'Top free agents actively seek you out, veterans take discounts' },
+            'analytics_expert_cap_wizard': { name: 'The Optimizer', bonus: 'See projected cap hits for next 3 seasons, identify declining value players' }
+        };
+
+        // --- STATE ---
+        let state = {
+            background: null,
+            archetype: null
+        };
+
+        // --- RENDER FUNCTIONS ---
+        function renderArchetypes() {
+            const container = document.getElementById('archetype-list');
+            container.innerHTML = archetypes.map(arch => `
+                <div class="option-card ${state.archetype === arch.id ? 'selected' : ''}"
+                     onclick="selectArchetype('${arch.id}')">
+                    <div class="card-header">
+                        <div class="card-icon">${arch.icon}</div>
+                        <div class="card-title-section">
+                            <div class="card-title">${arch.name}</div>
+                            <div class="card-philosophy">${arch.philosophy}</div>
+                        </div>
+                    </div>
+                    <p class="card-description">${arch.desc}</p>
+                    <div class="starting-skill">
+                        <div class="starting-skill-label">Starting Skill</div>
+                        <div class="starting-skill-name">${arch.skill.name} (${arch.skill.tier})</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderBackgrounds() {
+            const container = document.getElementById('background-list');
+            container.innerHTML = backgrounds.map(bg => {
+                const synergyKey = `${bg.id}_${state.archetype}`;
+                const synergy = synergies[synergyKey];
+                const hasSynergy = !!synergy;
+
+                return `
+                <div class="option-card ${state.background === bg.id ? 'selected' : ''} ${hasSynergy ? 'has-synergy' : ''}"
+                     onclick="selectBackground('${bg.id}')">
+                    <div class="card-header">
+                        <div class="card-icon">${bg.icon}</div>
+                        <div class="card-title-section">
+                            <div class="card-title">${bg.name}</div>
+                        </div>
+                        ${hasSynergy ? '<span class="synergy-badge">Synergy</span>' : ''}
+                    </div>
+                    <p class="card-description">${bg.desc}</p>
+                    <div class="card-bonuses">
+                        ${bg.bonuses.map(b => `<div class="bonus-item">${b}</div>`).join('')}
+                        <div class="bonus-item weakness">${bg.weakness}</div>
+                    </div>
+                    ${hasSynergy ? `
+                        <div class="synergy-box">
+                            <div class="synergy-box-header">
+                                <span class="synergy-box-title">Synergy Bonus</span>
+                            </div>
+                            <div class="synergy-box-name">"${synergy.name}"</div>
+                            <div class="synergy-box-bonus">${synergy.bonus}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `}).join('');
+        }
+
+        function renderConfirm() {
+            const bg = backgrounds.find(b => b.id === state.background);
+            const arch = archetypes.find(a => a.id === state.archetype);
+            const synergyKey = `${state.background}_${state.archetype}`;
+            const synergy = synergies[synergyKey];
+
+            const container = document.getElementById('confirm-content');
+            container.innerHTML = `
+                <!-- Persona Summary -->
+                <div class="confirm-header">
+                    <div class="persona-icons">
+                        <div class="persona-icon-large">${arch.icon}</div>
+                        <span class="persona-plus">+</span>
+                        <div class="persona-icon-large">${bg.icon}</div>
+                    </div>
+                    ${synergy ? `<div class="synergy-title">"${synergy.name}"</div>` : ''}
+                    <div class="persona-name">${arch.name} + ${bg.name}</div>
+                </div>
+
+                <!-- Strengths -->
+                <div class="bonus-section">
+                    <div class="bonus-section-title strength">
+                        <span>✓</span> Your Strengths
+                    </div>
+                    <div class="bonus-list">
+                        ${arch.bonuses.map(b => `
+                            <div class="bonus-row">
+                                <span class="bonus-row-icon" style="color: var(--strength)">•</span>
+                                <span>${b}</span>
+                            </div>
+                        `).join('')}
+                        ${bg.bonuses.map(b => `
+                            <div class="bonus-row">
+                                <span class="bonus-row-icon" style="color: var(--strength)">•</span>
+                                <span>${b}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- Weaknesses -->
+                <div class="bonus-section">
+                    <div class="bonus-section-title weakness">
+                        <span>✗</span> Your Weaknesses
+                    </div>
+                    <div class="bonus-list">
+                        <div class="bonus-row">
+                            <span class="bonus-row-icon" style="color: var(--weakness)">•</span>
+                            <span>${bg.weakness}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Starting Skill -->
+                <div class="bonus-section">
+                    <div class="bonus-section-title skill">
+                        Starting Skill
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-name">${arch.skill.name}</div>
+                        <div class="skill-tier">${arch.skill.tier} Tier</div>
+                        <div class="skill-desc">${arch.skill.desc}</div>
+                    </div>
+                </div>
+
+                ${synergy ? `
+                    <!-- Synergy Bonuses -->
+                    <div class="bonus-section">
+                        <div class="bonus-section-title" style="color: var(--synergy);">
+                            Synergy: ${synergy.name}
+                        </div>
+                        <div class="bonus-list">
+                            <div class="bonus-row">
+                                <span class="bonus-row-icon" style="color: var(--synergy)">•</span>
+                                <span>${synergy.bonus}</span>
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        // --- ACTIONS ---
+        function selectArchetype(id) {
+            state.archetype = id;
+            renderArchetypes();
+            document.getElementById('nextBtn1').disabled = false;
+
+            const arch = archetypes.find(a => a.id === id);
+            document.getElementById('selectedArchIcon').textContent = arch.icon;
+            document.getElementById('selectedArchName').textContent = arch.name;
+        }
+
+        function selectBackground(id) {
+            state.background = id;
+            renderBackgrounds();
+            document.getElementById('nextBtn2').disabled = false;
+        }
+
+        function showScreen(num) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen' + num).classList.add('active');
+
+            document.querySelectorAll('.demo-nav button').forEach((btn, i) => {
+                btn.classList.toggle('active', i === num - 1);
+            });
+
+            if (num === 1) renderArchetypes();
+            if (num === 2) renderBackgrounds();
+            if (num === 3) renderConfirm();
+        }
+
+        function goToBackground() {
+            showScreen(2);
+        }
+
+        function goToConfirm() {
+            showScreen(3);
+        }
+
+        function finishCreation() {
+            const bg = backgrounds.find(b => b.id === state.background);
+            const arch = archetypes.find(a => a.id === state.archetype);
+            const synergyKey = `${state.background}_${state.archetype}`;
+            const synergy = synergies[synergyKey];
+
+            alert(`GM Persona Created!\n\nArchetype: ${arch.name}\nBackground: ${bg.name}${synergy ? '\nSynergy: ' + synergy.name : ''}\n\nProceeding to team selection...`);
+        }
+
+        // --- INIT ---
+        renderArchetypes();
+    </script>
+
+</body>
+
+</html>
