@@ -1,55 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { teams, Team } from "@/data/teams";
-import { TeamList } from "@/components/career/team-list";
-import { Button } from "@/components/ui/button";
+import { useCareerStore } from "@/stores/career-store";
 
 export default function NewCareerPage() {
   const router = useRouter();
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const { reset } = useCareerStore();
 
-  function handleNext() {
-    if (selectedTeam) {
-      router.push(`/career/new/confirm?team=${selectedTeam.id}`);
-    }
-  }
+  useEffect(() => {
+    // Reset career state when starting fresh
+    reset();
+    // Redirect to archetype selection (step 1)
+    router.replace("/career/new/archetype");
+  }, [router, reset]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-40px)]">
-      {/* Header */}
-      <div className="flex items-center gap-4 py-4">
-        <Link
-          href="/"
-          className="text-muted-foreground hover:text-foreground transition-colors text-xl"
-        >
-          ←
-        </Link>
-        <h1 className="text-xl font-bold">Select Team</h1>
-      </div>
-
-      {/* Team List */}
-      <TeamList
-        teams={teams}
-        selectedTeam={selectedTeam}
-        onSelectTeam={setSelectedTeam}
-      />
-
-      {/* Footer */}
-      <div className="fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-background via-background to-transparent">
-        <div className="max-w-[400px] mx-auto">
-          <Button
-            onClick={handleNext}
-            disabled={!selectedTeam}
-            className="w-full"
-            size="lg"
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+    <div className="flex items-center justify-center h-[calc(100vh-40px)]">
+      <p className="text-muted-foreground">Loading...</p>
     </div>
   );
 }
