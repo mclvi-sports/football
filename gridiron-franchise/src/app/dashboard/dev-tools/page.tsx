@@ -89,6 +89,13 @@ export default function DevToolsPage() {
             href="/dashboard/dev-tools/schemes"
             description="View scheme details"
           />
+          <NavCard
+            title="Season"
+            icon="SZN"
+            href="/dashboard/dev-tools/season"
+            description="Simulate full season"
+            variant="highlight"
+          />
         </div>
       </main>
     </div>

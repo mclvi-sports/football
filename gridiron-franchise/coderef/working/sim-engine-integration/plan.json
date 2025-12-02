@@ -1,0 +1,362 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "sim-engine-integration",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Code",
+    "generated_at": "2024-12-01",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "source_documents": [
+        "context/FINALS/sim-engine-v2.html",
+        "context/FINALS/FINAL-traits-system.md",
+        "context/FINALS/FINAL-badge-system.md",
+        "context/FINALS/FINAL-coaching-staff-system.md"
+      ],
+      "existing_code_to_reference": [
+        "src/lib/types.ts - Player, Roster, Tier types",
+        "src/lib/data/traits.ts - Trait definitions",
+        "src/lib/data/badges.ts - Badge definitions",
+        "src/lib/dev-player-store.ts - Session storage for team rosters",
+        "src/lib/generators/full-game-generator.ts - NFL_TEAMS, TeamRosterData",
+        "src/components/dev-tools/roster-player-card.tsx - Player card component"
+      ],
+      "key_patterns": {
+        "component_structure": "src/app/dashboard/dev-tools/[feature]/page.tsx",
+        "lib_structure": "src/lib/[domain]/[module].ts",
+        "state_management": "React useState + sessionStorage for persistence"
+      }
+    },
+    "1_executive_summary": {
+      "goal": "Convert sim-engine-v2.html into a Next.js component that integrates with the existing roster generation system, enabling game simulation using actual generated player data with traits, badges, and attributes",
+      "scope": "Create simulation engine React component, game state management, team/player data adapters, and UI for running game simulations",
+      "success_criteria": [
+        "Simulations use actual generated rosters from Full Game Generator",
+        "Player traits and badges affect game outcomes per FINALS specs",
+        "Box score shows individual player statistics",
+        "All 32 teams selectable with calculated OVR from roster"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity": "high",
+      "estimated_tasks": 15,
+      "risks": [
+        {
+          "risk": "Data structure mismatch between sim engine and roster generator",
+          "mitigation": "Create adapter layer to transform roster data to sim format"
+        },
+        {
+          "risk": "Performance with 53-player rosters per team",
+          "mitigation": "Only load starters/depth chart into active simulation"
+        },
+        {
+          "risk": "Trait/badge calculations may differ from FINALS spec",
+          "mitigation": "Reuse existing traits.ts and badges.ts data"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        "src/lib/sim/simulator.ts - Core simulation engine class",
+        "src/lib/sim/types.ts - Simulation-specific types",
+        "src/lib/sim/team-adapter.ts - Transform roster to sim format",
+        "src/lib/sim/trait-effects.ts - Apply trait modifiers",
+        "src/lib/sim/badge-effects.ts - Apply badge modifiers",
+        "src/app/dashboard/dev-tools/sim/page.tsx - Simulation UI page",
+        "src/components/sim/scoreboard.tsx - Game scoreboard component",
+        "src/components/sim/field-view.tsx - Field visualization",
+        "src/components/sim/play-log.tsx - Play-by-play log",
+        "src/components/sim/stats-panel.tsx - Team statistics panel",
+        "src/components/sim/team-select.tsx - Team selection dropdown"
+      ],
+      "files_to_modify": [
+        "src/lib/dev-player-store.ts - Add full game data storage",
+        "src/app/dashboard/dev-tools/page.tsx - Add link to sim page"
+      ]
+    },
+    "4_key_features": [
+      {
+        "id": "CORE-001",
+        "name": "Simulation Engine Core",
+        "description": "Port Simulator class from HTML to TypeScript with proper typing"
+      },
+      {
+        "id": "CORE-002",
+        "name": "Team Data Adapter",
+        "description": "Transform TeamRosterData to sim engine format with calculated OVR"
+      },
+      {
+        "id": "CORE-003",
+        "name": "Trait System Integration",
+        "description": "Apply trait effects during simulation based on game situation"
+      },
+      {
+        "id": "CORE-004",
+        "name": "Badge System Integration",
+        "description": "Apply badge tier bonuses during plays"
+      },
+      {
+        "id": "UI-001",
+        "name": "Simulation UI Page",
+        "description": "Full simulation interface with team selection, controls, and display"
+      },
+      {
+        "id": "UI-002",
+        "name": "Player Stats Tracking",
+        "description": "Track and display individual player game statistics"
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SIM-ENGINE-INTEGRATION-001",
+        "name": "Sim Engine Integration",
+        "feature_dir": "coderef/working/sim-engine-integration"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Create src/lib/sim directory structure",
+          "phase": 1,
+          "dependencies": [],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "CORE-001",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Create simulation types (SimState, SimStats, PlayResult, etc.)",
+          "phase": 1,
+          "dependencies": ["SETUP-001"],
+          "estimated_complexity": "medium",
+          "file": "src/lib/sim/types.ts"
+        },
+        {
+          "id": "CORE-002",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Create team adapter to transform TeamRosterData to SimTeam format",
+          "phase": 1,
+          "dependencies": ["CORE-001"],
+          "estimated_complexity": "medium",
+          "file": "src/lib/sim/team-adapter.ts"
+        },
+        {
+          "id": "CORE-003",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Create trait effects module with situation detection",
+          "phase": 1,
+          "dependencies": ["CORE-001"],
+          "estimated_complexity": "medium",
+          "file": "src/lib/sim/trait-effects.ts"
+        },
+        {
+          "id": "CORE-004",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Create badge effects module with tier calculations",
+          "phase": 1,
+          "dependencies": ["CORE-001"],
+          "estimated_complexity": "medium",
+          "file": "src/lib/sim/badge-effects.ts"
+        },
+        {
+          "id": "CORE-005",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Port Simulator class to TypeScript with roster integration",
+          "phase": 2,
+          "dependencies": ["CORE-002", "CORE-003", "CORE-004"],
+          "estimated_complexity": "high",
+          "file": "src/lib/sim/simulator.ts"
+        },
+        {
+          "id": "STORE-001",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Add full game data storage to dev-player-store",
+          "phase": 1,
+          "dependencies": [],
+          "estimated_complexity": "low",
+          "file": "src/lib/dev-player-store.ts"
+        },
+        {
+          "id": "UI-001",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Create Scoreboard component",
+          "phase": 2,
+          "dependencies": ["CORE-001"],
+          "estimated_complexity": "medium",
+          "file": "src/components/sim/scoreboard.tsx"
+        },
+        {
+          "id": "UI-002",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Create FieldView component with ball/first-down markers",
+          "phase": 2,
+          "dependencies": ["CORE-001"],
+          "estimated_complexity": "medium",
+          "file": "src/components/sim/field-view.tsx"
+        },
+        {
+          "id": "UI-003",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Create PlayLog component for play-by-play",
+          "phase": 2,
+          "dependencies": ["CORE-001"],
+          "estimated_complexity": "medium",
+          "file": "src/components/sim/play-log.tsx"
+        },
+        {
+          "id": "UI-004",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Create StatsPanel component for team/player stats",
+          "phase": 2,
+          "dependencies": ["CORE-001"],
+          "estimated_complexity": "medium",
+          "file": "src/components/sim/stats-panel.tsx"
+        },
+        {
+          "id": "UI-005",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Create TeamSelect component with OVR display",
+          "phase": 2,
+          "dependencies": ["CORE-002"],
+          "estimated_complexity": "low",
+          "file": "src/components/sim/team-select.tsx"
+        },
+        {
+          "id": "PAGE-001",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Create main simulation page with all components",
+          "phase": 3,
+          "dependencies": ["CORE-005", "UI-001", "UI-002", "UI-003", "UI-004", "UI-005"],
+          "estimated_complexity": "high",
+          "file": "src/app/dashboard/dev-tools/sim/page.tsx"
+        },
+        {
+          "id": "NAV-001",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Add sim link to dev-tools main page",
+          "phase": 3,
+          "dependencies": ["PAGE-001"],
+          "estimated_complexity": "low",
+          "file": "src/app/dashboard/dev-tools/page.tsx"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-SIM-ENGINE-INTEGRATION-001",
+          "description": "Integration test: run simulation with generated rosters",
+          "phase": 3,
+          "dependencies": ["PAGE-001"],
+          "estimated_complexity": "medium"
+        }
+      ]
+    },
+    "6_implementation_phases": [
+      {
+        "phase": 1,
+        "name": "Core Engine Setup",
+        "description": "Create simulation types, adapters, and trait/badge effect modules",
+        "tasks": ["SETUP-001", "CORE-001", "CORE-002", "CORE-003", "CORE-004", "STORE-001"],
+        "deliverables": [
+          "Simulation types defined",
+          "Team adapter transforms roster to sim format",
+          "Trait/badge effects calculate modifiers"
+        ]
+      },
+      {
+        "phase": 2,
+        "name": "Engine & Components",
+        "description": "Port simulator class and create UI components",
+        "tasks": ["CORE-005", "UI-001", "UI-002", "UI-003", "UI-004", "UI-005"],
+        "deliverables": [
+          "Simulator class ported with TypeScript",
+          "All UI components created",
+          "Components integrate with sim state"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "Integration & Testing",
+        "description": "Assemble page, add navigation, test with real data",
+        "tasks": ["PAGE-001", "NAV-001", "TEST-001"],
+        "deliverables": [
+          "Simulation page functional",
+          "Link from dev-tools page",
+          "Verified with generated rosters"
+        ]
+      }
+    ],
+    "7_testing_strategy": {
+      "unit_tests": [
+        "team-adapter correctly calculates position group OVRs",
+        "trait-effects returns correct modifiers for situations",
+        "badge-effects returns correct tier bonuses",
+        "simulator produces valid play results"
+      ],
+      "integration_tests": [
+        "Full game simulation completes without errors",
+        "Player stats accumulate correctly",
+        "Trait/badge effects apply during clutch situations"
+      ],
+      "manual_tests": [
+        "Select teams from Full Game Generator data",
+        "Run play-by-play and verify sensible outcomes",
+        "Verify box score shows player names and stats"
+      ]
+    },
+    "8_success_criteria": [
+      {
+        "criterion": "Team selection shows all 32 teams with calculated OVR",
+        "measurement": "OVR matches team-adapter calculation from roster"
+      },
+      {
+        "criterion": "Simulation uses actual player attributes",
+        "measurement": "QB rating affects pass completion, RB rating affects rushing"
+      },
+      {
+        "criterion": "Traits apply in correct situations",
+        "measurement": "'Ice in Veins' provides bonus in Q4 close games"
+      },
+      {
+        "criterion": "Badges provide tier-appropriate bonuses",
+        "measurement": "Gold badge gives more bonus than Silver"
+      },
+      {
+        "criterion": "Box score shows individual player stats",
+        "measurement": "QB passing yards, RB rushing yards visible"
+      }
+    ],
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Create src/lib/sim directory",
+        "[ ] Define SimState, SimStats, PlayResult types",
+        "[ ] Create SimTeam interface with offense/defense/st groups",
+        "[ ] Implement adaptTeamRoster() function",
+        "[ ] Implement calculatePositionGroupOvr() with weights",
+        "[ ] Implement getTraitModifier() with situation checks",
+        "[ ] Implement getBadgeBonus() with tier values",
+        "[ ] Add storeFullGameData() to dev-player-store"
+      ],
+      "phase_2": [
+        "[ ] Port Simulator class to TypeScript",
+        "[ ] Integrate team adapter in simulator",
+        "[ ] Call trait/badge effects during plays",
+        "[ ] Track individual player stats in simulator",
+        "[ ] Create Scoreboard with team names/scores/quarter/clock",
+        "[ ] Create FieldView with ball position marker",
+        "[ ] Create PlayLog with scrollable entries",
+        "[ ] Create StatsPanel with team and player stats tabs",
+        "[ ] Create TeamSelect with roster-based team list"
+      ],
+      "phase_3": [
+        "[ ] Create simulation page with layout",
+        "[ ] Wire up sim controls (play/drive/quarter/game)",
+        "[ ] Load teams from Full Game Generator data",
+        "[ ] Add game settings (type, weather, home advantage)",
+        "[ ] Add link to sim from dev-tools index",
+        "[ ] Test full simulation with generated rosters",
+        "[ ] Verify trait/badge effects in clutch situations"
+      ]
+    }
+  }
+}

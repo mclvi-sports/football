@@ -1,0 +1,25 @@
+{
+  "feature_name": "sim-update",
+  "description": "Improve simulator stats display by separating player stats by team and putting team stats and player stats in their own separate cards",
+  "goal": "Better UX for viewing game statistics - clearer separation between team-level stats and individual player box scores, with player stats organized by team",
+  "requirements": [
+    "Separate team stats into their own Card component",
+    "Separate player stats (box score) into their own Card component",
+    "Within player stats, separate players by team (Away vs Home)",
+    "Add team identifier to PlayerGameStats so filtering is possible",
+    "Maintain existing stat categories (passing, rushing, receiving, defense)"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Keep existing SimStats and PlayerGameStats types compatible",
+    "Maintain mobile-friendly layout",
+    "Use existing UI component library (Card, Tabs, ScrollArea)"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-SIM-UPDATE-001",
+    "workorder_assigned_at": "2025-12-02T03:02:05.758188+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "sim-update",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-02T03:02:00Z",
+    "has_context": true,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": ["src/lib/sim/types.ts", "src/lib/sim/simulator.ts"],
+      "coding_standards": "TypeScript with React, shadcn/ui components",
+      "reference_components": [
+        "src/components/sim/stats-panel.tsx",
+        "src/app/dashboard/dev-tools/sim/page.tsx"
+      ],
+      "patterns_identified": [
+        "Card/CardHeader/CardContent for sections",
+        "Tabs for switching views",
+        "ScrollArea for scrollable content",
+        "Grid layouts for stat rows"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_name": "Simulator Stats Display Update",
+      "description": "Improve simulator stats display by separating player stats by team and putting team stats and player stats in their own separate cards",
+      "goal": "Better UX for viewing game statistics - clearer separation between team-level stats and individual player box scores, with player stats organized by team",
+      "scope": "UI refactor of stats-panel.tsx and sim page layout",
+      "estimated_complexity": "low",
+      "estimated_tasks": 5
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "risks": [
+        {
+          "risk": "Breaking existing PlayerGameStats consumers",
+          "severity": "low",
+          "mitigation": "Add teamId as optional field, maintain backward compatibility"
+        },
+        {
+          "risk": "Layout issues on mobile",
+          "severity": "low",
+          "mitigation": "Use responsive grid classes, test on mobile viewport"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/lib/sim/types.ts",
+          "reason": "Add teamId field to PlayerGameStats interface"
+        },
+        {
+          "path": "src/lib/sim/simulator.ts",
+          "reason": "Include teamId when creating player stats"
+        },
+        {
+          "path": "src/components/sim/stats-panel.tsx",
+          "reason": "Refactor into TeamStatsCard and PlayerStatsCard components"
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/sim/page.tsx",
+          "reason": "Update layout to show separate cards for team and player stats"
+        }
+      ],
+      "files_to_create": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Team Stats Card",
+          "description": "Separate team-level stats (yards, first downs, TOP) into dedicated Card"
+        },
+        {
+          "id": "F2",
+          "name": "Player Stats Card with Team Tabs",
+          "description": "Box score in own Card with Away/Home tabs to filter players by team"
+        },
+        {
+          "id": "F3",
+          "name": "Team ID on Player Stats",
+          "description": "Add teamId to PlayerGameStats for filtering capability"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SIM-UPDATE-001",
+        "name": "Sim Update",
+        "feature_dir": "coderef/working/sim-update"
+      },
+      "tasks": [
+        {
+          "id": "TYPES-001",
+          "workorder_id": "WO-SIM-UPDATE-001",
+          "feature_id": "F3",
+          "description": "Add teamId field to PlayerGameStats interface in types.ts",
+          "file": "src/lib/sim/types.ts",
+          "estimated_loc": 5
+        },
+        {
+          "id": "SIM-001",
+          "workorder_id": "WO-SIM-UPDATE-001",
+          "feature_id": "F3",
+          "description": "Update simulator to include teamId when tracking player stats",
+          "file": "src/lib/sim/simulator.ts",
+          "estimated_loc": 10
+        },
+        {
+          "id": "UI-001",
+          "workorder_id": "WO-SIM-UPDATE-001",
+          "feature_id": "F1",
+          "description": "Extract TeamStatsCard component from stats-panel",
+          "file": "src/components/sim/stats-panel.tsx",
+          "estimated_loc": 60
+        },
+        {
+          "id": "UI-002",
+          "workorder_id": "WO-SIM-UPDATE-001",
+          "feature_id": "F2",
+          "description": "Create PlayerStatsCard with team filtering tabs",
+          "file": "src/components/sim/stats-panel.tsx",
+          "estimated_loc": 100
+        },
+        {
+          "id": "PAGE-001",
+          "workorder_id": "WO-SIM-UPDATE-001",
+          "feature_id": "F1",
+          "description": "Update sim page to render separate TeamStatsCard and PlayerStatsCard",
+          "file": "src/app/dashboard/dev-tools/sim/page.tsx",
+          "estimated_loc": 20
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Data Layer",
+          "description": "Add team tracking to player stats",
+          "tasks": ["TYPES-001", "SIM-001"]
+        },
+        {
+          "phase": 2,
+          "name": "UI Components",
+          "description": "Refactor stats panel into separate card components",
+          "tasks": ["UI-001", "UI-002"]
+        },
+        {
+          "phase": 3,
+          "name": "Integration",
+          "description": "Update sim page layout with new components",
+          "tasks": ["PAGE-001"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Simulate a full game and verify team stats display correctly",
+        "Verify player stats are correctly separated by team",
+        "Test Away/Home tab switching shows correct players",
+        "Verify all stat categories (passing, rushing, receiving, defense) display",
+        "Check mobile layout responsiveness"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "Team stats displayed in dedicated card with side-by-side comparison",
+        "Player stats displayed in separate card with team tabs",
+        "Clicking Away tab shows only away team players",
+        "Clicking Home tab shows only home team players",
+        "No TypeScript errors",
+        "Build completes successfully"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Add teamId: string to PlayerGameStats interface",
+        "[ ] Update initPlayerStats to accept teamId parameter",
+        "[ ] Update getPlayerStats calls to pass team identifier"
+      ],
+      "phase_2": [
+        "[ ] Create TeamStatsCard component with existing team stats UI",
+        "[ ] Create PlayerStatsCard component with team tabs",
+        "[ ] Add filtering logic to show players by selected team"
+      ],
+      "phase_3": [
+        "[ ] Update sim page imports",
+        "[ ] Replace StatsPanel with TeamStatsCard and PlayerStatsCard",
+        "[ ] Verify layout works in right panel"
+      ]
+    }
+  }
+}

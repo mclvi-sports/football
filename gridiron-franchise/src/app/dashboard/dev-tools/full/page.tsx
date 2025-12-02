@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Player, Tier } from "@/lib/types";
-import { storeDevPlayers } from "@/lib/dev-player-store";
+import { storeDevPlayers, storeTeamRoster, storeFullGameData, TeamRosterData, FullGameData as StoredFullGameData } from "@/lib/dev-player-store";
 import { cn } from "@/lib/utils";
 
 interface TeamInfo {
@@ -13,17 +13,6 @@ interface TeamInfo {
   name: string;
   conference: string;
   division: string;
-}
-
-interface TeamRosterData {
-  team: TeamInfo;
-  tier: Tier;
-  roster: { players: Player[] };
-  stats: {
-    totalPlayers: number;
-    avgOvr: number;
-    avgAge: number;
-  };
 }
 
 interface FullGameData {
@@ -72,17 +61,29 @@ export default function FullGameGeneratorPage() {
   const [activeTab, setActiveTab] = useState<ViewTab>("overview");
   const [selectedConference, setSelectedConference] = useState<string>("all");
 
-  // Store all players for profile viewing
+  // Store all players for profile viewing and full game data for simulator
   useEffect(() => {
-    if (gameData) {
+    if (gameData && stats) {
       const allPlayers: Player[] = [
         ...gameData.teams.flatMap((t) => t.roster.players),
         ...gameData.freeAgents,
         ...gameData.draftClass,
       ];
       storeDevPlayers(allPlayers);
+
+      // Store full game data for simulator
+      const fullGameData: StoredFullGameData = {
+        teams: gameData.teams,
+        generatedAt: gameData.generatedAt,
+        totalPlayers: stats.totalPlayers,
+        tierDistribution: Object.entries(stats.tierDistribution).reduce((acc, [k, v]) => {
+          acc[k] = v;
+          return acc;
+        }, {} as Record<string, number>),
+      };
+      storeFullGameData(fullGameData);
     }
-  }, [gameData]);
+  }, [gameData, stats]);
 
   const generateFullGame = async () => {
     setLoading(true);
@@ -123,6 +124,12 @@ export default function FullGameGeneratorPage() {
   Object.keys(teamsByDivision).forEach((div) => {
     teamsByDivision[div].sort((a, b) => b.stats.avgOvr - a.stats.avgOvr);
   });
+
+  // Handle team click - store team and navigate to roster view
+  const handleTeamClick = (teamData: TeamRosterData) => {
+    storeTeamRoster(teamData);
+    router.push("/dashboard/dev-tools/team-roster");
+  };
 
   const tabs: { id: ViewTab; label: string }[] = [
     { id: "overview", label: "Overview" },
@@ -317,7 +324,8 @@ export default function FullGameGeneratorPage() {
                           {teams.map((teamData) => (
                             <div
                               key={teamData.team.id}
-                              className="bg-secondary/50 border border-border rounded-xl p-3 flex items-center justify-between"
+                              onClick={() => handleTeamClick(teamData)}
+                              className="bg-secondary/50 border border-border rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-secondary/80 hover:border-primary/50 transition-all active:scale-[0.99]"
                             >
                               <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center font-bold text-sm">
@@ -333,29 +341,32 @@ export default function FullGameGeneratorPage() {
                                   </div>
                                 </div>
                               </div>
-                              <div className="text-right">
-                                <div
-                                  className={cn(
-                                    "text-xl font-bold",
-                                    teamData.stats.avgOvr >= 80
-                                      ? "text-green-400"
-                                      : teamData.stats.avgOvr >= 75
-                                      ? "text-blue-400"
-                                      : teamData.stats.avgOvr >= 70
-                                      ? "text-yellow-400"
-                                      : "text-orange-400"
-                                  )}
-                                >
-                                  {teamData.stats.avgOvr}
+                              <div className="flex items-center gap-3">
+                                <div className="text-right">
+                                  <div
+                                    className={cn(
+                                      "text-xl font-bold",
+                                      teamData.stats.avgOvr >= 80
+                                        ? "text-green-400"
+                                        : teamData.stats.avgOvr >= 75
+                                        ? "text-blue-400"
+                                        : teamData.stats.avgOvr >= 70
+                                        ? "text-yellow-400"
+                                        : "text-orange-400"
+                                    )}
+                                  >
+                                    {teamData.stats.avgOvr}
+                                  </div>
+                                  <div
+                                    className={cn(
+                                      "text-[10px] uppercase font-bold",
+                                      TIER_COLORS[teamData.tier]
+                                    )}
+                                  >
+                                    {teamData.tier}
+                                  </div>
                                 </div>
-                                <div
-                                  className={cn(
-                                    "text-[10px] uppercase font-bold",
-                                    TIER_COLORS[teamData.tier]
-                                  )}
-                                >
-                                  {teamData.tier}
-                                </div>
+                                <div className="text-muted-foreground">→</div>
                               </div>
                             </div>
                           ))}

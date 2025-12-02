@@ -1,0 +1,440 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "module-connections",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-02",
+    "has_context": false,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_documents": {
+        "architecture": "docs/ARCHITECTURE.md",
+        "coding_standards": "Not established",
+        "project_conventions": "Next.js App Router, TypeScript, Tailwind CSS"
+      },
+      "reference_components": {
+        "store_pattern": "src/lib/dev-player-store.ts",
+        "simulator": "src/lib/sim/simulator.ts",
+        "team_adapter": "src/lib/sim/team-adapter.ts",
+        "modifier_patterns": [
+          "src/lib/sim/scheme-modifiers.ts",
+          "src/lib/sim/coaching-modifiers.ts",
+          "src/lib/sim/facility-modifiers.ts"
+        ]
+      },
+      "discovered_patterns": {
+        "state_management": "SessionStorage via custom store functions",
+        "data_flow": "Generators → SessionStorage → Consumers (Sim/Season)",
+        "type_safety": "Full TypeScript with strict interfaces"
+      }
+    },
+    "1_executive_summary": {
+      "feature_description": "Connect isolated dev-tools modules (Coaching, Facilities, Schedule, Scouting) to the game simulation engine so generated data actually affects gameplay outcomes.",
+      "primary_goal": "Ensure all generated module data flows into the simulator, making coaching staff perks, facility bonuses, and user-created schedules impact game results.",
+      "scope": {
+        "in_scope": [
+          "Connect Coaching store → Sim page team loading",
+          "Connect Facilities store → Sim page team loading",
+          "Connect Schedule store → Season Sim initialization",
+          "Update Full Game Generator to include coaching/facilities in team data"
+        ],
+        "out_of_scope": [
+          "Scouting integration (requires draft/FA systems not yet built)",
+          "Database persistence (current sessionStorage approach maintained)",
+          "New UI components (using existing pages)"
+        ]
+      },
+      "success_metrics": [
+        "Coaching staff data visible in Sim debug logs",
+        "Facility bonuses applied in Sim calculations",
+        "Season Sim uses stored schedule when available",
+        "Full Game Generator includes all module data"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity_score": 4,
+      "complexity_reasoning": "Moderate complexity - primarily wiring existing systems together. Modifier calculation code already exists; needs data loading integration.",
+      "risks": [
+        {
+          "risk": "Data shape mismatch between stores and SimTeam interface",
+          "severity": "medium",
+          "mitigation": "SimTeam already has optional coaching/facilities properties; verify type compatibility"
+        },
+        {
+          "risk": "SessionStorage race conditions on page load",
+          "severity": "low",
+          "mitigation": "Use existing store getter patterns with null checks"
+        },
+        {
+          "risk": "Breaking existing Sim functionality",
+          "severity": "medium",
+          "mitigation": "All new data is optional; existing flow works when stores are empty"
+        }
+      ],
+      "dependencies": [
+        "Existing coaching-modifiers.ts calculations",
+        "Existing facility-modifiers.ts calculations",
+        "SessionStorage store functions"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/app/dashboard/dev-tools/sim/page.tsx",
+          "changes": "Load coaching and facilities from stores when building SimTeam objects",
+          "risk_level": "medium"
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/season/page.tsx",
+          "changes": "Check for stored schedule before generating new one",
+          "risk_level": "low"
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/full/page.tsx",
+          "changes": "Include coaching/facilities data in full game generation flow",
+          "risk_level": "medium"
+        },
+        {
+          "path": "src/lib/sim/types.ts",
+          "changes": "Verify SimTeam interface includes coaching/facilities (may already exist)",
+          "risk_level": "low"
+        }
+      ],
+      "files_to_create": [],
+      "existing_patterns": {
+        "store_loading": "getFullGameData() in dev-player-store.ts",
+        "team_adaptation": "adaptTeamRoster() in sim/page.tsx",
+        "modifier_calculation": "initializeGameModifiers() in simulator.ts"
+      }
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Coaching Integration",
+          "description": "Load coaching staff from store and attach to SimTeam during team selection",
+          "requirements": [
+            "Read coaching data from dev-generated-coaching store",
+            "Match coaching staff to team by teamId",
+            "Attach CoachingStaff to SimTeam.coachingStaff property",
+            "Verify coaching modifiers apply in debug logs"
+          ]
+        },
+        {
+          "id": "F2",
+          "name": "Facilities Integration",
+          "description": "Load facilities from store and attach to SimTeam during team selection",
+          "requirements": [
+            "Read facilities data from dev-generated-facilities store",
+            "Match facilities to team by teamId",
+            "Attach TeamFacilities to SimTeam.facilities property",
+            "Verify facility bonuses appear in debug logs"
+          ]
+        },
+        {
+          "id": "F3",
+          "name": "Schedule Integration",
+          "description": "Season Sim uses stored schedule when available instead of generating new one",
+          "requirements": [
+            "Check for existing schedule in store on Season page load",
+            "Use stored schedule if available and matches team count",
+            "Fall back to generation if no stored schedule",
+            "Display schedule source indicator in UI"
+          ]
+        },
+        {
+          "id": "F4",
+          "name": "Full Game Generator Enhancement",
+          "description": "Include coaching and facilities in the full game generation workflow",
+          "requirements": [
+            "Generate coaching staff for all 32 teams",
+            "Generate facilities for all 32 teams",
+            "Store all data in coordinated sessionStorage keys",
+            "Update status display to show all generated modules"
+          ]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-MODULE-CONNECTIONS-001",
+        "name": "Module Connections",
+        "feature_dir": "coderef/working/module-connections"
+      },
+      "tasks": [
+        {
+          "id": "COACHING-001",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Add coaching store import and loading to Sim page",
+          "feature": "F1",
+          "estimated_loc": 20,
+          "files": ["src/app/dashboard/dev-tools/sim/page.tsx"],
+          "depends_on": []
+        },
+        {
+          "id": "COACHING-002",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Create helper function to match coaching to team by ID",
+          "feature": "F1",
+          "estimated_loc": 15,
+          "files": ["src/app/dashboard/dev-tools/sim/page.tsx"],
+          "depends_on": ["COACHING-001"]
+        },
+        {
+          "id": "COACHING-003",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Attach coaching staff to SimTeam in adaptTeamRoster",
+          "feature": "F1",
+          "estimated_loc": 10,
+          "files": ["src/app/dashboard/dev-tools/sim/page.tsx"],
+          "depends_on": ["COACHING-002"]
+        },
+        {
+          "id": "FACILITIES-001",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Add facilities store import and loading to Sim page",
+          "feature": "F2",
+          "estimated_loc": 20,
+          "files": ["src/app/dashboard/dev-tools/sim/page.tsx"],
+          "depends_on": []
+        },
+        {
+          "id": "FACILITIES-002",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Create helper function to match facilities to team by ID",
+          "feature": "F2",
+          "estimated_loc": 15,
+          "files": ["src/app/dashboard/dev-tools/sim/page.tsx"],
+          "depends_on": ["FACILITIES-001"]
+        },
+        {
+          "id": "FACILITIES-003",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Attach facilities to SimTeam in adaptTeamRoster",
+          "feature": "F2",
+          "estimated_loc": 10,
+          "files": ["src/app/dashboard/dev-tools/sim/page.tsx"],
+          "depends_on": ["FACILITIES-002"]
+        },
+        {
+          "id": "SCHEDULE-001",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Add schedule store check to Season page initialization",
+          "feature": "F3",
+          "estimated_loc": 25,
+          "files": ["src/app/dashboard/dev-tools/season/page.tsx"],
+          "depends_on": []
+        },
+        {
+          "id": "SCHEDULE-002",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Add fallback logic and schedule source indicator",
+          "feature": "F3",
+          "estimated_loc": 15,
+          "files": ["src/app/dashboard/dev-tools/season/page.tsx"],
+          "depends_on": ["SCHEDULE-001"]
+        },
+        {
+          "id": "FULLGEN-001",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Import coaching and facilities generators into Full page",
+          "feature": "F4",
+          "estimated_loc": 10,
+          "files": ["src/app/dashboard/dev-tools/full/page.tsx"],
+          "depends_on": []
+        },
+        {
+          "id": "FULLGEN-002",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Add coaching generation step to full game flow",
+          "feature": "F4",
+          "estimated_loc": 30,
+          "files": ["src/app/dashboard/dev-tools/full/page.tsx"],
+          "depends_on": ["FULLGEN-001"]
+        },
+        {
+          "id": "FULLGEN-003",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Add facilities generation step to full game flow",
+          "feature": "F4",
+          "estimated_loc": 30,
+          "files": ["src/app/dashboard/dev-tools/full/page.tsx"],
+          "depends_on": ["FULLGEN-001"]
+        },
+        {
+          "id": "FULLGEN-004",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Update generation status UI to show all modules",
+          "feature": "F4",
+          "estimated_loc": 20,
+          "files": ["src/app/dashboard/dev-tools/full/page.tsx"],
+          "depends_on": ["FULLGEN-002", "FULLGEN-003"]
+        },
+        {
+          "id": "VERIFY-001",
+          "workorder_id": "WO-MODULE-CONNECTIONS-001",
+          "description": "Test end-to-end: Generate full game → Run sim → Verify debug shows modifiers",
+          "feature": "F1",
+          "estimated_loc": 0,
+          "files": [],
+          "depends_on": ["COACHING-003", "FACILITIES-003", "FULLGEN-004"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase_id": "P1",
+          "name": "Sim Page Integration",
+          "description": "Connect coaching and facilities stores to the Sim page team loading",
+          "tasks": ["COACHING-001", "COACHING-002", "COACHING-003", "FACILITIES-001", "FACILITIES-002", "FACILITIES-003"],
+          "deliverables": [
+            "Sim page loads coaching/facilities from stores",
+            "SimTeam objects include coaching staff and facilities",
+            "Debug logs show modifier calculations"
+          ],
+          "success_criteria": "Running a sim game shows coaching and facility bonuses in debug mode"
+        },
+        {
+          "phase_id": "P2",
+          "name": "Schedule Integration",
+          "description": "Connect schedule store to Season Sim",
+          "tasks": ["SCHEDULE-001", "SCHEDULE-002"],
+          "deliverables": [
+            "Season Sim checks for stored schedule",
+            "Uses stored schedule when available",
+            "UI indicates schedule source"
+          ],
+          "success_criteria": "Season Sim uses schedule from Schedule Generator when available"
+        },
+        {
+          "phase_id": "P3",
+          "name": "Full Generator Enhancement",
+          "description": "Update Full Game Generator to include all modules",
+          "tasks": ["FULLGEN-001", "FULLGEN-002", "FULLGEN-003", "FULLGEN-004"],
+          "deliverables": [
+            "Full game generation includes coaching for all teams",
+            "Full game generation includes facilities for all teams",
+            "Status UI shows all generated modules"
+          ],
+          "success_criteria": "One-click full game generation produces complete data set"
+        },
+        {
+          "phase_id": "P4",
+          "name": "Verification",
+          "description": "End-to-end testing of all connections",
+          "tasks": ["VERIFY-001"],
+          "deliverables": [
+            "Full integration test completed",
+            "All debug logs show expected data"
+          ],
+          "success_criteria": "Complete workflow: Generate → Sim → Verify all modules connected"
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [],
+      "integration_tests": [
+        {
+          "name": "Coaching data flows to Sim",
+          "steps": [
+            "Generate coaching staff via Coaching page",
+            "Open Sim page and select a team",
+            "Enable debug mode",
+            "Run a play and verify coaching modifiers in debug output"
+          ]
+        },
+        {
+          "name": "Facilities data flows to Sim",
+          "steps": [
+            "Generate facilities via Facilities page",
+            "Open Sim page and select home team",
+            "Enable debug mode",
+            "Verify home field advantage bonus in debug output"
+          ]
+        },
+        {
+          "name": "Schedule flows to Season",
+          "steps": [
+            "Generate schedule via Schedule page",
+            "Open Season page",
+            "Verify schedule is loaded (not regenerated)",
+            "Check UI indicates 'Using stored schedule'"
+          ]
+        },
+        {
+          "name": "Full game generates all modules",
+          "steps": [
+            "Open Full page and generate",
+            "Verify coaching store has 32 teams",
+            "Verify facilities store has 32 teams",
+            "Open Sim and verify data loads"
+          ]
+        }
+      ],
+      "manual_testing": "Use debug mode in Sim to verify modifier calculations"
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "description": "Coaching staff modifiers appear in Sim debug logs when coaching data exists",
+          "verification": "Run sim with debug ON, see 'OC bonus', 'DC coverage', etc."
+        },
+        {
+          "id": "AC2",
+          "description": "Facility bonuses appear in Sim debug logs when facility data exists",
+          "verification": "Run sim with debug ON, see 'Home advantage' facility bonus"
+        },
+        {
+          "id": "AC3",
+          "description": "Season Sim uses stored schedule when available",
+          "verification": "Generate schedule, open Season, verify same matchups appear"
+        },
+        {
+          "id": "AC4",
+          "description": "Full Game Generator produces coaching and facilities for all 32 teams",
+          "verification": "Generate full game, check stores have 32 entries each"
+        }
+      ],
+      "definition_of_done": [
+        "All stores connected to consumers",
+        "Debug logs show module data being used",
+        "No TypeScript errors",
+        "Existing functionality preserved"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Import coaching store functions into sim/page.tsx",
+        "[ ] Import facilities store functions into sim/page.tsx",
+        "[ ] Create getCoachingForTeam() helper",
+        "[ ] Create getFacilitiesForTeam() helper",
+        "[ ] Update adaptTeamRoster() to include coaching",
+        "[ ] Update adaptTeamRoster() to include facilities",
+        "[ ] Test with debug mode ON"
+      ],
+      "phase_2_checklist": [
+        "[ ] Import schedule store into season/page.tsx",
+        "[ ] Add schedule availability check",
+        "[ ] Use stored schedule when valid",
+        "[ ] Add UI indicator for schedule source"
+      ],
+      "phase_3_checklist": [
+        "[ ] Import coaching generator into full/page.tsx",
+        "[ ] Import facilities generator into full/page.tsx",
+        "[ ] Add coaching generation to workflow",
+        "[ ] Add facilities generation to workflow",
+        "[ ] Update status UI"
+      ],
+      "phase_4_checklist": [
+        "[ ] Run full end-to-end test",
+        "[ ] Verify all debug outputs",
+        "[ ] Confirm no regressions"
+      ]
+    }
+  }
+}

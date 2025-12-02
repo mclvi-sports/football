@@ -1,11 +1,34 @@
 /**
- * Simple in-memory store for dev-generated players
+ * Simple in-memory store for dev-generated players and teams
  * Uses sessionStorage to persist across page navigations
  */
 
-import { Player } from "./types";
+import { Player, Position, Tier } from "./types";
 
 const STORAGE_KEY = "dev-generated-players";
+const TEAM_ROSTER_KEY = "dev-selected-team-roster";
+const FULL_GAME_KEY = "dev-full-game-data";
+
+// Team roster data structure
+export interface TeamRosterData {
+  team: {
+    id: string;
+    city: string;
+    name: string;
+    conference: string;
+    division: string;
+  };
+  tier: Tier;
+  roster: {
+    players: Player[];
+    depthChart: Record<Position, string[]>;
+  };
+  stats: {
+    totalPlayers: number;
+    avgOvr: number;
+    avgAge: number;
+  };
+}
 
 export function storeDevPlayers(players: Player[]): void {
   if (typeof window !== "undefined") {
@@ -28,4 +51,57 @@ export function clearDevPlayers(): void {
   if (typeof window !== "undefined") {
     sessionStorage.removeItem(STORAGE_KEY);
   }
+}
+
+// Team roster functions
+export function storeTeamRoster(teamData: TeamRosterData): void {
+  if (typeof window !== "undefined") {
+    sessionStorage.setItem(TEAM_ROSTER_KEY, JSON.stringify(teamData));
+    // Also store the team's players so they can be viewed individually
+    storeDevPlayers(teamData.roster.players);
+  }
+}
+
+export function getTeamRoster(): TeamRosterData | null {
+  if (typeof window === "undefined") return null;
+  const stored = sessionStorage.getItem(TEAM_ROSTER_KEY);
+  return stored ? JSON.parse(stored) : null;
+}
+
+export function clearTeamRoster(): void {
+  if (typeof window !== "undefined") {
+    sessionStorage.removeItem(TEAM_ROSTER_KEY);
+  }
+}
+
+// Full game data (all 32 teams with rosters)
+export interface FullGameData {
+  teams: TeamRosterData[];
+  generatedAt: string;
+  totalPlayers: number;
+  tierDistribution: Record<string, number>;
+}
+
+export function storeFullGameData(data: FullGameData): void {
+  if (typeof window !== "undefined") {
+    sessionStorage.setItem(FULL_GAME_KEY, JSON.stringify(data));
+  }
+}
+
+export function getFullGameData(): FullGameData | null {
+  if (typeof window === "undefined") return null;
+  const stored = sessionStorage.getItem(FULL_GAME_KEY);
+  return stored ? JSON.parse(stored) : null;
+}
+
+export function clearFullGameData(): void {
+  if (typeof window !== "undefined") {
+    sessionStorage.removeItem(FULL_GAME_KEY);
+  }
+}
+
+export function getTeamById(teamId: string): TeamRosterData | null {
+  const fullGame = getFullGameData();
+  if (!fullGame) return null;
+  return fullGame.teams.find((t) => t.team.id === teamId) || null;
 }
