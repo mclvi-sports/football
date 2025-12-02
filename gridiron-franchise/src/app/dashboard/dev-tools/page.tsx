@@ -52,6 +52,19 @@ export default function DevToolsPage() {
             href="/dashboard/dev-tools/full"
             description="Generate all data"
           />
+          <NavCard
+            title="Game Simulator"
+            icon="SIM"
+            href="/dashboard/dev-tools/sim"
+            description="Simulate games"
+            variant="highlight"
+          />
+          <NavCard
+            title="Schedule"
+            icon="CAL"
+            href="/dashboard/dev-tools/schedule"
+            description="Generate schedule"
+          />
         </div>
       </main>
     </div>
