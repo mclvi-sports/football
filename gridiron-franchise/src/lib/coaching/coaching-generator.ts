@@ -14,16 +14,12 @@ import {
   LeagueCoaching,
   CoachingStats,
   CoachPhilosophy,
-  OffensiveScheme,
-  DefensiveScheme,
-  SpecialTeamsScheme,
-  CoachScheme,
   Perk,
   PerkTier,
   HCAttributes,
   OCAttributes,
   DCAttributes,
-  STAttributes,
+  STCAttributes,
   CoachContract,
   HCPerkId,
   OCPerkId,
@@ -32,8 +28,16 @@ import {
   HC_PERKS,
   OC_PERKS,
   DC_PERKS,
-  ST_PERKS,
+  STC_PERKS,
+  OffensiveScheme,
+  DefensiveScheme,
+  STPhilosophy,
 } from './types';
+import {
+  ALL_OFFENSIVE_SCHEMES,
+  ALL_DEFENSIVE_SCHEMES,
+  ALL_ST_PHILOSOPHIES,
+} from '../schemes/scheme-data';
 
 // ============================================================================
 // FIRST NAMES & LAST NAMES
@@ -62,7 +66,7 @@ interface TierCoachRanges {
   HC: { min: number; max: number };
   OC: { min: number; max: number };
   DC: { min: number; max: number };
-  ST: { min: number; max: number };
+  STC: { min: number; max: number };
 }
 
 const TIER_COACH_RANGES: Record<Tier, TierCoachRanges> = {
@@ -70,31 +74,31 @@ const TIER_COACH_RANGES: Record<Tier, TierCoachRanges> = {
     HC: { min: 88, max: 95 },
     OC: { min: 85, max: 92 },
     DC: { min: 85, max: 92 },
-    ST: { min: 78, max: 85 },
+    STC: { min: 78, max: 85 },
   },
   [Tier.Good]: {
     HC: { min: 82, max: 89 },
     OC: { min: 80, max: 87 },
     DC: { min: 80, max: 87 },
-    ST: { min: 75, max: 82 },
+    STC: { min: 75, max: 82 },
   },
   [Tier.Average]: {
     HC: { min: 76, max: 83 },
     OC: { min: 74, max: 81 },
     DC: { min: 74, max: 81 },
-    ST: { min: 70, max: 77 },
+    STC: { min: 70, max: 77 },
   },
   [Tier.BelowAverage]: {
     HC: { min: 70, max: 78 },
     OC: { min: 68, max: 76 },
     DC: { min: 68, max: 76 },
-    ST: { min: 65, max: 73 },
+    STC: { min: 65, max: 73 },
   },
   [Tier.Rebuilding]: {
     HC: { min: 65, max: 75 },
     OC: { min: 63, max: 73 },
     DC: { min: 63, max: 73 },
-    ST: { min: 62, max: 70 },
+    STC: { min: 62, max: 70 },
   },
 };
 
@@ -146,39 +150,11 @@ function generateExperience(age: number): number {
 }
 
 function calculateRetirementRisk(age: number): number {
-  if (age < 60) return 0;
-  if (age <= 65) return 0;
-  if (age <= 70) return 10;
-  if (age <= 75) return 25;
+  if (age < 61) return 0;
+  if (age <= 65) return 5;
+  if (age <= 70) return 15;
+  if (age <= 75) return 30;
   return 50;
-}
-
-// ============================================================================
-// SCHEME GENERATION
-// ============================================================================
-
-const OFFENSIVE_SCHEMES: OffensiveScheme[] = [
-  'west_coast', 'spread', 'pro_style', 'air_raid', 'power_run', 'zone_run',
-];
-
-const DEFENSIVE_SCHEMES: DefensiveScheme[] = [
-  '4-3_base', '3-4_base', 'cover_2', 'cover_3', 'man_blitz', 'zone_blitz',
-];
-
-const ST_SCHEMES: SpecialTeamsScheme[] = [
-  'aggressive_returns', 'conservative', 'coverage_specialist',
-];
-
-function getSchemeForPosition(position: CoachPosition): CoachScheme {
-  switch (position) {
-    case 'HC':
-    case 'OC':
-      return pickRandom(OFFENSIVE_SCHEMES);
-    case 'DC':
-      return pickRandom(DEFENSIVE_SCHEMES);
-    case 'ST':
-      return pickRandom(ST_SCHEMES);
-  }
 }
 
 // ============================================================================
@@ -188,7 +164,7 @@ function getSchemeForPosition(position: CoachPosition): CoachScheme {
 function generateHCAttributes(targetOvr: number): HCAttributes {
   const variance = 8;
   return {
-    schemeKnowledge: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
+    schemeMastery: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     playerDevelopment: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     motivation: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     gamePlanning: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
@@ -197,15 +173,14 @@ function generateHCAttributes(targetOvr: number): HCAttributes {
     clockManagement: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     challengeSuccess: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     discipline: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
-    offensiveKnowledge: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
-    defensiveKnowledge: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
+    mediaHandling: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
   };
 }
 
 function generateOCAttributes(targetOvr: number): OCAttributes {
   const variance = 8;
   return {
-    schemeKnowledge: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
+    schemeMastery: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     playerDevelopment: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     motivation: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     gamePlanning: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
@@ -213,13 +188,15 @@ function generateOCAttributes(targetOvr: number): OCAttributes {
     playCalling: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     redZoneOffense: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     qbDevelopment: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
+    tempoControl: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
+    creativity: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
   };
 }
 
 function generateDCAttributes(targetOvr: number): DCAttributes {
   const variance = 8;
   return {
-    schemeKnowledge: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
+    schemeMastery: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     playerDevelopment: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     motivation: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     gamePlanning: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
@@ -227,13 +204,15 @@ function generateDCAttributes(targetOvr: number): DCAttributes {
     playCalling: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     redZoneDefense: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     turnoverCreation: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
+    blitzDesign: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
+    coverageDisguise: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
   };
 }
 
-function generateSTAttributes(targetOvr: number): STAttributes {
+function generateSTCAttributes(targetOvr: number): STCAttributes {
   const variance = 8;
   return {
-    schemeKnowledge: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
+    schemeMastery: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     playerDevelopment: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     motivation: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     gamePlanning: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
@@ -241,6 +220,8 @@ function generateSTAttributes(targetOvr: number): STAttributes {
     kickingGame: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     returnGame: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
     coverageUnits: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
+    situational: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
+    gunnerDevelopment: clamp(targetOvr + randomInRange(-variance, variance), 60, 99),
   };
 }
 
@@ -396,12 +377,12 @@ function generateDCPerks(ovr: number): Perk[] {
   return perks;
 }
 
-function generateSTPerks(ovr: number): Perk[] {
-  const totalTiers = Math.min(getTotalPerkTiers(ovr), 4); // ST has fewer perks
+function generateSTCPerks(ovr: number): Perk[] {
+  const totalTiers = Math.min(getTotalPerkTiers(ovr), 4); // STC has fewer perks
   if (totalTiers === 0) return [];
 
   const perks: Perk[] = [];
-  const availablePerks: STPerkId[] = Object.keys(ST_PERKS) as STPerkId[];
+  const availablePerks: STPerkId[] = Object.keys(STC_PERKS) as STPerkId[];
   let remainingTiers = totalTiers;
 
   let tier3Count = ovr >= 92 ? 1 : 0;
@@ -428,9 +409,9 @@ function generateSTPerks(ovr: number): Perk[] {
 
     perks.push({
       id: perkId,
-      name: ST_PERKS[perkId].name,
+      name: STC_PERKS[perkId].name,
       tier,
-      effect: ST_PERKS[perkId].effects[tier],
+      effect: STC_PERKS[perkId].effects[tier],
     });
   }
 
@@ -443,31 +424,31 @@ function generateSTPerks(ovr: number): Perk[] {
 
 function generateHCSalary(ovr: number): number {
   if (ovr >= 95) return randomFloat(12, 15);
-  if (ovr >= 90) return randomFloat(10, 12);
-  if (ovr >= 85) return randomFloat(8, 10);
-  if (ovr >= 80) return randomFloat(6, 8);
-  if (ovr >= 75) return randomFloat(4, 6);
-  if (ovr >= 70) return randomFloat(2, 4);
-  return randomFloat(1, 2);
+  if (ovr >= 90) return randomFloat(9, 12);
+  if (ovr >= 85) return randomFloat(6, 9);
+  if (ovr >= 80) return randomFloat(4, 6);
+  if (ovr >= 75) return randomFloat(2, 4);
+  if (ovr >= 70) return randomFloat(1, 2);
+  return randomFloat(0.5, 1);
 }
 
-function generateCoordinatorSalary(position: 'OC' | 'DC' | 'ST', ovr: number): number {
-  if (position === 'ST') {
+function generateCoordinatorSalary(position: 'OC' | 'DC' | 'STC', ovr: number): number {
+  if (position === 'STC') {
     if (ovr >= 90) return randomFloat(2, 3);
     if (ovr >= 85) return randomFloat(1.5, 2);
     if (ovr >= 80) return randomFloat(1, 1.5);
     if (ovr >= 75) return randomFloat(0.8, 1);
-    if (ovr >= 70) return randomFloat(0.6, 0.8);
-    return randomFloat(0.4, 0.6);
+    if (ovr >= 70) return randomFloat(0.5, 0.8);
+    return randomFloat(0.3, 0.5);
   }
 
   // OC and DC have same salary ranges
-  if (ovr >= 90) return randomFloat(4, 6);
-  if (ovr >= 85) return randomFloat(3, 4);
-  if (ovr >= 80) return randomFloat(2, 3);
-  if (ovr >= 75) return randomFloat(1.5, 2);
-  if (ovr >= 70) return randomFloat(1, 1.5);
-  return randomFloat(0.5, 1);
+  if (ovr >= 90) return randomFloat(6, 8);
+  if (ovr >= 85) return randomFloat(4, 6);
+  if (ovr >= 80) return randomFloat(2.5, 4);
+  if (ovr >= 75) return randomFloat(1.5, 2.5);
+  if (ovr >= 70) return randomFloat(0.8, 1.5);
+  return randomFloat(0.5, 0.8);
 }
 
 function generateContractYears(ovr: number, age: number): number {
@@ -531,17 +512,17 @@ function generateCoach(position: CoachPosition, targetOvr: number): Coach {
       attributes = generateDCAttributes(ovr);
       perks = generateDCPerks(ovr);
       break;
-    case 'ST':
-      attributes = generateSTAttributes(ovr);
-      perks = generateSTPerks(ovr);
+    case 'STC':
+      attributes = generateSTCAttributes(ovr);
+      perks = generateSTCPerks(ovr);
       break;
   }
 
-  const philosophy: CoachPhilosophy = pickRandom(['aggressive', 'balanced', 'conservative']);
-  const scheme = getSchemeForPosition(position);
+  const philosophy: CoachPhilosophy = pickRandom(['aggressive', 'balanced', 'conservative', 'innovative']);
   const contract = generateContract(position, ovr, age);
 
-  return {
+  // Build base coach object
+  const coach: Coach = {
     id: generateId(),
     firstName: pickRandom(FIRST_NAMES),
     lastName: pickRandom(LAST_NAMES),
@@ -550,13 +531,35 @@ function generateCoach(position: CoachPosition, targetOvr: number): Coach {
     experience,
     ovr,
     attributes,
-    scheme,
     philosophy,
     perks,
     contract,
     xp: 0,
     retirementRisk: calculateRetirementRisk(age),
   };
+
+  // Assign schemes based on position
+  switch (position) {
+    case 'HC':
+      // HC has both offensive and defensive scheme preferences
+      coach.offensiveScheme = pickRandom(ALL_OFFENSIVE_SCHEMES);
+      coach.defensiveScheme = pickRandom(ALL_DEFENSIVE_SCHEMES);
+      break;
+    case 'OC':
+      // OC has only offensive scheme
+      coach.offensiveScheme = pickRandom(ALL_OFFENSIVE_SCHEMES);
+      break;
+    case 'DC':
+      // DC has only defensive scheme
+      coach.defensiveScheme = pickRandom(ALL_DEFENSIVE_SCHEMES);
+      break;
+    case 'STC':
+      // STC has only ST philosophy
+      coach.stPhilosophy = pickRandom(ALL_ST_PHILOSOPHIES);
+      break;
+  }
+
+  return coach;
 }
 
 // ============================================================================
@@ -581,6 +584,16 @@ function calculateStaffChemistry(staff: CoachingStaff): number {
     chemistry += 15;
   } else if (allDifferent) {
     chemistry -= 10;
+  }
+
+  // Scheme alignment bonuses
+  // HC's offensive scheme matching OC's scheme
+  if (staff.headCoach.offensiveScheme === staff.offensiveCoordinator.offensiveScheme) {
+    chemistry += 5;
+  }
+  // HC's defensive scheme matching DC's scheme
+  if (staff.headCoach.defensiveScheme === staff.defensiveCoordinator.defensiveScheme) {
+    chemistry += 5;
   }
 
   // Veteran staff bonus
@@ -614,12 +627,12 @@ export function generateCoaching(teamTiers: Map<string, Tier>): LeagueCoaching {
     const hcOvr = randomInRange(ranges.HC.min, ranges.HC.max);
     const ocOvr = randomInRange(ranges.OC.min, ranges.OC.max);
     const dcOvr = randomInRange(ranges.DC.min, ranges.DC.max);
-    const stOvr = randomInRange(ranges.ST.min, ranges.ST.max);
+    const stcOvr = randomInRange(ranges.STC.min, ranges.STC.max);
 
     const headCoach = generateCoach('HC', hcOvr);
     const offensiveCoordinator = generateCoach('OC', ocOvr);
     const defensiveCoordinator = generateCoach('DC', dcOvr);
-    const specialTeamsCoordinator = generateCoach('ST', stOvr);
+    const specialTeamsCoordinator = generateCoach('STC', stcOvr);
 
     const totalSalary =
       headCoach.contract.salary +
@@ -660,7 +673,7 @@ export function getCoachingStats(coaching: LeagueCoaching): CoachingStats {
   let totalHC = 0;
   let totalOC = 0;
   let totalDC = 0;
-  let totalST = 0;
+  let totalSTC = 0;
   let totalSalaries = 0;
   let eliteCount = 0;
   let greatCount = 0;
@@ -673,17 +686,17 @@ export function getCoachingStats(coaching: LeagueCoaching): CoachingStats {
     west_coast: 0, spread: 0, pro_style: 0, air_raid: 0, power_run: 0, zone_run: 0,
   };
   const defSchemes: Record<DefensiveScheme, number> = {
-    '4-3_base': 0, '3-4_base': 0, cover_2: 0, cover_3: 0, man_blitz: 0, zone_blitz: 0,
+    '4-3': 0, '3-4': 0, cover_2: 0, cover_3: 0, man_blitz: 0, zone_blitz: 0,
   };
-  const stSchemes: Record<SpecialTeamsScheme, number> = {
-    aggressive_returns: 0, conservative: 0, coverage_specialist: 0,
+  const stPhilosophies: Record<STPhilosophy, number> = {
+    aggressive: 0, conservative: 0, coverage_specialist: 0,
   };
 
   for (const staff of staffList) {
     totalHC += staff.headCoach.ovr;
     totalOC += staff.offensiveCoordinator.ovr;
     totalDC += staff.defensiveCoordinator.ovr;
-    totalST += staff.specialTeamsCoordinator.ovr;
+    totalSTC += staff.specialTeamsCoordinator.ovr;
     totalSalaries += staff.totalSalary;
 
     // Count all coaches by tier
@@ -703,15 +716,23 @@ export function getCoachingStats(coaching: LeagueCoaching): CoachingStats {
       else poorCount++;
     }
 
-    // Count schemes
-    const ocScheme = staff.offensiveCoordinator.scheme as OffensiveScheme;
-    if (ocScheme in offSchemes) offSchemes[ocScheme]++;
+    // Count offensive schemes (from OC, as that's the primary offensive scheme)
+    const ocScheme = staff.offensiveCoordinator.offensiveScheme;
+    if (ocScheme && ocScheme in offSchemes) {
+      offSchemes[ocScheme]++;
+    }
 
-    const dcScheme = staff.defensiveCoordinator.scheme as DefensiveScheme;
-    if (dcScheme in defSchemes) defSchemes[dcScheme]++;
+    // Count defensive schemes (from DC, as that's the primary defensive scheme)
+    const dcScheme = staff.defensiveCoordinator.defensiveScheme;
+    if (dcScheme && dcScheme in defSchemes) {
+      defSchemes[dcScheme]++;
+    }
 
-    const stScheme = staff.specialTeamsCoordinator.scheme as SpecialTeamsScheme;
-    if (stScheme in stSchemes) stSchemes[stScheme]++;
+    // Count ST philosophies
+    const stcPhilosophy = staff.specialTeamsCoordinator.stPhilosophy;
+    if (stcPhilosophy && stcPhilosophy in stPhilosophies) {
+      stPhilosophies[stcPhilosophy]++;
+    }
   }
 
   const count = staffList.length;
@@ -721,8 +742,8 @@ export function getCoachingStats(coaching: LeagueCoaching): CoachingStats {
     avgHCRating: Math.round((totalHC / count) * 10) / 10,
     avgOCRating: Math.round((totalOC / count) * 10) / 10,
     avgDCRating: Math.round((totalDC / count) * 10) / 10,
-    avgSTRating: Math.round((totalST / count) * 10) / 10,
-    avgOverallRating: Math.round(((totalHC + totalOC + totalDC + totalST) / (count * 4)) * 10) / 10,
+    avgSTCRating: Math.round((totalSTC / count) * 10) / 10,
+    avgOverallRating: Math.round(((totalHC + totalOC + totalDC + totalSTC) / (count * 4)) * 10) / 10,
     eliteCoaches: eliteCount,
     greatCoaches: greatCount,
     goodCoaches: goodCount,
@@ -734,7 +755,7 @@ export function getCoachingStats(coaching: LeagueCoaching): CoachingStats {
     schemeDistribution: {
       offensive: offSchemes,
       defensive: defSchemes,
-      specialTeams: stSchemes,
+      specialTeams: stPhilosophies,
     },
     topHCs: sortedByHC.slice(0, 5).map((s) => ({
       teamId: s.teamId,

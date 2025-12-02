@@ -11,13 +11,12 @@ import {
   CoachingStats,
   Coach,
   CoachPosition,
-  OffensiveScheme,
-  DefensiveScheme,
-  SpecialTeamsScheme,
+} from '@/lib/coaching/types';
+import {
   OFFENSIVE_SCHEMES,
   DEFENSIVE_SCHEMES,
-  ST_SCHEMES,
-} from '@/lib/coaching/types';
+  ST_PHILOSOPHIES,
+} from '@/lib/schemes/scheme-data';
 import { Tier } from '@/lib/types';
 
 type ViewTab = 'overview' | 'by-team' | 'rankings' | 'schemes';
@@ -26,14 +25,14 @@ const POSITION_LABELS: Record<CoachPosition, string> = {
   HC: 'Head Coach',
   OC: 'Offensive Coordinator',
   DC: 'Defensive Coordinator',
-  ST: 'Special Teams Coordinator',
+  STC: 'Special Teams Coordinator',
 };
 
 const POSITION_ICONS: Record<CoachPosition, string> = {
   HC: '👔',
   OC: '🏈',
   DC: '🛡️',
-  ST: '⚡',
+  STC: '⚡',
 };
 
 const RATING_COLOR = (rating: number): string => {
@@ -58,19 +57,24 @@ const PHILOSOPHY_COLORS: Record<string, string> = {
   aggressive: 'bg-red-500/20 text-red-400 border-red-500/40',
   balanced: 'bg-blue-500/20 text-blue-400 border-blue-500/40',
   conservative: 'bg-green-500/20 text-green-400 border-green-500/40',
+  innovative: 'bg-purple-500/20 text-purple-400 border-purple-500/40',
 };
 
-function getSchemeDisplayName(scheme: string): string {
-  if (scheme in OFFENSIVE_SCHEMES) {
-    return OFFENSIVE_SCHEMES[scheme as OffensiveScheme].name;
+function getSchemeDisplayName(schemeId: string): string {
+  // Check offensive schemes
+  if (schemeId in OFFENSIVE_SCHEMES) {
+    return OFFENSIVE_SCHEMES[schemeId as keyof typeof OFFENSIVE_SCHEMES].name;
   }
-  if (scheme in DEFENSIVE_SCHEMES) {
-    return DEFENSIVE_SCHEMES[scheme as DefensiveScheme].name;
+  // Check defensive schemes
+  if (schemeId in DEFENSIVE_SCHEMES) {
+    return DEFENSIVE_SCHEMES[schemeId as keyof typeof DEFENSIVE_SCHEMES].name;
   }
-  if (scheme in ST_SCHEMES) {
-    return ST_SCHEMES[scheme as SpecialTeamsScheme].name;
+  // Check ST philosophies
+  if (schemeId in ST_PHILOSOPHIES) {
+    return ST_PHILOSOPHIES[schemeId as keyof typeof ST_PHILOSOPHIES].name;
   }
-  return scheme.replace(/_/g, ' ').replace(/-/g, ' ');
+  // Fallback: format the string
+  return schemeId.replace(/_/g, ' ').replace(/-/g, ' ');
 }
 
 export default function CoachingGeneratorPage() {
@@ -126,96 +130,135 @@ export default function CoachingGeneratorPage() {
     ? Object.values(coaching.teams).sort((a, b) => b.avgOvr - a.avgOvr)
     : [];
 
-  const CoachCard = ({ coach, compact = false }: { coach: Coach; compact?: boolean }) => (
-    <div className={cn('bg-secondary/50 border border-border rounded-xl p-4', compact && 'p-3')}>
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">{POSITION_ICONS[coach.position]}</span>
-          <div>
-            <div className={cn('font-bold', compact && 'text-sm')}>
-              {coach.firstName} {coach.lastName}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {POSITION_LABELS[coach.position]}
+  const CoachCard = ({ coach, compact = false }: { coach: Coach; compact?: boolean }) => {
+    // Get scheme display based on position
+    const getCoachSchemes = () => {
+      const schemes: { label: string; value: string; color: string }[] = [];
+
+      if (coach.offensiveScheme) {
+        schemes.push({
+          label: 'OFF',
+          value: getSchemeDisplayName(coach.offensiveScheme),
+          color: 'bg-orange-500/20 text-orange-400 border-orange-500/40',
+        });
+      }
+      if (coach.defensiveScheme) {
+        schemes.push({
+          label: 'DEF',
+          value: getSchemeDisplayName(coach.defensiveScheme),
+          color: 'bg-blue-500/20 text-blue-400 border-blue-500/40',
+        });
+      }
+      if (coach.stPhilosophy) {
+        schemes.push({
+          label: 'ST',
+          value: getSchemeDisplayName(coach.stPhilosophy),
+          color: 'bg-purple-500/20 text-purple-400 border-purple-500/40',
+        });
+      }
+
+      return schemes;
+    };
+
+    const schemes = getCoachSchemes();
+
+    return (
+      <div className={cn('bg-secondary/50 border border-border rounded-xl p-4', compact && 'p-3')}>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">{POSITION_ICONS[coach.position]}</span>
+            <div>
+              <div className={cn('font-bold', compact && 'text-sm')}>
+                {coach.firstName} {coach.lastName}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {POSITION_LABELS[coach.position]}
+              </div>
             </div>
           </div>
-        </div>
-        <div className={cn('text-2xl font-bold', RATING_COLOR(coach.ovr), compact && 'text-xl')}>
-          {coach.ovr}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-2 text-xs mb-2">
-        <div className="bg-secondary rounded p-1.5 text-center">
-          <div className="text-muted-foreground">Age</div>
-          <div className="font-medium">{coach.age}</div>
-        </div>
-        <div className="bg-secondary rounded p-1.5 text-center">
-          <div className="text-muted-foreground">Exp</div>
-          <div className="font-medium">{coach.experience} yrs</div>
-        </div>
-        <div className="bg-secondary rounded p-1.5 text-center">
-          <div className="text-muted-foreground">Salary</div>
-          <div className="font-medium">${coach.contract.salary}M</div>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-1 mb-2">
-        <span
-          className={cn(
-            'text-[10px] px-1.5 py-0.5 rounded border capitalize',
-            PHILOSOPHY_COLORS[coach.philosophy]
-          )}
-        >
-          {coach.philosophy}
-        </span>
-        <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/40">
-          {getSchemeDisplayName(coach.scheme)}
-        </span>
-      </div>
-
-      {coach.perks.length > 0 && (
-        <div className="border-t border-border pt-2 mt-2">
-          <div className="text-[10px] text-muted-foreground uppercase mb-1">Perks</div>
-          <div className="flex flex-wrap gap-1">
-            {coach.perks.map((perk) => (
-              <span
-                key={perk.id}
-                className={cn(
-                  'text-[10px] px-1.5 py-0.5 rounded',
-                  perk.tier === 3
-                    ? 'bg-yellow-500/20 text-yellow-400'
-                    : perk.tier === 2
-                      ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-zinc-500/20 text-zinc-400'
-                )}
-                title={perk.effect}
-              >
-                {perk.name} T{perk.tier}
-              </span>
-            ))}
+          <div className={cn('text-2xl font-bold', RATING_COLOR(coach.ovr), compact && 'text-xl')}>
+            {coach.ovr}
           </div>
         </div>
-      )}
 
-      {!compact && (
-        <div className="border-t border-border pt-2 mt-2 text-xs">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Contract</span>
-            <span>
-              {coach.contract.yearsRemaining}/{coach.contract.yearsTotal} yrs
+        <div className="grid grid-cols-3 gap-2 text-xs mb-2">
+          <div className="bg-secondary rounded p-1.5 text-center">
+            <div className="text-muted-foreground">Age</div>
+            <div className="font-medium">{coach.age}</div>
+          </div>
+          <div className="bg-secondary rounded p-1.5 text-center">
+            <div className="text-muted-foreground">Exp</div>
+            <div className="font-medium">{coach.experience} yrs</div>
+          </div>
+          <div className="bg-secondary rounded p-1.5 text-center">
+            <div className="text-muted-foreground">Salary</div>
+            <div className="font-medium">${coach.contract.salary}M</div>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-1 mb-2">
+          <span
+            className={cn(
+              'text-[10px] px-1.5 py-0.5 rounded border capitalize',
+              PHILOSOPHY_COLORS[coach.philosophy] || 'bg-zinc-500/20 text-zinc-400 border-zinc-500/40'
+            )}
+          >
+            {coach.philosophy}
+          </span>
+          {schemes.map((scheme) => (
+            <span
+              key={scheme.label}
+              className={cn('text-[10px] px-1.5 py-0.5 rounded border', scheme.color)}
+              title={`${scheme.label}: ${scheme.value}`}
+            >
+              {scheme.value}
             </span>
-          </div>
-          {coach.retirementRisk > 0 && (
-            <div className="flex justify-between text-orange-400">
-              <span>Retirement Risk</span>
-              <span>{coach.retirementRisk}%</span>
-            </div>
-          )}
+          ))}
         </div>
-      )}
-    </div>
-  );
+
+        {coach.perks.length > 0 && (
+          <div className="border-t border-border pt-2 mt-2">
+            <div className="text-[10px] text-muted-foreground uppercase mb-1">Perks</div>
+            <div className="flex flex-wrap gap-1">
+              {coach.perks.map((perk) => (
+                <span
+                  key={perk.id}
+                  className={cn(
+                    'text-[10px] px-1.5 py-0.5 rounded',
+                    perk.tier === 3
+                      ? 'bg-yellow-500/20 text-yellow-400'
+                      : perk.tier === 2
+                        ? 'bg-blue-500/20 text-blue-400'
+                        : 'bg-zinc-500/20 text-zinc-400'
+                  )}
+                  title={perk.effect}
+                >
+                  {perk.name} T{perk.tier}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {!compact && (
+          <div className="border-t border-border pt-2 mt-2 text-xs">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Contract</span>
+              <span>
+                {coach.contract.yearsRemaining}/{coach.contract.yearsTotal} yrs
+              </span>
+            </div>
+            {coach.retirementRisk > 0 && (
+              <div className="flex justify-between text-orange-400">
+                <span>Retirement Risk</span>
+                <span>{coach.retirementRisk}%</span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen pb-8">
@@ -228,7 +271,7 @@ export default function CoachingGeneratorPage() {
         </Link>
         <h1 className="text-2xl font-bold mt-2">Coaching Staff Generator</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Generate coaching staff with HC, OC, DC, and ST coordinators
+          Generate coaching staff with HC, OC, DC, and STC coordinators
         </p>
       </header>
 
@@ -354,12 +397,12 @@ export default function CoachingGeneratorPage() {
                         </div>
                         <div className="text-xs text-muted-foreground">DC</div>
                       </div>
-                      <div className={cn('rounded-lg p-3 text-center border', RATING_BG(stats.avgSTRating))}>
+                      <div className={cn('rounded-lg p-3 text-center border', RATING_BG(stats.avgSTCRating))}>
                         <div className="text-2xl mb-1">⚡</div>
-                        <div className={cn('text-2xl font-bold', RATING_COLOR(stats.avgSTRating))}>
-                          {stats.avgSTRating}
+                        <div className={cn('text-2xl font-bold', RATING_COLOR(stats.avgSTCRating))}>
+                          {stats.avgSTCRating}
                         </div>
-                        <div className="text-xs text-muted-foreground">ST</div>
+                        <div className="text-xs text-muted-foreground">STC</div>
                       </div>
                     </div>
                   </div>
@@ -581,7 +624,7 @@ export default function CoachingGeneratorPage() {
                     </div>
                   </div>
 
-                  {/* Special Teams Schemes */}
+                  {/* Special Teams Philosophy */}
                   <div className="bg-secondary/50 border border-border rounded-xl p-4">
                     <h3 className="text-sm font-bold text-purple-400 mb-3">Special Teams Philosophy</h3>
                     <div className="grid grid-cols-3 gap-2">

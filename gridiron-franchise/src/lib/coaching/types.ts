@@ -2,181 +2,25 @@
  * Coaching Staff System Types
  *
  * Types for the coaching staff following FINAL-coaching-staff-system.md
+ * Schemes are imported from the separate schemes module.
  */
+
+import {
+  OffensiveScheme,
+  DefensiveScheme,
+  STPhilosophy,
+} from '../schemes/types';
+
+// Re-export scheme types for convenience
+export type { OffensiveScheme, DefensiveScheme, STPhilosophy };
 
 // ============================================================================
 // COACH POSITIONS & CORE TYPES
 // ============================================================================
 
-export type CoachPosition = 'HC' | 'OC' | 'DC' | 'ST';
+export type CoachPosition = 'HC' | 'OC' | 'DC' | 'STC';
 
-export type CoachPhilosophy = 'aggressive' | 'balanced' | 'conservative';
-
-// ============================================================================
-// SCHEMES
-// ============================================================================
-
-export type OffensiveScheme =
-  | 'west_coast'
-  | 'spread'
-  | 'pro_style'
-  | 'air_raid'
-  | 'power_run'
-  | 'zone_run';
-
-export type DefensiveScheme =
-  | '4-3_base'
-  | '3-4_base'
-  | 'cover_2'
-  | 'cover_3'
-  | 'man_blitz'
-  | 'zone_blitz';
-
-export type SpecialTeamsScheme = 'aggressive_returns' | 'conservative' | 'coverage_specialist';
-
-export type CoachScheme = OffensiveScheme | DefensiveScheme | SpecialTeamsScheme;
-
-// ============================================================================
-// SCHEME DETAILS
-// ============================================================================
-
-export interface SchemeInfo {
-  id: string;
-  name: string;
-  philosophy: string;
-  bestFor: string;
-  bonuses: string[];
-  penalties: string[];
-}
-
-export const OFFENSIVE_SCHEMES: Record<OffensiveScheme, SchemeInfo> = {
-  west_coast: {
-    id: 'west_coast',
-    name: 'West Coast',
-    philosophy: 'Short timing passes',
-    bestFor: 'Accurate QBs, possession WRs',
-    bonuses: ['+3 Short Acc', '+2 Short RR'],
-    penalties: ['-2 Deep Acc'],
-  },
-  spread: {
-    id: 'spread',
-    name: 'Spread',
-    philosophy: 'Space defense, fast tempo',
-    bestFor: 'Mobile QBs, fast WRs',
-    bonuses: ['+3 Speed', '+2 Route Running'],
-    penalties: ['-2 Run Block'],
-  },
-  pro_style: {
-    id: 'pro_style',
-    name: 'Pro Style',
-    philosophy: 'Balanced run/pass',
-    bestFor: 'Pocket QBs, power RBs',
-    bonuses: ['+2 all offensive'],
-    penalties: [],
-  },
-  air_raid: {
-    id: 'air_raid',
-    name: 'Air Raid',
-    philosophy: 'Vertical passing',
-    bestFor: 'Strong arms, deep threats',
-    bonuses: ['+4 Deep Acc', '+3 Deep RR'],
-    penalties: ['-3 Run Block', '-2 Carry'],
-  },
-  power_run: {
-    id: 'power_run',
-    name: 'Power Run',
-    philosophy: 'Physical downhill',
-    bestFor: 'Power RBs, strong OL',
-    bonuses: ['+4 Truck', '+3 Run Block', '+2 STR'],
-    penalties: ['-3 all passing'],
-  },
-  zone_run: {
-    id: 'zone_run',
-    name: 'Zone Run',
-    philosophy: 'Outside zone, misdirection',
-    bestFor: 'Elusive RBs, athletic OL',
-    bonuses: ['+4 Elusive', '+3 AGI', '+2 Vision'],
-    penalties: ['-2 Trucking'],
-  },
-};
-
-export const DEFENSIVE_SCHEMES: Record<DefensiveScheme, SchemeInfo> = {
-  '4-3_base': {
-    id: '4-3_base',
-    name: '4-3 Base',
-    philosophy: 'Four DL, three LBs',
-    bestFor: 'Strong DL, versatile LBs',
-    bonuses: ['+3 DL pass rush', '+2 LB tackle'],
-    penalties: ['-2 DB coverage'],
-  },
-  '3-4_base': {
-    id: '3-4_base',
-    name: '3-4 Base',
-    philosophy: 'Three DL, four LBs',
-    bestFor: 'Big DL, rush OLBs',
-    bonuses: ['+3 OLB rush', '+2 flexibility'],
-    penalties: ['-2 DL run stop'],
-  },
-  cover_2: {
-    id: 'cover_2',
-    name: 'Cover 2',
-    philosophy: 'Two deep safeties',
-    bestFor: 'Fast safeties, zone CBs',
-    bonuses: ['+4 Zone', '+3 deep defense'],
-    penalties: ['-3 Man', 'weak intermediate'],
-  },
-  cover_3: {
-    id: 'cover_3',
-    name: 'Cover 3',
-    philosophy: 'Three deep zones',
-    bestFor: 'Ball-hawk DBs',
-    bonuses: ['+3 Zone', '+2 INTs'],
-    penalties: ['-2 run defense'],
-  },
-  man_blitz: {
-    id: 'man_blitz',
-    name: 'Man Blitz',
-    philosophy: 'Aggressive man + pressure',
-    bestFor: 'Lockdown CBs, rushers',
-    bonuses: ['+5 Man', '+4 pass rush'],
-    penalties: ['-4 Zone', 'big play risk'],
-  },
-  zone_blitz: {
-    id: 'zone_blitz',
-    name: 'Zone Blitz',
-    philosophy: 'Disguised pressure',
-    bestFor: 'Smart LBs, versatile DL',
-    bonuses: ['+3 Play Rec', '+3 Blitz'],
-    penalties: ['-2 Man'],
-  },
-};
-
-export const ST_SCHEMES: Record<SpecialTeamsScheme, SchemeInfo> = {
-  aggressive_returns: {
-    id: 'aggressive_returns',
-    name: 'Aggressive Returns',
-    philosophy: 'Return everything',
-    bestFor: 'Dynamic returners',
-    bonuses: ['+5 return yards', '+3% TD chance'],
-    penalties: ['+2% turnover risk'],
-  },
-  conservative: {
-    id: 'conservative',
-    name: 'Conservative',
-    philosophy: 'Fair catch often',
-    bestFor: 'Safe ball handling',
-    bonuses: ['-3% turnover risk'],
-    penalties: ['-5 return yards'],
-  },
-  coverage_specialist: {
-    id: 'coverage_specialist',
-    name: 'Coverage Specialist',
-    philosophy: 'Elite coverage',
-    bestFor: 'Fast gunners',
-    bonuses: ['-10 opponent return yards'],
-    penalties: [],
-  },
-};
+export type CoachPhilosophy = 'aggressive' | 'balanced' | 'conservative' | 'innovative';
 
 // ============================================================================
 // PERKS
@@ -197,29 +41,29 @@ export type HCPerkId =
   | 'disciplinarian'
   | 'winners_mentality'
   | 'clock_master'
-  | 'rebuild_specialist';
+  | 'players_coach';
 
 export type OCPerkId =
   | 'qb_whisperer'
-  | 'run_game_specialist'
-  | 'passing_game_guru'
-  | 'red_zone_maestro'
-  | 'tempo_controller'
-  | 'creative_play_caller';
+  | 'red_zone_specialist'
+  | 'tempo_tactician'
+  | 'run_game_architect'
+  | 'passing_guru'
+  | 'play_designer';
 
 export type DCPerkId =
-  | 'defensive_genius'
-  | 'turnover_creator'
+  | 'turnover_machine'
+  | 'pass_rush_specialist'
+  | 'coverage_master'
+  | 'run_stuffer'
   | 'blitz_master'
-  | 'run_stopper'
-  | 'coverage_specialist'
-  | 'db_developer';
+  | 'bend_dont_break';
 
 export type STPerkId =
-  | 'kicking_coach'
+  | 'leg_whisperer'
   | 'return_specialist'
-  | 'coverage_expert'
-  | 'field_position_master';
+  | 'coverage_ace'
+  | 'situational_genius';
 
 export type PerkId = HCPerkId | OCPerkId | DCPerkId | STPerkId;
 
@@ -228,7 +72,7 @@ export type PerkId = HCPerkId | OCPerkId | DCPerkId | STPerkId;
 // ============================================================================
 
 export interface BaseCoachAttributes {
-  schemeKnowledge: number; // 60-99
+  schemeMastery: number; // 60-99
   playerDevelopment: number; // 60-99
   motivation: number; // 60-99
   gamePlanning: number; // 60-99
@@ -240,29 +84,34 @@ export interface HCAttributes extends BaseCoachAttributes {
   clockManagement: number; // 60-99
   challengeSuccess: number; // 60-99
   discipline: number; // 60-99
-  offensiveKnowledge: number; // 60-99
-  defensiveKnowledge: number; // 60-99
+  mediaHandling: number; // 60-99
 }
 
 export interface OCAttributes extends BaseCoachAttributes {
   playCalling: number; // 60-99
   redZoneOffense: number; // 60-99
   qbDevelopment: number; // 60-99
+  tempoControl: number; // 60-99
+  creativity: number; // 60-99
 }
 
 export interface DCAttributes extends BaseCoachAttributes {
   playCalling: number; // 60-99
   redZoneDefense: number; // 60-99
   turnoverCreation: number; // 60-99
+  blitzDesign: number; // 60-99
+  coverageDisguise: number; // 60-99
 }
 
-export interface STAttributes extends BaseCoachAttributes {
+export interface STCAttributes extends BaseCoachAttributes {
   kickingGame: number; // 60-99
   returnGame: number; // 60-99
   coverageUnits: number; // 60-99
+  situational: number; // 60-99
+  gunnerDevelopment: number; // 60-99
 }
 
-export type CoachAttributes = HCAttributes | OCAttributes | DCAttributes | STAttributes;
+export type CoachAttributes = HCAttributes | OCAttributes | DCAttributes | STCAttributes;
 
 // ============================================================================
 // CONTRACT
@@ -288,7 +137,12 @@ export interface Coach {
   experience: number; // Years as a coach
   ovr: number; // 60-99
   attributes: CoachAttributes;
-  scheme: CoachScheme;
+
+  // Scheme preferences - position-specific
+  offensiveScheme?: OffensiveScheme; // HC & OC have this
+  defensiveScheme?: DefensiveScheme; // HC & DC have this
+  stPhilosophy?: STPhilosophy; // STC has this
+
   philosophy: CoachPhilosophy;
   perks: Perk[];
   contract: CoachContract;
@@ -328,7 +182,7 @@ export interface CoachingStats {
   avgHCRating: number;
   avgOCRating: number;
   avgDCRating: number;
-  avgSTRating: number;
+  avgSTCRating: number;
   avgOverallRating: number;
   eliteCoaches: number; // 90+
   greatCoaches: number; // 85-89
@@ -341,7 +195,7 @@ export interface CoachingStats {
   schemeDistribution: {
     offensive: Record<OffensiveScheme, number>;
     defensive: Record<DefensiveScheme, number>;
-    specialTeams: Record<SpecialTeamsScheme, number>;
+    specialTeams: Record<STPhilosophy, number>;
   };
   topHCs: { teamId: string; name: string; ovr: number }[];
   bottomHCs: { teamId: string; name: string; ovr: number }[];
@@ -360,119 +214,207 @@ export const PERK_XP_COSTS: Record<PerkTier, number> = {
 export const HC_PERKS: Record<HCPerkId, { name: string; effects: Record<PerkTier, string> }> = {
   motivator: {
     name: 'Motivator',
-    effects: { 1: '+10% morale', 2: '+20% morale', 3: '+30% morale, never quit' },
+    effects: {
+      1: '+10% team morale',
+      2: '+20% team morale',
+      3: '+30% team morale, team never gives up',
+    },
   },
   genius_mind: {
     name: 'Genius Mind',
-    effects: { 1: '+2 AWR all', 2: '+4 AWR all', 3: '+6 AWR, perfect game plans' },
+    effects: {
+      1: '+2 AWR to all players',
+      2: '+4 AWR to all players',
+      3: '+6 AWR to all players, perfect game plans',
+    },
   },
   disciplinarian: {
     name: 'Disciplinarian',
-    effects: { 1: '-25% penalties', 2: '-50% penalties', 3: '-75% penalties' },
+    effects: {
+      1: '-25% team penalties',
+      2: '-50% team penalties',
+      3: '-75% team penalties, no personal fouls',
+    },
   },
   winners_mentality: {
     name: "Winner's Mentality",
-    effects: { 1: '+2 playoff OVR', 2: '+3 playoff OVR', 3: '+5 playoff OVR' },
+    effects: {
+      1: '+2 OVR in playoff games',
+      2: '+4 OVR in playoff games',
+      3: '+6 OVR in playoff games, clutch bonus',
+    },
   },
   clock_master: {
     name: 'Clock Master',
-    effects: { 1: '+20% timeout efficiency', 2: '+40%, better 2-min', 3: 'Perfect clock management' },
+    effects: {
+      1: 'Better timeout usage, +1 challenge/game',
+      2: 'Optimal 2-minute drill, +2 challenges',
+      3: 'Perfect clock management, auto-win ties',
+    },
   },
-  rebuild_specialist: {
-    name: 'Rebuild Specialist',
-    effects: { 1: '+10% young dev', 2: '+25% young dev', 3: '+50% young dev' },
+  players_coach: {
+    name: "Players' Coach",
+    effects: {
+      1: '+5% player loyalty, -10% holdouts',
+      2: '+10% loyalty, -25% holdouts',
+      3: '+20% loyalty, players take discounts',
+    },
   },
 };
 
 export const OC_PERKS: Record<OCPerkId, { name: string; effects: Record<PerkTier, string> }> = {
   qb_whisperer: {
     name: 'QB Whisperer',
-    effects: { 1: '+25% QB dev', 2: '+50% QB dev', 3: '+100% QB dev' },
+    effects: {
+      1: '+25% QB XP gain',
+      2: '+50% QB XP gain, +2 QB OVR',
+      3: '+75% QB XP gain, +4 QB OVR, unlocks potential',
+    },
   },
-  run_game_specialist: {
-    name: 'Run Game Specialist',
-    effects: { 1: '+3 RB/OL run', 2: '+5 RB/OL run', 3: '+8 RB/OL run' },
+  red_zone_specialist: {
+    name: 'Red Zone Specialist',
+    effects: {
+      1: '+10% red zone TD rate',
+      2: '+20% red zone TD rate',
+      3: '+30% red zone TD rate, goal line package',
+    },
   },
-  passing_game_guru: {
-    name: 'Passing Game Guru',
-    effects: { 1: '+3 passing', 2: '+5 passing', 3: '+8 passing' },
+  tempo_tactician: {
+    name: 'Tempo Tactician',
+    effects: {
+      1: 'No-huddle +5% efficiency',
+      2: 'No-huddle +10%, defense fatigues faster',
+      3: 'No-huddle +15%, hurry-up mastery',
+    },
   },
-  red_zone_maestro: {
-    name: 'Red Zone Maestro',
-    effects: { 1: '+5 RZ offense', 2: '+8 RZ offense', 3: '+12 RZ, 90%+ TD' },
+  run_game_architect: {
+    name: 'Run Game Architect',
+    effects: {
+      1: '+0.3 YPC team average',
+      2: '+0.6 YPC, +25% RB XP',
+      3: '+1.0 YPC, elite run blocking bonus',
+    },
   },
-  tempo_controller: {
-    name: 'Tempo Controller',
-    effects: { 1: '+10% no-huddle', 2: '+20%, tires D', 3: '+30%, no subs' },
+  passing_guru: {
+    name: 'Passing Guru',
+    effects: {
+      1: '+3% completion rate',
+      2: '+5% completion, +25% WR/TE XP',
+      3: '+8% completion, deep ball specialist',
+    },
   },
-  creative_play_caller: {
-    name: 'Creative Play Caller',
-    effects: { 1: '10 trick plays', 2: '20 tricks, +10%', 3: '30 tricks, +25%' },
+  play_designer: {
+    name: 'Play Designer',
+    effects: {
+      1: '+10% trick play success',
+      2: '+20% trick plays, unique formations',
+      3: '+30% trick plays, unpredictable offense',
+    },
   },
 };
 
 export const DC_PERKS: Record<DCPerkId, { name: string; effects: Record<PerkTier, string> }> = {
-  defensive_genius: {
-    name: 'Defensive Genius',
-    effects: { 1: '+3 all defense', 2: '+5 all defense', 3: '+8 all, top 5 D' },
+  turnover_machine: {
+    name: 'Turnover Machine',
+    effects: {
+      1: '+10% turnover chance',
+      2: '+20% turnover chance',
+      3: '+30% turnover chance, strip specialist',
+    },
   },
-  turnover_creator: {
-    name: 'Turnover Creator',
-    effects: { 1: '+25% TO chance', 2: '+50% TO chance', 3: '+75% TO, 3+/game' },
+  pass_rush_specialist: {
+    name: 'Pass Rush Specialist',
+    effects: {
+      1: '+2 to all pass rush moves',
+      2: '+4 pass rush, +25% DE/DT XP',
+      3: '+6 pass rush, blitz packages elite',
+    },
+  },
+  coverage_master: {
+    name: 'Coverage Master',
+    effects: {
+      1: '+2 to all coverage ratings',
+      2: '+4 coverage, +25% CB/S XP',
+      3: '+6 coverage, shutdown ability',
+    },
+  },
+  run_stuffer: {
+    name: 'Run Stuffer',
+    effects: {
+      1: '-0.3 opponent YPC',
+      2: '-0.6 YPC, +25% LB XP',
+      3: '-1.0 YPC, goal line stand specialist',
+    },
   },
   blitz_master: {
     name: 'Blitz Master',
-    effects: { 1: '+3 blitz rush', 2: '+5 blitz rush', 3: '+8 blitz, 5+ sacks' },
+    effects: {
+      1: '+15% blitz success rate',
+      2: '+25% blitz success, disguised looks',
+      3: '+35% blitz success, chaos defense',
+    },
   },
-  run_stopper: {
-    name: 'Run Stopper',
-    effects: { 1: '+3 run defense', 2: '+5 run defense', 3: '+8 run, <75 yards' },
-  },
-  coverage_specialist: {
-    name: 'Coverage Specialist',
-    effects: { 1: '+3 coverage', 2: '+5 coverage', 3: '+8 coverage, lockdown' },
-  },
-  db_developer: {
-    name: 'DB Developer',
-    effects: { 1: '+25% DB dev', 2: '+50% DB dev', 3: '+100% DB dev' },
+  bend_dont_break: {
+    name: "Bend Don't Break",
+    effects: {
+      1: '-10% opponent red zone TD rate',
+      2: '-20% red zone TDs, force FGs',
+      3: '-30% red zone TDs, goal line elite',
+    },
   },
 };
 
-export const ST_PERKS: Record<STPerkId, { name: string; effects: Record<PerkTier, string> }> = {
-  kicking_coach: {
-    name: 'Kicking Coach',
-    effects: { 1: '+3 K/P', 2: '+5 K/P', 3: '+8 K/P, 95%+ FG' },
+export const STC_PERKS: Record<STPerkId, { name: string; effects: Record<PerkTier, string> }> = {
+  leg_whisperer: {
+    name: 'Leg Whisperer',
+    effects: {
+      1: '+3 to K/P ratings',
+      2: '+5 K/P ratings, clutch kicking',
+      3: '+8 K/P ratings, ice-proof kickers',
+    },
   },
   return_specialist: {
     name: 'Return Specialist',
-    effects: { 1: '+5 return yards', 2: '+10 yards', 3: '+15 yards, TD every 3 games' },
+    effects: {
+      1: '+5 return yards average',
+      2: '+10 return yards, +2% return TD',
+      3: '+15 return yards, +5% return TD',
+    },
   },
-  coverage_expert: {
-    name: 'Coverage Expert',
-    effects: { 1: '-5 opp yards', 2: '-10 opp yards', 3: '-15 yards, no ST scores' },
+  coverage_ace: {
+    name: 'Coverage Ace',
+    effects: {
+      1: '-5 opponent return yards',
+      2: '-10 return yards, +25% ST tackles',
+      3: '-15 return yards, elite gunners',
+    },
   },
-  field_position_master: {
-    name: 'Field Position Master',
-    effects: { 1: '+3 avg position', 2: '+5 avg position', 3: '+8 position' },
+  situational_genius: {
+    name: 'Situational Genius',
+    effects: {
+      1: '+15% fake punt/FG success',
+      2: '+25% fakes, +10% onside kick',
+      3: '+35% fakes, +20% onside, surprise plays',
+    },
   },
 };
 
 // Salary ranges by OVR (in millions)
 export const HC_SALARY_RANGES: Record<string, [number, number]> = {
   '95-99': [12, 15],
-  '90-94': [10, 12],
-  '85-89': [8, 10],
-  '80-84': [6, 8],
-  '75-79': [4, 6],
-  '70-74': [2, 4],
-  '60-69': [1, 2],
+  '90-94': [9, 12],
+  '85-89': [6, 9],
+  '80-84': [4, 6],
+  '75-79': [2, 4],
+  '70-74': [1, 2],
+  '60-69': [0.5, 1],
 };
 
-export const COORDINATOR_SALARY_RANGES: Record<string, { OC: [number, number]; DC: [number, number]; ST: [number, number] }> = {
-  '90-99': { OC: [4, 6], DC: [4, 6], ST: [2, 3] },
-  '85-89': { OC: [3, 4], DC: [3, 4], ST: [1.5, 2] },
-  '80-84': { OC: [2, 3], DC: [2, 3], ST: [1, 1.5] },
-  '75-79': { OC: [1.5, 2], DC: [1.5, 2], ST: [0.8, 1] },
-  '70-74': { OC: [1, 1.5], DC: [1, 1.5], ST: [0.6, 0.8] },
-  '60-69': { OC: [0.5, 1], DC: [0.5, 1], ST: [0.4, 0.6] },
+export const COORDINATOR_SALARY_RANGES: Record<string, { OC: [number, number]; DC: [number, number]; STC: [number, number] }> = {
+  '90-99': { OC: [6, 8], DC: [6, 8], STC: [2, 3] },
+  '85-89': { OC: [4, 6], DC: [4, 6], STC: [1.5, 2] },
+  '80-84': { OC: [2.5, 4], DC: [2.5, 4], STC: [1, 1.5] },
+  '75-79': { OC: [1.5, 2.5], DC: [1.5, 2.5], STC: [0.8, 1] },
+  '70-74': { OC: [0.8, 1.5], DC: [0.8, 1.5], STC: [0.5, 0.8] },
+  '60-69': { OC: [0.5, 0.8], DC: [0.5, 0.8], STC: [0.3, 0.5] },
 };
