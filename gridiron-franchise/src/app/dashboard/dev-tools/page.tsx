@@ -77,6 +77,12 @@ export default function DevToolsPage() {
             href="/dashboard/dev-tools/coaching"
             description="Coaching staff"
           />
+          <NavCard
+            title="Scouting"
+            icon="SCT"
+            href="/dashboard/dev-tools/scouting"
+            description="Scouting department"
+          />
         </div>
       </main>
     </div>
