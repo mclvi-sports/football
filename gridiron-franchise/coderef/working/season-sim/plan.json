@@ -1,0 +1,525 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "season-sim",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Code",
+    "generated_at": "2025-12-02T14:30:00Z",
+    "has_context": false,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": [
+        "context/FINALS/FINAL-schemes-system.md",
+        "context/FINALS/FINAL-coaching-staff-system (1).md",
+        "context/SIMULATOR-IMPROVEMENTS.md"
+      ],
+      "coding_standards": {
+        "language": "TypeScript",
+        "framework": "Next.js 14 (App Router)",
+        "styling": "Tailwind CSS",
+        "state_management": "SessionStorage for dev tools"
+      },
+      "reference_components": [
+        "src/lib/sim/simulator.ts",
+        "src/lib/schemes/scheme-data.ts",
+        "src/lib/coaching/coaching-generator.ts",
+        "src/lib/facilities/facilities-generator.ts",
+        "src/lib/schedule/schedule-generator.ts"
+      ],
+      "discovered_patterns": {
+        "module_structure": "types.ts + generator.ts + store.ts per module",
+        "type_exports": "All types exported from types.ts, re-exported in index",
+        "constants": "UPPERCASE_SNAKE_CASE for constant objects",
+        "generators": "Pure functions that return complete data structures"
+      }
+    },
+    "1_executive_summary": {
+      "feature_description": "Complete season simulation system that integrates all existing modules (schemes, coaching, facilities, scouting, schedule, rosters) into a cohesive 18-week season with playoffs, player progression, and comprehensive statistics tracking.",
+      "primary_goal": "Enable full season simulation where every module affects game outcomes - schemes influence play calling, coaching perks modify performance, facilities provide bonuses, and players progress based on performance.",
+      "scope": {
+        "in_scope": [
+          "Module integration into game simulator (schemes, coaching, facilities)",
+          "Season loop engine (18 weeks + playoffs)",
+          "Standings and statistics accumulation",
+          "Player progression system (XP, attribute growth)",
+          "Dev tools UI for season simulation"
+        ],
+        "out_of_scope": [
+          "Database persistence (using SessionStorage for now)",
+          "Multi-season franchise mode",
+          "Trade and free agency systems",
+          "Draft simulation"
+        ]
+      },
+      "success_metrics": [
+        "All 6 modules connected and affecting simulation outcomes",
+        "Can run complete 18-week season + 4 playoff rounds",
+        "Player/team stats accumulate accurately across games",
+        "Standings reflect correct W-L records and tiebreakers",
+        "Players gain XP and attributes change based on performance"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity_score": 8,
+      "risk_level": "high",
+      "risks": [
+        {
+          "id": "RISK-001",
+          "description": "Integration complexity - connecting 6 modules into simulator",
+          "likelihood": "medium",
+          "impact": "high",
+          "mitigation": "Create separate modifier files for each module, test incrementally"
+        },
+        {
+          "id": "RISK-002",
+          "description": "Performance - simulating 272 games (17 weeks x 16 games) may be slow",
+          "likelihood": "medium",
+          "impact": "medium",
+          "mitigation": "Optimize hot paths, consider web workers for background sim"
+        },
+        {
+          "id": "RISK-003",
+          "description": "Type mismatches between modules",
+          "likelihood": "low",
+          "impact": "medium",
+          "mitigation": "Use existing scheme types, create adapter functions"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        {
+          "path": "src/lib/sim/scheme-modifiers.ts",
+          "purpose": "Calculate scheme matchup advantages and apply play tendencies",
+          "estimated_lines": 150
+        },
+        {
+          "path": "src/lib/sim/coaching-modifiers.ts",
+          "purpose": "Apply coach perk effects to game simulation",
+          "estimated_lines": 200
+        },
+        {
+          "path": "src/lib/sim/facility-modifiers.ts",
+          "purpose": "Apply stadium, training room, weight room effects",
+          "estimated_lines": 100
+        },
+        {
+          "path": "src/lib/season/types.ts",
+          "purpose": "Season state, standings, playoff types",
+          "estimated_lines": 150
+        },
+        {
+          "path": "src/lib/season/season-simulator.ts",
+          "purpose": "Main season loop orchestration",
+          "estimated_lines": 300
+        },
+        {
+          "path": "src/lib/season/standings.ts",
+          "purpose": "W-L tracking, division/conference rankings",
+          "estimated_lines": 150
+        },
+        {
+          "path": "src/lib/season/playoffs.ts",
+          "purpose": "Playoff bracket generation and simulation",
+          "estimated_lines": 200
+        },
+        {
+          "path": "src/lib/progression/types.ts",
+          "purpose": "XP and progression type definitions",
+          "estimated_lines": 80
+        },
+        {
+          "path": "src/lib/progression/xp-calculator.ts",
+          "purpose": "Calculate XP gain per game based on performance",
+          "estimated_lines": 120
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/season/page.tsx",
+          "purpose": "Season simulation dev tools UI",
+          "estimated_lines": 400
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "src/lib/sim/simulator.ts",
+          "changes": "Add integration points for scheme/coaching/facility modifiers"
+        },
+        {
+          "path": "src/lib/sim/types.ts",
+          "changes": "Extend SimTeam with coaching staff and facilities data"
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/page.tsx",
+          "changes": "Add Season nav card"
+        }
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "FEAT-001",
+          "name": "Scheme Integration",
+          "description": "Integrate offensive/defensive schemes into game simulation",
+          "requirements": [
+            "Apply scheme matchup advantages (strong/weak against)",
+            "Use play calling tendencies from scheme data",
+            "Apply pass distribution (short/medium/deep)",
+            "Calculate player scheme fit modifiers"
+          ]
+        },
+        {
+          "id": "FEAT-002",
+          "name": "Coaching Integration",
+          "description": "Apply coach perks and attributes to game outcomes",
+          "requirements": [
+            "HC perks: motivation, genius mind, clock master, etc.",
+            "OC perks: QB whisperer, red zone specialist, tempo tactician",
+            "DC perks: turnover machine, pass rush specialist, coverage master",
+            "STC perks: leg whisperer, return specialist, coverage ace"
+          ]
+        },
+        {
+          "id": "FEAT-003",
+          "name": "Facilities Integration",
+          "description": "Apply facility effects to games and season",
+          "requirements": [
+            "Stadium home advantage bonus",
+            "Training room injury prevention",
+            "Weight room attribute bonuses",
+            "Practice facility XP multiplier"
+          ]
+        },
+        {
+          "id": "FEAT-004",
+          "name": "Season Loop",
+          "description": "18-week season simulation with proper orchestration",
+          "requirements": [
+            "Iterate through schedule week by week",
+            "Handle bye weeks (recovery, no game)",
+            "Accumulate player and team statistics",
+            "Update standings after each game",
+            "Track injuries across weeks"
+          ]
+        },
+        {
+          "id": "FEAT-005",
+          "name": "Playoff System",
+          "description": "Generate and simulate playoff bracket",
+          "requirements": [
+            "Determine 6 seeds per conference (4 division winners + 2 wild cards)",
+            "Generate Wild Card matchups (3 vs 6, 4 vs 5)",
+            "Divisional round with reseeding",
+            "Conference championships",
+            "Super Bowl"
+          ]
+        },
+        {
+          "id": "FEAT-006",
+          "name": "Player Progression",
+          "description": "XP gain and attribute changes based on performance",
+          "requirements": [
+            "Calculate XP from game stats",
+            "Apply facility and coach bonuses to XP",
+            "Attribute growth based on XP",
+            "Age-based regression for veterans"
+          ]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SEASON-SIM-001",
+        "name": "Season Simulation",
+        "feature_dir": "coderef/working/season-sim"
+      },
+      "tasks": [
+        {
+          "id": "SCHEME-001",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Create scheme-modifiers.ts with matchup calculations",
+          "feature_id": "FEAT-001",
+          "phase": 1,
+          "priority": "critical",
+          "estimated_lines": 150
+        },
+        {
+          "id": "SCHEME-002",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Integrate scheme modifiers into simulator.ts",
+          "feature_id": "FEAT-001",
+          "phase": 1,
+          "priority": "critical",
+          "depends_on": ["SCHEME-001"]
+        },
+        {
+          "id": "COACH-001",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Create coaching-modifiers.ts with perk effects",
+          "feature_id": "FEAT-002",
+          "phase": 1,
+          "priority": "critical",
+          "estimated_lines": 200
+        },
+        {
+          "id": "COACH-002",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Integrate coaching modifiers into simulator.ts",
+          "feature_id": "FEAT-002",
+          "phase": 1,
+          "priority": "critical",
+          "depends_on": ["COACH-001"]
+        },
+        {
+          "id": "FACIL-001",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Create facility-modifiers.ts with stadium/training effects",
+          "feature_id": "FEAT-003",
+          "phase": 1,
+          "priority": "high",
+          "estimated_lines": 100
+        },
+        {
+          "id": "FACIL-002",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Integrate facility modifiers into simulator.ts",
+          "feature_id": "FEAT-003",
+          "phase": 1,
+          "priority": "high",
+          "depends_on": ["FACIL-001"]
+        },
+        {
+          "id": "TYPES-001",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Extend SimTeam type with coaching and facilities",
+          "feature_id": "FEAT-001",
+          "phase": 1,
+          "priority": "critical"
+        },
+        {
+          "id": "SEASON-001",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Create season/types.ts with season state types",
+          "feature_id": "FEAT-004",
+          "phase": 2,
+          "priority": "critical",
+          "estimated_lines": 150
+        },
+        {
+          "id": "SEASON-002",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Create standings.ts with W-L tracking",
+          "feature_id": "FEAT-004",
+          "phase": 2,
+          "priority": "critical",
+          "estimated_lines": 150
+        },
+        {
+          "id": "SEASON-003",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Create season-simulator.ts main loop",
+          "feature_id": "FEAT-004",
+          "phase": 2,
+          "priority": "critical",
+          "depends_on": ["SEASON-001", "SEASON-002"],
+          "estimated_lines": 300
+        },
+        {
+          "id": "PLAYOFF-001",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Create playoffs.ts with bracket generation",
+          "feature_id": "FEAT-005",
+          "phase": 2,
+          "priority": "high",
+          "estimated_lines": 200
+        },
+        {
+          "id": "PROG-001",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Create progression/types.ts",
+          "feature_id": "FEAT-006",
+          "phase": 3,
+          "priority": "medium",
+          "estimated_lines": 80
+        },
+        {
+          "id": "PROG-002",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Create xp-calculator.ts",
+          "feature_id": "FEAT-006",
+          "phase": 3,
+          "priority": "medium",
+          "depends_on": ["PROG-001"],
+          "estimated_lines": 120
+        },
+        {
+          "id": "UI-001",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Create season dev tools page",
+          "feature_id": "FEAT-004",
+          "phase": 4,
+          "priority": "high",
+          "estimated_lines": 400
+        },
+        {
+          "id": "UI-002",
+          "workorder_id": "WO-SEASON-SIM-001",
+          "description": "Add Season nav card to dev-tools index",
+          "feature_id": "FEAT-004",
+          "phase": 4,
+          "priority": "medium"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "id": "phase_1",
+          "name": "Module Integration",
+          "description": "Integrate schemes, coaching, and facilities into game simulator",
+          "tasks": ["SCHEME-001", "SCHEME-002", "COACH-001", "COACH-002", "FACIL-001", "FACIL-002", "TYPES-001"],
+          "deliverables": [
+            "scheme-modifiers.ts",
+            "coaching-modifiers.ts",
+            "facility-modifiers.ts",
+            "Updated simulator.ts with integration points"
+          ],
+          "success_criteria": [
+            "Schemes affect play calling percentages",
+            "Coach perks modify game outcomes",
+            "Facilities affect home advantage and injuries"
+          ]
+        },
+        {
+          "id": "phase_2",
+          "name": "Season Engine",
+          "description": "Create season loop, standings, and playoff systems",
+          "tasks": ["SEASON-001", "SEASON-002", "SEASON-003", "PLAYOFF-001"],
+          "deliverables": [
+            "season/types.ts",
+            "season/standings.ts",
+            "season/season-simulator.ts",
+            "season/playoffs.ts"
+          ],
+          "success_criteria": [
+            "Can simulate full 18-week season",
+            "Standings update correctly after each game",
+            "Playoff bracket generates with correct seeding",
+            "Champion crowned after Super Bowl"
+          ]
+        },
+        {
+          "id": "phase_3",
+          "name": "Player Progression",
+          "description": "Implement XP gain and attribute changes",
+          "tasks": ["PROG-001", "PROG-002"],
+          "deliverables": [
+            "progression/types.ts",
+            "progression/xp-calculator.ts"
+          ],
+          "success_criteria": [
+            "Players gain XP based on game performance",
+            "Attributes change based on accumulated XP",
+            "Facility and coach bonuses apply to XP gain"
+          ]
+        },
+        {
+          "id": "phase_4",
+          "name": "Dev Tools UI",
+          "description": "Create season simulation UI for testing",
+          "tasks": ["UI-001", "UI-002"],
+          "deliverables": [
+            "season/page.tsx dev tools page",
+            "Updated dev-tools index"
+          ],
+          "success_criteria": [
+            "Can start and run season simulation",
+            "Standings visible during simulation",
+            "Stats leaderboards display correctly",
+            "Playoff bracket visualized"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Scheme matchup calculations return correct advantages",
+        "Coach perk modifiers apply correctly",
+        "Facility effects calculate properly",
+        "XP calculation matches expected values"
+      ],
+      "integration_tests": [
+        "Full game simulation with all modifiers",
+        "Season loop completes without errors",
+        "Standings reflect game outcomes",
+        "Playoff seeding follows NFL rules"
+      ],
+      "manual_tests": [
+        "Simulate multiple seasons, verify variety",
+        "Check stat accumulation accuracy",
+        "Verify player progression feels realistic",
+        "Test edge cases (ties, tiebreakers)"
+      ]
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        {
+          "id": "AC-001",
+          "description": "All 6 modules (schemes, coaching, facilities, scouting, schedule, rosters) affect simulation",
+          "verification": "Each module's data visibly impacts game outcomes"
+        },
+        {
+          "id": "AC-002",
+          "description": "Season completes with accurate standings",
+          "verification": "18 weeks + playoffs run, W-L records match game results"
+        },
+        {
+          "id": "AC-003",
+          "description": "Player stats accumulate correctly",
+          "verification": "Sum of game stats equals season totals"
+        },
+        {
+          "id": "AC-004",
+          "description": "Playoffs produce a champion",
+          "verification": "12-team bracket runs 4 rounds to Super Bowl winner"
+        },
+        {
+          "id": "AC-005",
+          "description": "Player progression works",
+          "verification": "Players gain XP and attributes change over season"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Create scheme-modifiers.ts",
+        "[ ] Create coaching-modifiers.ts",
+        "[ ] Create facility-modifiers.ts",
+        "[ ] Extend SimTeam type",
+        "[ ] Integrate all modifiers into simulator.ts",
+        "[ ] Test single game with all modifiers"
+      ],
+      "phase_2_checklist": [
+        "[ ] Create season/types.ts",
+        "[ ] Create standings.ts",
+        "[ ] Create season-simulator.ts",
+        "[ ] Create playoffs.ts",
+        "[ ] Test full season simulation",
+        "[ ] Test playoff bracket"
+      ],
+      "phase_3_checklist": [
+        "[ ] Create progression/types.ts",
+        "[ ] Create xp-calculator.ts",
+        "[ ] Integrate progression into season loop",
+        "[ ] Test XP gain and attribute changes"
+      ],
+      "phase_4_checklist": [
+        "[ ] Create season dev tools page",
+        "[ ] Add nav card to dev-tools index",
+        "[ ] Test UI controls",
+        "[ ] Verify all displays work"
+      ]
+    }
+  }
+}
