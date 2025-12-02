@@ -83,6 +83,12 @@ export default function DevToolsPage() {
             href="/dashboard/dev-tools/scouting"
             description="Scouting department"
           />
+          <NavCard
+            title="Schemes"
+            icon="SCH"
+            href="/dashboard/dev-tools/schemes"
+            description="View scheme details"
+          />
         </div>
       </main>
     </div>
