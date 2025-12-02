@@ -4,9 +4,9 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
 const themes = [
-  { value: "light", label: "Light", icon: "☀️" },
-  { value: "dark", label: "Dark", icon: "🌙" },
-  { value: "system", label: "System", icon: "💻" },
+  { value: "light", label: "Light", icon: "L" },
+  { value: "dark", label: "Dark", icon: "D" },
+  { value: "system", label: "System", icon: "S" },
 ] as const;
 
 export function ThemeToggle() {

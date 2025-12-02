@@ -1,0 +1,33 @@
+{
+  "feature_name": "dev-tools-finals-alignment",
+  "description": "Update all 4 dev tools generators (Roster, FA Pool, Draft Class, Full New Game) to align with FINALS design documents. Ensure traits, badges, contracts, and all generation logic matches the finalized specifications.",
+  "goal": "Align existing generators with FINALS docs and add missing features",
+  "requirements": [
+    "Roster Generator aligns with FINAL-roster-generation-system.md",
+    "FA Pool Generator aligns with FINAL-free-agent-pool-system.md",
+    "Draft Class Generator aligns with FINAL-draft-class-system.md",
+    "Player generation uses all 70 archetypes from FINAL-player-generation-system.md",
+    "Traits system matches FINAL-traits-system.md (44 traits)",
+    "Badge system matches FINAL-badge-system.md (43 badges, 4 tiers)",
+    "Contract/salary generation matches FINAL-salarycap.md",
+    "Full New Game Generator combines all systems correctly"
+  ],
+  "out_of_scope": [
+    "Coaching staff generation (future feature)",
+    "Scout department generation (future feature)",
+    "Facilities generation (future feature)",
+    "Season calendar implementation"
+  ],
+  "constraints": [
+    "Must work with existing Player type in src/lib/types.ts",
+    "Must not break existing dev tools UI",
+    "Generators must remain testable in isolation"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+    "workorder_assigned_at": "2025-12-02T00:09:51.232181+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

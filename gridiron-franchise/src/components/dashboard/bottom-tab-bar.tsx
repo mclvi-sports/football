@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface Tab {
   id: string;
   label: string;
   icon: string;
+  href?: string;
 }
 
 const tabs: Tab[] = [
@@ -13,7 +15,7 @@ const tabs: Tab[] = [
   { id: "roster", label: "Roster", icon: "R" },
   { id: "schedule", label: "Schedule", icon: "S" },
   { id: "draft", label: "Draft", icon: "D" },
-  { id: "settings", label: "Settings", icon: "G" },
+  { id: "settings", label: "Settings", icon: "G", href: "/dashboard/settings" },
 ];
 
 interface BottomTabBarProps {
@@ -27,15 +29,9 @@ export function BottomTabBar({ activeTab, onTabChange }: BottomTabBarProps) {
       <div className="flex items-center justify-around h-16 max-w-[500px] mx-auto">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => onTabChange?.(tab.id)}
-              className={cn(
-                "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors",
-                isActive ? "text-primary" : "text-muted-foreground"
-              )}
-            >
+
+          const content = (
+            <>
               {/* Icon placeholder */}
               <div
                 className={cn(
@@ -47,6 +43,36 @@ export function BottomTabBar({ activeTab, onTabChange }: BottomTabBarProps) {
               </div>
               {/* Label */}
               <span className="text-[10px] font-medium">{tab.label}</span>
+            </>
+          );
+
+          // If tab has href, use Link
+          if (tab.href) {
+            return (
+              <Link
+                key={tab.id}
+                href={tab.href}
+                className={cn(
+                  "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors",
+                  isActive ? "text-primary" : "text-muted-foreground"
+                )}
+              >
+                {content}
+              </Link>
+            );
+          }
+
+          // Otherwise use button
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onTabChange?.(tab.id)}
+              className={cn(
+                "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors",
+                isActive ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              {content}
             </button>
           );
         })}

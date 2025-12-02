@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<!--
+================================================================================
+GRIDIRON ENGINE v2.0 - ROSTER INTEGRATION NOTES
+================================================================================
+
+This simulator is designed to accept externally-generated roster data.
+The current TEAMS constant contains PLACEHOLDER data that should be replaced
+with dynamically loaded rosters from your roster generation system.
+
+================================================================================
+EXPECTED PLAYER DATA STRUCTURE
+================================================================================
+
+Each player object should contain:
+
+{
+    id: string,                  // Unique ID: "POR-QB-001"
+    firstName: string,           // From namepools.csv
+    lastName: string,            // From namepools.csv  
+    position: string,            // QB, RB, FB, WR, TE, LT, LG, C, RG, RT,
+                                 // EDGE, DT, LB, CB, S, K, P, LS
+    archetype: string,           // "Field General", "Power Back", etc.
+    ovr: number,                 // 40-99
+    age: number,                 // 21-40
+    experience: number,          // 0-20 years
+    
+    attributes: {
+        // UNIVERSAL (all positions)
+        speed: number,           // SPD 0-99
+        acceleration: number,    // ACC 0-99
+        strength: number,        // STR 0-99
+        agility: number,         // AGI 0-99
+        jumping: number,         // JMP 0-99
+        stamina: number,         // STA 0-99
+        toughness: number,       // TGH 0-99
+        awareness: number,       // AWR 0-99
+        
+        // QB-SPECIFIC
+        throwPower: number,      // THP
+        shortAccuracy: number,   // SAC
+        mediumAccuracy: number,  // MAC
+        deepAccuracy: number,    // DAC
+        throwOnRun: number,      // TOR
+        throwUnderPressure: number, // TUP
+        playAction: number,      // PAC
+        breakSack: number,       // BSK
+        
+        // RB-SPECIFIC
+        carrying: number,        // CAR
+        ballCarrierVision: number, // BCV
+        breakTackle: number,     // BTK
+        trucking: number,        // TRK
+        elusiveness: number,     // ELU
+        spinMove: number,        // SPM
+        jukeMove: number,        // JKM
+        stiffArm: number,        // SFA
+        
+        // RECEIVER (WR/TE)
+        catching: number,        // CTH
+        catchInTraffic: number,  // CIT
+        spectacularCatch: number, // SPC
+        shortRouteRunning: number, // SRR
+        mediumRouteRunning: number, // MRR
+        deepRouteRunning: number, // DRR
+        release: number,         // REL
+        
+        // BLOCKING (OL/TE)
+        passBlocking: number,    // PBK
+        runBlocking: number,     // RBK
+        impactBlocking: number,  // IBL
+        leadBlocking: number,    // LBK
+        passBlockPower: number,  // PBP
+        passBlockFinesse: number, // PBF
+        runBlockPower: number,   // RBP
+        runBlockFinesse: number, // RBF
+        
+        // PASS RUSH (EDGE/DT)
+        powerMoves: number,      // PMV
+        finesseMoves: number,    // FMV
+        blockShedding: number,   // BSH
+        
+        // TACKLING (DEF)
+        tackle: number,          // TAK
+        hitPower: number,        // HTP
+        pursuit: number,         // PUR
+        playRecognition: number, // PRC
+        
+        // COVERAGE (LB/CB/S)
+        manCoverage: number,     // MCV
+        zoneCoverage: number,    // ZCV
+        press: number,           // PRS
+        
+        // KICKING
+        kickPower: number,       // KPW
+        kickAccuracy: number     // KAC
+    },
+    
+    traits: string[],            // ["Ice in Veins", "Durable", "Film Junkie"]
+    
+    badges: [                    // Array of badge objects
+        { name: string, tier: string }  // tier: "Bronze"|"Silver"|"Gold"|"HoF"
+    ],
+    
+    contract: {
+        salary: number,          // Annual salary
+        yearsRemaining: number,
+        signingBonus: number
+    },
+    
+    devTrait: string,            // "Superstar"|"Star"|"Normal"|"Late Bloomer"
+    potential: number,           // 60-99
+    
+    // GAME STATS (initialize to zeros, update during sim)
+    gameStats: {
+        passing: { attempts: 0, completions: 0, yards: 0, tds: 0, ints: 0, sacked: 0 },
+        rushing: { carries: 0, yards: 0, tds: 0, fumbles: 0, long: 0 },
+        receiving: { targets: 0, catches: 0, yards: 0, tds: 0, long: 0 },
+        defense: { tackles: 0, sacks: 0, ints: 0, passDeflections: 0 },
+        kicking: { fgAttempts: 0, fgMade: 0, xpAttempts: 0, xpMade: 0 }
+    }
+}
+
+================================================================================
+EXPECTED TEAM DATA STRUCTURE
+================================================================================
+
+Each team object should contain:
+
+{
+    id: string,                  // "POR" (abbreviation)
+    city: string,                // "Portland"
+    name: string,                // "Lumberjacks"
+    abbr: string,                // "POR"
+    conference: string,          // "Pacific"
+    division: string,            // "North"
+    primaryColor: string,        // "#2D5A27"
+    secondaryColor: string,      // "#8B4513"
+    
+    coaches: {
+        headCoach: {
+            name: string,
+            ovr: number,
+            offScheme: string,   // "West Coast"|"Air Raid"|"Power Run"|"Spread"|"Pro Style"|"Run Heavy"
+            defScheme: string,   // "4-3"|"3-4"|"4-2-5"|"Cover 2"|"Cover 3"
+            traits: string[]
+        }
+    },
+    
+    roster: Player[],            // Array of 53 Player objects
+    
+    depthChart: {                // Position -> array of player IDs (ordered by depth)
+        QB: ["POR-QB-001", "POR-QB-002"],
+        RB: ["POR-RB-001", "POR-RB-002", "POR-RB-003"],
+        WR: ["POR-WR-001", "POR-WR-002", "POR-WR-003", "POR-WR-004", "POR-WR-005"],
+        TE: ["POR-TE-001", "POR-TE-002"],
+        LT: ["POR-LT-001"],
+        LG: ["POR-LG-001"],
+        C: ["POR-C-001"],
+        RG: ["POR-RG-001"],
+        RT: ["POR-RT-001"],
+        EDGE: ["POR-EDGE-001", "POR-EDGE-002"],
+        DT: ["POR-DT-001", "POR-DT-002"],
+        LB: ["POR-LB-001", "POR-LB-002", "POR-LB-003"],
+        CB: ["POR-CB-001", "POR-CB-002", "POR-CB-003"],
+        S: ["POR-S-001", "POR-S-002"],
+        K: ["POR-K-001"],
+        P: ["POR-P-001"]
+    },
+    
+    // CALCULATED (compute from roster)
+    ovr: number,                 // Team overall
+    offOvr: number,              // Offense overall  
+    defOvr: number,              // Defense overall
+    stOvr: number                // Special teams overall
+}
+
+================================================================================
+TEAM OVR CALCULATION FORMULA
+================================================================================
+
+Calculate team OVR from roster using position weights:
+
+OFFENSIVE WEIGHTS (total 100%):
+  QB: 20%, RB: 8%, WR1: 10%, WR2: 6%, WR3: 3%, TE: 5%
+  LT: 10%, LG: 5%, C: 5%, RG: 5%, RT: 8%
+  (normalize remaining % across positions)
+
+DEFENSIVE WEIGHTS (total 100%):
+  EDGE1: 12%, EDGE2: 8%, DT1: 8%, DT2: 5%
+  LB1: 10%, LB2: 8%, LB3: 5%
+  CB1: 15%, CB2: 10%, S1: 10%, S2: 8%
+
+FORMULAS:
+  offOvr = Σ(starterOVR × weight) / Σ(weights)
+  defOvr = Σ(starterOVR × weight) / Σ(weights)
+  teamOvr = (offOvr + defOvr) / 2
+
+================================================================================
+TRAIT SYSTEM (from FINAL-traits-system.md)
+================================================================================
+
+Check traits each play based on game situation:
+
+SITUATION CHECKS:
+  isClutch: quarter >= 4 && clock <= 120
+  isPlayoffs: game.isPlayoffs
+  isPrimeTime: game.isPrimeTime
+  isTrailing: teamScore < opponentScore
+  isLeading: teamScore > opponentScore
+  inRedZone: ballPosition >= 80 (or <= 20)
+  inGoalLine: ballPosition >= 95 (or <= 5)
+
+TRAIT EFFECTS:
+  "Ice in Veins": isClutch || isPlayoffs → +10 all attrs
+  "Chokes Under Pressure": isClutch || isPlayoffs → -10 all attrs
+  "Comeback Artist": isTrailing && Q4 → +8 all attrs
+  "Prime Time Player": isPrimeTime → +5 OVR
+  "Iron Man": always → -75% injury chance
+  "Durable": always → -40% injury chance
+  "Injury Prone": always → +75% injury chance
+  "Aggressive": always → +10% big play, +10% turnover
+  "Disciplined": always → -75% penalty chance
+  "Hot Head": always → +50% penalty, +2 physical
+  "High Football IQ": always → +3 awareness
+  "Ball Hawk" (DEF): always → +5% INT chance
+  "Workhorse": always → +10 stamina, no fatigue
+
+================================================================================
+BADGE SYSTEM (from FINAL-badge-system.md)
+================================================================================
+
+Badges have tiers with different bonuses:
+  Bronze: +2 to +5
+  Silver: +4 to +8
+  Gold: +6 to +12
+  HoF: +9 to +15
+
+UNIVERSAL BADGES:
+  "Clutch": isClutch → +3/5/8/12 all attrs
+  "Prime Time": isPrimeTime → +2/3/5/7 OVR
+  "Playoff Performer": isPlayoffs → +3/5/8/10 OVR
+  "Comeback Kid": isTrailing && Q4 → +3/5/8/12 attrs
+  "4th Quarter Closer": isLeading && Q4 → +3/5/7/10 attrs
+
+QB BADGES:
+  "Red Zone QB": inRedZone → +3/5/8/12 passing
+  "Deep Ball Threat": always → +3/5/8/12 deep accuracy
+  "Pocket Presence": always → +3/5/8/12 throw under pressure
+  "No Huddle Specialist": hurry-up → +2/4/6/8 all attrs
+
+RB BADGES:
+  "Red Zone Back": inRedZone → +3/5/8/12 rushing
+  "Goal Line Back": inGoalLine → +5/8/12/15 trucking
+  "Open Field Runner": always → +3/5/8/12 speed
+  "Third Down Back": down === 3 → +3/5/8/12 catching
+
+WR BADGES:
+  "Deep Threat": always → +3/5/8/12 speed
+  "Possession Receiver": always → +3/5/8/12 catch in traffic
+  "Red Zone Threat": inRedZone → +3/5/8/12 catching
+
+DEFENSE BADGES:
+  "Pass Rusher": always → +3/5/8/12 pass rush
+  "Shutdown Corner": always → +3/5/8/12 man coverage
+  "Ball Hawk": always → +3/5/8/12% INT bonus
+
+================================================================================
+SCHEME EFFECTS (from FINAL-coaching-staff-system.md)
+================================================================================
+
+OFFENSIVE SCHEMES (affect play calling):
+  "West Coast": +10% short pass rate, +5 short accuracy
+  "Air Raid": +15% pass rate, +5 deep accuracy
+  "Power Run": +15% run rate, +5 trucking/blocking
+  "Spread": +10% pass rate, +5 speed/agility
+  "Pro Style": balanced
+  "Run Heavy": +20% run rate, +5 run blocking
+
+DEFENSIVE SCHEMES:
+  "4-3": +5 run defense
+  "3-4": +5 zone coverage
+  "4-2-5": +5 pass defense
+
+================================================================================
+INTEGRATION STEPS
+================================================================================
+
+1. LOAD ROSTER DATA:
+   - Call loadTeams(teamsArray) with generated roster data
+   - Data can come from JSON, localStorage, or API
+
+2. POPULATE UI:
+   - Update team select dropdowns with all 32 teams
+   - Display team OVR in selection UI
+
+3. ON GAME START:
+   - Copy selected teams to simulator.teams
+   - Calculate effective OVR for each unit
+   - Build key players map from depth chart
+
+4. DURING SIMULATION:
+   - Get starter from depthChart for each play
+   - Use actual player attributes for calculations
+   - Check player traits against game situation
+   - Check player badges (with correct tier)
+   - Track individual player stats
+
+5. POST-GAME:
+   - Display box score with player stats
+   - Update player XP (for franchise mode)
+
+================================================================================
+HELPER FUNCTIONS TO ADD
+================================================================================
+
+function getStarter(team, position, depth = 0) {
+    const playerId = team.depthChart[position]?.[depth];
+    return team.roster.find(p => p.id === playerId);
+}
+
+function formatPlayerName(player, style = 'short') {
+    if (style === 'full') return `${player.firstName} ${player.lastName}`;
+    return `${player.firstName.charAt(0)}. ${player.lastName}`;
+}
+
+function getBadgeTier(player, badgeName) {
+    const badge = player.badges?.find(b => b.name === badgeName);
+    return badge?.tier || null;
+}
+
+function hasTrait(player, traitName) {
+    return player.traits?.includes(traitName) || false;
+}
+
+function calculateTeamOvr(team) {
+    // Implement weighted average from starters
+}
+
+================================================================================
+SOURCE DOCUMENTS
+================================================================================
+
+| Document                           | Content                        |
+|------------------------------------|--------------------------------|
+| FINAL-player-generation-system.md  | Attributes, archetypes         |
+| FINAL-roster-generation-system.md  | 53-man roster rules            |
+| FINAL-traits-system.md             | 40+ trait definitions          |
+| FINAL-badge-system.md              | 43 badge definitions           |
+| FINAL-coaching-staff-system.md     | Scheme definitions             |
+| FINAL-salarycap.md                 | Contract structures            |
+| footballteams.csv                  | 32 team definitions            |
+| namepools.csv                      | Player names                   |
+
+================================================================================
+END OF INTEGRATION NOTES
+================================================================================
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gridiron Engine v2.0 | Pro Football Simulator</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #0a0a0f;
+            --secondary-dark: #12141d;
+            --accent-red: #e63946;
+            --accent-gold: #ffd60a;
+            --accent-blue: #1d3557;
+            --field-green: #2d5a27;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --glass-bg: rgba(18, 20, 29, 0.85);
+            --positive: #4caf50;
+            --negative: #f44336;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .bg-pattern {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(230, 57, 70, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(29, 53, 87, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        header {
+            text-align: center;
+            padding: 15px 0;
+            border-bottom: 3px solid var(--accent-red);
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 5px;
+            text-shadow: 0 0 30px rgba(230, 57, 70, 0.5);
+        }
+
+        .logo span { color: var(--accent-red); }
+
+        .version-badge {
+            display: inline-block;
+            background: var(--accent-gold);
+            color: var(--primary-dark);
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 3px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .subtitle {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr 300px;
+            gap: 15px;
+        }
+
+        .panel {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+        }
+
+        .panel-header {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            padding: 8px 12px;
+            background: linear-gradient(90deg, var(--accent-red), transparent);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .panel-content { padding: 12px; }
+
+        .team-setup { margin-bottom: 12px; }
+
+        .team-label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .team-label::before {
+            content: '';
+            width: 8px; height: 3px;
+            background: var(--accent-gold);
+        }
+
+        .team-select {
+            width: 100%;
+            padding: 8px 10px;
+            background: var(--primary-dark);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+            color: var(--text-primary);
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .team-select:focus { outline: none; border-color: var(--accent-gold); }
+
+        .team-ovr-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 6px;
+            padding: 6px 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            font-size: 0.75rem;
+        }
+
+        .ovr-badge {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .ovr-elite { background: var(--accent-gold); color: var(--primary-dark); }
+        .ovr-good { background: var(--positive); color: white; }
+        .ovr-average { background: var(--accent-blue); color: white; }
+        .ovr-below { background: #ff9800; color: var(--primary-dark); }
+
+        .settings-section {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+        }
+
+        .settings-label { color: var(--text-secondary); }
+
+        .settings-select {
+            padding: 4px 8px;
+            background: var(--primary-dark);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+        }
+
+        .scoreboard {
+            background: linear-gradient(135deg, var(--secondary-dark), var(--primary-dark));
+            border: 2px solid var(--accent-red);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .game-status {
+            position: absolute;
+            top: 6px; right: 10px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .status-live { background: var(--accent-red); animation: pulse 1.5s infinite; }
+        .status-final { background: var(--accent-gold); color: var(--primary-dark); }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .score-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .score-team { text-align: center; flex: 1; }
+
+        .score-team-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .score-team-ovr {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+        }
+
+        .score-team-score {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            line-height: 1;
+        }
+
+        .score-vs {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            padding: 0 12px;
+        }
+
+        .game-info {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            text-align: center;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.55rem;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        .info-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+        }
+
+        .game-context {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .context-badge {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.6rem;
+            letter-spacing: 1px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background: var(--accent-blue);
+        }
+
+        .context-badge.prime-time { background: var(--accent-gold); color: var(--primary-dark); }
+        .context-badge.playoff { background: var(--accent-red); }
+        .context-badge.clutch { background: #9c27b0; }
+        .context-badge.weather { background: #607d8b; }
+
+        .field-container { margin-bottom: 12px; }
+
+        .field {
+            height: 50px;
+            background: linear-gradient(90deg,
+                var(--accent-red) 0%, var(--accent-red) 10%,
+                var(--field-green) 10%, var(--field-green) 90%,
+                var(--accent-blue) 90%, var(--accent-blue) 100%);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .field::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 10%; right: 10%;
+            height: 100%;
+            background: repeating-linear-gradient(90deg,
+                transparent, transparent calc(10% - 1px),
+                rgba(255, 255, 255, 0.3) calc(10% - 1px),
+                rgba(255, 255, 255, 0.3) 10%);
+        }
+
+        .ball-marker {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 14px; height: 9px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-gold);
+            z-index: 2;
+            transition: left 0.3s ease;
+        }
+
+        .first-down-marker {
+            position: absolute;
+            top: 0;
+            width: 2px; height: 100%;
+            background: var(--accent-gold);
+            z-index: 1;
+            transition: left 0.3s ease;
+        }
+
+        .yard-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.55rem;
+            color: var(--text-secondary);
+        }
+
+        .play-log { max-height: 300px; overflow-y: auto; }
+
+        .play-entry {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.8rem;
+        }
+
+        .play-entry.touchdown { border-left: 3px solid var(--positive); background: rgba(76, 175, 80, 0.1); }
+        .play-entry.turnover { border-left: 3px solid var(--accent-red); background: rgba(230, 57, 70, 0.1); }
+        .play-entry.field-goal { border-left: 3px solid var(--accent-gold); background: rgba(255, 214, 10, 0.1); }
+
+        .play-situation {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+        }
+
+        .play-result {
+            display: inline-block;
+            margin-top: 4px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            padding: 2px 6px;
+            background: var(--positive);
+            border-radius: 2px;
+        }
+
+        .stats-grid { font-size: 0.75rem; }
+
+        .stat-category { margin-bottom: 10px; }
+
+        .stat-category-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            margin-bottom: 5px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid rgba(255, 214, 10, 0.3);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+        }
+
+        .stat-label { color: var(--text-secondary); }
+        .stat-values { display: flex; gap: 15px; }
+
+        .stat-value {
+            min-width: 30px;
+            text-align: right;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        .stat-value.away { color: var(--accent-red); }
+        .stat-value.home { color: var(--accent-blue); }
+
+        .active-effects {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .effect-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 6px;
+            margin-bottom: 3px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            font-size: 0.7rem;
+        }
+
+        .effect-item.positive { border-left: 2px solid var(--positive); }
+        .effect-item.negative { border-left: 2px solid var(--negative); }
+        .effect-item.neutral { border-left: 2px solid var(--accent-blue); }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .btn {
+            padding: 10px 12px;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-primary { background: var(--accent-red); color: white; }
+        .btn-primary:hover:not(:disabled) { background: #ff4757; }
+        .btn-secondary { background: var(--accent-blue); color: white; }
+        .btn-gold { background: var(--accent-gold); color: var(--primary-dark); }
+        .btn-small { padding: 5px 8px; font-size: 0.65rem; }
+        .btn-row { display: flex; gap: 6px; }
+        .btn-row .btn { flex: 1; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--primary-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-red); border-radius: 3px; }
+    </style>
+</head>
+
+<body>
+    <div class="bg-pattern"></div>
+    <div class="container">
+        <header>
+            <div class="logo">GRIDIRON <span>ENGINE</span> <span class="version-badge">v2.0</span></div>
+            <div class="subtitle">TEAM OVR • BADGES • TRAITS • WEATHER • HOME FIELD</div>
+        </header>
+
+        <div class="main-grid">
+            <!-- Left Panel -->
+            <div>
+                <div class="panel">
+                    <div class="panel-header">Game Setup</div>
+                    <div class="panel-content">
+                        <div class="team-setup">
+                            <div class="team-label">Away Team</div>
+                            <select class="team-select" id="awayTeamSelect">
+                                <option value="austin">Austin Outlaws (78)</option>
+                                <option value="baltimore">Baltimore Ravens (84)</option>
+                                <option value="chicago">Chicago Storm (81)</option>
+                                <option value="denver">Denver Titans (86)</option>
+                                <option value="houston">Houston Helix (79)</option>
+                                <option value="lasvegas">Las Vegas Aces (88)</option>
+                                <option value="miami">Miami Sharks (83)</option>
+                                <option value="newyork">New York Empire (91)</option>
+                            </select>
+                            <div class="team-ovr-display">
+                                <span>OVR</span>
+                                <span class="ovr-badge ovr-average" id="awayOvrBadge">78</span>
+                            </div>
+                        </div>
+
+                        <div class="team-setup">
+                            <div class="team-label">Home Team</div>
+                            <select class="team-select" id="homeTeamSelect">
+                                <option value="austin">Austin Outlaws (78)</option>
+                                <option value="baltimore">Baltimore Ravens (84)</option>
+                                <option value="chicago" selected>Chicago Storm (81)</option>
+                                <option value="denver">Denver Titans (86)</option>
+                                <option value="houston">Houston Helix (79)</option>
+                                <option value="lasvegas">Las Vegas Aces (88)</option>
+                                <option value="miami">Miami Sharks (83)</option>
+                                <option value="newyork">New York Empire (91)</option>
+                            </select>
+                            <div class="team-ovr-display">
+                                <span>OVR</span>
+                                <span class="ovr-badge ovr-average" id="homeOvrBadge">81</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <div class="team-label">Settings</div>
+                            <div class="settings-row">
+                                <span class="settings-label">Game Type</span>
+                                <select class="settings-select" id="gameType">
+                                    <option value="regular">Regular</option>
+                                    <option value="primetime">Prime Time</option>
+                                    <option value="playoff">Playoff</option>
+                                    <option value="championship">Championship</option>
+                                </select>
+                            </div>
+                            <div class="settings-row">
+                                <span class="settings-label">Weather</span>
+                                <select class="settings-select" id="weather">
+                                    <option value="clear">Clear</option>
+                                    <option value="rain">Rain</option>
+                                    <option value="snow">Snow</option>
+                                    <option value="wind">High Wind</option>
+                                </select>
+                            </div>
+                            <div class="settings-row">
+                                <span class="settings-label">Home Field</span>
+                                <select class="settings-select" id="homeAdvantage">
+                                    <option value="normal">Normal (+3)</option>
+                                    <option value="loud">Loud (+5)</option>
+                                    <option value="dome">Dome (+2)</option>
+                                    <option value="neutral">Neutral (0)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" id="startBtn">Start Game</button>
+                            <div class="btn-row">
+                                <button class="btn btn-secondary" id="simPlayBtn" disabled>Play</button>
+                                <button class="btn btn-secondary" id="simDriveBtn" disabled>Drive</button>
+                            </div>
+                            <div class="btn-row">
+                                <button class="btn btn-secondary" id="simQuarterBtn" disabled>Quarter</button>
+                                <button class="btn btn-secondary" id="simGameBtn" disabled>Full Game</button>
+                            </div>
+                            <button class="btn btn-gold" id="resetBtn">Reset</button>
+                            <button class="btn btn-small btn-secondary" id="toggleDebugBtn">Debug: OFF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel -->
+            <div>
+                <div class="scoreboard">
+                    <div class="game-status status-live" id="gameStatus">PREGAME</div>
+                    <div class="score-teams">
+                        <div class="score-team">
+                            <div class="score-team-name" id="awayName">OUTLAWS</div>
+                            <div class="score-team-ovr" id="awayOvrDisplay">78 OVR</div>
+                            <div class="score-team-score" id="awayScore">0</div>
+                        </div>
+                        <div class="score-vs">@</div>
+                        <div class="score-team">
+                            <div class="score-team-name" id="homeName">STORM</div>
+                            <div class="score-team-ovr" id="homeOvrDisplay">81 OVR</div>
+                            <div class="score-team-score" id="homeScore">0</div>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <div class="info-item">
+                            <div class="info-label">QTR</div>
+                            <div class="info-value" id="quarter">1ST</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">TIME</div>
+                            <div class="info-value" id="clock">15:00</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">DOWN</div>
+                            <div class="info-value" id="down">1ST & 10</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">BALL</div>
+                            <div class="info-value" id="possession">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-context" id="gameContext">
+                    <span class="context-badge">REGULAR SEASON</span>
+                </div>
+
+                <div class="field-container">
+                    <div class="field">
+                        <div class="ball-marker" id="ballMarker" style="left: 65%;"></div>
+                        <div class="first-down-marker" id="firstDownMarker" style="left: 75%;"></div>
+                    </div>
+                    <div class="yard-labels">
+                        <span>AWAY</span><span>20</span><span>40</span><span>50</span><span>40</span><span>20</span><span>HOME</span>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <span>Play-by-Play</span>
+                        <span id="playCount">0 plays</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="play-log" id="playLog">
+                            <div class="play-entry">
+                                <div class="play-description" style="color: var(--text-secondary); text-align: center;">
+                                    Configure teams and settings, then press START GAME
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div>
+                <div class="panel">
+                    <div class="panel-header">Statistics</div>
+                    <div class="panel-content">
+                        <div class="stats-grid">
+                            <div class="stat-category">
+                                <div class="stat-category-title">OFFENSE</div>
+                                <div class="stat-row"><span class="stat-label">Total Yards</span><div class="stat-values"><span class="stat-value away" id="awayYards">0</span><span class="stat-value home" id="homeYards">0</span></div></div>
+                                <div class="stat-row"><span class="stat-label">Pass Yards</span><div class="stat-values"><span class="stat-value away" id="awayPassYards">0</span><span class="stat-value home" id="homePassYards">0</span></div></div>
+                                <div class="stat-row"><span class="stat-label">Rush Yards</span><div class="stat-values"><span class="stat-value away" id="awayRushYards">0</span><span class="stat-value home" id="homeRushYards">0</span></div></div>
+                                <div class="stat-row"><span class="stat-label">First Downs</span><div class="stat-values"><span class="stat-value away" id="awayFirstDowns">0</span><span class="stat-value home" id="homeFirstDowns">0</span></div></div>
+                            </div>
+                            <div class="stat-category">
+                                <div class="stat-category-title">PASSING</div>
+                                <div class="stat-row"><span class="stat-label">Comp/Att</span><div class="stat-values"><span class="stat-value away" id="awayCompAtt">0/0</span><span class="stat-value home" id="homeCompAtt">0/0</span></div></div>
+                                <div class="stat-row"><span class="stat-label">TDs</span><div class="stat-values"><span class="stat-value away" id="awayPassTD">0</span><span class="stat-value home" id="homePassTD">0</span></div></div>
+                                <div class="stat-row"><span class="stat-label">INTs</span><div class="stat-values"><span class="stat-value away" id="awayINT">0</span><span class="stat-value home" id="homeINT">0</span></div></div>
+                            </div>
+                            <div class="stat-category">
+                                <div class="stat-category-title">RUSHING</div>
+                                <div class="stat-row"><span class="stat-label">Carries</span><div class="stat-values"><span class="stat-value away" id="awayCarries">0</span><span class="stat-value home" id="homeCarries">0</span></div></div>
+                                <div class="stat-row"><span class="stat-label">TDs</span><div class="stat-values"><span class="stat-value away" id="awayRushTD">0</span><span class="stat-value home" id="homeRushTD">0</span></div></div>
+                                <div class="stat-row"><span class="stat-label">Fumbles</span><div class="stat-values"><span class="stat-value away" id="awayFumbles">0</span><span class="stat-value home" id="homeFumbles">0</span></div></div>
+                            </div>
+                            <div class="stat-category">
+                                <div class="stat-category-title">DEFENSE</div>
+                                <div class="stat-row"><span class="stat-label">Sacks</span><div class="stat-values"><span class="stat-value away" id="awaySacks">0</span><span class="stat-value home" id="homeSacks">0</span></div></div>
+                                <div class="stat-row"><span class="stat-label">Penalties</span><div class="stat-values"><span class="stat-value away" id="awayPenalties">0</span><span class="stat-value home" id="homePenalties">0</span></div></div>
+                                <div class="stat-row"><span class="stat-label">TOP</span><div class="stat-values"><span class="stat-value away" id="awayTOP">0:00</span><span class="stat-value home" id="homeTOP">0:00</span></div></div>
+                            </div>
+                        </div>
+
+                        <div class="active-effects">
+                            <div class="team-label">Active Modifiers</div>
+                            <div id="activeEffects">
+                                <div class="effect-item neutral"><span>Home Field</span><span>+3 OVR</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /*
+        ========================================================================
+        INTEGRATION POINT: TEAMS CONSTANT
+        ========================================================================
+        CURRENT: Hardcoded placeholder teams with simplified structure
+        REPLACE WITH: Dynamically loaded roster data
+        
+        TO INTEGRATE:
+        1. Change to: let TEAMS = {};
+        2. Add loadTeams(teamsArray) function that populates TEAMS
+        3. Each team should have full roster[] and depthChart{}
+        4. Calculate ovr/offense/defense from actual player ratings
+        
+        EXAMPLE LOAD FUNCTION:
+        function loadTeams(teamsArray) {
+            teamsArray.forEach(team => {
+                TEAMS[team.id.toLowerCase()] = {
+                    ...team,
+                    ovr: calculateTeamOvr(team),
+                    offense: calculateOffenseRatings(team),
+                    defense: calculateDefenseRatings(team)
+                };
+            });
+            populateTeamSelects();
+        }
+        ========================================================================
+        */
+        // Team database with attributes, badges, traits
+        const TEAMS = {
+            austin: { name: 'Austin Outlaws', abbrev: 'AUS', ovr: 78, offense: { qb: 76, rb: 80, wr: 77, ol: 75 }, defense: { dl: 79, lb: 78, db: 76 }, st: { k: 82, p: 75 }, badges: ['Underdog Mentality (Silver)'], scheme: 'Spread' },
+            baltimore: { name: 'Baltimore Ravens', abbrev: 'BAL', ovr: 84, offense: { qb: 82, rb: 88, wr: 81, ol: 86 }, defense: { dl: 85, lb: 87, db: 82 }, st: { k: 84, p: 80 }, badges: ['Road Warrior (Gold)'], scheme: 'Power Run' },
+            chicago: { name: 'Chicago Storm', abbrev: 'CHI', ovr: 81, offense: { qb: 84, rb: 78, wr: 83, ol: 79 }, defense: { dl: 82, lb: 80, db: 81 }, st: { k: 79, p: 82 }, badges: ['Home Field Hero (Gold)', 'Clutch (Silver)'], scheme: 'West Coast' },
+            denver: { name: 'Denver Titans', abbrev: 'DEN', ovr: 86, offense: { qb: 89, rb: 82, wr: 88, ol: 84 }, defense: { dl: 84, lb: 86, db: 85 }, st: { k: 86, p: 84 }, badges: ['Prime Time (Gold)', 'Deep Ball (Gold)'], scheme: 'Air Raid' },
+            houston: { name: 'Houston Helix', abbrev: 'HOU', ovr: 79, offense: { qb: 80, rb: 77, wr: 82, ol: 76 }, defense: { dl: 80, lb: 79, db: 78 }, st: { k: 77, p: 79 }, badges: ['Comeback Kid (Silver)'], scheme: 'Pro Style' },
+            lasvegas: { name: 'Las Vegas Aces', abbrev: 'LV', ovr: 88, offense: { qb: 91, rb: 85, wr: 90, ol: 86 }, defense: { dl: 87, lb: 86, db: 88 }, st: { k: 88, p: 85 }, badges: ['Prime Time (HoF)', 'Clutch (Gold)', 'Big Game (Gold)'], scheme: 'Spread' },
+            miami: { name: 'Miami Sharks', abbrev: 'MIA', ovr: 83, offense: { qb: 85, rb: 79, wr: 86, ol: 80 }, defense: { dl: 83, lb: 82, db: 84 }, st: { k: 81, p: 83 }, badges: ['Weather Proof (Gold)'], scheme: 'Air Raid' },
+            newyork: { name: 'New York Empire', abbrev: 'NYE', ovr: 91, offense: { qb: 94, rb: 87, wr: 92, ol: 89 }, defense: { dl: 90, lb: 91, db: 90 }, st: { k: 90, p: 88 }, badges: ['Prime Time (HoF)', 'Playoff Performer (HoF)', 'Clutch (HoF)'], scheme: 'West Coast' }
+        };
+
+        const MODIFIERS = {
+            gameType: { regular: { bonus: 0 }, primetime: { bonus: 0, prime: true }, playoff: { bonus: 0, playoff: true }, championship: { bonus: 0, playoff: true, champ: true } },
+            weather: { clear: { pass: 0, fumble: 0, fg: 0 }, rain: { pass: -0.08, fumble: 0.01, fg: -0.10 }, snow: { pass: -0.12, fumble: 0.015, fg: -0.15 }, wind: { pass: -0.05, fumble: 0, fg: -0.20 } },
+            homeAdv: { normal: 3, loud: 5, dome: 2, neutral: 0 }
+        };
+
+        const BADGE_VALUES = { bronze: 2, silver: 4, gold: 6, hof: 10 };
+
+        /*
+        ========================================================================
+        INTEGRATION POINT: Simulator Class
+        ========================================================================
+        KEY METHODS TO MODIFY:
+        
+        1. getOvrBonus(team) - Currently reads badges as strings
+           CHANGE: Read from team.roster players, check badge.tier property
+           
+        2. getClutchBonus(team) - Checks for "Clutch" badge
+           CHANGE: Loop through roster, check each player's badges array
+           
+        3. ovrDiff(off) - Uses team.ovr directly  
+           CHANGE: Calculate from roster using position weights
+           
+        4. play() - Main simulation loop
+           CHANGE: Get actual starter from depthChart for play outcomes
+           CHANGE: Use player attributes for calculations
+           CHANGE: Track individual player.gameStats
+        
+        HELPER METHODS TO ADD:
+        - getStarter(team, position, depth=0)
+        - getPositionGroupOvr(team, positions)
+        - calculatePlayOvr(team, playType)
+        - applyTraitEffects(player, situation)
+        - applyBadgeEffects(player, situation)
+        ========================================================================
+        */
+        class Simulator {
+            constructor() { this.reset(); }
+
+            reset() {
+                this.state = { quarter: 1, clock: 900, possession: null, ball: 75, down: 1, ytg: 10, away: 0, home: 0, over: false, kickoff: true };
+                this.stats = { away: this.emptyStats(), home: this.emptyStats() };
+                this.settings = { away: null, home: null, type: 'regular', weather: 'clear', homeAdv: 'normal' };
+                this.plays = 0;
+                this.debug = [];
+            }
+
+            emptyStats() { return { yards: 0, pass: 0, rush: 0, fd: 0, comp: 0, att: 0, ptd: 0, int: 0, car: 0, rtd: 0, fum: 0, sack: 0, pen: 0, top: 0 }; }
+
+            getOvrBonus(team) {
+                const t = this.settings[team];
+                let bonus = 0;
+                if (team === 'home') bonus += MODIFIERS.homeAdv[this.settings.homeAdv];
+                
+                t.badges?.forEach(b => {
+                    const tier = b.includes('HoF') ? 'hof' : b.includes('Gold') ? 'gold' : b.includes('Silver') ? 'silver' : 'bronze';
+                    const val = BADGE_VALUES[tier];
+                    
+                    if (b.includes('Prime Time') && MODIFIERS.gameType[this.settings.type].prime) bonus += val;
+                    if (b.includes('Playoff') && MODIFIERS.gameType[this.settings.type].playoff) bonus += val;
+                    if (b.includes('Home Field') && team === 'home') bonus += val;
+                    if (b.includes('Road Warrior') && team === 'away') bonus += val;
+                    if (b.includes('Weather') && this.settings.weather !== 'clear') bonus += val;
+                });
+                
+                return bonus;
+            }
+
+            isClutch() { return this.state.quarter === 4 && this.state.clock <= 120 && Math.abs(this.state.away - this.state.home) <= 8; }
+
+            getClutchBonus(team) {
+                if (!this.isClutch()) return 0;
+                let bonus = 0;
+                this.settings[team].badges?.forEach(b => {
+                    if (b.includes('Clutch')) {
+                        const tier = b.includes('HoF') ? 'hof' : b.includes('Gold') ? 'gold' : b.includes('Silver') ? 'silver' : 'bronze';
+                        bonus += BADGE_VALUES[tier];
+                    }
+                });
+                return bonus;
+            }
+
+            ovrDiff(off) {
+                const offOvr = this.settings[off].ovr + this.getOvrBonus(off) + this.getClutchBonus(off);
+                const def = off === 'away' ? 'home' : 'away';
+                const defOvr = this.settings[def].ovr + this.getOvrBonus(def) + this.getClutchBonus(def);
+                return (offOvr - defOvr) * 0.015;
+            }
+
+            formatTime(s) { return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`; }
+            getYardLine() { const p = this.state.ball; return p <= 50 ? `AWAY ${p}` : `HOME ${100-p}`; }
+            ord(n) { return ['th','st','nd','rd'][n%100>10&&n%100<14?0:n%10<4?n%10:0]; }
+
+            changePoss() { this.state.possession = this.state.possession === 'away' ? 'home' : 'away'; this.state.down = 1; this.state.ytg = 10; }
+
+            advClock(s) {
+                this.state.clock -= s;
+                if (this.state.clock <= 0) {
+                    this.state.clock = 0;
+                    this.state.quarter++;
+                    if (this.state.quarter > 4) {
+                        if (this.state.away === this.state.home) this.state.clock = 600;
+                        else this.state.over = true;
+                    } else {
+                        this.state.clock = 900;
+                        if (this.state.quarter === 3) { this.state.kickoff = true; this.changePoss(); }
+                    }
+                }
+            }
+
+            kickoff() {
+                const ret = Math.floor(Math.random() * 30) + 15;
+                const tb = Math.random() < 0.4;
+                if (this.state.possession === 'away') { this.state.possession = 'home'; this.state.ball = tb ? 75 : Math.min(75, 100 - ret); }
+                else { this.state.possession = 'away'; this.state.ball = tb ? 25 : Math.max(25, ret); }
+                this.state.down = 1; this.state.ytg = 10; this.state.kickoff = false;
+                return { type: 'kickoff', desc: tb ? `Touchback. Ball at the 25.` : `Kickoff returned ${ret} yards.` };
+            }
+
+            play() {
+                if (this.state.over) return null;
+                this.plays++;
+                this.debug = [];
+
+                if (this.state.kickoff) { const r = this.kickoff(); this.advClock(5); return r; }
+
+                const off = this.state.possession;
+                const def = off === 'away' ? 'home' : 'away';
+                const adv = this.ovrDiff(off);
+                const weather = MODIFIERS.weather[this.settings.weather];
+                const offT = this.settings[off];
+                const defT = this.settings[def];
+
+                this.debug.push(`${this.state.down}${this.ord(this.state.down)} & ${this.state.ytg} at ${this.getYardLine()}`);
+                this.debug.push(`${offT.name} (${offT.ovr}+${this.getOvrBonus(off)}) vs ${defT.name} (${defT.ovr}+${this.getOvrBonus(def)})`);
+                if (this.isClutch()) this.debug.push(`⚡ CLUTCH SITUATION`);
+
+                // Play selection
+                const { down, ytg, ball, possession } = this.state;
+                const inFG = (possession === 'away' && ball >= 65) || (possession === 'home' && ball <= 35);
+                let playType;
+
+                if (down === 4) {
+                    if (ytg <= 2 && Math.random() < 0.3) playType = Math.random() < 0.5 ? 'run' : 'pass';
+                    else if (inFG) playType = 'fg';
+                    else playType = 'punt';
+                } else {
+                    let passRate = 0.55;
+                    if (offT.scheme === 'Air Raid' || offT.scheme === 'Spread') passRate += 0.1;
+                    if (offT.scheme === 'Power Run') passRate -= 0.15;
+                    if (ytg > 7) passRate += 0.15;
+                    if (down === 3) passRate += 0.1;
+                    if (weather.pass < 0) passRate -= 0.1;
+                    playType = Math.random() < passRate ? 'pass' : 'run';
+                }
+
+                let result;
+                if (playType === 'run') result = this.simRun(off, def, adv, weather);
+                else if (playType === 'pass') result = this.simPass(off, def, adv, weather);
+                else if (playType === 'punt') result = this.simPunt(off);
+                else result = this.simFG(off, weather);
+
+                // Penalties
+                let penChance = 0.08;
+                if (off === 'away' && this.settings.homeAdv === 'loud') penChance += 0.03;
+                if (Math.random() < penChance) result = this.applyPen(result, off, def);
+
+                const time = result.time || Math.floor(Math.random() * 20) + 20;
+                this.advClock(time);
+                this.stats[off].top += time;
+                result.debug = [...this.debug];
+                return result;
+            }
+
+            simRun(off, def, adv, weather) {
+                this.stats[off].car++;
+                const rb = this.settings[off].offense.rb;
+                const runD = (this.settings[def].defense.dl + this.settings[def].defense.lb) / 2;
+                let yards = Math.floor(Math.random() * 8) + Math.floor(Math.random() * 5) - 2;
+                yards += Math.round((rb - runD) * 0.1 + adv * 3);
+
+                if (Math.random() < 0.05 + adv * 0.02) yards = Math.floor(Math.random() * 30) + 15;
+
+                let fumChance = 0.015 + weather.fumble - adv * 0.005;
+                if (Math.random() < fumChance) {
+                    this.stats[off].fum++;
+                    return this.turnover(off, 'fumble', yards);
+                }
+
+                return this.processYards(off, yards, 'run');
+            }
+
+            simPass(off, def, adv, weather) {
+                this.stats[off].att++;
+                const qb = this.settings[off].offense.qb;
+                const wr = this.settings[off].offense.wr;
+                const ol = this.settings[off].offense.ol;
+                const dl = this.settings[def].defense.dl;
+                const db = this.settings[def].defense.db;
+
+                // Sack
+                let sackChance = 0.07 + (dl - ol) * 0.005 - adv * 0.02;
+                if (Math.random() < Math.max(0.02, sackChance)) {
+                    const loss = -(Math.floor(Math.random() * 8) + 3);
+                    this.stats[def].sack++;
+                    return this.processYards(off, loss, 'sack');
+                }
+
+                // Completion
+                let compRate = 0.65 + (qb - 80) * 0.005 + (wr - db) * 0.003 + adv * 0.05 + weather.pass;
+                if (Math.random() >= compRate) {
+                    let intChance = 0.08 - adv * 0.02 + (db - qb) * 0.002;
+                    if (Math.random() < Math.max(0.02, intChance)) {
+                        this.stats[off].int++;
+                        return this.turnover(off, 'int', 0);
+                    }
+                    return { type: 'pass', desc: 'Pass incomplete.', yards: 0, result: 'inc' };
+                }
+
+                this.stats[off].comp++;
+                let yards = Math.floor(Math.random() * 12) + Math.floor(Math.random() * 6);
+                yards += Math.round((wr - db) * 0.2 + adv * 5);
+                if (Math.random() < 0.08 + adv * 0.03) yards = Math.floor(Math.random() * 40) + 20;
+
+                return this.processYards(off, yards, 'pass');
+            }
+
+            simPunt(off) {
+                const dist = Math.floor(Math.random() * 20) + 35;
+                const tb = Math.random() < 0.15;
+                if (off === 'away') this.state.ball = tb ? 80 : Math.min(95, this.state.ball + dist);
+                else this.state.ball = tb ? 20 : Math.max(5, this.state.ball - dist);
+                this.changePoss();
+                return { type: 'punt', desc: `Punt for ${dist} yards.${tb ? ' Touchback.' : ''}` };
+            }
+
+            simFG(off, weather) {
+                const dist = off === 'away' ? (100 - this.state.ball) + 17 : this.state.ball + 17;
+                const k = this.settings[off].st.k;
+                let rate = Math.max(0.3, 1 - (dist - 20) * 0.015) + (k - 80) * 0.005 + weather.fg;
+                if (this.isClutch()) rate -= 0.05;
+
+                if (Math.random() < rate) {
+                    this.state[off === 'away' ? 'away' : 'home'] += 3;
+                    this.state.kickoff = true;
+                    return { type: 'fg', desc: `${dist}-yard FG is GOOD!`, result: 'made' };
+                }
+                this.changePoss();
+                return { type: 'fg', desc: `${dist}-yard FG is NO GOOD.`, result: 'miss' };
+            }
+
+            processYards(off, yards, type) {
+                if (off === 'away') this.state.ball = Math.max(0, Math.min(100, this.state.ball + yards));
+                else this.state.ball = Math.max(0, Math.min(100, this.state.ball - yards));
+
+                if (type === 'run' && yards > 0) { this.stats[off].rush += yards; this.stats[off].yards += yards; }
+                else if (type === 'pass' && yards > 0) { this.stats[off].pass += yards; this.stats[off].yards += yards; }
+                else if (type === 'sack') { this.stats[off].pass += yards; this.stats[off].yards += yards; }
+
+                // TD
+                if ((off === 'away' && this.state.ball >= 100) || (off === 'home' && this.state.ball <= 0)) {
+                    return this.touchdown(off, yards, type);
+                }
+
+                this.state.ytg -= yards;
+                if (this.state.ytg <= 0) {
+                    this.stats[off].fd++;
+                    this.state.down = 1;
+                    this.state.ytg = 10;
+                    return { type, desc: this.playDesc(type, yards), yards, result: 'fd' };
+                }
+
+                this.state.down++;
+                if (this.state.down > 4) {
+                    this.changePoss();
+                    return { type, desc: this.playDesc(type, yards) + ' Turnover on downs.', yards, result: 'tod' };
+                }
+                return { type, desc: this.playDesc(type, yards), yards, result: 'normal' };
+            }
+
+            touchdown(off, yards, type) {
+                this.state[off] += 6;
+                if (type === 'run') this.stats[off].rtd++;
+                else if (type === 'pass') this.stats[off].ptd++;
+                const xp = Math.random() < 0.94 + (this.settings[off].st.k - 80) * 0.003;
+                if (xp) this.state[off] += 1;
+                this.state.kickoff = true;
+                return { type: 'td', desc: `🏈 TOUCHDOWN! ${type === 'pass' ? 'Pass' : 'Rush'} for ${yards} yards! XP ${xp ? 'GOOD' : 'NO GOOD'}.`, result: 'td' };
+            }
+
+            turnover(off, type, yards) {
+                this.changePoss();
+                return { type: 'to', desc: type === 'int' ? '❌ INTERCEPTED!' : '❌ FUMBLE RECOVERED!', result: type };
+            }
+
+            playDesc(type, yards) {
+                const name = this.settings[this.state.possession].name;
+                if (type === 'run') return yards < 0 ? `${name} run for loss of ${Math.abs(yards)}.` : yards === 0 ? `${name} run for no gain.` : `${name} run for ${yards} yards.`;
+                if (type === 'pass') return `${name} pass for ${yards} yards.`;
+                if (type === 'sack') return `${name} QB sacked for ${Math.abs(yards)} yard loss!`;
+                return `${name} play for ${yards} yards.`;
+            }
+
+            applyPen(orig, off, def) {
+                const pens = [{ n: 'False Start', y: 5, o: true }, { n: 'Holding', y: 10, o: true }, { n: 'Pass Interference', y: 15, o: false }, { n: 'Offsides', y: 5, o: false }];
+                const p = pens[Math.floor(Math.random() * pens.length)];
+                const on = p.o ? off : def;
+                this.stats[on].pen++;
+                if (p.o) {
+                    if (off === 'away') this.state.ball = Math.max(1, this.state.ball - p.y);
+                    else this.state.ball = Math.min(99, this.state.ball + p.y);
+                } else {
+                    if (off === 'away') this.state.ball = Math.min(99, this.state.ball + p.y);
+                    else this.state.ball = Math.max(1, this.state.ball - p.y);
+                    this.state.down = 1; this.state.ytg = 10;
+                }
+                return { type: 'pen', desc: `🚩 ${p.n} on ${this.settings[on].name}, ${p.y} yards.` };
+            }
+        }
+
+        // UI
+        /*
+        ========================================================================
+        INTEGRATION POINT: UI Initialization
+        ========================================================================
+        TO INTEGRATE WITH EXTERNAL ROSTER DATA:
+        
+        1. ADD this function to dynamically populate team selects:
+        
+        function populateTeamSelects(teamsArray) {
+            el.away.innerHTML = '';
+            el.home.innerHTML = '';
+            
+            teamsArray.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team.id.toLowerCase();
+                option.textContent = `${team.city} ${team.name} (${team.ovr})`;
+                el.away.appendChild(option.cloneNode(true));
+                el.home.appendChild(option);
+            });
+        }
+        
+        2. ADD this function to load external roster data:
+        
+        async function loadRosterData(url) {
+            const response = await fetch(url);
+            const teams = await response.json();
+            
+            // Clear and repopulate TEAMS
+            Object.keys(TEAMS).forEach(k => delete TEAMS[k]);
+            teams.forEach(team => {
+                TEAMS[team.id.toLowerCase()] = team;
+            });
+            
+            populateTeamSelects(teams);
+            updateTeams();
+        }
+        
+        3. OR accept roster data directly:
+        
+        function initializeWithRosters(teamsArray) {
+            Object.keys(TEAMS).forEach(k => delete TEAMS[k]);
+            teamsArray.forEach(team => {
+                TEAMS[team.id.toLowerCase()] = {
+                    ...team,
+                    name: `${team.city} ${team.name}`,
+                    abbrev: team.abbr,
+                    // Map roster data to expected format
+                    offense: calculateOffenseRatings(team),
+                    defense: calculateDefenseRatings(team),
+                    st: calculateSTRatings(team)
+                };
+            });
+            populateTeamSelects(teamsArray);
+            updateTeams();
+        }
+        
+        4. HELPER: Calculate unit ratings from roster
+        
+        function calculateOffenseRatings(team) {
+            const qb = getStarter(team, 'QB');
+            const rb = getStarter(team, 'RB');
+            const wr1 = getStarter(team, 'WR', 0);
+            const wr2 = getStarter(team, 'WR', 1);
+            const te = getStarter(team, 'TE');
+            const lt = getStarter(team, 'LT');
+            // ... etc
+            
+            return {
+                qb: qb?.ovr || 70,
+                rb: rb?.ovr || 70,
+                wr: Math.round((wr1?.ovr + wr2?.ovr) / 2) || 70,
+                ol: Math.round((lt?.ovr + ...) / 5) || 70
+            };
+        }
+        ========================================================================
+        */
+        const sim = new Simulator();
+        let started = false, debug = false;
+
+        const el = {
+            away: document.getElementById('awayTeamSelect'),
+            home: document.getElementById('homeTeamSelect'),
+            type: document.getElementById('gameType'),
+            weather: document.getElementById('weather'),
+            homeAdv: document.getElementById('homeAdvantage'),
+            awayBadge: document.getElementById('awayOvrBadge'),
+            homeBadge: document.getElementById('homeOvrBadge'),
+            awayName: document.getElementById('awayName'),
+            homeName: document.getElementById('homeName'),
+            awayOvr: document.getElementById('awayOvrDisplay'),
+            homeOvr: document.getElementById('homeOvrDisplay'),
+            awayScore: document.getElementById('awayScore'),
+            homeScore: document.getElementById('homeScore'),
+            qtr: document.getElementById('quarter'),
+            clock: document.getElementById('clock'),
+            down: document.getElementById('down'),
+            poss: document.getElementById('possession'),
+            status: document.getElementById('gameStatus'),
+            context: document.getElementById('gameContext'),
+            ball: document.getElementById('ballMarker'),
+            fd: document.getElementById('firstDownMarker'),
+            log: document.getElementById('playLog'),
+            plays: document.getElementById('playCount'),
+            effects: document.getElementById('activeEffects'),
+            start: document.getElementById('startBtn'),
+            play: document.getElementById('simPlayBtn'),
+            drive: document.getElementById('simDriveBtn'),
+            qtrBtn: document.getElementById('simQuarterBtn'),
+            game: document.getElementById('simGameBtn'),
+            reset: document.getElementById('resetBtn'),
+            debug: document.getElementById('toggleDebugBtn')
+        };
+
+        function ovrClass(o) { return o >= 90 ? 'ovr-elite' : o >= 85 ? 'ovr-good' : o >= 80 ? 'ovr-average' : 'ovr-below'; }
+
+        function updateTeams() {
+            const a = TEAMS[el.away.value], h = TEAMS[el.home.value];
+            el.awayBadge.textContent = a.ovr;
+            el.awayBadge.className = 'ovr-badge ' + ovrClass(a.ovr);
+            el.homeBadge.textContent = h.ovr;
+            el.homeBadge.className = 'ovr-badge ' + ovrClass(h.ovr);
+        }
+
+        function updateContext() {
+            const type = el.type.value, w = el.weather.value;
+            let badges = [`<span class="context-badge ${type === 'primetime' ? 'prime-time' : ''} ${type === 'playoff' || type === 'championship' ? 'playoff' : ''}">${type.toUpperCase()}</span>`];
+            if (w !== 'clear') badges.push(`<span class="context-badge weather">${w.toUpperCase()}</span>`);
+            if (sim.isClutch()) badges.push(`<span class="context-badge clutch">CLUTCH</span>`);
+            el.context.innerHTML = badges.join('');
+        }
+
+        function updateEffects() {
+            const effects = [];
+            const ha = MODIFIERS.homeAdv[sim.settings.homeAdv];
+            if (ha > 0) effects.push({ l: 'Home Field', v: `+${ha}`, t: 'positive' });
+            const w = MODIFIERS.weather[sim.settings.weather];
+            if (w.pass < 0) effects.push({ l: 'Weather (Pass)', v: `${(w.pass*100).toFixed(0)}%`, t: 'negative' });
+            if (w.fg < 0) effects.push({ l: 'Weather (FG)', v: `${(w.fg*100).toFixed(0)}%`, t: 'negative' });
+            if (sim.isClutch()) effects.push({ l: '⚡ CLUTCH', v: 'Active', t: 'positive' });
+            el.effects.innerHTML = effects.map(e => `<div class="effect-item ${e.t}"><span>${e.l}</span><span>${e.v}</span></div>`).join('') || '<div class="effect-item neutral"><span>None</span><span>—</span></div>';
+        }
+
+        function updateDisplay() {
+            const s = sim.state, st = sim.stats;
+            el.awayScore.textContent = s.away;
+            el.homeScore.textContent = s.home;
+            el.qtr.textContent = ['1ST','2ND','3RD','4TH','OT'][Math.min(s.quarter-1,4)];
+            el.clock.textContent = sim.formatTime(s.clock);
+            el.down.textContent = `${s.down}${sim.ord(s.down)} & ${s.ytg}`;
+            if (s.possession && sim.settings.away) el.poss.textContent = sim.settings[s.possession].abbrev;
+            
+            el.status.textContent = s.over ? 'FINAL' : started ? 'LIVE' : 'PREGAME';
+            el.status.className = 'game-status ' + (s.over ? 'status-final' : 'status-live');
+            
+            el.ball.style.left = `${10 + s.ball * 0.8}%`;
+            let fdPos = s.possession === 'away' ? Math.min(100, s.ball + s.ytg) : Math.max(0, s.ball - s.ytg);
+            el.fd.style.left = `${10 + fdPos * 0.8}%`;
+
+            document.getElementById('awayYards').textContent = st.away.yards;
+            document.getElementById('homeYards').textContent = st.home.yards;
+            document.getElementById('awayPassYards').textContent = st.away.pass;
+            document.getElementById('homePassYards').textContent = st.home.pass;
+            document.getElementById('awayRushYards').textContent = st.away.rush;
+            document.getElementById('homeRushYards').textContent = st.home.rush;
+            document.getElementById('awayFirstDowns').textContent = st.away.fd;
+            document.getElementById('homeFirstDowns').textContent = st.home.fd;
+            document.getElementById('awayCompAtt').textContent = `${st.away.comp}/${st.away.att}`;
+            document.getElementById('homeCompAtt').textContent = `${st.home.comp}/${st.home.att}`;
+            document.getElementById('awayPassTD').textContent = st.away.ptd;
+            document.getElementById('homePassTD').textContent = st.home.ptd;
+            document.getElementById('awayINT').textContent = st.away.int;
+            document.getElementById('homeINT').textContent = st.home.int;
+            document.getElementById('awayCarries').textContent = st.away.car;
+            document.getElementById('homeCarries').textContent = st.home.car;
+            document.getElementById('awayRushTD').textContent = st.away.rtd;
+            document.getElementById('homeRushTD').textContent = st.home.rtd;
+            document.getElementById('awayFumbles').textContent = st.away.fum;
+            document.getElementById('homeFumbles').textContent = st.home.fum;
+            document.getElementById('awaySacks').textContent = st.away.sack;
+            document.getElementById('homeSacks').textContent = st.home.sack;
+            document.getElementById('awayPenalties').textContent = st.away.pen;
+            document.getElementById('homePenalties').textContent = st.home.pen;
+            document.getElementById('awayTOP').textContent = sim.formatTime(st.away.top);
+            document.getElementById('homeTOP').textContent = sim.formatTime(st.home.top);
+
+            el.plays.textContent = `${sim.plays} plays`;
+            updateContext();
+            updateEffects();
+        }
+
+        function addLog(r) {
+            if (!r) return;
+            const e = document.createElement('div');
+            e.className = 'play-entry';
+            if (r.type === 'td') e.classList.add('touchdown');
+            if (r.type === 'to') e.classList.add('turnover');
+            if (r.type === 'fg' && r.result === 'made') e.classList.add('field-goal');
+            
+            let debugHtml = '';
+            if (debug && r.debug?.length) {
+                debugHtml = `<div style="margin-top:6px;padding:6px;background:rgba(0,0,0,0.4);font-size:0.7rem;color:var(--text-secondary);white-space:pre-wrap;border-left:2px solid var(--accent-gold);">${r.debug.join('\n')}</div>`;
+            }
+            
+            e.innerHTML = `<div class="play-situation">Q${sim.state.quarter} ${sim.formatTime(sim.state.clock)} | ${sim.getYardLine()}</div><div class="play-description">${r.desc}</div>${r.result === 'fd' ? '<div class="play-result">FIRST DOWN</div>' : ''}${debugHtml}`;
+            el.log.insertBefore(e, el.log.firstChild);
+        }
+
+        function start() {
+            sim.reset();
+            sim.settings.away = TEAMS[el.away.value];
+            sim.settings.home = TEAMS[el.home.value];
+            sim.settings.type = el.type.value;
+            sim.settings.weather = el.weather.value;
+            sim.settings.homeAdv = el.homeAdv.value;
+
+            el.awayName.textContent = sim.settings.away.abbrev;
+            el.homeName.textContent = sim.settings.home.abbrev;
+            el.awayOvr.textContent = `${sim.settings.away.ovr} OVR`;
+            el.homeOvr.textContent = `${sim.settings.home.ovr} OVR`;
+
+            sim.state.possession = Math.random() < 0.5 ? 'away' : 'home';
+            started = true;
+
+            el.start.disabled = true;
+            el.play.disabled = false;
+            el.drive.disabled = false;
+            el.qtrBtn.disabled = false;
+            el.game.disabled = false;
+            [el.away, el.home, el.type, el.weather, el.homeAdv].forEach(e => e.disabled = true);
+
+            el.log.innerHTML = '';
+            addLog({ desc: `${sim.settings[sim.state.possession].name} wins the toss and receives.` });
+            updateDisplay();
+        }
+
+        function simPlay() {
+            if (sim.state.over) return;
+            addLog(sim.play());
+            updateDisplay();
+            if (sim.state.over) endGame();
+        }
+
+        function simDrive() {
+            if (sim.state.over) return;
+            const startPoss = sim.state.possession;
+            let count = 0;
+            while (!sim.state.over && sim.state.possession === startPoss && count < 25) {
+                const r = sim.play();
+                addLog(r);
+                count++;
+                if (['td','to','fg','punt'].includes(r.type)) break;
+            }
+            updateDisplay();
+            if (sim.state.over) endGame();
+        }
+
+        function simQuarter() {
+            if (sim.state.over) return;
+            const startQ = sim.state.quarter;
+            while (!sim.state.over && sim.state.quarter === startQ) addLog(sim.play());
+            updateDisplay();
+            if (sim.state.over) endGame();
+        }
+
+        function simGame() {
+            if (sim.state.over) return;
+            while (!sim.state.over) addLog(sim.play());
+            updateDisplay();
+            endGame();
+        }
+
+        function endGame() {
+            [el.play, el.drive, el.qtrBtn, el.game].forEach(b => b.disabled = true);
+            const winner = sim.state.away > sim.state.home ? sim.settings.away.name : sim.state.home > sim.state.away ? sim.settings.home.name : 'TIE';
+            addLog({ desc: `🏁 FINAL: ${winner === 'TIE' ? `Tie ${sim.state.away}-${sim.state.home}` : `${winner} wins ${Math.max(sim.state.away,sim.state.home)}-${Math.min(sim.state.away,sim.state.home)}!`}` });
+        }
+
+        function resetGame() {
+            sim.reset();
+            started = false;
+            el.start.disabled = false;
+            [el.play, el.drive, el.qtrBtn, el.game].forEach(b => b.disabled = true);
+            [el.away, el.home, el.type, el.weather, el.homeAdv].forEach(e => e.disabled = false);
+            el.log.innerHTML = '<div class="play-entry"><div class="play-description" style="color:var(--text-secondary);text-align:center;">Configure teams and settings, then press START GAME</div></div>';
+            updateTeams();
+            updateDisplay();
+        }
+
+        el.away.addEventListener('change', updateTeams);
+        el.home.addEventListener('change', updateTeams);
+        el.start.addEventListener('click', start);
+        el.play.addEventListener('click', simPlay);
+        el.drive.addEventListener('click', simDrive);
+        el.qtrBtn.addEventListener('click', simQuarter);
+        el.game.addEventListener('click', simGame);
+        el.reset.addEventListener('click', resetGame);
+        el.debug.addEventListener('click', function() {
+            debug = !debug;
+            this.textContent = debug ? 'Debug: ON' : 'Debug: OFF';
+            this.style.background = debug ? 'var(--accent-gold)' : 'var(--accent-blue)';
+            this.style.color = debug ? 'var(--primary-dark)' : 'var(--text-primary)';
+        });
+
+        updateTeams();
+        updateDisplay();
+    </script>
+</body>
+</html>

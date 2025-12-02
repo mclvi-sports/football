@@ -26,6 +26,12 @@ export default function DevToolsPage() {
             icon="R"
             href="/dashboard/dev-tools/roster"
             description="Generate team rosters"
+          />
+          <NavCard
+            title="Roster View"
+            icon="RV"
+            href="/dashboard/dev-tools/roster-view"
+            description="Mockup roster UI"
             variant="highlight"
           />
           <NavCard

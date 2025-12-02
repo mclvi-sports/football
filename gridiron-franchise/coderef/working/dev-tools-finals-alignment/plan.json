@@ -1,0 +1,433 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "dev-tools-finals-alignment",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd (AI Assistant)",
+    "generated_at": "2025-12-01T19:15:00Z",
+    "has_context": true,
+    "has_analysis": true,
+    "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "documents_reviewed": [
+        "context/FINALS/FINAL-player-generation-system.md",
+        "context/FINALS/FINAL-roster-generation-system.md",
+        "context/FINALS/FINAL-draft-class-system.md",
+        "context/FINALS/FINAL-free-agent-pool-system.md",
+        "context/FINALS/FINAL-traits-system.md",
+        "context/FINALS/FINAL-badge-system.md",
+        "context/FINALS/FINAL-salarycap.md"
+      ],
+      "existing_code_reviewed": [
+        "src/lib/generators/player-generator.ts",
+        "src/lib/generators/roster-generator.ts",
+        "src/lib/generators/fa-generator.ts",
+        "src/lib/generators/draft-generator.ts",
+        "src/lib/generators/full-game-generator.ts",
+        "src/lib/data/traits.ts",
+        "src/lib/data/badges.ts",
+        "src/lib/data/archetype-templates.ts",
+        "src/lib/data/slot-ovr-tables.ts"
+      ],
+      "current_state_summary": {
+        "traits": "46 traits implemented vs 44 in FINALS - minor adjustment needed",
+        "badges": "42 badges implemented vs 43 in FINALS - 1 badge missing",
+        "archetypes": "70 archetypes appear to be implemented - needs audit",
+        "roster_generator": "Uses tier system but needs OVR table validation",
+        "fa_generator": "Simplified quality tiers - needs FINALS distribution alignment",
+        "draft_generator": "Basic round OVR - needs FINALS curves and potential system"
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Dev Tools FINALS Alignment",
+      "goal": "Update all 4 dev tools generators to match FINALS design documents",
+      "scope": "Roster Generator, FA Pool Generator, Draft Class Generator, Full New Game Generator",
+      "approach": "Audit each generator against its FINALS spec, fix discrepancies, add missing features",
+      "estimated_complexity": "Medium - mostly data alignment and formula adjustments",
+      "key_deliverables": [
+        "Roster Generator matches FINAL-roster-generation-system.md",
+        "FA Pool Generator matches FINAL-free-agent-pool-system.md",
+        "Draft Class Generator matches FINAL-draft-class-system.md",
+        "Player Generator uses correct trait/badge distributions",
+        "Salary/contract generation matches FINAL-salarycap.md"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity_score": 6,
+      "confidence_level": "high",
+      "risks": [
+        {
+          "risk": "Type changes may break existing code",
+          "severity": "medium",
+          "mitigation": "Run TypeScript checks after each change"
+        },
+        {
+          "risk": "FINALS docs may have internal inconsistencies",
+          "severity": "low",
+          "mitigation": "Cross-reference related docs when discrepancies found"
+        },
+        {
+          "risk": "UI may not display new fields",
+          "severity": "medium",
+          "mitigation": "Update dev tools UI pages if new data is added"
+        }
+      ],
+      "dependencies": [
+        "Player type in src/lib/types.ts must accommodate any new fields",
+        "Dev tools UI pages must remain functional"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "file": "src/lib/generators/fa-generator.ts",
+          "changes": "Update OVR distribution, age distribution, position weights to match FINALS"
+        },
+        {
+          "file": "src/lib/generators/draft-generator.ts",
+          "changes": "Update round OVR curves, potential system, position distribution"
+        },
+        {
+          "file": "src/lib/generators/roster-generator.ts",
+          "changes": "Validate against FINALS slot OVR tables, add contract generation"
+        },
+        {
+          "file": "src/lib/generators/player-generator.ts",
+          "changes": "Update trait distribution percentages, validate badge counts"
+        },
+        {
+          "file": "src/lib/data/slot-ovr-tables.ts",
+          "changes": "Validate OVR expectations match FINALS roster template"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_audit": [
+        {
+          "file": "src/lib/data/traits.ts",
+          "audit": "Verify 44 traits match FINALS-traits-system.md"
+        },
+        {
+          "file": "src/lib/data/badges.ts",
+          "audit": "Verify 43 badges match FINALS-badge-system.md"
+        },
+        {
+          "file": "src/lib/data/archetype-templates.ts",
+          "audit": "Verify 70 archetypes match FINALS-player-generation-system.md"
+        }
+      ]
+    },
+    "4_key_features": [
+      {
+        "id": "FEAT-001",
+        "name": "FA Pool FINALS Alignment",
+        "description": "Update FA generator to match FINAL-free-agent-pool-system.md distributions",
+        "acceptance_criteria": [
+          "Pool size: 150-200 players",
+          "OVR distribution: 3% at 80+, 10% at 75-79, 25% at 70-74, 35% at 65-69, 20% at 60-64, 7% below 60",
+          "Age distribution skews older (30% age 28-30, 25% age 31-33)",
+          "Availability reasons assigned to each FA",
+          "Contract demands calculated per FINALS formula"
+        ]
+      },
+      {
+        "id": "FEAT-002",
+        "name": "Draft Class FINALS Alignment",
+        "description": "Update draft generator to match FINAL-draft-class-system.md",
+        "acceptance_criteria": [
+          "275 prospects across 7 rounds",
+          "Round 1 OVR: 72-82, Round 7 OVR: 58-68 (per FINALS curves)",
+          "Potential tiers: Superstar, Star, Starter, Backup, Bust Risk",
+          "Bust rates by round: 15% R1, 25% R2-3, 35% R4-5, 50% R6-7",
+          "Position distribution matches FINALS percentages"
+        ]
+      },
+      {
+        "id": "FEAT-003",
+        "name": "Roster Generator Validation",
+        "description": "Validate roster generator against FINAL-roster-generation-system.md",
+        "acceptance_criteria": [
+          "53-man roster with correct position counts",
+          "Tier OVR ranges match FINALS (Elite: 85-92, Good: 80-87, etc.)",
+          "Contract generation for all players using FINAL-salarycap.md formulas",
+          "Trait/badge distribution at team level matches FINALS"
+        ]
+      },
+      {
+        "id": "FEAT-004",
+        "name": "Trait/Badge Audit",
+        "description": "Audit trait and badge data against FINALS specs",
+        "acceptance_criteria": [
+          "44 traits match FINAL-traits-system.md",
+          "43 badges match FINAL-badge-system.md (4 tiers)",
+          "Badge tier bonuses: Bronze +2-5, Silver +4-8, Gold +6-12, HoF +9-15"
+        ]
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+        "name": "Dev Tools FINALS Alignment",
+        "feature_dir": "coderef/working/dev-tools-finals-alignment"
+      },
+      "tasks": [
+        {
+          "id": "AUDIT-001",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 1,
+          "description": "Audit traits.ts against FINAL-traits-system.md",
+          "file": "src/lib/data/traits.ts",
+          "type": "audit",
+          "estimated_effort": "small"
+        },
+        {
+          "id": "AUDIT-002",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 1,
+          "description": "Audit badges.ts against FINAL-badge-system.md",
+          "file": "src/lib/data/badges.ts",
+          "type": "audit",
+          "estimated_effort": "small"
+        },
+        {
+          "id": "AUDIT-003",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 1,
+          "description": "Audit archetype-templates.ts against FINAL-player-generation-system.md",
+          "file": "src/lib/data/archetype-templates.ts",
+          "type": "audit",
+          "estimated_effort": "medium"
+        },
+        {
+          "id": "FA-001",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 2,
+          "description": "Update FA OVR distribution to match FINALS",
+          "file": "src/lib/generators/fa-generator.ts",
+          "type": "modify",
+          "estimated_effort": "small"
+        },
+        {
+          "id": "FA-002",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 2,
+          "description": "Update FA age distribution to match FINALS",
+          "file": "src/lib/generators/fa-generator.ts",
+          "type": "modify",
+          "estimated_effort": "small"
+        },
+        {
+          "id": "FA-003",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 2,
+          "description": "Add availability reasons to FA generation",
+          "file": "src/lib/generators/fa-generator.ts",
+          "type": "modify",
+          "estimated_effort": "medium"
+        },
+        {
+          "id": "FA-004",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 2,
+          "description": "Update FA position distribution weights",
+          "file": "src/lib/generators/fa-generator.ts",
+          "type": "modify",
+          "estimated_effort": "small"
+        },
+        {
+          "id": "DRAFT-001",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 2,
+          "description": "Update draft OVR curves to match FINALS round expectations",
+          "file": "src/lib/generators/draft-generator.ts",
+          "type": "modify",
+          "estimated_effort": "small"
+        },
+        {
+          "id": "DRAFT-002",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 2,
+          "description": "Implement FINALS potential tier system",
+          "file": "src/lib/generators/draft-generator.ts",
+          "type": "modify",
+          "estimated_effort": "medium"
+        },
+        {
+          "id": "DRAFT-003",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 2,
+          "description": "Update draft class size to 275 prospects",
+          "file": "src/lib/generators/draft-generator.ts",
+          "type": "modify",
+          "estimated_effort": "small"
+        },
+        {
+          "id": "DRAFT-004",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 2,
+          "description": "Update draft position distribution to match FINALS",
+          "file": "src/lib/generators/draft-generator.ts",
+          "type": "modify",
+          "estimated_effort": "small"
+        },
+        {
+          "id": "ROSTER-001",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 3,
+          "description": "Validate slot OVR tables against FINALS roster template",
+          "file": "src/lib/data/slot-ovr-tables.ts",
+          "type": "audit",
+          "estimated_effort": "medium"
+        },
+        {
+          "id": "ROSTER-002",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 3,
+          "description": "Add contract generation to roster players using FINALS salary formulas",
+          "file": "src/lib/generators/roster-generator.ts",
+          "type": "modify",
+          "estimated_effort": "medium"
+        },
+        {
+          "id": "PLAYER-001",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 3,
+          "description": "Update trait distribution percentages in player generator",
+          "file": "src/lib/generators/player-generator.ts",
+          "type": "modify",
+          "estimated_effort": "small"
+        },
+        {
+          "id": "PLAYER-002",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 3,
+          "description": "Validate badge count formula matches FINALS",
+          "file": "src/lib/generators/player-generator.ts",
+          "type": "audit",
+          "estimated_effort": "small"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 4,
+          "description": "Test all generators via dev tools UI",
+          "type": "test",
+          "estimated_effort": "medium"
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-DEV-TOOLS-FINALS-ALIGNMENT-001",
+          "phase": 4,
+          "description": "Verify generated data matches FINALS distributions",
+          "type": "test",
+          "estimated_effort": "medium"
+        }
+      ]
+    },
+    "6_implementation_phases": [
+      {
+        "phase": 1,
+        "name": "Audit Phase",
+        "description": "Audit existing data files against FINALS specs",
+        "tasks": ["AUDIT-001", "AUDIT-002", "AUDIT-003"],
+        "deliverables": ["Audit report with discrepancies identified"],
+        "estimated_effort": "1-2 hours"
+      },
+      {
+        "phase": 2,
+        "name": "Generator Updates",
+        "description": "Update FA and Draft generators to match FINALS",
+        "tasks": ["FA-001", "FA-002", "FA-003", "FA-004", "DRAFT-001", "DRAFT-002", "DRAFT-003", "DRAFT-004"],
+        "deliverables": ["Updated fa-generator.ts", "Updated draft-generator.ts"],
+        "estimated_effort": "2-3 hours"
+      },
+      {
+        "phase": 3,
+        "name": "Roster & Player Updates",
+        "description": "Update roster generator and player generator",
+        "tasks": ["ROSTER-001", "ROSTER-002", "PLAYER-001", "PLAYER-002"],
+        "deliverables": ["Updated roster-generator.ts", "Updated player-generator.ts", "Validated slot-ovr-tables.ts"],
+        "estimated_effort": "1-2 hours"
+      },
+      {
+        "phase": 4,
+        "name": "Testing & Validation",
+        "description": "Test all generators and validate output",
+        "tasks": ["TEST-001", "TEST-002"],
+        "deliverables": ["All generators produce FINALS-compliant output"],
+        "estimated_effort": "1 hour"
+      }
+    ],
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Test FA OVR distribution matches FINALS percentages",
+        "Test draft round OVR curves match FINALS ranges",
+        "Test potential tier assignment"
+      ],
+      "integration_tests": [
+        "Generate full game and verify all player counts",
+        "Verify average OVRs fall within expected ranges",
+        "Verify age distributions"
+      ],
+      "manual_tests": [
+        "Generate roster via dev tools UI and inspect",
+        "Generate FA pool and verify quality distribution",
+        "Generate draft class and verify round breakdown"
+      ]
+    },
+    "8_success_criteria": [
+      {
+        "id": "SC-001",
+        "description": "FA pool generates 150-200 players with FINALS OVR distribution",
+        "measurable": true,
+        "metric": "OVR buckets within 5% of FINALS targets"
+      },
+      {
+        "id": "SC-002",
+        "description": "Draft class generates 275 prospects with correct round OVR ranges",
+        "measurable": true,
+        "metric": "Round average OVRs within 2 points of FINALS targets"
+      },
+      {
+        "id": "SC-003",
+        "description": "Roster generator produces correct position counts and tier OVRs",
+        "measurable": true,
+        "metric": "53 players with tier-appropriate average OVRs"
+      },
+      {
+        "id": "SC-004",
+        "description": "All generators work in dev tools UI without errors",
+        "measurable": true,
+        "metric": "Zero TypeScript errors, zero runtime errors"
+      }
+    ],
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Audit traits.ts - identify discrepancies",
+        "[ ] Audit badges.ts - identify missing badges",
+        "[ ] Audit archetype-templates.ts - verify 70 archetypes"
+      ],
+      "phase_2_checklist": [
+        "[ ] Update FA OVR distribution",
+        "[ ] Update FA age distribution",
+        "[ ] Add FA availability reasons",
+        "[ ] Update FA position weights",
+        "[ ] Update draft OVR curves",
+        "[ ] Implement potential tier system",
+        "[ ] Set draft class size to 275",
+        "[ ] Update draft position distribution"
+      ],
+      "phase_3_checklist": [
+        "[ ] Validate slot OVR tables",
+        "[ ] Add contract generation to roster",
+        "[ ] Update trait distribution in player generator",
+        "[ ] Validate badge count formula"
+      ],
+      "phase_4_checklist": [
+        "[ ] Test all generators in dev tools UI",
+        "[ ] Verify output matches FINALS distributions"
+      ]
+    }
+  }
+}

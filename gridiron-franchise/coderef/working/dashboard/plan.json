@@ -1,0 +1,326 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "dashboard",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-11-30T21:35:00Z",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": ["README.md"],
+      "coding_standards_reviewed": [],
+      "reference_components_identified": [
+        "src/components/dashboard/bottom-tab-bar.tsx",
+        "src/components/dashboard/team-card.tsx",
+        "src/app/dashboard/page.tsx"
+      ],
+      "existing_patterns": [
+        "Zustand store for state management",
+        "Client components with 'use client' directive",
+        "Tailwind CSS with shadcn/ui components",
+        "Mobile-first design (max-width 500px)"
+      ],
+      "technology_stack": {
+        "language": "TypeScript",
+        "framework": "Next.js 14 (App Router)",
+        "state_management": "Zustand",
+        "styling": "Tailwind CSS + shadcn/ui",
+        "build": "Next.js built-in"
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Dashboard",
+      "description": "Mobile-first dashboard for the football GM simulation game. Main hub after career creation where users manage their team. Features a bottom tab bar navigation with 5 tabs (Home, Roster, Schedule, Draft, Settings) and displays key information about the user's team and career progress.",
+      "goal": "Create an engaging, information-rich dashboard that serves as the central hub for all GM activities, providing quick access to team status, upcoming games, and core management features while maintaining the mobile-first design language.",
+      "estimated_complexity": "Medium",
+      "estimated_tasks": 12
+    },
+    "2_risk_assessment": {
+      "complexity_score": 5,
+      "risk_level": "Low",
+      "risks": [
+        {
+          "risk": "Tab navigation state management",
+          "mitigation": "Use URL-based routing with Next.js App Router for each tab",
+          "severity": "low"
+        },
+        {
+          "risk": "State persistence across tabs",
+          "mitigation": "Zustand store already handles career state; ensure dashboard state persists",
+          "severity": "low"
+        },
+        {
+          "risk": "Mock data complexity",
+          "mitigation": "Start with simple static mock data, can enhance later",
+          "severity": "low"
+        }
+      ],
+      "dependencies": [
+        "Existing career store (src/stores/career-store.ts)",
+        "Team data (src/data/teams.ts)",
+        "shadcn/ui components"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        "src/app/dashboard/home/page.tsx",
+        "src/app/dashboard/roster/page.tsx",
+        "src/app/dashboard/schedule/page.tsx",
+        "src/app/dashboard/draft/page.tsx",
+        "src/app/dashboard/settings/page.tsx",
+        "src/components/dashboard/upcoming-game-card.tsx",
+        "src/components/dashboard/quick-stats-card.tsx",
+        "src/components/dashboard/season-header.tsx",
+        "src/components/dashboard/placeholder-content.tsx"
+      ],
+      "files_to_modify": [
+        "src/app/dashboard/page.tsx",
+        "src/app/dashboard/layout.tsx",
+        "src/components/dashboard/bottom-tab-bar.tsx",
+        "src/stores/career-store.ts"
+      ],
+      "files_unchanged": [
+        "src/components/dashboard/team-card.tsx",
+        "src/data/teams.ts",
+        "src/types/gm-persona.ts"
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Tab Navigation System",
+          "description": "URL-based tab navigation with 5 tabs that update URL and render correct content",
+          "requirements": ["REQ-1", "REQ-3", "REQ-6"]
+        },
+        {
+          "id": "F2",
+          "name": "Home Tab Content",
+          "description": "Main dashboard view with team card, upcoming game preview, and quick stats",
+          "requirements": ["REQ-2", "REQ-4", "REQ-5"]
+        },
+        {
+          "id": "F3",
+          "name": "Placeholder Tabs",
+          "description": "Roster, Schedule, Draft, and Settings tabs with placeholder content",
+          "requirements": ["REQ-6"]
+        },
+        {
+          "id": "F4",
+          "name": "Season Header",
+          "description": "Consistent header showing current season and week across all tabs",
+          "requirements": ["REQ-5"]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-DASHBOARD-001",
+        "name": "Dashboard",
+        "feature_dir": "coderef/working/dashboard"
+      },
+      "tasks": [
+        {
+          "id": "NAV-001",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Update bottom-tab-bar to use Next.js Link for URL-based navigation",
+          "feature": "F1",
+          "type": "modify",
+          "file": "src/components/dashboard/bottom-tab-bar.tsx",
+          "estimated_loc": 30,
+          "dependencies": []
+        },
+        {
+          "id": "NAV-002",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Update dashboard layout to handle tab routes",
+          "feature": "F1",
+          "type": "modify",
+          "file": "src/app/dashboard/layout.tsx",
+          "estimated_loc": 40,
+          "dependencies": ["NAV-001"]
+        },
+        {
+          "id": "NAV-003",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Create dashboard index page that redirects to home tab",
+          "feature": "F1",
+          "type": "modify",
+          "file": "src/app/dashboard/page.tsx",
+          "estimated_loc": 20,
+          "dependencies": ["NAV-002"]
+        },
+        {
+          "id": "UI-001",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Create season header component",
+          "feature": "F4",
+          "type": "create",
+          "file": "src/components/dashboard/season-header.tsx",
+          "estimated_loc": 35,
+          "dependencies": []
+        },
+        {
+          "id": "UI-002",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Create upcoming game card component",
+          "feature": "F2",
+          "type": "create",
+          "file": "src/components/dashboard/upcoming-game-card.tsx",
+          "estimated_loc": 60,
+          "dependencies": []
+        },
+        {
+          "id": "UI-003",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Create quick stats card component",
+          "feature": "F2",
+          "type": "create",
+          "file": "src/components/dashboard/quick-stats-card.tsx",
+          "estimated_loc": 50,
+          "dependencies": []
+        },
+        {
+          "id": "UI-004",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Create placeholder content component for mock tabs",
+          "feature": "F3",
+          "type": "create",
+          "file": "src/components/dashboard/placeholder-content.tsx",
+          "estimated_loc": 25,
+          "dependencies": []
+        },
+        {
+          "id": "PAGE-001",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Create home tab page with all dashboard cards",
+          "feature": "F2",
+          "type": "create",
+          "file": "src/app/dashboard/home/page.tsx",
+          "estimated_loc": 50,
+          "dependencies": ["UI-001", "UI-002", "UI-003"]
+        },
+        {
+          "id": "PAGE-002",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Create roster tab page with placeholder",
+          "feature": "F3",
+          "type": "create",
+          "file": "src/app/dashboard/roster/page.tsx",
+          "estimated_loc": 20,
+          "dependencies": ["UI-004"]
+        },
+        {
+          "id": "PAGE-003",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Create schedule tab page with placeholder",
+          "feature": "F3",
+          "type": "create",
+          "file": "src/app/dashboard/schedule/page.tsx",
+          "estimated_loc": 20,
+          "dependencies": ["UI-004"]
+        },
+        {
+          "id": "PAGE-004",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Create draft tab page with placeholder",
+          "feature": "F3",
+          "type": "create",
+          "file": "src/app/dashboard/draft/page.tsx",
+          "estimated_loc": 20,
+          "dependencies": ["UI-004"]
+        },
+        {
+          "id": "PAGE-005",
+          "workorder_id": "WO-DASHBOARD-001",
+          "description": "Create settings tab page with placeholder",
+          "feature": "F3",
+          "type": "create",
+          "file": "src/app/dashboard/settings/page.tsx",
+          "estimated_loc": 20,
+          "dependencies": ["UI-004"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "id": "phase_1",
+          "name": "Navigation Foundation",
+          "description": "Set up URL-based tab navigation system",
+          "tasks": ["NAV-001", "NAV-002", "NAV-003"],
+          "deliverables": ["Working tab navigation with URL updates"]
+        },
+        {
+          "id": "phase_2",
+          "name": "UI Components",
+          "description": "Build dashboard card components",
+          "tasks": ["UI-001", "UI-002", "UI-003", "UI-004"],
+          "deliverables": ["Season header", "Upcoming game card", "Quick stats card", "Placeholder component"]
+        },
+        {
+          "id": "phase_3",
+          "name": "Tab Pages",
+          "description": "Create all tab page routes",
+          "tasks": ["PAGE-001", "PAGE-002", "PAGE-003", "PAGE-004", "PAGE-005"],
+          "deliverables": ["Home tab with content", "4 placeholder tabs"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Tab navigation renders correct active state",
+        "Season header displays correct season/week",
+        "Team card displays team data correctly"
+      ],
+      "integration_tests": [
+        "Navigation between tabs updates URL",
+        "Career store data persists across tab changes",
+        "Redirect to home when accessing /dashboard directly"
+      ],
+      "manual_tests": [
+        "Complete career flow and verify dashboard displays",
+        "Test all 5 tab navigation on mobile viewport",
+        "Verify styling matches existing app aesthetic"
+      ]
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        "All 5 tabs accessible via bottom navigation",
+        "URLs update when switching tabs (/dashboard/home, /dashboard/roster, etc.)",
+        "Home tab displays team card, upcoming game, and quick stats",
+        "Selected team and persona data visible on dashboard",
+        "Consistent mobile-first design across all tabs",
+        "No console errors during navigation"
+      ],
+      "definition_of_done": [
+        "All 12 tasks completed",
+        "Build passes without errors",
+        "Navigation works correctly on mobile viewport"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] NAV-001: Update bottom-tab-bar with Link navigation",
+        "[ ] NAV-002: Update dashboard layout for tab routes",
+        "[ ] NAV-003: Update dashboard index to redirect to home"
+      ],
+      "phase_2_checklist": [
+        "[ ] UI-001: Create season-header component",
+        "[ ] UI-002: Create upcoming-game-card component",
+        "[ ] UI-003: Create quick-stats-card component",
+        "[ ] UI-004: Create placeholder-content component"
+      ],
+      "phase_3_checklist": [
+        "[ ] PAGE-001: Create home tab page",
+        "[ ] PAGE-002: Create roster tab page",
+        "[ ] PAGE-003: Create schedule tab page",
+        "[ ] PAGE-004: Create draft tab page",
+        "[ ] PAGE-005: Create settings tab page"
+      ]
+    }
+  }
+}

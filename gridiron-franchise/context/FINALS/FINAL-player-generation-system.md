@@ -4,6 +4,20 @@
 
 Players are generated using **archetypes** — templates that define what type of player they are. This creates distinct, recognizable player identities rather than random stat blobs.
 
+This is the **core player generation system**. It defines how to create a single player. For generating groups of players, see the related documents below.
+
+---
+
+## Related Documents
+
+| Document | Purpose |
+|----------|---------|
+| `FINAL-roster-generation-system.md` | Generate 53-man team rosters |
+| `FINAL-draft-class-system.md` | Generate annual draft prospects |
+| `FINAL-free-agent-pool-system.md` | Generate free agent market |
+
+---
+
 ### Generation Flow
 
 ```
@@ -1445,3 +1459,704 @@ Name, age, college, draft info from pools.
 **Archetypes Defined:** 70 across all positions
 **Version:** 1.0
 **Date:** November 2025
+
+---
+
+# JERSEY NUMBER SYSTEM
+
+## Overview
+
+Jersey numbers are assigned based on position, following traditional football conventions. This creates authentic rosters and avoids confusion during gameplay.
+
+---
+
+## Number Ranges by Position
+
+| Position | Primary Range | Secondary Range | Notes |
+|----------|---------------|-----------------|-------|
+| QB | 1-19 | — | Traditional quarterback numbers |
+| RB | 20-49 | 1-9 | Modern rules allow single digits |
+| WR | 10-19 | 80-89, 1-9 | 10-19 most common, single digits for stars |
+| TE | 80-89 | 40-49 | Traditional tight end range |
+| LT | 70-79 | 60-69 | Left side of line |
+| LG | 60-69 | 70-79 | Interior linemen |
+| C | 50-59 | 60-69 | Center of the line |
+| RG | 60-69 | 70-79 | Interior linemen |
+| RT | 70-79 | 60-69 | Right side of line |
+| DE | 90-99 | 50-59 | Edge rushers |
+| DT | 90-99 | 70-79 | Interior defensive line |
+| MLB | 50-59 | 40-49 | Middle linebacker |
+| OLB | 40-59 | 90-99 | Outside linebacker |
+| CB | 20-39 | 1-9 | Cornerbacks, single digits for elite |
+| FS | 20-39 | 40-49 | Free safety |
+| SS | 20-39 | 40-49 | Strong safety |
+| K | 1-19 | — | Kickers |
+| P | 1-19 | — | Punters |
+
+---
+
+## Number Assignment Rules
+
+### Rule 1: No Duplicates Per Team
+- Each number can only be assigned to one active roster player
+- Practice squad can share numbers with active roster
+
+### Rule 2: Position Priority
+- Always try primary range first
+- Use secondary range only if primary is exhausted
+- Never assign outside allowed ranges
+
+### Rule 3: Star Numbers
+Elite players (90+ OVR) get priority for "iconic" numbers:
+
+| Position | Star Numbers |
+|----------|--------------|
+| QB | 7, 12, 9, 3, 1 |
+| RB | 21, 28, 26, 22, 2 |
+| WR | 84, 81, 88, 1, 10 |
+| TE | 87, 85, 80, 88 |
+| DE | 99, 91, 97, 55 |
+| DT | 93, 92, 90, 98 |
+| LB | 52, 55, 54, 56, 51 |
+| CB | 24, 21, 20, 22, 2 |
+| S | 21, 20, 32, 27, 43 |
+
+### Rule 4: Retired Numbers (Optional)
+Each team can have 1-3 retired numbers that cannot be assigned.
+
+---
+
+## Assignment Algorithm
+
+```
+function assignJerseyNumber(player, team):
+    position = player.position
+    primaryRange = getRange(position, "primary")
+    secondaryRange = getRange(position, "secondary")
+    takenNumbers = team.getAssignedNumbers()
+    retiredNumbers = team.getRetiredNumbers()
+    unavailable = takenNumbers + retiredNumbers
+    
+    // Star players get priority picks
+    if player.overall >= 90:
+        starNumbers = getStarNumbers(position)
+        for num in starNumbers:
+            if num not in unavailable:
+                return num
+    
+    // Try primary range (randomized)
+    available = shuffle(primaryRange - unavailable)
+    if available.length > 0:
+        return available[0]
+    
+    // Try secondary range
+    available = shuffle(secondaryRange - unavailable)
+    if available.length > 0:
+        return available[0]
+    
+    // Emergency: find any legal number
+    return findAnyAvailable(position, unavailable)
+```
+
+---
+
+## Roster Number Distribution
+
+Typical 53-man roster number usage:
+
+| Range | Positions | Count |
+|-------|-----------|-------|
+| 1-9 | QB, K, P, star skill players | 3-5 |
+| 10-19 | QB, WR, K, P | 5-8 |
+| 20-39 | RB, CB, S | 10-14 |
+| 40-49 | RB, TE, LB, S | 5-8 |
+| 50-59 | OL, LB | 6-10 |
+| 60-69 | OL | 4-6 |
+| 70-79 | OL, DL | 4-6 |
+| 80-89 | WR, TE | 6-10 |
+| 90-99 | DL, LB | 8-12 |
+
+---
+
+## Special Cases
+
+### Number Changes
+- Players changing positions may keep their number if legal for new position
+- Players may request number changes in offseason
+
+### Rookie Assignment
+- Rookies assigned numbers after veterans
+- High draft picks get earlier selection priority
+
+### Trade/Free Agent Signing
+- New players must take available number
+- If preferred number taken, assign next best available
+
+---
+
+# AGE & EXPERIENCE DISTRIBUTION
+
+## Overview
+
+Age affects player value, potential, development, and decline. This section defines realistic age distributions for different contexts: rosters, draft classes, and free agents.
+
+---
+
+## Rookie Age Ranges
+
+Players entering the league (draft or undrafted):
+
+| Entry Type | Age Range | Most Common | Notes |
+|------------|-----------|-------------|-------|
+| Underclassman (Junior) | 21 | 21 | Left college early |
+| Senior | 22 | 22 | Standard 4-year player |
+| Redshirt Senior | 23 | 23 | Extra year of eligibility |
+| Graduate/Late Bloomer | 24 | 24 | Rare, 5th year or transfers |
+
+### Rookie Age Distribution
+
+| Age | Probability | Description |
+|-----|-------------|-------------|
+| 21 | 30% | Early entry, elite talent |
+| 22 | 45% | Standard senior |
+| 23 | 20% | Redshirt or extra year |
+| 24 | 5% | Late bloomer |
+
+---
+
+## Career Age Curves by Position
+
+### Position Longevity Tiers
+
+| Tier | Positions | Peak Years | Decline Start | Career End |
+|------|-----------|------------|---------------|------------|
+| Short | RB | 24-27 | 28 | 30-32 |
+| Medium-Short | WR, CB, S | 25-29 | 30 | 32-34 |
+| Medium | QB, LB, DE, TE | 26-32 | 33 | 35-38 |
+| Long | OL, DT, K, P | 26-34 | 35 | 36-40 |
+
+### Detailed Age Curves
+
+#### Running Back (RB) — Shortest Career
+| Age | Phase | OVR Modifier | Notes |
+|-----|-------|--------------|-------|
+| 21-23 | Development | Improving | Building to peak |
+| 24-27 | Peak | +0 to +2 | Prime years |
+| 28-29 | Early Decline | -2 to -4/year | Significant drop |
+| 30+ | Late Decline | -4 to -6/year | Rapid decline |
+
+#### Wide Receiver (WR)
+| Age | Phase | OVR Modifier | Notes |
+|-----|-------|--------------|-------|
+| 21-24 | Development | Improving | Learning routes |
+| 25-29 | Peak | +0 to +2 | Prime production |
+| 30-32 | Early Decline | -1 to -3/year | Speed drops first |
+| 33+ | Late Decline | -3 to -5/year | Role player |
+
+#### Quarterback (QB) — Longest Peak
+| Age | Phase | OVR Modifier | Notes |
+|-----|-------|--------------|-------|
+| 21-24 | Development | Improving | Learning to read defenses |
+| 25-32 | Peak | +0 to +2 | Extended prime |
+| 33-36 | Early Decline | -1 to -2/year | Gradual decline |
+| 37+ | Late Decline | -2 to -4/year | Arm strength fades |
+
+#### Offensive Line (OL) — Most Durable
+| Age | Phase | OVR Modifier | Notes |
+|-----|-------|--------------|-------|
+| 21-24 | Development | Improving | Building strength |
+| 25-34 | Peak | +0 to +1 | Long prime window |
+| 35-37 | Early Decline | -1 to -2/year | Slow decline |
+| 38+ | Late Decline | -2 to -3/year | Final years |
+
+#### Cornerback (CB) — Speed Dependent
+| Age | Phase | OVR Modifier | Notes |
+|-----|-------|--------------|-------|
+| 21-23 | Development | Improving | Learning coverage |
+| 24-29 | Peak | +0 to +2 | Prime coverage years |
+| 30-31 | Early Decline | -2 to -3/year | Speed drops |
+| 32+ | Late Decline | -3 to -5/year | Move to safety? |
+
+#### Defensive End (DE)
+| Age | Phase | OVR Modifier | Notes |
+|-----|-------|--------------|-------|
+| 21-24 | Development | Improving | Learning moves |
+| 25-30 | Peak | +0 to +2 | Prime pass rush |
+| 31-33 | Early Decline | -1 to -2/year | Loses burst |
+| 34+ | Late Decline | -2 to -4/year | Rotational role |
+
+#### Linebacker (LB)
+| Age | Phase | OVR Modifier | Notes |
+|-----|-------|--------------|-------|
+| 21-24 | Development | Improving | Reading offenses |
+| 25-30 | Peak | +0 to +2 | Prime tackling |
+| 31-33 | Early Decline | -1 to -2/year | Slower sideline-to-sideline |
+| 34+ | Late Decline | -2 to -4/year | Limited snaps |
+
+#### Safety (S)
+| Age | Phase | OVR Modifier | Notes |
+|-----|-------|--------------|-------|
+| 21-23 | Development | Improving | Learning reads |
+| 24-29 | Peak | +0 to +2 | Prime range |
+| 30-32 | Early Decline | -1 to -3/year | Range shrinks |
+| 33+ | Late Decline | -3 to -4/year | Box safety role |
+
+#### Defensive Tackle (DT)
+| Age | Phase | OVR Modifier | Notes |
+|-----|-------|--------------|-------|
+| 21-24 | Development | Improving | Building power |
+| 25-32 | Peak | +0 to +2 | Long prime |
+| 33-35 | Early Decline | -1 to -2/year | Gradual |
+| 36+ | Late Decline | -2 to -3/year | Final years |
+
+#### Tight End (TE)
+| Age | Phase | OVR Modifier | Notes |
+|-----|-------|--------------|-------|
+| 21-24 | Development | Improving | Learning dual role |
+| 25-30 | Peak | +0 to +2 | Prime production |
+| 31-33 | Early Decline | -1 to -2/year | Less athletic |
+| 34+ | Late Decline | -2 to -3/year | Blocking focus |
+
+#### Kicker (K) / Punter (P) — Longest Careers
+| Age | Phase | OVR Modifier | Notes |
+|-----|-------|--------------|-------|
+| 21-24 | Development | Improving | Building consistency |
+| 25-36 | Peak | +0 to +1 | Very long prime |
+| 37-40 | Early Decline | -1/year | Gradual |
+| 41+ | Late Decline | -1 to -2/year | Can still play |
+
+---
+
+## Experience Levels
+
+### Experience Tiers
+
+| Years in League | Label | Notes |
+|-----------------|-------|-------|
+| 0 (Rookie) | Rookie | First year, learning curve |
+| 1-2 | Sophomore | Still developing |
+| 3-4 | Established | Should be contributing |
+| 5-7 | Veteran | Proven commodity |
+| 8-10 | Seasoned Veteran | Leadership, knows the game |
+| 11+ | Elder Statesman | Rare, respected veteran |
+
+### Experience Effects
+
+| Experience | Effect |
+|------------|--------|
+| Rookie | -3 to -5 OVR penalty in games (nerves, adjustment) |
+| 1 year | -1 to -2 OVR penalty (still adjusting) |
+| 2+ years | No penalty (fully adjusted) |
+| 8+ years | +1 Awareness bonus (experience) |
+| 11+ years | +2 Awareness bonus, leadership trait boost |
+
+---
+
+## Age-to-Experience Mapping
+
+| Current Age | Min Experience | Max Experience | Typical |
+|-------------|----------------|----------------|---------|
+| 21 | 0 | 0 | Rookie |
+| 22 | 0 | 1 | 0-1 |
+| 23 | 0 | 2 | 1 |
+| 24 | 0 | 3 | 2 |
+| 25 | 1 | 4 | 3 |
+| 26 | 2 | 5 | 4 |
+| 27 | 3 | 6 | 5 |
+| 28 | 4 | 7 | 6 |
+| 29 | 5 | 8 | 7 |
+| 30 | 6 | 9 | 8 |
+| 31 | 7 | 10 | 9 |
+| 32 | 8 | 11 | 10 |
+| 33+ | 9+ | 12+ | 11+ |
+
+---
+
+## Roster Age Distribution Template
+
+Target age distribution for a balanced 53-man roster:
+
+| Age Range | Target % | Count | Description |
+|-----------|----------|-------|-------------|
+| 21-23 | 20% | 10-12 | Young talent, developing |
+| 24-26 | 35% | 18-20 | Emerging starters |
+| 27-29 | 30% | 15-17 | Prime veterans |
+| 30-32 | 12% | 6-7 | Veteran leaders |
+| 33+ | 3% | 1-2 | Elder statesmen |
+
+### Average Age by Position
+
+| Position | Target Average Age | Range |
+|----------|-------------------|-------|
+| QB | 27 | 22-38 |
+| RB | 25 | 21-30 |
+| WR | 26 | 21-34 |
+| TE | 27 | 22-35 |
+| OL | 28 | 22-38 |
+| DE | 27 | 22-35 |
+| DT | 27 | 22-36 |
+| LB | 26 | 22-34 |
+| CB | 26 | 21-33 |
+| S | 26 | 21-34 |
+| K | 29 | 22-42 |
+| P | 28 | 22-40 |
+
+---
+
+## Context-Specific Age Generation
+
+### For Draft Class
+```
+Age = weighted_random(21: 30%, 22: 45%, 23: 20%, 24: 5%)
+Experience = 0
+```
+
+### For Veteran Roster Player
+```
+Age = position_curve_sample(position)
+Experience = Age - entry_age (where entry_age is 21-23)
+```
+
+### For Free Agent Pool
+```
+Age = weighted toward older (28-33 for most positions)
+Skews toward players past prime or cut from rosters
+Experience = Age - random(21, 23)
+```
+
+---
+
+## Development & Decline Integration
+
+### Annual Offseason Update
+
+```
+for each player:
+    age += 1
+    experience += 1
+    
+    if age < peak_start(position):
+        // Development phase - can improve toward potential
+        development_rate = base_rate * potential_modifier
+        ovr += development_roll(0 to development_rate)
+    
+    else if age >= decline_start(position):
+        // Decline phase - loses attributes
+        decline_rate = get_decline_rate(position, age)
+        ovr -= decline_roll(decline_rate)
+        
+        // Physical attributes decline first
+        speed -= random(1, 3)
+        acceleration -= random(1, 2)
+        agility -= random(0, 2)
+    
+    else:
+        // Peak phase - maintain with small variance
+        ovr += random(-1, +1)
+```
+
+### Attribute-Specific Decline Order
+
+Physical attributes decline before mental:
+
+| Decline Priority | Attributes | When |
+|------------------|------------|------|
+| First | Speed, Acceleration | Age 28+ (skill), 32+ (big) |
+| Second | Agility, Jumping | Age 30+ (skill), 34+ (big) |
+| Third | Strength, Stamina | Age 32+ (all) |
+| Last | Awareness, Play Recognition | Rarely declines |
+
+---
+
+**Status:** Player Generation System Complete (Phases 1-3)
+**Components:** Archetypes, Attributes, Traits, Physical, Names, Jerseys, Age/Experience
+**Version:** 1.0
+**Date:** December 2025
+
+---
+
+# TRAIT & BADGE ASSIGNMENT
+
+## Overview
+
+Traits represent personality and intangibles. Badges are situational bonuses earned through play. This section defines how traits and badges are assigned during player generation.
+
+---
+
+## Trait Assignment
+
+### Trait Count by Context
+
+| Context | Trait Count | Notes |
+|---------|-------------|-------|
+| Draft Prospect | 1-3 | Most hidden until scouted/drafted |
+| Roster Veteran | 2-4 | Fully visible |
+| Free Agent | 2-4 | Fully visible |
+
+### Trait Count Distribution
+
+| Count | Probability |
+|-------|-------------|
+| 1 trait | 15% |
+| 2 traits | 40% |
+| 3 traits | 35% |
+| 4 traits | 10% |
+
+---
+
+### Trait Selection Process
+
+```
+function assignTraits(player):
+    traitCount = rollTraitCount()
+    traits = []
+    
+    // Step 1: Pull from archetype affinities
+    highAffinity = getHighAffinityTraits(player.archetype)
+    mediumAffinity = getMediumAffinityTraits(player.archetype)
+    
+    for i in 1 to traitCount:
+        if i == 1:
+            // First trait: 60% high affinity, 30% medium, 10% random
+            trait = weightedSelect(high: 60%, medium: 30%, random: 10%)
+        else:
+            // Additional traits: 40% high, 35% medium, 25% random
+            trait = weightedSelect(high: 40%, medium: 35%, random: 25%)
+        
+        // Check for conflicts
+        if hasConflict(trait, traits):
+            trait = selectNonConflicting(trait, traits)
+        
+        traits.add(trait)
+    
+    // Step 2: Negative trait chance
+    if random() < getNegativeTraitChance(player):
+        negativeTrait = selectNegativeTrait()
+        if not hasConflict(negativeTrait, traits):
+            traits.add(negativeTrait)
+    
+    return traits
+```
+
+### Trait Rarity Weights
+
+When selecting from the random pool, use rarity weights:
+
+| Rarity | Weight | Examples |
+|--------|--------|----------|
+| Common | 25% | Quiet/Reserved |
+| Uncommon | 15% | Vocal Leader, Gym Rat, Team First |
+| Rare | 8% | Veteran Mentor, Lazy, Diva |
+| Very Rare | 2% | Locker Room Cancer |
+
+### Negative Trait Probability
+
+| OVR Range | Negative Trait Chance |
+|-----------|----------------------|
+| 90+ | 5% |
+| 80-89 | 10% |
+| 70-79 | 15% |
+| 60-69 | 20% |
+| <60 | 25% |
+
+Lower OVR players are more likely to have character concerns (why they fell in the draft, etc.).
+
+### Negative Traits List
+
+| Trait | Rarity | Effect |
+|-------|--------|--------|
+| Lazy | Rare (5%) | -50% XP, faster regression |
+| Diva | Rare (5%) | -15% chemistry, +20% contract demands |
+| Injury Prone | Rare (8%) | +50% injury chance |
+| Slow Learner | Uncommon (10%) | -25% XP, slow playbook learning |
+| Penalty Prone | Uncommon (12%) | +30% penalty chance |
+| Locker Room Cancer | Very Rare (2%) | -25% team morale |
+| Hot Head | Rare (6%) | Ejection risk, personal fouls |
+| Money Motivated | Uncommon (10%) | +25% contract demands, may hold out |
+
+### Trait Conflict Rules
+
+Certain traits cannot coexist:
+
+| Trait | Conflicts With |
+|-------|----------------|
+| Vocal Leader | Quiet, Diva |
+| Team First | Diva, Selfish, Money Motivated |
+| Gym Rat | Lazy |
+| Film Junkie | Lazy |
+| Focused | Distracted, Lazy |
+| Clutch | Chokes Under Pressure |
+| Iron Man | Injury Prone |
+
+---
+
+## Badge Assignment
+
+### Badge Philosophy
+
+- **Rookies:** Start with 0 badges (earn through play)
+- **Veterans:** Start with badges based on OVR and experience
+- **Badges reflect career accomplishments**
+
+### Starting Badge Count
+
+| OVR | Experience | Badge Count | Badge Tiers |
+|-----|------------|-------------|-------------|
+| 90+ | 8+ years | 4-6 | Mix of Gold/Silver |
+| 90+ | 5-7 years | 3-5 | Mostly Silver, some Gold |
+| 85-89 | 6+ years | 3-4 | Silver, some Gold |
+| 85-89 | 3-5 years | 2-3 | Silver |
+| 80-84 | 5+ years | 2-3 | Bronze/Silver |
+| 80-84 | 2-4 years | 1-2 | Bronze/Silver |
+| 75-79 | 3+ years | 1-2 | Bronze |
+| 75-79 | 1-2 years | 0-1 | Bronze |
+| 70-74 | 2+ years | 0-1 | Bronze |
+| 70-74 | 0-1 years | 0 | None |
+| <70 | Any | 0 | None |
+| Rookie | 0 | 0 | None |
+
+### Badge Tier Distribution for Veterans
+
+| Badge Count | Tier Mix |
+|-------------|----------|
+| 1 badge | 70% Bronze, 30% Silver |
+| 2 badges | 60% Bronze, 40% Silver |
+| 3 badges | 50% Bronze, 40% Silver, 10% Gold |
+| 4 badges | 40% Bronze, 40% Silver, 20% Gold |
+| 5+ badges | 30% Bronze, 40% Silver, 25% Gold, 5% HoF |
+
+### Badge Selection by Position
+
+Badges are position-specific. Select from appropriate pools:
+
+#### QB Badges
+| Badge | Description |
+|-------|-------------|
+| Clutch | Boost in final 2 minutes |
+| Gunslinger | Tighter throwing windows |
+| Escape Artist | Better scrambling |
+| Conductor | Hot route effectiveness |
+| Fastball | Faster bullet passes |
+
+#### RB Badges
+| Badge | Description |
+|-------|-------------|
+| Bruiser | Break more tackles |
+| Evasive | Better juke/spin moves |
+| Goal Line Back | Red zone power |
+| Workhorse | Less fatigue on high carries |
+| Pass Pro | Better blitz pickup |
+
+#### WR Badges
+| Badge | Description |
+|-------|-------------|
+| Route Technician | Sharper routes |
+| Acrobat | Better sideline catches |
+| Deep Threat Elite | Boost on deep routes |
+| RAC 'Em Up | Better YAC |
+| Contested Catch | Win 50/50 balls |
+
+#### Defensive Badges
+| Badge | Description |
+|-------|-------------|
+| Enforcer | Big hit ability |
+| Ball Hawk | Better interceptions |
+| Strip Specialist | Forced fumbles |
+| Shutdown | Better man coverage |
+| Pass Rush Elite | Better sack moves |
+
+#### Universal Badges
+| Badge | Description |
+|-------|-------------|
+| Clutch | All attributes boost late game |
+| Prime Time | Boost in big games |
+| Playoff Performer | Boost in playoffs |
+| Consistent | Less variance game-to-game |
+| Ironman | Reduced injury chance |
+
+### Badge Assignment Algorithm
+
+```
+function assignBadges(player):
+    if player.experience == 0:
+        return []  // Rookies get no badges
+    
+    badgeCount = calculateBadgeCount(player.ovr, player.experience)
+    badges = []
+    
+    positionBadges = getBadgesForPosition(player.position)
+    universalBadges = getUniversalBadges()
+    allBadges = positionBadges + universalBadges
+    
+    for i in 1 to badgeCount:
+        // 70% position-specific, 30% universal
+        if random() < 0.70:
+            badge = selectFromPool(positionBadges)
+        else:
+            badge = selectFromPool(universalBadges)
+        
+        // Determine tier
+        tier = rollBadgeTier(badgeCount)
+        
+        // Avoid duplicates
+        if badge not in badges:
+            badges.add({badge: badge, tier: tier})
+    
+    return badges
+```
+
+---
+
+## Trait Visibility (Scouting)
+
+### Draft Prospects
+
+| Scout Rating | Traits Revealed |
+|--------------|-----------------|
+| 90-99 Elite | All traits visible |
+| 80-89 Good | 2-3 traits visible |
+| 70-79 Average | 1-2 traits visible |
+| 60-69 Poor | 0-1 traits visible |
+
+Hidden traits are revealed after drafting.
+
+### Roster Players & Free Agents
+
+All traits are visible for veteran players.
+
+---
+
+## Integration Example
+
+### Generated Player: Marcus Webb, QB
+
+**Base Info:**
+- Position: QB
+- Archetype: Pocket Passer
+- OVR: 83
+- Age: 27
+- Experience: 5 years
+
+**Trait Assignment:**
+1. Roll trait count: 3 traits
+2. First trait (high affinity): Film Junkie ✓
+3. Second trait (medium affinity): Calm Under Pressure ✓
+4. Third trait (random): Team First ✓
+5. Negative trait roll (10% chance): No
+
+**Result:** Film Junkie, Calm Under Pressure, Team First
+
+**Badge Assignment:**
+1. OVR 83, Experience 5 = 2-3 badges
+2. Roll: 2 badges
+3. Badge 1 (position): Clutch (Silver)
+4. Badge 2 (universal): Conductor (Bronze)
+
+**Result:** Clutch (Silver), Conductor (Bronze)
+
+---
+
+**Status:** Player Generation System Complete
+**Scope:** Core individual player generation (archetypes, attributes, traits, badges, physical, identity)
+**Version:** 2.0
+**Date:** December 2025
