@@ -1,0 +1,34 @@
+{
+  "feature_name": "scheme-separation",
+  "description": "Separate the schemes system from the coaching staff system to have a clear separation of concerns. Schemes should be their own module that coaches reference, not embed.",
+  "goal": "Create a standalone schemes module (src/lib/schemes/) with full scheme definitions, player fit calculations, and simulation integration. Refactor the coaching module to reference schemes instead of defining them inline.",
+  "requirements": [
+    "Create new src/lib/schemes/ module with types.ts, scheme-data.ts, and scheme-fit.ts",
+    "Move all scheme definitions (offensive, defensive, ST) from coaching to schemes module",
+    "Update Coach interface: HC gets both offensive AND defensive scheme, OC gets offensive, DC gets defensive, STC gets ST philosophy",
+    "Rename coach position ST to STC (Special Teams Coordinator)",
+    "Add Players Coach perk to HC perks",
+    "Implement player scheme fit system with 5 levels: Perfect (+5), Good (+2), Neutral (0), Poor (-2), Terrible (-5)",
+    "Add scheme adjustment period logic (4 weeks when schemes change)",
+    "Update coaching generator to use new scheme structure",
+    "Update coaching dev tools UI to reflect changes"
+  ],
+  "out_of_scope": [
+    "Simulation engine integration (will be separate work)",
+    "Player generation integration with scheme fit",
+    "Schemes dev tool UI page (optional future enhancement)"
+  ],
+  "constraints": [
+    "Must maintain backwards compatibility with existing coaching data structure",
+    "Follow existing dev-tools patterns for consistency",
+    "Schemes are reference data, not generated data like coaches",
+    "Must align with FINAL-schemes-system.md specifications"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-SCHEME-SEPARATION-001",
+    "workorder_assigned_at": "2025-12-02T18:29:13.153929+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

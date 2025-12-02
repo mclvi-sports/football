@@ -1,0 +1,718 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "scheme-separation",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-02T13:30:00.000Z",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "README": "coderef/foundation-docs/README.md",
+        "ARCHITECTURE": "coderef/foundation-docs/ARCHITECTURE.md",
+        "API": "coderef/foundation-docs/API.md",
+        "COMPONENTS": "coderef/foundation-docs/COMPONENTS.md"
+      },
+      "design_specs": {
+        "coaching_system": "context/FINALS/FINAL-coaching-staff-system (1).md",
+        "schemes_system": "context/FINALS/FINAL-schemes-system.md"
+      },
+      "reference_implementations": {
+        "existing_coaching_types": "src/lib/coaching/types.ts",
+        "existing_coaching_generator": "src/lib/coaching/coaching-generator.ts",
+        "existing_coaching_store": "src/lib/coaching/coaching-store.ts",
+        "existing_coaching_ui": "src/app/dashboard/dev-tools/coaching/page.tsx",
+        "dev_tools_pattern": "src/app/dashboard/dev-tools/page.tsx"
+      },
+      "technology_stack": {
+        "language": "TypeScript",
+        "framework": "Next.js with React",
+        "state_management": "SessionStorage via custom stores",
+        "styling": "Tailwind CSS"
+      }
+    },
+    "1_executive_summary": {
+      "feature_description": "Separate the schemes system from the coaching staff system to establish a clear separation of concerns. Create a standalone schemes module that defines all offensive, defensive, and special teams schemes with their bonuses, penalties, play calling tendencies, and player fit calculations. Refactor the coaching module to reference schemes instead of defining them inline.",
+      "primary_goal": "Create a modular, reusable schemes system that can be consumed by coaching, player generation, roster management, and simulation systems independently.",
+      "scope": {
+        "in_scope": [
+          "Create new src/lib/schemes/ module with complete type definitions",
+          "Define all 6 offensive schemes with full data (West Coast, Spread, Pro Style, Air Raid, Power Run, Zone Run)",
+          "Define all 6 defensive schemes with full data (4-3, 3-4, Cover 2, Cover 3, Man Blitz, Zone Blitz)",
+          "Define all 3 ST philosophies (Aggressive Returns, Conservative, Coverage Specialist)",
+          "Implement player scheme fit calculation system (5 levels: Perfect to Terrible)",
+          "Refactor coaching types to reference schemes module",
+          "Update Coach interface for dual schemes (HC) and role-specific schemes",
+          "Rename ST position to STC",
+          "Add Players Coach perk to HC perks",
+          "Update coaching generator for new scheme structure",
+          "Update coaching dev tools UI"
+        ],
+        "out_of_scope": [
+          "Simulation engine integration",
+          "Player generation integration",
+          "Schemes dev tool UI page"
+        ]
+      },
+      "estimated_complexity": "medium",
+      "estimated_files_changed": 8,
+      "estimated_files_created": 3
+    },
+    "2_risk_assessment": {
+      "risks": [
+        {
+          "id": "RISK-001",
+          "description": "Breaking existing coaching data structure",
+          "probability": "medium",
+          "impact": "high",
+          "mitigation": "Export scheme types from schemes module with same names, update coaching types to import from new location"
+        },
+        {
+          "id": "RISK-002",
+          "description": "HC dual-scheme assignment complexity",
+          "probability": "low",
+          "impact": "medium",
+          "mitigation": "Update Coach interface to have separate offensiveScheme and defensiveScheme optional properties"
+        },
+        {
+          "id": "RISK-003",
+          "description": "UI not reflecting new scheme structure",
+          "probability": "low",
+          "impact": "medium",
+          "mitigation": "Update coaching page to show both offensive and defensive schemes for HC"
+        }
+      ],
+      "complexity_factors": [
+        "Multiple files need coordinated updates",
+        "Type system changes require careful migration",
+        "Must maintain existing API contracts"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        {
+          "path": "src/lib/schemes/types.ts",
+          "purpose": "Scheme type definitions, interfaces, and constants",
+          "estimated_lines": 200
+        },
+        {
+          "path": "src/lib/schemes/scheme-data.ts",
+          "purpose": "Complete scheme definitions with all bonuses, tendencies, personnel requirements",
+          "estimated_lines": 600
+        },
+        {
+          "path": "src/lib/schemes/scheme-fit.ts",
+          "purpose": "Player scheme fit calculation functions",
+          "estimated_lines": 150
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "src/lib/coaching/types.ts",
+          "changes": "Remove scheme definitions, import from schemes module, update Coach interface, add Players Coach perk, rename ST to STC",
+          "estimated_lines_changed": 150
+        },
+        {
+          "path": "src/lib/coaching/coaching-generator.ts",
+          "changes": "Update scheme assignment for HC dual schemes, import schemes from new module",
+          "estimated_lines_changed": 50
+        },
+        {
+          "path": "src/lib/coaching/coaching-store.ts",
+          "changes": "No changes expected, but verify compatibility",
+          "estimated_lines_changed": 0
+        },
+        {
+          "path": "src/app/api/dev/generate-coaching/route.ts",
+          "changes": "No changes expected, verify types work",
+          "estimated_lines_changed": 0
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/coaching/page.tsx",
+          "changes": "Update Schemes tab to show offensive and defensive separately, show HC with both schemes",
+          "estimated_lines_changed": 100
+        }
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "FEAT-001",
+          "name": "Schemes Module Types",
+          "description": "Create type definitions for all schemes including OffensiveScheme, DefensiveScheme, STPhilosophy, SchemeFit levels, and supporting interfaces",
+          "priority": "high",
+          "dependencies": []
+        },
+        {
+          "id": "FEAT-002",
+          "name": "Offensive Scheme Data",
+          "description": "Complete definitions for all 6 offensive schemes: West Coast, Spread, Pro Style, Air Raid, Power Run, Zone Run - including philosophy, bonuses, penalties, play calling tendencies, and ideal personnel",
+          "priority": "high",
+          "dependencies": ["FEAT-001"]
+        },
+        {
+          "id": "FEAT-003",
+          "name": "Defensive Scheme Data",
+          "description": "Complete definitions for all 6 defensive schemes: 4-3, 3-4, Cover 2, Cover 3, Man Blitz, Zone Blitz - including formation, bonuses, penalties, and personnel packages",
+          "priority": "high",
+          "dependencies": ["FEAT-001"]
+        },
+        {
+          "id": "FEAT-004",
+          "name": "ST Philosophy Data",
+          "description": "Complete definitions for 3 special teams philosophies: Aggressive Returns, Conservative, Coverage Specialist",
+          "priority": "high",
+          "dependencies": ["FEAT-001"]
+        },
+        {
+          "id": "FEAT-005",
+          "name": "Player Scheme Fit System",
+          "description": "Functions to calculate player scheme fit based on archetype and attributes, returning fit level with OVR modifier",
+          "priority": "medium",
+          "dependencies": ["FEAT-001", "FEAT-002", "FEAT-003"]
+        },
+        {
+          "id": "FEAT-006",
+          "name": "Coaching Types Refactor",
+          "description": "Update coaching types to import schemes, update Coach interface for dual schemes (HC), rename ST to STC, add Players Coach perk",
+          "priority": "high",
+          "dependencies": ["FEAT-001"]
+        },
+        {
+          "id": "FEAT-007",
+          "name": "Coaching Generator Update",
+          "description": "Update generator to assign schemes correctly: HC gets both offensive and defensive, OC gets offensive, DC gets defensive, STC gets philosophy",
+          "priority": "high",
+          "dependencies": ["FEAT-006"]
+        },
+        {
+          "id": "FEAT-008",
+          "name": "Dev Tools UI Update",
+          "description": "Update coaching dev tools page to display schemes correctly with new structure",
+          "priority": "medium",
+          "dependencies": ["FEAT-007"]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SCHEME-SEPARATION-001",
+        "name": "Scheme Separation",
+        "feature_dir": "coderef/working/scheme-separation"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Create src/lib/schemes/ directory structure",
+          "feature_id": "FEAT-001",
+          "phase": 1,
+          "estimated_minutes": 5
+        },
+        {
+          "id": "TYPES-001",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Create schemes/types.ts with OffensiveScheme, DefensiveScheme, STPhilosophy types",
+          "feature_id": "FEAT-001",
+          "phase": 1,
+          "estimated_minutes": 30
+        },
+        {
+          "id": "TYPES-002",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add SchemeFit type and SCHEME_FIT_MODIFIERS constant",
+          "feature_id": "FEAT-001",
+          "phase": 1,
+          "estimated_minutes": 15
+        },
+        {
+          "id": "TYPES-003",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add SchemeDefinition, AttributeModifier, PlayTendencies, PositionRequirement interfaces",
+          "feature_id": "FEAT-001",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-001",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Create schemes/scheme-data.ts with West Coast scheme definition",
+          "feature_id": "FEAT-002",
+          "phase": 1,
+          "estimated_minutes": 30
+        },
+        {
+          "id": "DATA-002",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add Spread scheme definition",
+          "feature_id": "FEAT-002",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-003",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add Pro Style scheme definition",
+          "feature_id": "FEAT-002",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-004",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add Air Raid scheme definition",
+          "feature_id": "FEAT-002",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-005",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add Power Run scheme definition",
+          "feature_id": "FEAT-002",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-006",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add Zone Run scheme definition",
+          "feature_id": "FEAT-002",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-007",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add 4-3 Base defensive scheme definition",
+          "feature_id": "FEAT-003",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-008",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add 3-4 Base defensive scheme definition",
+          "feature_id": "FEAT-003",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-009",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add Cover 2 defensive scheme definition",
+          "feature_id": "FEAT-003",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-010",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add Cover 3 defensive scheme definition",
+          "feature_id": "FEAT-003",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-011",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add Man Blitz defensive scheme definition",
+          "feature_id": "FEAT-003",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-012",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add Zone Blitz defensive scheme definition",
+          "feature_id": "FEAT-003",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "DATA-013",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add 3 ST philosophies (Aggressive Returns, Conservative, Coverage Specialist)",
+          "feature_id": "FEAT-004",
+          "phase": 1,
+          "estimated_minutes": 25
+        },
+        {
+          "id": "DATA-014",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add scheme matchup data (strong against, weak against)",
+          "feature_id": "FEAT-002",
+          "phase": 1,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "FIT-001",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Create schemes/scheme-fit.ts with archetype affinity mappings",
+          "feature_id": "FEAT-005",
+          "phase": 2,
+          "estimated_minutes": 40
+        },
+        {
+          "id": "FIT-002",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add calculateSchemeFit function for attribute-based fit calculation",
+          "feature_id": "FEAT-005",
+          "phase": 2,
+          "estimated_minutes": 30
+        },
+        {
+          "id": "FIT-003",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add scheme adjustment period logic (4 weeks transition)",
+          "feature_id": "FEAT-005",
+          "phase": 2,
+          "estimated_minutes": 25
+        },
+        {
+          "id": "FIT-004",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add scheme families constant for faster adjustments",
+          "feature_id": "FEAT-005",
+          "phase": 2,
+          "estimated_minutes": 15
+        },
+        {
+          "id": "COACH-001",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Remove scheme definitions from coaching/types.ts",
+          "feature_id": "FEAT-006",
+          "phase": 2,
+          "estimated_minutes": 15
+        },
+        {
+          "id": "COACH-002",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add imports from schemes module to coaching/types.ts",
+          "feature_id": "FEAT-006",
+          "phase": 2,
+          "estimated_minutes": 10
+        },
+        {
+          "id": "COACH-003",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Update Coach interface: add offensiveScheme?, defensiveScheme?, stPhilosophy?",
+          "feature_id": "FEAT-006",
+          "phase": 2,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "COACH-004",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Rename CoachPosition ST to STC",
+          "feature_id": "FEAT-006",
+          "phase": 2,
+          "estimated_minutes": 15
+        },
+        {
+          "id": "COACH-005",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Add Players Coach perk to HC_PERKS",
+          "feature_id": "FEAT-006",
+          "phase": 2,
+          "estimated_minutes": 10
+        },
+        {
+          "id": "COACH-006",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Update CoachingStats schemeDistribution for new structure",
+          "feature_id": "FEAT-006",
+          "phase": 2,
+          "estimated_minutes": 15
+        },
+        {
+          "id": "GEN-001",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Update coaching-generator.ts imports from schemes module",
+          "feature_id": "FEAT-007",
+          "phase": 3,
+          "estimated_minutes": 10
+        },
+        {
+          "id": "GEN-002",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Update generateCoach to assign HC both offensive and defensive schemes",
+          "feature_id": "FEAT-007",
+          "phase": 3,
+          "estimated_minutes": 25
+        },
+        {
+          "id": "GEN-003",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Update getSchemeForPosition to return correct scheme types by role",
+          "feature_id": "FEAT-007",
+          "phase": 3,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "GEN-004",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Update getCoachingStats to track schemes correctly",
+          "feature_id": "FEAT-007",
+          "phase": 3,
+          "estimated_minutes": 20
+        },
+        {
+          "id": "GEN-005",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Update ST position references to STC throughout generator",
+          "feature_id": "FEAT-007",
+          "phase": 3,
+          "estimated_minutes": 15
+        },
+        {
+          "id": "UI-001",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Update coaching page imports for new scheme types",
+          "feature_id": "FEAT-008",
+          "phase": 3,
+          "estimated_minutes": 10
+        },
+        {
+          "id": "UI-002",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Update Schemes tab to show offensive and defensive schemes separately",
+          "feature_id": "FEAT-008",
+          "phase": 3,
+          "estimated_minutes": 30
+        },
+        {
+          "id": "UI-003",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Update By Team tab to display HC with both schemes",
+          "feature_id": "FEAT-008",
+          "phase": 3,
+          "estimated_minutes": 25
+        },
+        {
+          "id": "UI-004",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Update coach position labels from ST to STC",
+          "feature_id": "FEAT-008",
+          "phase": 3,
+          "estimated_minutes": 10
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Run TypeScript compiler to verify no type errors",
+          "feature_id": null,
+          "phase": 4,
+          "estimated_minutes": 10
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Test coaching generator produces valid data",
+          "feature_id": null,
+          "phase": 4,
+          "estimated_minutes": 15
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-SCHEME-SEPARATION-001",
+          "description": "Test dev tools UI displays correctly",
+          "feature_id": null,
+          "phase": 4,
+          "estimated_minutes": 15
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "id": 1,
+          "name": "Create Schemes Module",
+          "description": "Build the new schemes module with complete type definitions and scheme data",
+          "tasks": ["SETUP-001", "TYPES-001", "TYPES-002", "TYPES-003", "DATA-001", "DATA-002", "DATA-003", "DATA-004", "DATA-005", "DATA-006", "DATA-007", "DATA-008", "DATA-009", "DATA-010", "DATA-011", "DATA-012", "DATA-013", "DATA-014"],
+          "deliverables": [
+            "src/lib/schemes/types.ts with all type definitions",
+            "src/lib/schemes/scheme-data.ts with 6 offensive, 6 defensive, 3 ST schemes"
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Player Fit System & Coaching Refactor",
+          "description": "Implement scheme fit calculations and refactor coaching types",
+          "tasks": ["FIT-001", "FIT-002", "FIT-003", "FIT-004", "COACH-001", "COACH-002", "COACH-003", "COACH-004", "COACH-005", "COACH-006"],
+          "deliverables": [
+            "src/lib/schemes/scheme-fit.ts with fit calculation functions",
+            "Updated src/lib/coaching/types.ts importing from schemes module"
+          ]
+        },
+        {
+          "id": 3,
+          "name": "Generator & UI Updates",
+          "description": "Update coaching generator and dev tools UI for new structure",
+          "tasks": ["GEN-001", "GEN-002", "GEN-003", "GEN-004", "GEN-005", "UI-001", "UI-002", "UI-003", "UI-004"],
+          "deliverables": [
+            "Updated src/lib/coaching/coaching-generator.ts",
+            "Updated src/app/dashboard/dev-tools/coaching/page.tsx"
+          ]
+        },
+        {
+          "id": 4,
+          "name": "Testing & Verification",
+          "description": "Verify all changes work correctly together",
+          "tasks": ["TEST-001", "TEST-002", "TEST-003"],
+          "deliverables": [
+            "TypeScript compilation passes",
+            "Coaching generator works",
+            "Dev tools UI displays correctly"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "approach": "Manual testing via dev tools and TypeScript compilation",
+      "tests": [
+        {
+          "id": "TEST-TS",
+          "type": "compilation",
+          "description": "Run npx tsc to verify no TypeScript errors",
+          "command": "npx tsc --noEmit"
+        },
+        {
+          "id": "TEST-GEN",
+          "type": "functional",
+          "description": "Generate coaching data via API and verify structure",
+          "steps": [
+            "Navigate to dev tools coaching page",
+            "Click generate button",
+            "Verify HC has both offensive and defensive schemes",
+            "Verify OC has only offensive scheme",
+            "Verify DC has only defensive scheme",
+            "Verify STC has only ST philosophy"
+          ]
+        },
+        {
+          "id": "TEST-UI",
+          "type": "visual",
+          "description": "Verify UI displays schemes correctly",
+          "steps": [
+            "Check Schemes tab shows offensive and defensive separately",
+            "Check By Team shows HC with both schemes",
+            "Check position labels show STC not ST"
+          ]
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        {
+          "id": "SC-001",
+          "description": "Schemes module exists at src/lib/schemes/ with types.ts, scheme-data.ts, scheme-fit.ts",
+          "measurable": true
+        },
+        {
+          "id": "SC-002",
+          "description": "All 6 offensive schemes defined with bonuses, penalties, and play tendencies",
+          "measurable": true
+        },
+        {
+          "id": "SC-003",
+          "description": "All 6 defensive schemes defined with formations and personnel packages",
+          "measurable": true
+        },
+        {
+          "id": "SC-004",
+          "description": "All 3 ST philosophies defined",
+          "measurable": true
+        },
+        {
+          "id": "SC-005",
+          "description": "Player scheme fit calculation returns 5 fit levels with correct OVR modifiers",
+          "measurable": true
+        },
+        {
+          "id": "SC-006",
+          "description": "Coaching types.ts imports schemes instead of defining them",
+          "measurable": true
+        },
+        {
+          "id": "SC-007",
+          "description": "HC has both offensiveScheme and defensiveScheme properties",
+          "measurable": true
+        },
+        {
+          "id": "SC-008",
+          "description": "Coach position ST renamed to STC throughout",
+          "measurable": true
+        },
+        {
+          "id": "SC-009",
+          "description": "Players Coach perk added to HC perks",
+          "measurable": true
+        },
+        {
+          "id": "SC-010",
+          "description": "TypeScript compilation passes with no errors",
+          "measurable": true
+        },
+        {
+          "id": "SC-011",
+          "description": "Dev tools coaching page displays schemes correctly",
+          "measurable": true
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Create src/lib/schemes/ directory",
+        "[ ] Create types.ts with OffensiveScheme, DefensiveScheme, STPhilosophy",
+        "[ ] Add SchemeFit type and SCHEME_FIT_MODIFIERS",
+        "[ ] Add SchemeDefinition and supporting interfaces",
+        "[ ] Create scheme-data.ts with West Coast scheme",
+        "[ ] Add Spread scheme",
+        "[ ] Add Pro Style scheme",
+        "[ ] Add Air Raid scheme",
+        "[ ] Add Power Run scheme",
+        "[ ] Add Zone Run scheme",
+        "[ ] Add 4-3 Base scheme",
+        "[ ] Add 3-4 Base scheme",
+        "[ ] Add Cover 2 scheme",
+        "[ ] Add Cover 3 scheme",
+        "[ ] Add Man Blitz scheme",
+        "[ ] Add Zone Blitz scheme",
+        "[ ] Add 3 ST philosophies",
+        "[ ] Add scheme matchup data"
+      ],
+      "phase_2": [
+        "[ ] Create scheme-fit.ts with archetype affinities",
+        "[ ] Add calculateSchemeFit function",
+        "[ ] Add scheme adjustment period logic",
+        "[ ] Add SCHEME_FAMILIES constant",
+        "[ ] Remove scheme definitions from coaching/types.ts",
+        "[ ] Add imports from schemes module",
+        "[ ] Update Coach interface with offensiveScheme, defensiveScheme, stPhilosophy",
+        "[ ] Rename ST to STC in CoachPosition",
+        "[ ] Add Players Coach perk",
+        "[ ] Update CoachingStats schemeDistribution"
+      ],
+      "phase_3": [
+        "[ ] Update coaching-generator.ts imports",
+        "[ ] Update generateCoach for HC dual schemes",
+        "[ ] Update getSchemeForPosition function",
+        "[ ] Update getCoachingStats for new scheme structure",
+        "[ ] Update ST references to STC in generator",
+        "[ ] Update coaching page imports",
+        "[ ] Update Schemes tab layout",
+        "[ ] Update By Team tab for HC dual schemes",
+        "[ ] Update position labels to STC"
+      ],
+      "phase_4": [
+        "[ ] Run TypeScript compiler",
+        "[ ] Test coaching generator",
+        "[ ] Test dev tools UI"
+      ]
+    }
+  }
+}
