@@ -65,6 +65,18 @@ export default function DevToolsPage() {
             href="/dashboard/dev-tools/schedule"
             description="Generate schedule"
           />
+          <NavCard
+            title="Facilities"
+            icon="FAC"
+            href="/dashboard/dev-tools/facilities"
+            description="Team facilities"
+          />
+          <NavCard
+            title="Coaching"
+            icon="HC"
+            href="/dashboard/dev-tools/coaching"
+            description="Coaching staff"
+          />
         </div>
       </main>
     </div>
