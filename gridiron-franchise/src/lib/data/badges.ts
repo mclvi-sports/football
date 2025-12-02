@@ -24,13 +24,13 @@ export interface BadgeDefinition {
 }
 
 /**
- * Badge tier boost ranges
+ * Badge tier boost ranges (per FINAL-badge-system.md)
  */
 export const BADGE_TIER_RANGES: Record<BadgeTier, { min: number; max: number }> = {
-  bronze: { min: 2, max: 3 },
-  silver: { min: 4, max: 5 },
-  gold: { min: 6, max: 8 },
-  hof: { min: 9, max: 12 },
+  bronze: { min: 2, max: 5 },
+  silver: { min: 4, max: 8 },
+  gold: { min: 6, max: 12 },
+  hof: { min: 9, max: 15 },
 };
 
 /**
@@ -438,6 +438,19 @@ export const BADGES: BadgeDefinition[] = [
       hof: { boost: 12, description: '+12 Lead Block, +8 Speed' },
     },
   },
+  {
+    id: 'short_yardage_specialist',
+    name: 'Short Yardage Specialist',
+    type: 'position',
+    positions: [Position.LT, Position.LG, Position.C, Position.RG, Position.RT],
+    condition: '3rd/4th down, 2 or fewer yards to go',
+    tiers: {
+      bronze: { boost: 5, description: '+5 Run Blocking, +3 Strength' },
+      silver: { boost: 8, description: '+8 Run Blocking, +5 Strength' },
+      gold: { boost: 12, description: '+12 Run Blocking, +8 Strength' },
+      hof: { boost: 15, description: '+15 Run Blocking, +10 Strength' },
+    },
+  },
 
   // ==========================================
   // DEFENSIVE LINE BADGES
@@ -466,6 +479,19 @@ export const BADGES: BadgeDefinition[] = [
       silver: { boost: 5, description: '+5 Block Shedding, +4 Tackling' },
       gold: { boost: 8, description: '+8 Block Shedding, +6 Tackling' },
       hof: { boost: 12, description: '+12 Block Shedding, +8 Tackling' },
+    },
+  },
+  {
+    id: 'third_down_rusher',
+    name: 'Third Down Rusher',
+    type: 'position',
+    positions: [Position.DE, Position.DT],
+    condition: '3rd down pass rush',
+    tiers: {
+      bronze: { boost: 5, description: '+5 all pass rush attributes' },
+      silver: { boost: 8, description: '+8 all pass rush attributes' },
+      gold: { boost: 12, description: '+12 all pass rush attributes' },
+      hof: { boost: 15, description: '+15 all pass rush attributes' },
     },
   },
 
@@ -499,16 +525,16 @@ export const BADGES: BadgeDefinition[] = [
     },
   },
   {
-    id: 'enforcer_badge',
-    name: 'Enforcer',
+    id: 'run_stopper_badge',
+    name: 'Run Stopper',
     type: 'position',
-    positions: [Position.MLB, Position.OLB, Position.SS],
-    condition: 'Contact plays',
+    positions: [Position.MLB, Position.OLB],
+    condition: 'Run defense',
     tiers: {
-      bronze: { boost: 3, description: '+3 Hit Power, +2 Tackling' },
-      silver: { boost: 5, description: '+5 Hit Power, +4 Tackling' },
-      gold: { boost: 8, description: '+8 Hit Power, +6 Tackling' },
-      hof: { boost: 12, description: '+12 Hit Power, +8 Tackling' },
+      bronze: { boost: 3, description: '+3 Tackling, +2 Block Shedding' },
+      silver: { boost: 5, description: '+5 Tackling, +4 Block Shedding' },
+      gold: { boost: 8, description: '+8 Tackling, +6 Block Shedding' },
+      hof: { boost: 12, description: '+12 Tackling, +8 Block Shedding' },
     },
   },
 
@@ -542,16 +568,29 @@ export const BADGES: BadgeDefinition[] = [
     },
   },
   {
-    id: 'deep_cover_safety',
-    name: 'Deep Cover Safety',
+    id: 'zone_defender',
+    name: 'Zone Defender',
     type: 'position',
-    positions: [Position.FS, Position.SS],
-    condition: 'Deep zone coverage',
+    positions: [Position.CB, Position.FS, Position.SS],
+    condition: 'Zone coverage',
     tiers: {
-      bronze: { boost: 3, description: '+3 Zone Coverage, +2 Speed' },
-      silver: { boost: 5, description: '+5 Zone Coverage, +4 Speed' },
-      gold: { boost: 8, description: '+8 Zone Coverage, +6 Speed' },
-      hof: { boost: 12, description: '+12 Zone Coverage, +8 Speed' },
+      bronze: { boost: 3, description: '+3 Zone Coverage, +2 Play Recognition' },
+      silver: { boost: 5, description: '+5 Zone Coverage, +4 Play Recognition' },
+      gold: { boost: 8, description: '+8 Zone Coverage, +6 Play Recognition' },
+      hof: { boost: 12, description: '+12 Zone Coverage, +8 Play Recognition' },
+    },
+  },
+  {
+    id: 'run_support',
+    name: 'Run Support',
+    type: 'position',
+    positions: [Position.CB, Position.FS, Position.SS],
+    condition: 'Run defense',
+    tiers: {
+      bronze: { boost: 3, description: '+3 Tackling, +2 Pursuit' },
+      silver: { boost: 5, description: '+5 Tackling, +4 Pursuit' },
+      gold: { boost: 8, description: '+8 Tackling, +6 Pursuit' },
+      hof: { boost: 12, description: '+12 Tackling, +8 Pursuit' },
     },
   },
 
@@ -578,10 +617,23 @@ export const BADGES: BadgeDefinition[] = [
     positions: [Position.K],
     condition: '50+ yard field goals',
     tiers: {
-      bronze: { boost: 3, description: '+3 Kick Power, +2 Accuracy' },
-      silver: { boost: 5, description: '+5 Kick Power, +4 Accuracy' },
-      gold: { boost: 8, description: '+8 Kick Power, +6 Accuracy' },
-      hof: { boost: 12, description: '+12 Kick Power, +8 Accuracy' },
+      bronze: { boost: 5, description: '+5 Kick Power' },
+      silver: { boost: 8, description: '+8 Kick Power' },
+      gold: { boost: 12, description: '+12 Kick Power' },
+      hof: { boost: 15, description: '+15 Kick Power' },
+    },
+  },
+  {
+    id: 'short_range_specialist',
+    name: 'Short Range Specialist',
+    type: 'position',
+    positions: [Position.K],
+    condition: 'Field goals inside 40 yards',
+    tiers: {
+      bronze: { boost: 5, description: '+5 Kick Accuracy' },
+      silver: { boost: 8, description: '+8 Kick Accuracy' },
+      gold: { boost: 12, description: '+12 Kick Accuracy' },
+      hof: { boost: 15, description: '+15 Kick Accuracy' },
     },
   },
   {
@@ -591,10 +643,23 @@ export const BADGES: BadgeDefinition[] = [
     positions: [Position.P],
     condition: 'Punts inside the 20',
     tiers: {
-      bronze: { boost: 3, description: '+3 Punt Accuracy' },
-      silver: { boost: 5, description: '+5 Punt Accuracy' },
-      gold: { boost: 8, description: '+8 Punt Accuracy' },
-      hof: { boost: 12, description: '+12 Punt Accuracy' },
+      bronze: { boost: 5, description: '+5 Punt Accuracy' },
+      silver: { boost: 8, description: '+8 Punt Accuracy' },
+      gold: { boost: 12, description: '+12 Punt Accuracy' },
+      hof: { boost: 15, description: '+15 Punt Accuracy' },
+    },
+  },
+  {
+    id: 'big_leg',
+    name: 'Big Leg',
+    type: 'position',
+    positions: [Position.P],
+    condition: 'All punts',
+    tiers: {
+      bronze: { boost: 5, description: '+5 Punt Power' },
+      silver: { boost: 8, description: '+8 Punt Power' },
+      gold: { boost: 12, description: '+12 Punt Power' },
+      hof: { boost: 15, description: '+15 Punt Power' },
     },
   },
 ];
@@ -645,18 +710,36 @@ export function getBadgeCount(ovr: number, experience: number): number {
   // Rookies (experience = 0) have no badges
   if (experience === 0) return 0;
 
-  // Base count on OVR
-  let count = 0;
-  if (ovr >= 90) count = 3;
-  else if (ovr >= 85) count = 2;
-  else if (ovr >= 80) count = 1;
-  else if (ovr >= 75) count = Math.random() < 0.5 ? 1 : 0;
-  else count = 0;
+  // Badge count by OVR tier (per FINALS)
+  // 95-99: 5-6, 90-94: 4-5, 85-89: 3-4, 80-84: 2-3, 75-79: 1-2, 70-74: 0-1, <70: 0
+  let minBadges: number;
+  let maxBadges: number;
 
-  // Experience bonus (veterans get more badges)
-  if (experience >= 10) count += 2;
-  else if (experience >= 6) count += 1;
+  if (ovr >= 95) {
+    minBadges = 5; maxBadges = 6;
+  } else if (ovr >= 90) {
+    minBadges = 4; maxBadges = 5;
+  } else if (ovr >= 85) {
+    minBadges = 3; maxBadges = 4;
+  } else if (ovr >= 80) {
+    minBadges = 2; maxBadges = 3;
+  } else if (ovr >= 75) {
+    minBadges = 1; maxBadges = 2;
+  } else if (ovr >= 70) {
+    minBadges = 0; maxBadges = 1;
+  } else {
+    return 0; // <70 OVR: no badges
+  }
 
-  // Cap at 6 badges max
+  // Experience bonus (veterans more likely to hit max)
+  let experienceBonus = 0;
+  if (experience >= 10) experienceBonus = 0.4;  // 40% more likely to hit max
+  else if (experience >= 6) experienceBonus = 0.2;
+
+  // Random within range, biased by experience
+  const roll = Math.random() + experienceBonus;
+  const count = roll < 0.5 ? minBadges : maxBadges;
+
+  // Cap at 6 badges max per FINALS
   return Math.min(count, 6);
 }

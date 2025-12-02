@@ -308,23 +308,33 @@ function calculatePotential(ovr: number, age: number): number {
 /**
  * Generate traits for a player based on OVR and archetype
  *
- * Algorithm from FINAL spec:
- * 1. Roll trait count: 15% = 1, 40% = 2, 35% = 3, 10% = 4
- * 2. First trait: 60% high affinity, 30% medium, 10% random
- * 3. Additional traits: 40% high, 35% medium, 25% random
- * 4. Validate no conflicts
- * 5. Negative trait roll based on OVR
+ * Algorithm from FINALS spec:
+ * - Trait count depends on OVR tier
+ * - Negative trait ratio depends on OVR tier
+ * - Validate no conflicts
  */
 function generateTraits(archetype: Archetype, position: Position, ovr: number): string[] {
   const traits: string[] = [];
 
-  // Roll trait count
-  const countRoll = Math.random() * 100;
-  let traitCount: number;
-  if (countRoll < 15) traitCount = 1;
-  else if (countRoll < 55) traitCount = 2;
-  else if (countRoll < 90) traitCount = 3;
-  else traitCount = 4;
+  // Trait count by OVR tier (per FINALS)
+  // Elite (90+): 3-5, Good (80-89): 2-4, Average (70-79): 2-3
+  // Below Average (60-69): 1-3, Poor (<60): 1-2
+  let minTraits: number;
+  let maxTraits: number;
+
+  if (ovr >= 90) {
+    minTraits = 3; maxTraits = 5;
+  } else if (ovr >= 80) {
+    minTraits = 2; maxTraits = 4;
+  } else if (ovr >= 70) {
+    minTraits = 2; maxTraits = 3;
+  } else if (ovr >= 60) {
+    minTraits = 1; maxTraits = 3;
+  } else {
+    minTraits = 1; maxTraits = 2;
+  }
+
+  const traitCount = minTraits + Math.floor(Math.random() * (maxTraits - minTraits + 1));
 
   // Get available positive traits
   const availablePositive = TRAITS.filter(t => POSITIVE_TRAITS.includes(t.id));
@@ -355,14 +365,21 @@ function generateTraits(archetype: Archetype, position: Position, ovr: number): 
     traits.push(selectedTrait);
   }
 
-  // Negative trait roll based on OVR
-  let negativeChance: number;
-  if (ovr >= 90) negativeChance = 5;
-  else if (ovr >= 80) negativeChance = 10;
-  else if (ovr >= 70) negativeChance = 15;
-  else negativeChance = 25;
+  // Negative trait ratio by OVR tier (per FINALS)
+  // Elite (90+): 20%, Good (80-89): 30%, Average (70-79): 40%
+  // Below Average (60-69): 50%, Poor (<60): 60%
+  let negativeRatio: number;
+  if (ovr >= 90) negativeRatio = 0.20;
+  else if (ovr >= 80) negativeRatio = 0.30;
+  else if (ovr >= 70) negativeRatio = 0.40;
+  else if (ovr >= 60) negativeRatio = 0.50;
+  else negativeRatio = 0.60;
 
-  if (Math.random() * 100 < negativeChance) {
+  // Calculate how many negative traits based on total count and ratio
+  const targetNegative = Math.round(traits.length * negativeRatio);
+
+  // Add negative traits to reach target
+  for (let i = 0; i < targetNegative; i++) {
     const availableNegative = TRAITS.filter(t => {
       if (!NEGATIVE_TRAITS.includes(t.id)) return false;
       if (traits.includes(t.id)) return false;

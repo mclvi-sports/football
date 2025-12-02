@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateDraftClass, getDraftClassStats, DraftDepth, DraftTalent } from "@/lib/generators/draft-generator";
+import { generateDraftClass, getDraftClassStats } from "@/lib/generators/draft-generator";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const depth = (body.depth as DraftDepth) || "normal";
-    const talent = (body.talent as DraftTalent) || "average";
+    // Size defaults to ~275 (224 drafted + 40-60 UDFA) per FINALS if not specified
+    const size = body.size ? Number(body.size) : undefined;
 
-    const players = generateDraftClass({ depth, talent });
+    const players = generateDraftClass({ size });
     const stats = getDraftClassStats(players);
 
     return NextResponse.json({

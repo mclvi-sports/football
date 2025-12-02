@@ -7,8 +7,8 @@
 
 import { Player, Roster, Tier } from '../types';
 import { generateTeamRoster, getRosterStats } from './roster-generator';
-import { generateFAPool, getFAPoolStats } from './fa-generator';
-import { generateDraftClass, getDraftClassStats } from './draft-generator';
+import { generateFAPool, getFAPoolStats, FreeAgent } from './fa-generator';
+import { generateDraftClass, getDraftClassStats, DraftProspect } from './draft-generator';
 
 // All 32 teams with their info
 export const NFL_TEAMS: TeamInfo[] = [
@@ -69,8 +69,8 @@ export interface TeamRosterData {
 
 export interface FullGameData {
   teams: TeamRosterData[];
-  freeAgents: Player[];
-  draftClass: Player[];
+  freeAgents: FreeAgent[];
+  draftClass: DraftProspect[];
   totalPlayers: number;
   generatedAt: string;
 }
@@ -87,13 +87,13 @@ export interface FullGameStats {
   tierDistribution: Record<Tier, number>;
 }
 
-// Tier distribution for realistic league parity
+// Tier distribution per FINALS spec
 const TIER_DISTRIBUTION: { tier: Tier; count: number }[] = [
-  { tier: Tier.Elite, count: 4 },        // ~12.5% - Top teams
-  { tier: Tier.Good, count: 8 },         // ~25% - Playoff contenders
-  { tier: Tier.Average, count: 10 },     // ~31% - Middle of the pack
-  { tier: Tier.BelowAverage, count: 6 }, // ~19% - Struggling teams
-  { tier: Tier.Rebuilding, count: 4 },   // ~12.5% - Rebuilding teams
+  { tier: Tier.Elite, count: 3 },        // Super Bowl contenders
+  { tier: Tier.Good, count: 8 },         // Playoff caliber
+  { tier: Tier.Average, count: 12 },     // Middle of the pack
+  { tier: Tier.BelowAverage, count: 6 }, // Struggling
+  { tier: Tier.Rebuilding, count: 3 },   // Bottom of the league
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -145,11 +145,11 @@ export function generateFullGame(): FullGameData {
     });
   }
 
-  // Generate free agent pool (150 players, mixed quality)
-  const freeAgents = generateFAPool({ size: 150, quality: 'mixed' });
+  // Generate free agent pool (150-200 players per FINALS)
+  const freeAgents = generateFAPool({ size: 175 });
 
-  // Generate draft class (normal depth, average talent)
-  const draftClass = generateDraftClass({ depth: 'normal', talent: 'average' });
+  // Generate draft class (~275 prospects per FINALS)
+  const draftClass = generateDraftClass();
 
   const totalRosterPlayers = teams.reduce((sum, t) => sum + t.stats.totalPlayers, 0);
 
