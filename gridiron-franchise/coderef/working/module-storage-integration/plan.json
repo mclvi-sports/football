@@ -1,0 +1,185 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "module-storage-integration",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": false,
+    "has_analysis": false,
+    "created_at": "2025-12-02"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "architecture": "Module pages share sessionStorage, each module can generate independently",
+        "patterns": "Read dependencies from shared storage, write results back to shared storage"
+      },
+      "reference_implementations": [
+        {
+          "file": "src/components/franchise/game-setup-dashboard.tsx",
+          "pattern": "Reads teamTiers from getFullGameData() before generating coaching/facilities"
+        },
+        {
+          "file": "src/lib/dev-player-store.ts",
+          "pattern": "getFullGameData() returns all team data including tiers"
+        }
+      ]
+    },
+    "1_executive_summary": {
+      "description": "Update individual module pages to read dependencies from shared storage when generating, enabling standalone generation that integrates with Full page",
+      "goal": "Allow modules to be generated independently while maintaining data consistency with Full page",
+      "requirements": [
+        "Coaching page reads teamTiers from getFullGameData() when generating",
+        "Facilities page reads teamTiers from getFullGameData() when generating",
+        "Both pages show warning if rosters not generated yet",
+        "Full page status reflects individually-generated modules"
+      ],
+      "out_of_scope": [
+        "Changing storage structure",
+        "Adding new stores",
+        "Modifying API endpoints"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity": "low",
+      "estimated_tasks": 4,
+      "risks": [
+        {
+          "risk": "User generates coaching without rosters first",
+          "mitigation": "Show warning message, disable generate button if no rosters",
+          "severity": "low"
+        }
+      ],
+      "dependencies": [
+        "getFullGameData() already exists and returns team tiers",
+        "APIs already accept teamTiers parameter"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/app/dashboard/dev-tools/coaching/page.tsx",
+          "changes": "Read teamTiers from getFullGameData(), show warning if no rosters"
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/facilities/page.tsx",
+          "changes": "Read teamTiers from getFullGameData(), show warning if no rosters"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_reference": [
+        "src/components/franchise/game-setup-dashboard.tsx",
+        "src/lib/dev-player-store.ts"
+      ]
+    },
+    "4_key_features": [
+      {
+        "id": "COACHING-STORAGE",
+        "name": "Coaching Storage Integration",
+        "description": "Coaching page reads teamTiers from shared storage when generating"
+      },
+      {
+        "id": "FACILITIES-STORAGE",
+        "name": "Facilities Storage Integration",
+        "description": "Facilities page reads teamTiers from shared storage when generating"
+      },
+      {
+        "id": "DEPENDENCY-CHECK",
+        "name": "Dependency Validation",
+        "description": "Show warning and disable generate if rosters not available"
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-MODULE-STORAGE-INTEGRATION-001",
+        "name": "Module Storage Integration",
+        "feature_dir": "coderef/working/module-storage-integration"
+      },
+      "tasks": [
+        {
+          "id": "STORAGE-001",
+          "workorder_id": "WO-MODULE-STORAGE-INTEGRATION-001",
+          "description": "Add getFullGameData import to coaching page",
+          "feature": "COACHING-STORAGE",
+          "phase": 1,
+          "complexity": "trivial"
+        },
+        {
+          "id": "STORAGE-002",
+          "workorder_id": "WO-MODULE-STORAGE-INTEGRATION-001",
+          "description": "Update coaching generateCoaching() to read teamTiers from storage",
+          "feature": "COACHING-STORAGE",
+          "phase": 1,
+          "complexity": "small"
+        },
+        {
+          "id": "STORAGE-003",
+          "workorder_id": "WO-MODULE-STORAGE-INTEGRATION-001",
+          "description": "Add getFullGameData import to facilities page",
+          "feature": "FACILITIES-STORAGE",
+          "phase": 1,
+          "complexity": "trivial"
+        },
+        {
+          "id": "STORAGE-004",
+          "workorder_id": "WO-MODULE-STORAGE-INTEGRATION-001",
+          "description": "Update facilities generateFacilities() to read teamTiers from storage",
+          "feature": "FACILITIES-STORAGE",
+          "phase": 1,
+          "complexity": "small"
+        },
+        {
+          "id": "STORAGE-005",
+          "workorder_id": "WO-MODULE-STORAGE-INTEGRATION-001",
+          "description": "Add roster dependency check and warning UI to both pages",
+          "feature": "DEPENDENCY-CHECK",
+          "phase": 2,
+          "complexity": "small"
+        }
+      ]
+    },
+    "6_implementation_phases": [
+      {
+        "phase": 1,
+        "name": "Storage Integration",
+        "description": "Update generate functions to read from shared storage",
+        "tasks": ["STORAGE-001", "STORAGE-002", "STORAGE-003", "STORAGE-004"]
+      },
+      {
+        "phase": 2,
+        "name": "Dependency Validation",
+        "description": "Add checks and warnings for missing roster data",
+        "tasks": ["STORAGE-005"]
+      }
+    ],
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Generate rosters on Full page, then generate coaching on coaching page - verify it uses roster tiers",
+        "Generate rosters on Full page, then generate facilities on facilities page - verify it uses roster tiers",
+        "Try to generate coaching without rosters - verify warning shown",
+        "Try to generate facilities without rosters - verify warning shown",
+        "Generate module individually, return to Full page - verify status updated"
+      ]
+    },
+    "8_success_criteria": [
+      "Coaching page uses teamTiers from Full page data when generating",
+      "Facilities page uses teamTiers from Full page data when generating",
+      "Warning shown when trying to generate without rosters",
+      "Full page correctly shows status of individually-generated modules",
+      "No breaking changes to existing Full page generation flow"
+    ],
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Add getFullGameData import to coaching page",
+        "[ ] Update coaching generateCoaching() to build teamTiers from storage",
+        "[ ] Add getFullGameData import to facilities page",
+        "[ ] Update facilities generateFacilities() to build teamTiers from storage"
+      ],
+      "phase_2": [
+        "[ ] Add hasRosters check state to both pages",
+        "[ ] Show warning message when no rosters available",
+        "[ ] Disable generate button when no rosters"
+      ]
+    }
+  }
+}

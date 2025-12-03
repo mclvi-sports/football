@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { storeCoaching, getCoaching, getCachedStats } from '@/lib/coaching/coaching-store';
+import { getFullGameData } from '@/lib/dev-player-store';
 import { LEAGUE_TEAMS } from '@/lib/data/teams';
 import {
   LeagueCoaching,
@@ -84,8 +85,9 @@ export default function CoachingGeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<ViewTab>('overview');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('BOS');
+  const [hasRosters, setHasRosters] = useState(false);
 
-  // Load existing coaching data on mount
+  // Load existing coaching data on mount and check for rosters
   useEffect(() => {
     const existingCoaching = getCoaching();
     const existingStats = getCachedStats();
@@ -95,6 +97,9 @@ export default function CoachingGeneratorPage() {
         setStats(existingStats);
       }
     }
+    // Check if rosters exist in storage
+    const fullGameData = getFullGameData();
+    setHasRosters(!!fullGameData && fullGameData.teams.length > 0);
   }, []);
 
   // Store coaching when generated
@@ -107,10 +112,19 @@ export default function CoachingGeneratorPage() {
   const generateCoaching = async () => {
     setLoading(true);
     try {
+      // Build teamTiers from stored roster data
+      const fullGameData = getFullGameData();
+      const teamTiers: Record<string, Tier> = {};
+      if (fullGameData) {
+        for (const teamData of fullGameData.teams) {
+          teamTiers[teamData.team.id] = teamData.tier;
+        }
+      }
+
       const response = await fetch('/api/dev/generate-coaching', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ teamTiers }),
       });
       const data = await response.json();
       if (data.success) {
@@ -295,9 +309,14 @@ export default function CoachingGeneratorPage() {
             <p className="text-muted-foreground mb-4">
               Generate coaching staff for all 32 teams with attributes, schemes, and perks.
             </p>
+            {!hasRosters && (
+              <div className="mb-4 p-3 rounded-lg bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm">
+                Rosters must be generated first. Generate rosters from the Full page to enable tier-based coaching generation.
+              </div>
+            )}
             <button
               onClick={generateCoaching}
-              disabled={loading}
+              disabled={loading || !hasRosters}
               className={cn(
                 'px-8 py-3 rounded-lg font-semibold transition-all',
                 'bg-gradient-to-r from-blue-600 to-purple-600 text-white',

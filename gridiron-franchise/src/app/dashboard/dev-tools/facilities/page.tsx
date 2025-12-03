@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { storeFacilities, getFacilities, getCachedStats } from '@/lib/facilities/facilities-store';
+import { getFullGameData } from '@/lib/dev-player-store';
 import { LEAGUE_TEAMS } from '@/lib/data/teams';
 import {
   LeagueFacilities,
@@ -68,8 +69,9 @@ export default function FacilitiesGeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<ViewTab>('overview');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('BOS');
+  const [hasRosters, setHasRosters] = useState(false);
 
-  // Load existing facilities data on mount
+  // Load existing facilities data on mount and check for rosters
   useEffect(() => {
     const existingFacilities = getFacilities();
     const existingStats = getCachedStats();
@@ -79,6 +81,9 @@ export default function FacilitiesGeneratorPage() {
         setStats(existingStats);
       }
     }
+    // Check if rosters exist in storage
+    const fullGameData = getFullGameData();
+    setHasRosters(!!fullGameData && fullGameData.teams.length > 0);
   }, []);
 
   // Store facilities when generated
@@ -91,10 +96,19 @@ export default function FacilitiesGeneratorPage() {
   const generateFacilities = async () => {
     setLoading(true);
     try {
+      // Build teamTiers from stored roster data
+      const fullGameData = getFullGameData();
+      const teamTiers: Record<string, Tier> = {};
+      if (fullGameData) {
+        for (const teamData of fullGameData.teams) {
+          teamTiers[teamData.team.id] = teamData.tier;
+        }
+      }
+
       const response = await fetch('/api/dev/generate-facilities', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ teamTiers }),
       });
       const data = await response.json();
       if (data.success) {
@@ -202,9 +216,14 @@ export default function FacilitiesGeneratorPage() {
             <p className="text-muted-foreground mb-4">
               Generate facilities for all 32 teams with ratings, effects, and owner tiers.
             </p>
+            {!hasRosters && (
+              <div className="mb-4 p-3 rounded-lg bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm">
+                Rosters must be generated first. Generate rosters from the Full page to enable tier-based facilities generation.
+              </div>
+            )}
             <button
               onClick={generateFacilities}
-              disabled={loading}
+              disabled={loading || !hasRosters}
               className={cn(
                 'px-8 py-3 rounded-lg font-semibold transition-all',
                 'bg-gradient-to-r from-blue-600 to-purple-600 text-white',
