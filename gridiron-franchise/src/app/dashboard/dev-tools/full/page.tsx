@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation";
 import { Player, Tier } from "@/lib/types";
 import { storeDevPlayers, storeTeamRoster, storeFullGameData, TeamRosterData, FullGameData as StoredFullGameData } from "@/lib/dev-player-store";
 import { cn } from "@/lib/utils";
+import { generateCoaching } from "@/lib/coaching/coaching-generator";
+import { storeCoaching } from "@/lib/coaching/coaching-store";
+import { generateFacilities } from "@/lib/facilities/facilities-generator";
+import { storeFacilities } from "@/lib/facilities/facilities-store";
+import { Users, Building2 } from "lucide-react";
 
 interface TeamInfo {
   id: string;
@@ -60,6 +65,8 @@ export default function FullGameGeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<ViewTab>("overview");
   const [selectedConference, setSelectedConference] = useState<string>("all");
+  const [hasCoaching, setHasCoaching] = useState(false);
+  const [hasFacilities, setHasFacilities] = useState(false);
 
   // Store all players for profile viewing and full game data for simulator
   useEffect(() => {
@@ -87,6 +94,8 @@ export default function FullGameGeneratorPage() {
 
   const generateFullGame = async () => {
     setLoading(true);
+    setHasCoaching(false);
+    setHasFacilities(false);
     try {
       const response = await fetch("/api/dev/generate-full", {
         method: "POST",
@@ -96,6 +105,22 @@ export default function FullGameGeneratorPage() {
       if (data.success) {
         setGameData(data.data);
         setStats(data.stats);
+
+        // Build team tiers map from generated teams
+        const teamTiers = new Map<string, Tier>();
+        for (const teamData of data.data.teams) {
+          teamTiers.set(teamData.team.id, teamData.tier);
+        }
+
+        // Generate and store coaching staff for all 32 teams
+        const coachingData = generateCoaching(teamTiers);
+        storeCoaching(coachingData);
+        setHasCoaching(true);
+
+        // Generate and store facilities for all 32 teams
+        const facilitiesData = generateFacilities(teamTiers);
+        storeFacilities(facilitiesData);
+        setHasFacilities(true);
       }
     } catch (error) {
       console.error("Failed to generate full game:", error);
@@ -215,6 +240,25 @@ export default function FullGameGeneratorPage() {
                 <div className="text-2xl font-bold">{stats.draftClassCount}</div>
                 <div className="text-[10px] text-muted-foreground uppercase">Prospects</div>
               </div>
+            </div>
+
+            {/* Module Status Indicators */}
+            <div className="flex flex-wrap gap-2">
+              <span className="rounded-full bg-blue-600/20 border border-blue-500/40 px-3 py-1 text-xs font-semibold text-blue-400">
+                {stats.teamCount} ROSTERS
+              </span>
+              {hasCoaching && (
+                <span className="flex items-center gap-1 rounded-full bg-green-600/20 border border-green-500/40 px-3 py-1 text-xs font-semibold text-green-400">
+                  <Users className="h-3 w-3" />
+                  32 COACHING STAFFS
+                </span>
+              )}
+              {hasFacilities && (
+                <span className="flex items-center gap-1 rounded-full bg-amber-600/20 border border-amber-500/40 px-3 py-1 text-xs font-semibold text-amber-400">
+                  <Building2 className="h-3 w-3" />
+                  32 FACILITIES
+                </span>
+              )}
             </div>
 
             {/* Tabs */}

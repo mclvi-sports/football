@@ -1,0 +1,690 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "unified-game-generator",
+    "version": "2.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-02",
+    "has_context": true,
+    "has_analysis": true,
+    "description": "Franchise Mode UI Prototype - Complete game setup, season simulation, box scores, and playoffs"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_documents": {
+        "architecture": "docs/ARCHITECTURE.md",
+        "coding_standards": "Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui",
+        "project_conventions": "SessionStorage for dev data, modular generators, sim engine integration"
+      },
+      "reference_components": {
+        "existing_pages": [
+          "src/app/dashboard/dev-tools/full/page.tsx",
+          "src/app/dashboard/dev-tools/season/page.tsx",
+          "src/app/dashboard/dev-tools/sim/page.tsx"
+        ],
+        "store_patterns": [
+          "src/lib/dev-player-store.ts",
+          "src/lib/coaching/coaching-store.ts",
+          "src/lib/facilities/facilities-store.ts",
+          "src/lib/schedule/schedule-store.ts"
+        ],
+        "sim_engine": [
+          "src/lib/sim/simulator.ts",
+          "src/lib/season/season-simulator.ts",
+          "src/lib/season/playoffs.ts"
+        ],
+        "ui_components": [
+          "src/components/ui/*",
+          "src/components/sim/*"
+        ]
+      },
+      "discovered_patterns": {
+        "data_flow": "Generators → SessionStorage → Season Simulator → Game Results",
+        "game_result_data": "GameResult includes awayStats, homeStats, playerStats[] for box scores",
+        "playoff_structure": "PlayoffBracket with wild_card, divisional, conference_championship, championship rounds"
+      }
+    },
+    "1_executive_summary": {
+      "feature_description": "Build the complete Franchise Mode UI prototype that will serve as the foundation for the final game. Includes game setup dashboard, season hub with schedule/standings/stats, clickable box scores for every game, and visual playoff bracket.",
+      "primary_goal": "Create a polished, game-ready UI for the complete franchise mode experience from new game setup through championship celebration.",
+      "scope": {
+        "in_scope": [
+          "Game Setup Dashboard with module generation status",
+          "Season Hub as central navigation during active season",
+          "Schedule View with week selector and clickable games",
+          "Box Score Modal with team stats, player stats, scoring summary",
+          "Standings View by division and conference",
+          "Stats View with team and player leaderboards",
+          "Playoff Bracket visualization with clickable matchups",
+          "Champion celebration screen"
+        ],
+        "out_of_scope": [
+          "User-controlled play calling (sim only for now)",
+          "Trade/FA signing during season",
+          "Multi-season franchise progression",
+          "Save/load game state to database"
+        ]
+      },
+      "success_metrics": [
+        "Can start new game and generate all required data",
+        "Can simulate full season week-by-week or all at once",
+        "Can click any game to see full box score",
+        "Can view playoff bracket with all results",
+        "UI feels like a real football game franchise mode"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity_score": 7,
+      "complexity_reasoning": "Significant UI work with multiple interconnected components. Core simulation logic exists; this is primarily UI/UX implementation with state management.",
+      "risks": [
+        {
+          "risk": "Large refactor of existing season page",
+          "severity": "medium",
+          "mitigation": "Build new components incrementally, integrate one at a time"
+        },
+        {
+          "risk": "Box score data not capturing all needed info",
+          "severity": "low",
+          "mitigation": "GameResult already has awayStats, homeStats, playerStats - sufficient for box scores"
+        },
+        {
+          "risk": "Playoff bracket complexity",
+          "severity": "medium",
+          "mitigation": "Start with simple list view, enhance to visual bracket"
+        },
+        {
+          "risk": "Performance with full season of game data",
+          "severity": "low",
+          "mitigation": "Data already in memory via SeasonSimulator, just need UI"
+        }
+      ],
+      "dependencies": [
+        "Existing SeasonSimulator class",
+        "Existing GameResult interface with full stats",
+        "Existing PlayoffBracket system",
+        "shadcn/ui Dialog for modals"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/app/dashboard/dev-tools/full/page.tsx",
+          "changes": "Transform into Game Setup Dashboard with module cards",
+          "risk_level": "high"
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/season/page.tsx",
+          "changes": "Enhance with week selector, clickable games, better playoff bracket",
+          "risk_level": "high"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "src/components/franchise/game-setup-dashboard.tsx",
+          "purpose": "Module generation cards with status indicators"
+        },
+        {
+          "path": "src/components/franchise/module-card.tsx",
+          "purpose": "Individual module status and generate button"
+        },
+        {
+          "path": "src/components/franchise/ready-indicator.tsx",
+          "purpose": "Shows if all required modules are generated"
+        },
+        {
+          "path": "src/components/franchise/season-hub.tsx",
+          "purpose": "Main season navigation with tabs"
+        },
+        {
+          "path": "src/components/franchise/schedule-view.tsx",
+          "purpose": "Week selector and game list"
+        },
+        {
+          "path": "src/components/franchise/game-card.tsx",
+          "purpose": "Single game result row, clickable"
+        },
+        {
+          "path": "src/components/franchise/box-score-modal.tsx",
+          "purpose": "Full box score with team/player stats"
+        },
+        {
+          "path": "src/components/franchise/standings-view.tsx",
+          "purpose": "Division standings tables"
+        },
+        {
+          "path": "src/components/franchise/stats-view.tsx",
+          "purpose": "Team and player stat leaderboards"
+        },
+        {
+          "path": "src/components/franchise/playoff-bracket.tsx",
+          "purpose": "Visual bracket with matchup cards"
+        },
+        {
+          "path": "src/components/franchise/bracket-matchup.tsx",
+          "purpose": "Single playoff matchup in bracket"
+        },
+        {
+          "path": "src/components/franchise/champion-banner.tsx",
+          "purpose": "Championship celebration display"
+        },
+        {
+          "path": "src/lib/franchise/game-utils.ts",
+          "purpose": "Helper functions for game data formatting"
+        }
+      ],
+      "existing_patterns": {
+        "modal_pattern": "shadcn/ui Dialog component",
+        "tab_pattern": "shadcn/ui Tabs for navigation",
+        "card_pattern": "Card components throughout dev-tools",
+        "stats_display": "Table layouts in current season page"
+      }
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Game Setup Dashboard",
+          "description": "New game creation interface showing all required modules with generation controls",
+          "requirements": [
+            "6 module cards: Rosters, FA, Draft, Coaching, Facilities, Schedule",
+            "Each card shows: status (Ready/Missing), count, last generated time",
+            "Individual Generate button per module",
+            "Generate All button with progress",
+            "Ready to Play indicator when all modules complete",
+            "Start Season button (disabled until ready)"
+          ]
+        },
+        {
+          "id": "F2",
+          "name": "Season Hub",
+          "description": "Central navigation hub during active season",
+          "requirements": [
+            "Current week and phase indicator (Regular/Playoffs/Offseason)",
+            "Tab navigation: Schedule, Standings, Stats, Playoffs",
+            "Simulation controls: Sim Week, Sim to Playoffs, Sim Season",
+            "Module indicators showing what data is active"
+          ]
+        },
+        {
+          "id": "F3",
+          "name": "Schedule View",
+          "description": "Week-by-week schedule with all game results",
+          "requirements": [
+            "Week selector dropdown (Week 1-18, Wild Card, Divisional, etc.)",
+            "List of all games for selected week",
+            "Each game shows: teams, score, final/upcoming status",
+            "Click game to open box score modal",
+            "Visual distinction for primetime games",
+            "Bye week indicator for teams"
+          ]
+        },
+        {
+          "id": "F4",
+          "name": "Box Score Modal",
+          "description": "Detailed game results when clicking any game",
+          "requirements": [
+            "Header: Teams, final score, game info (week, primetime, playoff round)",
+            "Scoring summary: Points by quarter",
+            "Team stats comparison: Total yards, passing, rushing, turnovers, TOP",
+            "Passing leaders: Both teams' QBs with full stat line",
+            "Rushing leaders: Top rushers from each team",
+            "Receiving leaders: Top receivers from each team",
+            "Defensive leaders: Tackles, sacks, INTs",
+            "Close button, maybe link to play-by-play"
+          ]
+        },
+        {
+          "id": "F5",
+          "name": "Standings View",
+          "description": "Division and conference standings",
+          "requirements": [
+            "Conference toggle: Atlantic / Pacific",
+            "4 division tables per conference",
+            "Columns: Team, W, L, PCT, PF, PA, Diff, Streak, Home, Away",
+            "Playoff seed indicators (1-7)",
+            "Clinched playoff/division/bye indicators"
+          ]
+        },
+        {
+          "id": "F6",
+          "name": "Stats View",
+          "description": "Season statistics leaderboards",
+          "requirements": [
+            "Category tabs: Team, Passing, Rushing, Receiving, Defense",
+            "Team stats: Sortable table with all team stats",
+            "Player stats: Top 20 in each category",
+            "Full stat lines for each category"
+          ]
+        },
+        {
+          "id": "F7",
+          "name": "Playoff Bracket",
+          "description": "Visual playoff bracket showing all matchups",
+          "requirements": [
+            "Conference brackets side by side",
+            "Rounds: Wild Card (3 games), Divisional (2), Conference Championship (1), Championship (1)",
+            "Each matchup shows: seeds, team names, scores (if played)",
+            "Click matchup to see box score",
+            "Winner advances visually to next round",
+            "Championship game centered at top/end",
+            "Champion celebration when season complete"
+          ]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-UNIFIED-GAME-GENERATOR-001",
+        "name": "Franchise Mode UI",
+        "feature_dir": "coderef/working/unified-game-generator"
+      },
+      "tasks": [
+        {
+          "id": "UTIL-001",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create game-utils.ts with helper functions for formatting stats, scores, records",
+          "feature": "F4",
+          "estimated_loc": 80,
+          "files": ["src/lib/franchise/game-utils.ts"],
+          "depends_on": []
+        },
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create ModuleCard component for individual module status",
+          "feature": "F1",
+          "estimated_loc": 70,
+          "files": ["src/components/franchise/module-card.tsx"],
+          "depends_on": []
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create ReadyIndicator component showing simulation readiness",
+          "feature": "F1",
+          "estimated_loc": 50,
+          "files": ["src/components/franchise/ready-indicator.tsx"],
+          "depends_on": []
+        },
+        {
+          "id": "SETUP-003",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create GameSetupDashboard with all module cards and generate controls",
+          "feature": "F1",
+          "estimated_loc": 200,
+          "files": ["src/components/franchise/game-setup-dashboard.tsx"],
+          "depends_on": ["SETUP-001", "SETUP-002"]
+        },
+        {
+          "id": "SETUP-004",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Integrate GameSetupDashboard into full/page.tsx",
+          "feature": "F1",
+          "estimated_loc": 50,
+          "files": ["src/app/dashboard/dev-tools/full/page.tsx"],
+          "depends_on": ["SETUP-003"]
+        },
+        {
+          "id": "BOX-001",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create BoxScoreModal component with team stats section",
+          "feature": "F4",
+          "estimated_loc": 150,
+          "files": ["src/components/franchise/box-score-modal.tsx"],
+          "depends_on": ["UTIL-001"]
+        },
+        {
+          "id": "BOX-002",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Add player stats sections to BoxScoreModal (passing, rushing, receiving, defense)",
+          "feature": "F4",
+          "estimated_loc": 120,
+          "files": ["src/components/franchise/box-score-modal.tsx"],
+          "depends_on": ["BOX-001"]
+        },
+        {
+          "id": "BOX-003",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Add scoring summary (by quarter) to BoxScoreModal",
+          "feature": "F4",
+          "estimated_loc": 60,
+          "files": ["src/components/franchise/box-score-modal.tsx"],
+          "depends_on": ["BOX-001"]
+        },
+        {
+          "id": "SCHED-001",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create GameCard component for individual game result row",
+          "feature": "F3",
+          "estimated_loc": 60,
+          "files": ["src/components/franchise/game-card.tsx"],
+          "depends_on": []
+        },
+        {
+          "id": "SCHED-002",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create ScheduleView with week selector and game list",
+          "feature": "F3",
+          "estimated_loc": 120,
+          "files": ["src/components/franchise/schedule-view.tsx"],
+          "depends_on": ["SCHED-001", "BOX-001"]
+        },
+        {
+          "id": "STAND-001",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create StandingsView with division tables",
+          "feature": "F5",
+          "estimated_loc": 150,
+          "files": ["src/components/franchise/standings-view.tsx"],
+          "depends_on": []
+        },
+        {
+          "id": "STATS-001",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create StatsView with category tabs and leaderboards",
+          "feature": "F6",
+          "estimated_loc": 200,
+          "files": ["src/components/franchise/stats-view.tsx"],
+          "depends_on": []
+        },
+        {
+          "id": "PLAY-001",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create BracketMatchup component for single playoff game",
+          "feature": "F7",
+          "estimated_loc": 70,
+          "files": ["src/components/franchise/bracket-matchup.tsx"],
+          "depends_on": ["BOX-001"]
+        },
+        {
+          "id": "PLAY-002",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create PlayoffBracket component with full bracket layout",
+          "feature": "F7",
+          "estimated_loc": 180,
+          "files": ["src/components/franchise/playoff-bracket.tsx"],
+          "depends_on": ["PLAY-001"]
+        },
+        {
+          "id": "PLAY-003",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create ChampionBanner celebration component",
+          "feature": "F7",
+          "estimated_loc": 50,
+          "files": ["src/components/franchise/champion-banner.tsx"],
+          "depends_on": []
+        },
+        {
+          "id": "HUB-001",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Create SeasonHub component integrating all views",
+          "feature": "F2",
+          "estimated_loc": 150,
+          "files": ["src/components/franchise/season-hub.tsx"],
+          "depends_on": ["SCHED-002", "STAND-001", "STATS-001", "PLAY-002"]
+        },
+        {
+          "id": "HUB-002",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "Refactor season/page.tsx to use new SeasonHub component",
+          "feature": "F2",
+          "estimated_loc": 100,
+          "files": ["src/app/dashboard/dev-tools/season/page.tsx"],
+          "depends_on": ["HUB-001", "PLAY-003"]
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-UNIFIED-GAME-GENERATOR-001",
+          "description": "End-to-end testing: Generate → Season → Box Scores → Playoffs → Champion",
+          "feature": "F7",
+          "estimated_loc": 0,
+          "files": [],
+          "depends_on": ["SETUP-004", "HUB-002"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase_id": "P1",
+          "name": "Foundation & Utilities",
+          "description": "Create utility functions and base components",
+          "tasks": ["UTIL-001", "SETUP-001", "SETUP-002", "SCHED-001"],
+          "deliverables": [
+            "game-utils.ts with formatting helpers",
+            "ModuleCard component",
+            "ReadyIndicator component",
+            "GameCard component"
+          ],
+          "success_criteria": "All base components render correctly in isolation"
+        },
+        {
+          "phase_id": "P2",
+          "name": "Game Setup Dashboard",
+          "description": "Build the new game creation interface",
+          "tasks": ["SETUP-003", "SETUP-004"],
+          "deliverables": [
+            "GameSetupDashboard with 6 module cards",
+            "Generate All functionality",
+            "Ready indicator and Start Season button",
+            "Integrated into /dev-tools/full page"
+          ],
+          "success_criteria": "Can generate all modules and see ready status"
+        },
+        {
+          "phase_id": "P3",
+          "name": "Box Score Modal",
+          "description": "Build the detailed game result view",
+          "tasks": ["BOX-001", "BOX-002", "BOX-003"],
+          "deliverables": [
+            "BoxScoreModal with header and team stats",
+            "Player stats by category",
+            "Scoring summary by quarter"
+          ],
+          "success_criteria": "Can open any game and see full box score"
+        },
+        {
+          "phase_id": "P4",
+          "name": "Season Views",
+          "description": "Build schedule, standings, and stats views",
+          "tasks": ["SCHED-002", "STAND-001", "STATS-001"],
+          "deliverables": [
+            "ScheduleView with week selector",
+            "StandingsView with division tables",
+            "StatsView with leaderboards"
+          ],
+          "success_criteria": "All season data viewable in organized tabs"
+        },
+        {
+          "phase_id": "P5",
+          "name": "Playoff Bracket",
+          "description": "Build visual playoff bracket and champion display",
+          "tasks": ["PLAY-001", "PLAY-002", "PLAY-003"],
+          "deliverables": [
+            "BracketMatchup component",
+            "Full PlayoffBracket visualization",
+            "ChampionBanner celebration"
+          ],
+          "success_criteria": "Playoff bracket shows all rounds with clickable games"
+        },
+        {
+          "phase_id": "P6",
+          "name": "Integration & Polish",
+          "description": "Integrate all components and test full flow",
+          "tasks": ["HUB-001", "HUB-002", "TEST-001"],
+          "deliverables": [
+            "SeasonHub integrating all views",
+            "Refactored season page",
+            "Full end-to-end tested"
+          ],
+          "success_criteria": "Complete flow from new game to championship works"
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [],
+      "integration_tests": [
+        {
+          "name": "Game Setup Flow",
+          "steps": [
+            "Open /dev-tools/full",
+            "Verify all modules show Missing initially",
+            "Click Generate All",
+            "Verify progress through each module",
+            "Verify Ready indicator turns green",
+            "Click Start Season",
+            "Verify navigation to season page with data"
+          ]
+        },
+        {
+          "name": "Box Score Display",
+          "steps": [
+            "Simulate at least 1 week",
+            "Click on a completed game",
+            "Verify box score modal opens",
+            "Verify team stats display correctly",
+            "Verify player stats display correctly",
+            "Verify scoring summary shows all quarters",
+            "Close modal"
+          ]
+        },
+        {
+          "name": "Week Navigation",
+          "steps": [
+            "Simulate multiple weeks",
+            "Use week selector to go to Week 1",
+            "Verify Week 1 games display",
+            "Change to Week 3",
+            "Verify Week 3 games display",
+            "Click a game, verify correct box score"
+          ]
+        },
+        {
+          "name": "Playoff Bracket",
+          "steps": [
+            "Simulate to playoffs",
+            "View playoff bracket tab",
+            "Verify Wild Card matchups show correctly",
+            "Simulate Wild Card round",
+            "Verify winners advance to Divisional",
+            "Click a playoff game",
+            "Verify box score shows playoff round"
+          ]
+        },
+        {
+          "name": "Championship",
+          "steps": [
+            "Simulate entire season including playoffs",
+            "Verify champion banner displays",
+            "Verify champion name is correct",
+            "Verify championship game is clickable"
+          ]
+        }
+      ],
+      "manual_testing": "Visual inspection of bracket layout, responsive design, animation polish"
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "description": "Game Setup shows 6 modules with accurate status from stores",
+          "verification": "Each module shows Generated/Missing correctly"
+        },
+        {
+          "id": "AC2",
+          "description": "Can generate all modules with single button",
+          "verification": "Generate All creates all data without errors"
+        },
+        {
+          "id": "AC3",
+          "description": "Every game in schedule is clickable",
+          "verification": "Clicking any game opens box score modal"
+        },
+        {
+          "id": "AC4",
+          "description": "Box score shows complete team and player stats",
+          "verification": "All stat categories display with correct data"
+        },
+        {
+          "id": "AC5",
+          "description": "Can navigate to any week's games",
+          "verification": "Week selector shows all weeks, games load correctly"
+        },
+        {
+          "id": "AC6",
+          "description": "Standings update correctly each week",
+          "verification": "W-L records match game results"
+        },
+        {
+          "id": "AC7",
+          "description": "Playoff bracket shows all rounds and results",
+          "verification": "Can see and click all playoff games"
+        },
+        {
+          "id": "AC8",
+          "description": "Champion celebration displays at season end",
+          "verification": "Banner shows with correct team name"
+        }
+      ],
+      "definition_of_done": [
+        "All components created and styled",
+        "Full flow from setup to champion works",
+        "Every game has clickable box score",
+        "Playoff bracket visualizes correctly",
+        "No TypeScript errors",
+        "Responsive design works",
+        "Feels like a real football game UI"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Create src/lib/franchise/game-utils.ts",
+        "[ ] Create src/components/franchise/module-card.tsx",
+        "[ ] Create src/components/franchise/ready-indicator.tsx",
+        "[ ] Create src/components/franchise/game-card.tsx",
+        "[ ] Test all components render correctly"
+      ],
+      "phase_2_checklist": [
+        "[ ] Create src/components/franchise/game-setup-dashboard.tsx",
+        "[ ] Add module grid with all 6 modules",
+        "[ ] Add Generate All with progress",
+        "[ ] Add Ready indicator",
+        "[ ] Integrate into full/page.tsx",
+        "[ ] Test generation flow"
+      ],
+      "phase_3_checklist": [
+        "[ ] Create src/components/franchise/box-score-modal.tsx",
+        "[ ] Add header with teams and final score",
+        "[ ] Add team stats comparison",
+        "[ ] Add passing/rushing/receiving/defense stats",
+        "[ ] Add scoring summary by quarter",
+        "[ ] Test with actual game data"
+      ],
+      "phase_4_checklist": [
+        "[ ] Create src/components/franchise/schedule-view.tsx",
+        "[ ] Add week selector dropdown",
+        "[ ] Add game list with GameCards",
+        "[ ] Create src/components/franchise/standings-view.tsx",
+        "[ ] Add division tables",
+        "[ ] Create src/components/franchise/stats-view.tsx",
+        "[ ] Add category tabs and leaderboards"
+      ],
+      "phase_5_checklist": [
+        "[ ] Create src/components/franchise/bracket-matchup.tsx",
+        "[ ] Create src/components/franchise/playoff-bracket.tsx",
+        "[ ] Layout bracket with all rounds",
+        "[ ] Create src/components/franchise/champion-banner.tsx",
+        "[ ] Connect matchups to box score modal"
+      ],
+      "phase_6_checklist": [
+        "[ ] Create src/components/franchise/season-hub.tsx",
+        "[ ] Integrate all views with tabs",
+        "[ ] Refactor season/page.tsx",
+        "[ ] Test full end-to-end flow",
+        "[ ] Verify all box scores work",
+        "[ ] Verify playoff bracket works",
+        "[ ] Final polish and cleanup"
+      ]
+    }
+  }
+}

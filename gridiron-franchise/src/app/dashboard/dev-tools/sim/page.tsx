@@ -19,8 +19,10 @@ import { TeamSelect } from '@/components/sim/team-select';
 import { Simulator } from '@/lib/sim/simulator';
 import { adaptTeamRoster } from '@/lib/sim/team-adapter';
 import { getFullGameData, TeamRosterData } from '@/lib/dev-player-store';
+import { getTeamCoachingById } from '@/lib/coaching/coaching-store';
+import { getTeamFacilitiesById } from '@/lib/facilities/facilities-store';
 import { SimTeam, PlayResult, GameType, Weather, HomeAdvantage } from '@/lib/sim/types';
-import { ArrowLeft, Play, FastForward, SkipForward, RotateCcw, Bug } from 'lucide-react';
+import { ArrowLeft, Play, FastForward, SkipForward, RotateCcw, Bug, Users, Building2 } from 'lucide-react';
 
 export default function SimulatorPage() {
   const router = useRouter();
@@ -45,11 +47,27 @@ export default function SimulatorPage() {
   // Force re-render for simulator state
   const [, forceUpdate] = useState({});
 
-  // Load teams from full game data
+  // Load teams from full game data with coaching and facilities
   useEffect(() => {
     const fullGameData = getFullGameData();
     if (fullGameData && fullGameData.teams.length > 0) {
-      const simTeams = fullGameData.teams.map((teamData: TeamRosterData) => adaptTeamRoster(teamData));
+      const simTeams = fullGameData.teams.map((teamData: TeamRosterData) => {
+        const simTeam = adaptTeamRoster(teamData);
+
+        // Attach coaching staff if available
+        const coaching = getTeamCoachingById(simTeam.id);
+        if (coaching) {
+          simTeam.coachingStaff = coaching;
+        }
+
+        // Attach facilities if available
+        const facilities = getTeamFacilitiesById(simTeam.id);
+        if (facilities) {
+          simTeam.facilities = facilities;
+        }
+
+        return simTeam;
+      });
       setTeams(simTeams);
 
       // Default selections
@@ -81,6 +99,9 @@ export default function SimulatorPage() {
     sim.settings.gameType = gameType;
     sim.settings.weather = weather;
     sim.settings.homeAdvantage = homeAdvantage;
+
+    // Initialize modifiers from coaching/facilities data
+    sim.initializeGameModifiers();
 
     // Coin toss
     sim.state.possession = Math.random() < 0.5 ? 'away' : 'home';
@@ -348,6 +369,19 @@ export default function SimulatorPage() {
             {sim.isClutch() && (
               <span className="rounded bg-purple-600 px-2 py-1 text-xs font-semibold tracking-wider">
                 CLUTCH
+              </span>
+            )}
+            {/* Module integration indicators */}
+            {(awayTeam?.coachingStaff || homeTeam?.coachingStaff) && (
+              <span className="flex items-center gap-1 rounded bg-green-700 px-2 py-1 text-xs font-semibold tracking-wider">
+                <Users className="h-3 w-3" />
+                COACHING
+              </span>
+            )}
+            {(awayTeam?.facilities || homeTeam?.facilities) && (
+              <span className="flex items-center gap-1 rounded bg-amber-700 px-2 py-1 text-xs font-semibold tracking-wider">
+                <Building2 className="h-3 w-3" />
+                FACILITIES
               </span>
             )}
           </div>

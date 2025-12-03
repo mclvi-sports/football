@@ -15,8 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ArrowLeft, Play, FastForward, SkipForward, RotateCcw, Trophy, Calendar, Users, TrendingUp, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Play, FastForward, SkipForward, RotateCcw, Trophy, Calendar, Users, TrendingUp, BarChart3, Database, Sparkles } from 'lucide-react';
 import { getFullGameData, TeamRosterData } from '@/lib/dev-player-store';
+import { getTeamCoachingById } from '@/lib/coaching/coaching-store';
+import { getTeamFacilitiesById } from '@/lib/facilities/facilities-store';
+import { getSchedule } from '@/lib/schedule/schedule-store';
 import { adaptTeamRoster } from '@/lib/sim/team-adapter';
 import { SimTeam } from '@/lib/sim/types';
 import { SeasonSimulator, SeasonTeam, TeamStanding, WeekSummary, GameResult, formatRecord, formatStreak } from '@/lib/season';
@@ -102,13 +105,39 @@ export default function SeasonPage() {
   const [weekSummaries, setWeekSummaries] = useState<WeekSummary[]>([]);
   const [selectedConference, setSelectedConference] = useState<'Atlantic' | 'Pacific'>('Atlantic');
   const [statsCategory, setStatsCategory] = useState<'team' | 'passing' | 'rushing' | 'receiving' | 'defense'>('team');
+  const [scheduleSource, setScheduleSource] = useState<'stored' | 'generated' | null>(null);
+  const [hasCoaching, setHasCoaching] = useState(false);
+  const [hasFacilities, setHasFacilities] = useState(false);
 
-  // Load teams
+  // Load teams with coaching and facilities
   useEffect(() => {
     const fullGameData = getFullGameData();
     if (fullGameData && fullGameData.teams.length > 0) {
-      const simTeams = fullGameData.teams.map((teamData: TeamRosterData) => adaptTeamRoster(teamData));
+      let coachingFound = false;
+      let facilitiesFound = false;
+
+      const simTeams = fullGameData.teams.map((teamData: TeamRosterData) => {
+        const simTeam = adaptTeamRoster(teamData);
+
+        // Attach coaching staff if available
+        const coaching = getTeamCoachingById(simTeam.id);
+        if (coaching) {
+          simTeam.coachingStaff = coaching;
+          coachingFound = true;
+        }
+
+        // Attach facilities if available
+        const facilities = getTeamFacilitiesById(simTeam.id);
+        if (facilities) {
+          simTeam.facilities = facilities;
+          facilitiesFound = true;
+        }
+
+        return simTeam;
+      });
       setTeams(simTeams);
+      setHasCoaching(coachingFound);
+      setHasFacilities(facilitiesFound);
     }
     setLoading(false);
   }, []);
@@ -127,17 +156,29 @@ export default function SeasonPage() {
       return toSeasonTeam(team, divInfo.division, divInfo.conference, byeWeek);
     });
 
-    // Generate schedule
-    const schedule = generateSchedule({
-      season: 2025,
-      randomizeStandings: true,
-    });
+    // Check for stored schedule first, otherwise generate new one
+    let scheduleWeeks: WeekSchedule[];
+    const storedSchedule = getSchedule();
+
+    if (storedSchedule && storedSchedule.weeks && storedSchedule.weeks.length === 18) {
+      // Use stored schedule
+      scheduleWeeks = storedSchedule.weeks;
+      setScheduleSource('stored');
+    } else {
+      // Generate new schedule
+      const schedule = generateSchedule({
+        season: 2025,
+        randomizeStandings: true,
+      });
+      scheduleWeeks = schedule.weeks;
+      setScheduleSource('generated');
+    }
 
     // Create simulator
     simulatorRef.current = new SeasonSimulator({
       year: 2025,
       teams: seasonTeams,
-      schedule: schedule.weeks,
+      schedule: scheduleWeeks,
       simulateInjuries,
       injuryRate: 0.03,
       enableProgression: false,
@@ -387,13 +428,36 @@ export default function SeasonPage() {
               </Button>
             </div>
 
-            <div className="p-4 bg-muted rounded-lg">
+            <div className="p-4 bg-muted rounded-lg space-y-3">
               <p className="text-sm text-muted-foreground">
                 <strong>Teams loaded:</strong> {teams.length} / 32 required
               </p>
-              <p className="text-sm text-muted-foreground mt-2">
+              <div className="flex flex-wrap gap-2">
+                <span className="flex items-center gap-1 rounded bg-blue-700 px-2 py-1 text-xs font-semibold text-white">
+                  <Users className="h-3 w-3" />
+                  {teams.length} TEAMS
+                </span>
+                {hasCoaching && (
+                  <span className="flex items-center gap-1 rounded bg-green-700 px-2 py-1 text-xs font-semibold text-white">
+                    <Users className="h-3 w-3" />
+                    COACHING
+                  </span>
+                )}
+                {hasFacilities && (
+                  <span className="flex items-center gap-1 rounded bg-amber-700 px-2 py-1 text-xs font-semibold text-white">
+                    <Database className="h-3 w-3" />
+                    FACILITIES
+                  </span>
+                )}
+                {getSchedule() && (
+                  <span className="flex items-center gap-1 rounded bg-purple-700 px-2 py-1 text-xs font-semibold text-white">
+                    <Calendar className="h-3 w-3" />
+                    SCHEDULE READY
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground">
                 This will simulate a full 18-week regular season followed by playoffs.
-                All modules (schemes, coaching, facilities) are integrated.
               </p>
             </div>
 
@@ -438,6 +502,35 @@ export default function SeasonPage() {
                   Sim Playoffs
                 </Button>
                 <div className="flex-1" />
+
+                {/* Module indicators */}
+                <div className="flex items-center gap-2">
+                  {scheduleSource === 'stored' && (
+                    <span className="flex items-center gap-1 rounded bg-purple-700 px-2 py-1 text-xs font-semibold text-white">
+                      <Database className="h-3 w-3" />
+                      STORED SCHEDULE
+                    </span>
+                  )}
+                  {scheduleSource === 'generated' && (
+                    <span className="flex items-center gap-1 rounded bg-zinc-600 px-2 py-1 text-xs font-semibold text-white">
+                      <Sparkles className="h-3 w-3" />
+                      NEW SCHEDULE
+                    </span>
+                  )}
+                  {hasCoaching && (
+                    <span className="flex items-center gap-1 rounded bg-green-700 px-2 py-1 text-xs font-semibold text-white">
+                      <Users className="h-3 w-3" />
+                      COACHING
+                    </span>
+                  )}
+                  {hasFacilities && (
+                    <span className="flex items-center gap-1 rounded bg-amber-700 px-2 py-1 text-xs font-semibold text-white">
+                      <Database className="h-3 w-3" />
+                      FACILITIES
+                    </span>
+                  )}
+                </div>
+
                 <Button onClick={resetSeason} variant="outline">
                   <RotateCcw className="mr-2 h-4 w-4" />
                   Reset
