@@ -80,13 +80,13 @@ function assignTiers(): Map<string, Tier> {
 }
 
 /**
- * Generate complete game data
+ * Generate all 32 team rosters with tier distribution
+ * Can be used independently or as part of full game generation
  */
-export function generateFullGame(): FullGameData {
+export function generateAllTeamRosters(): { teams: TeamRosterData[]; tierAssignments: Map<string, Tier> } {
   const tierAssignments = assignTiers();
   const teams: TeamRosterData[] = [];
 
-  // Generate all 32 team rosters
   for (const teamInfo of LEAGUE_TEAMS) {
     const tier = tierAssignments.get(teamInfo.id) || Tier.Average;
     const roster = generateTeamRoster(teamInfo.id, tier);
@@ -103,6 +103,16 @@ export function generateFullGame(): FullGameData {
       },
     });
   }
+
+  return { teams, tierAssignments };
+}
+
+/**
+ * Generate complete game data (rosters + FA + draft)
+ */
+export function generateFullGame(): FullGameData {
+  // Generate all team rosters
+  const { teams } = generateAllTeamRosters();
 
   // Generate free agent pool (150-200 players per FINALS)
   const freeAgents = generateFAPool({ size: 175 });

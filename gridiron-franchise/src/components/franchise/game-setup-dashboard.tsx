@@ -109,43 +109,79 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     return teamTiers;
   };
 
-  // Generate rosters (calls API)
-  const generateRosters = async () => {
+  // Generate team rosters only (calls /api/dev/generate-rosters)
+  const generateTeamRosters = async () => {
     setGeneratingModules((prev) => ({ ...prev, rosters: true }));
     try {
-      const response = await fetch('/api/dev/generate-full', {
+      const response = await fetch('/api/dev/generate-rosters', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
       if (data.success) {
-        // Store the full game data
+        // Store the team rosters data
         const fullGameData: FullGameData = {
-          teams: data.data.teams,
-          generatedAt: data.data.generatedAt,
+          teams: data.teams,
+          generatedAt: data.generatedAt,
           totalPlayers: data.stats.totalPlayers,
           tierDistribution: data.stats.tierDistribution,
         };
         storeFullGameData(fullGameData);
 
-        // Store all players for profile viewing
-        const allPlayers = [
-          ...data.data.teams.flatMap((t: TeamRosterData) => t.roster.players),
-          ...data.data.freeAgents,
-          ...data.data.draftClass,
-        ];
-        storeDevPlayers(allPlayers);
-
-        // Store FA and Draft separately for module pages
-        storeFreeAgents(data.data.freeAgents);
-        storeDraftClass(data.data.draftClass);
+        // Store roster players for profile viewing
+        const rosterPlayers = data.teams.flatMap((t: TeamRosterData) => t.roster.players);
+        storeDevPlayers(rosterPlayers);
 
         loadModuleStatus();
       }
     } catch (error) {
-      console.error('Failed to generate rosters:', error);
+      console.error('Failed to generate team rosters:', error);
     }
     setGeneratingModules((prev) => ({ ...prev, rosters: false }));
+  };
+
+  // Generate free agents only (calls /api/dev/generate-fa)
+  const generateFreeAgentsData = async () => {
+    setGeneratingModules((prev) => ({ ...prev, freeagents: true }));
+    try {
+      const response = await fetch('/api/dev/generate-fa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      if (data.success) {
+        storeFreeAgents(data.players);
+        // Add FA players to dev players for profile viewing
+        const existingPlayers = modules.rosters?.teams.flatMap((t) => t.roster.players) || [];
+        storeDevPlayers([...existingPlayers, ...data.players, ...modules.draftClass]);
+        loadModuleStatus();
+      }
+    } catch (error) {
+      console.error('Failed to generate free agents:', error);
+    }
+    setGeneratingModules((prev) => ({ ...prev, freeagents: false }));
+  };
+
+  // Generate draft class only (calls /api/dev/generate-draft)
+  const generateDraftClassData = async () => {
+    setGeneratingModules((prev) => ({ ...prev, draft: true }));
+    try {
+      const response = await fetch('/api/dev/generate-draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      if (data.success) {
+        storeDraftClass(data.players);
+        // Add draft players to dev players for profile viewing
+        const existingPlayers = modules.rosters?.teams.flatMap((t) => t.roster.players) || [];
+        storeDevPlayers([...existingPlayers, ...modules.freeAgents, ...data.players]);
+        loadModuleStatus();
+      }
+    } catch (error) {
+      console.error('Failed to generate draft class:', error);
+    }
+    setGeneratingModules((prev) => ({ ...prev, draft: false }));
   };
 
   // Generate coaching staff via API
@@ -271,13 +307,13 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
   const generateAll = async () => {
     setIsGeneratingAll(true);
 
-    // 1. Generate rosters first (required for coaching/facilities/scouting)
-    await generateRosters();
+    // 1. Generate rosters, FA, and draft (can be parallel)
+    await Promise.all([generateTeamRosters(), generateFreeAgentsData(), generateDraftClassData()]);
 
     // Wait for state to update
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    // 2. Generate coaching, facilities, and scouting (can be parallel)
+    // 2. Generate coaching, facilities, and scouting (can be parallel, need rosters for tiers)
     await Promise.all([generateCoachingStaff(), generateFacilitiesData(), generateScoutingData()]);
 
     // 3. Generate schedule
@@ -304,17 +340,32 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
   const handleModuleClear = (moduleId: string) => {
     switch (moduleId) {
       case 'rosters':
-      case 'freeagents':
-      case 'draft':
         clearFullGameData();
-        clearDevPlayers();
-        clearFreeAgents();
-        clearDraftClass();
-        // Also clear dependent modules
+        // Also clear dependent modules that need tier data
         clearGMs();
         clearCoaching();
         clearFacilities();
         clearScouting();
+        // Rebuild dev players from remaining FA/Draft
+        storeDevPlayers([...modules.freeAgents, ...modules.draftClass]);
+        break;
+      case 'freeagents':
+        clearFreeAgents();
+        // Rebuild dev players without FA
+        const playersWithoutFA = [
+          ...(modules.rosters?.teams.flatMap((t) => t.roster.players) || []),
+          ...modules.draftClass,
+        ];
+        storeDevPlayers(playersWithoutFA);
+        break;
+      case 'draft':
+        clearDraftClass();
+        // Rebuild dev players without Draft
+        const playersWithoutDraft = [
+          ...(modules.rosters?.teams.flatMap((t) => t.roster.players) || []),
+          ...modules.freeAgents,
+        ];
+        storeDevPlayers(playersWithoutDraft);
         break;
       case 'gm':
         clearGMs();
@@ -340,7 +391,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     {
       id: 'rosters',
       name: 'Team Rosters',
-      description: '32 teams, 53-man rosters, Free Agents, Draft Class',
+      description: '32 teams, 53-man rosters',
       icon: <Users className="h-5 w-5" />,
       isGenerated: !!modules.rosters,
       count: modules.rosters?.teams.length || 0,
@@ -414,6 +465,8 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
   // Build ready checks for ReadyIndicator
   const readyChecks: ReadyCheck[] = [
     { id: 'rosters', label: 'Rosters', isReady: !!modules.rosters, required: true },
+    { id: 'freeagents', label: 'Free Agents', isReady: modules.freeAgents.length > 0, required: true },
+    { id: 'draft', label: 'Draft Class', isReady: modules.draftClass.length > 0, required: true },
     { id: 'gm', label: 'General Manager', isReady: !!modules.gm, required: true },
     { id: 'coaching', label: 'Coaching', isReady: !!modules.coaching, required: true },
     { id: 'facilities', label: 'Facilities', isReady: !!modules.facilities, required: true },
@@ -424,9 +477,13 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
   const handleModuleGenerate = (moduleId: string) => {
     switch (moduleId) {
       case 'rosters':
+        generateTeamRosters();
+        break;
       case 'freeagents':
+        generateFreeAgentsData();
+        break;
       case 'draft':
-        generateRosters();
+        generateDraftClassData();
         break;
       case 'gm':
         // Open team selection modal to start GM creation flow
