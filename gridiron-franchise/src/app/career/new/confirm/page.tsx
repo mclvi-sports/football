@@ -1,30 +1,38 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useCareerStore } from "@/stores/career-store";
+import { getPlayerGM, GM, GM_BACKGROUNDS, GM_ARCHETYPES } from "@/lib/gm";
 
 export default function ConfirmCareerPage() {
   const router = useRouter();
-  const { persona, selectedTeam } = useCareerStore();
+  const { selectedTeam } = useCareerStore();
+  const [gm, setGM] = useState<GM | null>(null);
 
-  // Redirect if missing selections
+  // Load GM data
   useEffect(() => {
-    if (!persona) {
-      router.replace("/career/new/archetype");
-    } else if (!selectedTeam) {
+    if (!selectedTeam) {
       router.replace("/career/new/team");
+      return;
     }
-  }, [persona, selectedTeam, router]);
+
+    const playerGM = getPlayerGM();
+    if (!playerGM) {
+      router.replace("/career/new/generate");
+      return;
+    }
+
+    setGM(playerGM);
+  }, [selectedTeam, router]);
 
   function handleStartCareer() {
-    // Navigate to dashboard (keep state so dashboard can access team/persona)
     router.push("/dashboard");
   }
 
-  if (!persona || !selectedTeam) {
+  if (!selectedTeam || !gm) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-40px)]">
         <p className="text-muted-foreground">Loading...</p>
@@ -32,7 +40,8 @@ export default function ConfirmCareerPage() {
     );
   }
 
-  const { archetype, background, synergy } = persona;
+  const background = GM_BACKGROUNDS[gm.background];
+  const archetype = GM_ARCHETYPES[gm.archetype];
 
   return (
     <div className="space-y-6 pb-32">
@@ -44,7 +53,7 @@ export default function ConfirmCareerPage() {
         >
           ←
         </Link>
-        <h1 className="text-xl font-bold">Confirm Career</h1>
+        <h1 className="text-xl font-bold">Meet Your GM</h1>
       </div>
 
       {/* Team Preview */}
@@ -73,43 +82,51 @@ export default function ConfirmCareerPage() {
       {/* Divider */}
       <div className="border-t border-border" />
 
-      {/* GM Persona Preview */}
+      {/* GM Profile */}
       <div className="space-y-4">
         <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
-          Your GM Profile
+          Your General Manager
         </h3>
 
-        {/* Persona Icons */}
-        <div className="flex items-center justify-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-base font-bold text-primary">
-            {archetype.icon}
-          </div>
-          <span className="text-lg text-muted-foreground">+</span>
-          <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-base font-bold text-primary">
-            {background.icon}
-          </div>
-        </div>
-
-        {/* Names */}
+        {/* GM Name */}
         <div className="text-center">
-          {synergy && (
-            <p className="text-xs font-bold text-amber-500 uppercase tracking-wider mb-1">
-              "{synergy.name}"
-            </p>
-          )}
-          <p className="font-semibold">
-            {archetype.name} + {background.name}
+          <h2 className="text-2xl font-bold">
+            {gm.firstName} {gm.lastName}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Age {gm.age} • {gm.experience} years experience
           </p>
         </div>
 
-        {/* Starting Skill */}
+        {/* Background & Archetype */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-secondary/50 border border-border rounded-xl p-3 text-center">
+            <p className="text-xs text-muted-foreground mb-1">Background</p>
+            <p className="font-semibold text-sm">{background.name}</p>
+          </div>
+          <div className="bg-secondary/50 border border-border rounded-xl p-3 text-center">
+            <p className="text-xs text-muted-foreground mb-1">Archetype</p>
+            <p className="font-semibold text-sm">{archetype.name}</p>
+          </div>
+        </div>
+
+        {/* Synergy */}
+        {gm.hasSynergy && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-center">
+            <p className="text-xs text-amber-500 font-bold uppercase tracking-wider">
+              Synergy Active
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              {background.name} + {archetype.name} bonuses enhanced
+            </p>
+          </div>
+        )}
+
+        {/* Contract */}
         <div className="bg-secondary/50 border border-border rounded-xl p-3">
-          <p className="text-xs text-muted-foreground mb-1">Starting Skill</p>
+          <p className="text-xs text-muted-foreground mb-1">Contract</p>
           <p className="font-medium text-sm">
-            {archetype.startingSkill.name}{" "}
-            <span className="text-muted-foreground">
-              ({archetype.startingSkill.tier})
-            </span>
+            {gm.contract.years} years • ${gm.contract.salary}M/year
           </p>
         </div>
       </div>
@@ -125,8 +142,8 @@ export default function ConfirmCareerPage() {
           <span className="font-medium">2025</span>
         </p>
         <p className="text-sm">
-          <span className="text-muted-foreground">Difficulty:</span>{" "}
-          <span className="font-medium">Normal</span>
+          <span className="text-muted-foreground">Role:</span>{" "}
+          <span className="font-medium">Team Owner</span>
         </p>
       </div>
 

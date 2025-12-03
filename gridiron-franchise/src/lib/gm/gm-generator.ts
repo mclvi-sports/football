@@ -204,3 +204,18 @@ export function getTeamGM(gms: LeagueGMs, teamId: string): GM | null {
   }
   return gms.cpuGMs[teamId] || null;
 }
+
+/**
+ * Generate all 32 GMs as CPU GMs (Owner model - no player GM)
+ * Used when user is Owner, not GM - they inherit the team's pre-assigned GM
+ */
+export function generateAllCPUGMs(teamTiers: Map<string, Tier>): Record<string, GM> {
+  const allGMs: Record<string, GM> = {};
+
+  for (const team of LEAGUE_TEAMS) {
+    const tier = teamTiers.get(team.id) || Tier.Average;
+    allGMs[team.id] = generateCPUGM(team.id, tier);
+  }
+
+  return allGMs;
+}

@@ -10,16 +10,16 @@ import { useCareerStore } from "@/stores/career-store";
 export default function DashboardPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("home");
-  const { selectedTeam, persona } = useCareerStore();
+  const { selectedTeam } = useCareerStore();
 
-  // Redirect if no team/persona selected
+  // Redirect if no team selected (Owner model)
   useEffect(() => {
-    if (!selectedTeam || !persona) {
+    if (!selectedTeam) {
       router.replace("/");
     }
-  }, [selectedTeam, persona, router]);
+  }, [selectedTeam, router]);
 
-  if (!selectedTeam || !persona) {
+  if (!selectedTeam) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p className="text-muted-foreground">Loading...</p>

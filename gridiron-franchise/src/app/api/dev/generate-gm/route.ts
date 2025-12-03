@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Tier } from '@/lib/types';
-import { GMBackground, GMArchetype, generateLeagueGMs } from '@/lib/gm';
+import { GMBackground, GMArchetype, generateLeagueGMs, generateAllCPUGMs } from '@/lib/gm';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +15,26 @@ export async function POST(request: NextRequest) {
       playerLastName,
     } = body;
 
-    // Validate required fields
+    // Convert team tiers to Map
+    const tiersMap = new Map<string, Tier>();
+    if (teamTiers && typeof teamTiers === 'object') {
+      Object.entries(teamTiers).forEach(([teamId, tier]) => {
+        tiersMap.set(teamId, tier as Tier);
+      });
+    }
+
+    // Owner mode: If no player params, generate all 32 as CPU GMs
+    if (!playerTeamId && !playerBackground && !playerArchetype) {
+      const allGMs = generateAllCPUGMs(tiersMap);
+      return NextResponse.json({
+        success: true,
+        mode: 'owner',
+        gms: allGMs,
+        generatedAt: new Date().toISOString(),
+      });
+    }
+
+    // Player GM mode: Validate required fields
     if (!playerTeamId || !playerBackground || !playerArchetype) {
       return NextResponse.json(
         {
@@ -48,15 +67,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert team tiers to Map
-    const tiersMap = new Map<string, Tier>();
-    if (teamTiers && typeof teamTiers === 'object') {
-      Object.entries(teamTiers).forEach(([teamId, tier]) => {
-        tiersMap.set(teamId, tier as Tier);
-      });
-    }
-
-    // Generate all GMs
+    // Generate all GMs with player GM
     const gms = generateLeagueGMs(
       playerTeamId,
       playerBackground as GMBackground,
@@ -68,6 +79,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      mode: 'player',
       gms,
     });
   } catch (error) {

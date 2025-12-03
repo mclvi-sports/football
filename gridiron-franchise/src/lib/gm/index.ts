@@ -6,6 +6,7 @@ export type {
   GMBonuses,
   GMContract,
   LeagueGMs,
+  OwnerModeGMs,
   BackgroundDefinition,
   ArchetypeDefinition,
   SynergyDefinition,
@@ -29,6 +30,7 @@ export {
   generateCPUGM,
   createPlayerGM,
   generateLeagueGMs,
+  generateAllCPUGMs,
   getTeamGM,
 } from './gm-generator';
 
@@ -42,4 +44,9 @@ export {
   getTeamGM as getStoredTeamGM,
   getAllGMsList,
   hasGMs,
+  // Owner mode
+  storeOwnerModeGMs,
+  getOwnerModeGMs,
+  setOwnerTeam,
+  isOwnerMode,
 } from './gm-store';

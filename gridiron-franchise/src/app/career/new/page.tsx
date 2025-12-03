@@ -11,8 +11,8 @@ export default function NewCareerPage() {
   useEffect(() => {
     // Reset career state when starting fresh
     reset();
-    // Redirect to archetype selection (step 1)
-    router.replace("/career/new/archetype");
+    // Redirect to league generation (Owner model flow)
+    router.replace("/career/new/generate");
   }, [router, reset]);
 
   return (

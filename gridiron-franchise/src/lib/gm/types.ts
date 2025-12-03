@@ -68,12 +68,23 @@ export interface GM {
 }
 
 /**
- * League GMs - All GMs in the league
+ * League GMs - All GMs in the league (Player GM mode)
  */
 export interface LeagueGMs {
   playerTeamId: string;
   playerGM: GM;
   cpuGMs: Record<string, GM>;  // teamId -> GM (excludes player team)
+  generatedAt: string;
+}
+
+/**
+ * Owner Mode GMs - All 32 GMs are CPU-generated (Owner model)
+ * User picks team after generation, inherits pre-assigned GM
+ */
+export interface OwnerModeGMs {
+  mode: 'owner';
+  allGMs: Record<string, GM>;  // all 32 teams
+  playerTeamId: string | null; // set when user picks team
   generatedAt: string;
 }
 
