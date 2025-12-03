@@ -249,6 +249,10 @@ export interface Player {
     years: number;
     salary: number; // in millions
   };
+  // Training system fields (WO-TRAINING-SYSTEM-001 | TYPE-002)
+  currentXP?: number;      // Available XP to spend
+  totalXPEarned?: number;  // Lifetime XP earned
+  seasonXP?: number;       // XP earned this season
 }
 
 export interface Roster {

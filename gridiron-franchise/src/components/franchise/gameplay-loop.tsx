@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { SeasonState } from '@/lib/season/types';
 import { LEAGUE_TEAMS, TeamInfo } from '@/lib/data/teams';
@@ -9,6 +9,12 @@ import { StatsView } from './stats-view';
 import { PlayoffBracket } from './playoff-bracket';
 import { ScheduleSection } from './schedule-section';
 import { ScoutingSection } from './scouting-section';
+import { RosterSection } from './roster-section';
+import { TrainingDashboard } from '@/components/training';
+import { getPlayerTeamId } from '@/lib/gm';
+import { getFullGameData } from '@/lib/dev-player-store';
+import { initializeTeamTraining, getTeamTrainingState } from '@/lib/training';
+import { Player } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -79,6 +85,36 @@ export function GameplayLoop({
   onReset,
 }: GameplayLoopProps) {
   const [activeSection, setActiveSection] = useState<GameplaySection>('schedule');
+
+  // Player team state
+  const [playerTeamId, setPlayerTeamId] = useState<string | null>(null);
+  const [playerTeamName, setPlayerTeamName] = useState<string>('');
+  const [playerRoster, setPlayerRoster] = useState<Player[]>([]);
+  const [trainingInitialized, setTrainingInitialized] = useState(false);
+
+  // Initialize player team data
+  useEffect(() => {
+    const teamId = getPlayerTeamId();
+    if (!teamId) return;
+
+    setPlayerTeamId(teamId);
+
+    // Get player's roster from stored game data
+    const gameData = getFullGameData();
+    if (gameData) {
+      const teamData = gameData.teams.find(t => t.team.id === teamId);
+      if (teamData) {
+        setPlayerTeamName(`${teamData.team.city} ${teamData.team.name}`);
+        setPlayerRoster(teamData.roster.players);
+
+        // Initialize training if not already done
+        if (!getTeamTrainingState(teamId)) {
+          initializeTeamTraining(teamId, teamData.roster.players, seasonState?.year || 1, seasonState?.week || 1);
+        }
+        setTrainingInitialized(true);
+      }
+    }
+  }, [seasonState?.year, seasonState?.week]);
 
   // Build teams map from LEAGUE_TEAMS
   const teamsMap = useMemo(() => {
@@ -153,8 +189,8 @@ export function GameplayLoop({
       id: 'roster',
       label: 'Roster',
       icon: <Users className="w-4 h-4" />,
-      description: 'Manage roster, cuts, signings, waivers',
-      available: false,
+      description: 'View and manage your team roster',
+      available: !!playerTeamId && playerRoster.length > 0,
       category: 'gameplay',
     },
     {
@@ -162,7 +198,7 @@ export function GameplayLoop({
       label: 'Training',
       icon: <Dumbbell className="w-4 h-4" />,
       description: 'Practice allocation, player development',
-      available: false,
+      available: trainingInitialized && !!playerTeamId,
       category: 'gameplay',
     },
     {
@@ -414,28 +450,43 @@ export function GameplayLoop({
         {/* Scouting Section */}
         {activeSection === 'scouting' && <ScoutingSection />}
 
-        {/* Roster Section (Placeholder) */}
+        {/* Roster Section */}
         {activeSection === 'roster' && (
-          <div className="bg-secondary/50 border border-dashed border-border rounded-xl p-8 text-center">
-            <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-lg font-medium mb-2">Roster Management</h3>
-            <p className="text-sm text-muted-foreground">
-              Manage your 53-man roster, practice squad, IR, and make transactions.
-            </p>
-            <div className="mt-4 text-xs text-muted-foreground/50">Coming Soon</div>
-          </div>
+          playerTeamId && playerRoster.length > 0 ? (
+            <RosterSection
+              teamId={playerTeamId}
+              teamName={playerTeamName}
+              roster={playerRoster}
+            />
+          ) : (
+            <div className="bg-secondary/50 border border-dashed border-border rounded-xl p-8 text-center">
+              <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+              <h3 className="text-lg font-medium mb-2">Roster Management</h3>
+              <p className="text-sm text-muted-foreground">
+                Select a team as GM to view your roster.
+              </p>
+            </div>
+          )
         )}
 
-        {/* Training Section (Placeholder) */}
+        {/* Training Section */}
         {activeSection === 'training' && (
-          <div className="bg-secondary/50 border border-dashed border-border rounded-xl p-8 text-center">
-            <Dumbbell className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-lg font-medium mb-2">Training & Development</h3>
-            <p className="text-sm text-muted-foreground">
-              Allocate practice time and develop player skills throughout the season.
-            </p>
-            <div className="mt-4 text-xs text-muted-foreground/50">Coming Soon</div>
-          </div>
+          playerTeamId && playerRoster.length > 0 ? (
+            <TrainingDashboard
+              teamId={playerTeamId}
+              roster={playerRoster}
+              week={seasonState?.week || 1}
+              season={seasonState?.year || 1}
+            />
+          ) : (
+            <div className="bg-secondary/50 border border-dashed border-border rounded-xl p-8 text-center">
+              <Dumbbell className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+              <h3 className="text-lg font-medium mb-2">Training & Development</h3>
+              <p className="text-sm text-muted-foreground">
+                Select a team as GM to access training features.
+              </p>
+            </div>
+          )
         )}
 
         {/* Game Prep Section (Placeholder) */}

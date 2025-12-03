@@ -1,0 +1,561 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "module-architecture",
+    "version": "2.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2024-12-03",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": [
+        "src/app/dashboard/dev-tools/page.tsx - Dev tools index with card categories (Generators, Views, Loops)",
+        "src/app/dashboard/dev-tools/full/page.tsx - Full game page with Setup/Gameplay/Dashboard tabs",
+        "src/components/franchise/game-setup-dashboard.tsx - Setup tab generators (good pattern)",
+        "src/components/franchise/gameplay-loop.tsx - Gameplay tab with inline section components"
+      ],
+      "coding_standards": {
+        "component_pattern": "React functional components with TypeScript",
+        "state_management": "useState/useEffect hooks, session storage for persistence",
+        "styling": "Tailwind CSS with cn() utility for conditional classes",
+        "file_structure": "Components in src/components/, pages in src/app/",
+        "module_contract": "Each module accepts mode prop ('standalone' | 'embedded') to control layout"
+      },
+      "reference_components": [
+        "src/components/training/training-dashboard.tsx - Good example of reusable module",
+        "src/components/franchise/scouting-section.tsx - Embedded section pattern",
+        "src/app/dashboard/dev-tools/roster-view/page.tsx - Standalone page pattern"
+      ],
+      "existing_patterns": {
+        "generators": "API calls to /api/dev/generate-*, store results in session storage",
+        "views": "Load from session storage, filter/sort/display with tabs and search",
+        "loops": "Interactive components with state management, callbacks, user actions"
+      },
+      "current_duplication": {
+        "roster": {
+          "standalone": "roster-view/page.tsx (500 LOC) - Full features, team selector",
+          "embedded": "roster-section.tsx (200 LOC) - Simplified, player's team only",
+          "problem": "Two different UIs, two places to fix bugs"
+        },
+        "scouting": {
+          "standalone": "scouting/page.tsx - Generator page",
+          "embedded": "scouting-section.tsx - Embedded in gameplay loop",
+          "problem": "Different implementations"
+        },
+        "training": {
+          "standalone": "training/page.tsx - Test harness with controls",
+          "embedded": "TrainingDashboard direct import (good!)",
+          "problem": "Training is already modular - use as reference"
+        }
+      }
+    },
+    "1_executive_summary": {
+      "description": "Refactor the codebase to use a modular component architecture where each dev tools card (Generator, View, Gameplay Loop) corresponds to a reusable module. The Full Game page imports and composes these same modules, ensuring consistency across the application.",
+      "goal": "Single source of truth for each module - update once, updates everywhere. Dev tools becomes testing ground, Full Game becomes composition layer.",
+      "problem_statement": "Currently there is duplication between dev tools pages and full game sections. roster-view/page.tsx (500 LOC) and roster-section.tsx (200 LOC) do similar things with different UIs. This causes maintenance burden and UI inconsistency.",
+      "solution": "Extract core logic into module components with a 'mode' prop that controls standalone vs embedded behavior. Both dev tools and full game import the same module.",
+      "scope": {
+        "in_scope": [
+          "Create src/components/modules/ directory structure",
+          "Extract RosterView module (merge roster-view page + roster-section)",
+          "Extract ScheduleView module from schedule-section",
+          "Move StandingsView and StatsView to modules",
+          "Extract ScoutingLoop module from scouting-section",
+          "Create TrainingLoop wrapper module",
+          "Update GameplayLoop to import modules",
+          "Update dev tools pages to use modules with page wrappers",
+          "Delete deprecated section components"
+        ],
+        "out_of_scope": [
+          "Adding new features or gameplay mechanics",
+          "Changing API endpoints or data structures",
+          "Generator modules (GameSetupDashboard pattern is already good)",
+          "Mobile-specific optimizations"
+        ]
+      },
+      "estimated_complexity": "medium",
+      "primary_files_affected": 18
+    },
+    "2_risk_assessment": {
+      "risks": [
+        {
+          "id": "RISK-001",
+          "description": "Breaking existing functionality during refactor",
+          "severity": "high",
+          "mitigation": "Refactor one module at a time, test after each extraction, keep old files until new ones verified"
+        },
+        {
+          "id": "RISK-002",
+          "description": "Props interface mismatches between standalone and embedded usage",
+          "severity": "medium",
+          "mitigation": "Design flexible interfaces with sensible defaults, use TypeScript for compile-time checking"
+        },
+        {
+          "id": "RISK-003",
+          "description": "Styling inconsistencies between contexts",
+          "severity": "low",
+          "mitigation": "Use mode prop to control height/padding, avoid hardcoded dimensions"
+        },
+        {
+          "id": "RISK-004",
+          "description": "Navigation/routing differences between contexts",
+          "severity": "medium",
+          "mitigation": "Pass onPlayerClick callback instead of hardcoding router.push"
+        }
+      ],
+      "dependencies": [
+        "Existing session storage patterns must be maintained",
+        "API endpoints remain unchanged",
+        "RosterPlayerCard component is shared (already good)",
+        "TrainingDashboard is already modular (use as reference)"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        {
+          "path": "src/components/modules/index.ts",
+          "purpose": "Barrel export for all modules",
+          "estimated_loc": 10
+        },
+        {
+          "path": "src/components/modules/views/index.ts",
+          "purpose": "Barrel export for view modules",
+          "estimated_loc": 10
+        },
+        {
+          "path": "src/components/modules/views/roster-view.tsx",
+          "purpose": "Unified roster view module with mode prop",
+          "estimated_loc": 350,
+          "merges_from": ["roster-view/page.tsx", "roster-section.tsx"]
+        },
+        {
+          "path": "src/components/modules/views/schedule-view.tsx",
+          "purpose": "Schedule view module extracted from schedule-section",
+          "estimated_loc": 150
+        },
+        {
+          "path": "src/components/modules/loops/index.ts",
+          "purpose": "Barrel export for loop modules",
+          "estimated_loc": 10
+        },
+        {
+          "path": "src/components/modules/loops/scouting-loop.tsx",
+          "purpose": "Scouting gameplay loop module",
+          "estimated_loc": 250,
+          "merges_from": ["scouting-section.tsx"]
+        },
+        {
+          "path": "src/components/modules/loops/training-loop.tsx",
+          "purpose": "Training gameplay loop wrapper with mode support",
+          "estimated_loc": 100
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "src/components/franchise/gameplay-loop.tsx",
+          "changes": "Import RosterView, ScheduleView, ScoutingLoop, TrainingLoop from modules instead of inline/local components",
+          "estimated_changes": "Replace 4 section imports, update JSX"
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/roster-view/page.tsx",
+          "changes": "Simplify to thin wrapper around RosterView module with mode='standalone'",
+          "estimated_loc_reduction": 400
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/training/page.tsx",
+          "changes": "Use TrainingLoop module instead of inline test harness",
+          "estimated_changes": "Minimal - training is already modular"
+        },
+        {
+          "path": "src/components/modules/views/standings-view.tsx",
+          "changes": "Move from src/components/franchise/standings-view.tsx, add mode prop",
+          "estimated_changes": "Add props interface, minimal logic changes"
+        },
+        {
+          "path": "src/components/modules/views/stats-view.tsx",
+          "changes": "Move from src/components/franchise/stats-view.tsx, add mode prop",
+          "estimated_changes": "Add props interface, minimal logic changes"
+        }
+      ],
+      "files_to_delete": [
+        {
+          "path": "src/components/franchise/roster-section.tsx",
+          "reason": "Replaced by modules/views/roster-view.tsx"
+        },
+        {
+          "path": "src/components/franchise/scouting-section.tsx",
+          "reason": "Replaced by modules/loops/scouting-loop.tsx"
+        },
+        {
+          "path": "src/components/franchise/schedule-section.tsx",
+          "reason": "Replaced by modules/views/schedule-view.tsx"
+        }
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "FEAT-001",
+          "name": "Module Directory Structure",
+          "description": "Create organized src/components/modules/ with views/ and loops/ subdirectories and barrel exports",
+          "priority": "high",
+          "acceptance": "Directory structure exists with index.ts files"
+        },
+        {
+          "id": "FEAT-002",
+          "name": "RosterView Module",
+          "description": "Unified roster view with mode prop - standalone shows team selector and full header, embedded shows compact scrollable list",
+          "priority": "high",
+          "acceptance": "Same component works in dev tools page and gameplay loop"
+        },
+        {
+          "id": "FEAT-003",
+          "name": "ScheduleView Module",
+          "description": "Schedule view extracted from schedule-section with mode support",
+          "priority": "high",
+          "acceptance": "Schedule displays correctly in both contexts"
+        },
+        {
+          "id": "FEAT-004",
+          "name": "ScoutingLoop Module",
+          "description": "Scouting gameplay loop with scout assignments, point spending, report generation",
+          "priority": "high",
+          "acceptance": "Scouting works identically in dev tools and gameplay loop"
+        },
+        {
+          "id": "FEAT-005",
+          "name": "TrainingLoop Module",
+          "description": "Training gameplay wrapper that uses TrainingDashboard with mode-aware controls",
+          "priority": "medium",
+          "acceptance": "Training XP and practice focus works in both contexts"
+        },
+        {
+          "id": "FEAT-006",
+          "name": "GameplayLoop Integration",
+          "description": "Update gameplay-loop.tsx to import all sections from modules/",
+          "priority": "high",
+          "acceptance": "All gameplay sections render correctly from module imports"
+        },
+        {
+          "id": "FEAT-007",
+          "name": "Dev Tools Integration",
+          "description": "Update dev tools pages to be thin wrappers around module components",
+          "priority": "medium",
+          "acceptance": "Dev tools pages use same modules as full game"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-MODULE-ARCHITECTURE-001",
+        "name": "Module Architecture Refactor",
+        "feature_dir": "coderef/working/module-architecture"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-MODULE-ARCHITECTURE-001",
+          "description": "Create module directory structure with barrel exports",
+          "feature_id": "FEAT-001",
+          "estimated_loc": 30,
+          "files": [
+            "src/components/modules/index.ts",
+            "src/components/modules/views/index.ts",
+            "src/components/modules/loops/index.ts"
+          ],
+          "acceptance": "Directories exist, TypeScript imports work"
+        },
+        {
+          "id": "VIEW-001",
+          "workorder_id": "WO-MODULE-ARCHITECTURE-001",
+          "description": "Create RosterView module merging roster-view page and roster-section",
+          "feature_id": "FEAT-002",
+          "estimated_loc": 350,
+          "files": ["src/components/modules/views/roster-view.tsx"],
+          "props_interface": {
+            "roster": "Player[]",
+            "teamId": "string",
+            "teamName": "string",
+            "mode": "'standalone' | 'embedded'",
+            "showTeamSelector": "boolean (default: false)",
+            "onPlayerClick": "(id: string) => void",
+            "maxHeight": "string (default: '500px' for embedded)"
+          },
+          "acceptance": "Renders player cards with filter/sort in both modes"
+        },
+        {
+          "id": "VIEW-002",
+          "workorder_id": "WO-MODULE-ARCHITECTURE-001",
+          "description": "Create ScheduleView module from schedule-section",
+          "feature_id": "FEAT-003",
+          "estimated_loc": 200,
+          "files": ["src/components/modules/views/schedule-view.tsx"],
+          "props_interface": {
+            "seasonState": "SeasonState",
+            "teamsMap": "Map<string, Team>",
+            "mode": "'standalone' | 'embedded'"
+          },
+          "acceptance": "Shows weekly schedule with game results"
+        },
+        {
+          "id": "VIEW-003",
+          "workorder_id": "WO-MODULE-ARCHITECTURE-001",
+          "description": "Move StandingsView to modules with mode prop",
+          "feature_id": "FEAT-003",
+          "estimated_loc": 50,
+          "files": ["src/components/modules/views/standings-view.tsx"],
+          "acceptance": "Standings display works from new location"
+        },
+        {
+          "id": "VIEW-004",
+          "workorder_id": "WO-MODULE-ARCHITECTURE-001",
+          "description": "Move StatsView to modules with mode prop",
+          "feature_id": "FEAT-003",
+          "estimated_loc": 50,
+          "files": ["src/components/modules/views/stats-view.tsx"],
+          "acceptance": "Stats display works from new location"
+        },
+        {
+          "id": "LOOP-001",
+          "workorder_id": "WO-MODULE-ARCHITECTURE-001",
+          "description": "Create ScoutingLoop module from scouting-section",
+          "feature_id": "FEAT-004",
+          "estimated_loc": 250,
+          "files": ["src/components/modules/loops/scouting-loop.tsx"],
+          "props_interface": {
+            "teamId": "string (optional - uses player team if not provided)",
+            "mode": "'standalone' | 'embedded'",
+            "onScoutAssigned": "(assignment) => void",
+            "onReportGenerated": "(report) => void"
+          },
+          "acceptance": "Scout assignments and reports work in both contexts"
+        },
+        {
+          "id": "LOOP-002",
+          "workorder_id": "WO-MODULE-ARCHITECTURE-001",
+          "description": "Create TrainingLoop module wrapping TrainingDashboard",
+          "feature_id": "FEAT-005",
+          "estimated_loc": 150,
+          "files": ["src/components/modules/loops/training-loop.tsx"],
+          "props_interface": {
+            "teamId": "string",
+            "roster": "Player[]",
+            "week": "number",
+            "season": "number",
+            "mode": "'standalone' | 'embedded'",
+            "showTestControls": "boolean (default: true for standalone)",
+            "onPracticeFocusChange": "(focus, intensity) => void"
+          },
+          "acceptance": "Training UI works with practice focus and XP display"
+        },
+        {
+          "id": "INT-001",
+          "workorder_id": "WO-MODULE-ARCHITECTURE-001",
+          "description": "Update GameplayLoop to import from modules/",
+          "feature_id": "FEAT-006",
+          "estimated_loc": 80,
+          "files": ["src/components/franchise/gameplay-loop.tsx"],
+          "changes": [
+            "Import RosterView from modules/views",
+            "Import ScheduleView from modules/views",
+            "Import StandingsView from modules/views",
+            "Import StatsView from modules/views",
+            "Import ScoutingLoop from modules/loops",
+            "Import TrainingLoop from modules/loops",
+            "Remove local section imports",
+            "Update JSX to use module components with mode='embedded'"
+          ],
+          "acceptance": "All gameplay sections render from module imports"
+        },
+        {
+          "id": "INT-002",
+          "workorder_id": "WO-MODULE-ARCHITECTURE-001",
+          "description": "Update roster-view page to use RosterView module",
+          "feature_id": "FEAT-007",
+          "estimated_loc": 50,
+          "files": ["src/app/dashboard/dev-tools/roster-view/page.tsx"],
+          "changes": "Thin wrapper with PageHeader + RosterView mode='standalone'",
+          "acceptance": "Dev tools roster page works with module"
+        },
+        {
+          "id": "INT-003",
+          "workorder_id": "WO-MODULE-ARCHITECTURE-001",
+          "description": "Update training page to use TrainingLoop module",
+          "feature_id": "FEAT-007",
+          "estimated_loc": 50,
+          "files": ["src/app/dashboard/dev-tools/training/page.tsx"],
+          "changes": "Use TrainingLoop with mode='standalone' and showTestControls",
+          "acceptance": "Dev tools training page works with module"
+        },
+        {
+          "id": "CLEAN-001",
+          "workorder_id": "WO-MODULE-ARCHITECTURE-001",
+          "description": "Delete deprecated section files and update all imports",
+          "feature_id": "FEAT-006",
+          "estimated_loc": 0,
+          "files_to_delete": [
+            "src/components/franchise/roster-section.tsx",
+            "src/components/franchise/scouting-section.tsx",
+            "src/components/franchise/schedule-section.tsx"
+          ],
+          "acceptance": "No orphaned files, all imports resolve, TypeScript passes"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "id": "phase_1",
+          "name": "Foundation",
+          "description": "Create module directory structure and barrel exports",
+          "tasks": ["SETUP-001"],
+          "estimated_time": "15 minutes",
+          "deliverables": [
+            "src/components/modules/ directory created",
+            "views/ and loops/ subdirectories created",
+            "index.ts barrel exports in place"
+          ],
+          "validation": "TypeScript recognizes import paths"
+        },
+        {
+          "id": "phase_2",
+          "name": "View Modules",
+          "description": "Extract and create all view modules (RosterView, ScheduleView, StandingsView, StatsView)",
+          "tasks": ["VIEW-001", "VIEW-002", "VIEW-003", "VIEW-004"],
+          "estimated_time": "2 hours",
+          "deliverables": [
+            "RosterView module with standalone/embedded modes",
+            "ScheduleView module extracted",
+            "StandingsView moved to modules",
+            "StatsView moved to modules",
+            "All barrel exports updated"
+          ],
+          "validation": "Each view renders correctly in isolation test"
+        },
+        {
+          "id": "phase_3",
+          "name": "Loop Modules",
+          "description": "Extract and create gameplay loop modules (ScoutingLoop, TrainingLoop)",
+          "tasks": ["LOOP-001", "LOOP-002"],
+          "estimated_time": "1.5 hours",
+          "deliverables": [
+            "ScoutingLoop module with embedded/standalone modes",
+            "TrainingLoop module wrapping TrainingDashboard",
+            "Barrel exports updated"
+          ],
+          "validation": "Loops work with test data in isolation"
+        },
+        {
+          "id": "phase_4",
+          "name": "Integration & Cleanup",
+          "description": "Wire modules into Full Game and Dev Tools, delete deprecated files",
+          "tasks": ["INT-001", "INT-002", "INT-003", "CLEAN-001"],
+          "estimated_time": "1 hour",
+          "deliverables": [
+            "GameplayLoop uses module imports",
+            "Dev tools pages use modules",
+            "Deprecated files deleted",
+            "All TypeScript checks pass",
+            "Manual testing complete"
+          ],
+          "validation": "Full game and dev tools both work with same modules"
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "RosterView renders with empty roster",
+        "RosterView filters by position correctly",
+        "RosterView sorts by OVR/age/potential correctly",
+        "ScheduleView renders week games",
+        "ScoutingLoop displays scout list",
+        "TrainingLoop shows practice focus selector"
+      ],
+      "integration_tests": [
+        "RosterView mode='standalone' shows team selector",
+        "RosterView mode='embedded' respects maxHeight",
+        "ScoutingLoop loads data from session storage",
+        "TrainingLoop initializes training state",
+        "Player click navigates to profile in both contexts"
+      ],
+      "manual_testing_checklist": [
+        "[ ] Generate all data via Setup tab",
+        "[ ] Switch to Gameplay tab, verify Roster section shows your team",
+        "[ ] Go to Dev Tools > Roster View, verify same UI with team selector",
+        "[ ] Test filter/sort in both locations",
+        "[ ] Click player in both locations, verify navigation",
+        "[ ] Test Scouting in both dev tools and gameplay",
+        "[ ] Test Training in both dev tools and gameplay",
+        "[ ] Verify Schedule/Standings/Stats display correctly"
+      ]
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        "All view modules work in both dev tools and full game with mode prop",
+        "All loop modules work in both dev tools and full game with mode prop",
+        "No functionality regression from current state",
+        "TypeScript compilation passes with no errors",
+        "Same UI/UX in both contexts for the same module",
+        "Code duplication reduced by eliminating separate section components"
+      ],
+      "measurable_outcomes": [
+        "RosterView used in 2 locations (was: roster-view page + roster-section)",
+        "ScoutingLoop used in 2 locations (was: scouting page + scouting-section)",
+        "TrainingLoop used in 2 locations",
+        "3 deprecated files deleted (roster-section, scouting-section, schedule-section)",
+        "~600 LOC reduction from deduplication",
+        "All 12 tasks completed"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_foundation": [
+        "[ ] Create src/components/modules/ directory",
+        "[ ] Create src/components/modules/views/ directory",
+        "[ ] Create src/components/modules/loops/ directory",
+        "[ ] Create src/components/modules/index.ts with exports",
+        "[ ] Create src/components/modules/views/index.ts",
+        "[ ] Create src/components/modules/loops/index.ts",
+        "[ ] Verify import '@/components/modules' resolves"
+      ],
+      "phase_2_views": [
+        "[ ] Create roster-view.tsx with RosterViewProps interface",
+        "[ ] Implement mode='standalone' with team selector",
+        "[ ] Implement mode='embedded' with maxHeight scroll",
+        "[ ] Add filter tabs (all/offense/defense/special)",
+        "[ ] Add sort options (ovr/potential/age/position)",
+        "[ ] Add search functionality",
+        "[ ] Test RosterView in isolation",
+        "[ ] Create schedule-view.tsx from schedule-section",
+        "[ ] Move standings-view.tsx to modules/views/",
+        "[ ] Move stats-view.tsx to modules/views/",
+        "[ ] Update views/index.ts barrel export"
+      ],
+      "phase_3_loops": [
+        "[ ] Create scouting-loop.tsx from scouting-section",
+        "[ ] Add mode prop with standalone/embedded behavior",
+        "[ ] Create training-loop.tsx wrapping TrainingDashboard",
+        "[ ] Add showTestControls prop for dev tools mode",
+        "[ ] Update loops/index.ts barrel export",
+        "[ ] Test each loop in isolation"
+      ],
+      "phase_4_integration": [
+        "[ ] Update gameplay-loop.tsx imports to use @/components/modules",
+        "[ ] Replace inline Roster section with <RosterView mode='embedded' />",
+        "[ ] Replace ScheduleSection with <ScheduleView mode='embedded' />",
+        "[ ] Replace ScoutingSection with <ScoutingLoop mode='embedded' />",
+        "[ ] Replace Training section with <TrainingLoop mode='embedded' />",
+        "[ ] Update roster-view/page.tsx to use <RosterView mode='standalone' />",
+        "[ ] Update training/page.tsx to use <TrainingLoop mode='standalone' />",
+        "[ ] Delete roster-section.tsx",
+        "[ ] Delete scouting-section.tsx",
+        "[ ] Delete schedule-section.tsx",
+        "[ ] Run npx tsc --noEmit",
+        "[ ] Manual test: Full Game all sections",
+        "[ ] Manual test: Dev Tools roster page",
+        "[ ] Manual test: Dev Tools training page"
+      ]
+    }
+  }
+}

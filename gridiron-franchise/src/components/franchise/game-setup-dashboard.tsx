@@ -19,6 +19,7 @@ import {
   RefreshCw,
   Trash2,
   UserCog,
+  Search,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -28,6 +29,8 @@ import { getCoaching } from '@/lib/coaching/coaching-store';
 import { getFacilities } from '@/lib/facilities/facilities-store';
 import { getSchedule } from '@/lib/schedule/schedule-store';
 import { getGMs, storeGMs, clearGMs, LeagueGMs, GMBackground, GMArchetype } from '@/lib/gm';
+import { getScouting, storeScouting, clearScouting } from '@/lib/scouting/scouting-store';
+import { LeagueScouting } from '@/lib/scouting/types';
 import { Player } from '@/lib/types';
 
 // Store setters and clearers
@@ -44,6 +47,7 @@ interface ModuleData {
   gm: LeagueGMs | null;
   coaching: ReturnType<typeof getCoaching>;
   facilities: ReturnType<typeof getFacilities>;
+  scouting: LeagueScouting | null;
   schedule: ReturnType<typeof getSchedule>;
 }
 
@@ -62,6 +66,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     gm: null,
     coaching: null,
     facilities: null,
+    scouting: null,
     schedule: null,
   });
 
@@ -87,6 +92,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       gm: getGMs(),
       coaching: getCoaching(),
       facilities: getFacilities(),
+      scouting: getScouting(),
       schedule: getSchedule(),
     });
   };
@@ -206,6 +212,38 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     setGeneratingModules((prev) => ({ ...prev, facilities: false }));
   };
 
+  // Generate scouting via API
+  const generateScoutingData = async () => {
+    setGeneratingModules((prev) => ({ ...prev, scouting: true }));
+    try {
+      const teamTiers = getTeamTiers();
+      if (teamTiers.size === 0) {
+        console.warn('No rosters found - generate rosters first');
+        setGeneratingModules((prev) => ({ ...prev, scouting: false }));
+        return;
+      }
+      // Convert Map to object for API
+      const tierObj: Record<string, Tier> = {};
+      teamTiers.forEach((tier, teamId) => {
+        tierObj[teamId] = tier;
+      });
+
+      const response = await fetch('/api/dev/generate-scouting', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamTiers: tierObj }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        storeScouting(data.scouting);
+        loadModuleStatus();
+      }
+    } catch (error) {
+      console.error('Failed to generate scouting:', error);
+    }
+    setGeneratingModules((prev) => ({ ...prev, scouting: false }));
+  };
+
   // Generate schedule via API
   const generateScheduleData = async () => {
     setGeneratingModules((prev) => ({ ...prev, schedule: true }));
@@ -233,14 +271,14 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
   const generateAll = async () => {
     setIsGeneratingAll(true);
 
-    // 1. Generate rosters first (required for coaching/facilities)
+    // 1. Generate rosters first (required for coaching/facilities/scouting)
     await generateRosters();
 
     // Wait for state to update
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    // 2. Generate coaching and facilities (can be parallel)
-    await Promise.all([generateCoachingStaff(), generateFacilitiesData()]);
+    // 2. Generate coaching, facilities, and scouting (can be parallel)
+    await Promise.all([generateCoachingStaff(), generateFacilitiesData(), generateScoutingData()]);
 
     // 3. Generate schedule
     await generateScheduleData();
@@ -257,6 +295,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     clearGMs();
     clearCoaching();
     clearFacilities();
+    clearScouting();
     clearSchedule();
     loadModuleStatus();
   };
@@ -275,6 +314,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         clearGMs();
         clearCoaching();
         clearFacilities();
+        clearScouting();
         break;
       case 'gm':
         clearGMs();
@@ -284,6 +324,9 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         break;
       case 'facilities':
         clearFacilities();
+        break;
+      case 'scouting':
+        clearScouting();
         break;
       case 'schedule':
         clearSchedule();
@@ -342,10 +385,19 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     {
       id: 'facilities',
       name: 'Facilities',
-      description: 'Stadium, training, medical, scouting',
+      description: 'Stadium, training, medical',
       icon: <Building2 className="h-5 w-5" />,
       isGenerated: !!modules.facilities,
       count: modules.facilities ? Object.keys(modules.facilities.teams).length : 0,
+      countLabel: 'teams',
+    },
+    {
+      id: 'scouting',
+      name: 'Scouting Dept',
+      description: 'Scouts, scouting points, assignments',
+      icon: <Search className="h-5 w-5" />,
+      isGenerated: !!modules.scouting,
+      count: modules.scouting ? Object.keys(modules.scouting.teams).length : 0,
       countLabel: 'teams',
     },
     {
@@ -365,6 +417,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     { id: 'gm', label: 'General Manager', isReady: !!modules.gm, required: true },
     { id: 'coaching', label: 'Coaching', isReady: !!modules.coaching, required: true },
     { id: 'facilities', label: 'Facilities', isReady: !!modules.facilities, required: true },
+    { id: 'scouting', label: 'Scouting', isReady: !!modules.scouting, required: true },
     { id: 'schedule', label: 'Schedule', isReady: !!modules.schedule, required: true },
   ];
 
@@ -384,6 +437,9 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         break;
       case 'facilities':
         generateFacilitiesData();
+        break;
+      case 'scouting':
+        generateScoutingData();
         break;
       case 'schedule':
         generateScheduleData();
@@ -410,6 +466,9 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         break;
       case 'facilities':
         router.push('/dashboard/dev-tools/facilities');
+        break;
+      case 'scouting':
+        router.push('/dashboard/dev-tools/scouting');
         break;
       case 'schedule':
         router.push('/dashboard/dev-tools/schedule');
@@ -538,8 +597,8 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
             onView={() => handleModuleView(module.id)}
             disabled={
               isAnyGenerating ||
-              // Disable gm/coaching/facilities if no rosters
-              (['gm', 'coaching', 'facilities'].includes(module.id) && !modules.rosters)
+              // Disable gm/coaching/facilities/scouting if no rosters
+              (['gm', 'coaching', 'facilities', 'scouting'].includes(module.id) && !modules.rosters)
             }
           />
         ))}
