@@ -1,0 +1,26 @@
+{
+  "feature_name": "owner-model",
+  "description": "Change career creation from GM role to Owner role. User picks team after league data is generated, inherits pre-assigned GM.",
+  "goal": "Connect the career wizard to league generation so new careers have full game data, using an Owner model where the player owns a team and works with their assigned GM.",
+  "requirements": [
+    "Generate all league data (rosters, FA, draft, GMs, coaching, facilities, scouting, schedule) when starting new career",
+    "Remove archetype/background/persona selection (user is Owner not GM)",
+    "User picks team after league is generated",
+    "Show assigned GM profile on confirmation screen",
+    "Dashboard loads from generated session storage data",
+    "My GM page shows actual GM data"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Keep existing generator APIs and session storage patterns",
+    "Maintain backward compatibility with dev tools GM generation",
+    "Don't break existing dashboard navigation"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-OWNER-MODEL-001",
+    "workorder_assigned_at": "2025-12-03T20:36:13.185039+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

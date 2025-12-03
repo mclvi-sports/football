@@ -1,0 +1,196 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "owner-model",
+    "version": "1.0.0",
+    "status": "approved",
+    "generated_by": "Claude Code",
+    "generated_at": "2025-12-03T20:40:00.000Z",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": ["src/stores/career-store.ts", "src/lib/gm/index.ts"],
+      "reference_components": ["src/components/franchise/game-setup-dashboard.tsx"],
+      "coding_standards": "Next.js App Router, TypeScript, Zustand stores"
+    },
+    "1_executive_summary": {
+      "problem": "Career wizard and dev tools GM generator are disconnected. Career wizard creates GM persona but no league data. Dashboard shows nothing when accessed via career wizard.",
+      "solution": "Owner model - Player is the Owner, not the GM. They pick a team after league generation and inherit the pre-assigned GM.",
+      "scope": "Career creation flow, dashboard integration, session storage data flow"
+    },
+    "2_risk_assessment": {
+      "complexity": "medium",
+      "risks": [
+        {
+          "risk": "Breaking existing dev tools GM generation",
+          "mitigation": "Make player params optional, keep backward compatible"
+        },
+        {
+          "risk": "Session storage data not persisting",
+          "mitigation": "Use existing session storage patterns from game-setup-dashboard"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        "src/app/career/new/generate/page.tsx"
+      ],
+      "files_to_modify": [
+        "src/app/api/dev/generate-gm/route.ts",
+        "src/app/career/new/page.tsx",
+        "src/app/career/new/team/page.tsx",
+        "src/app/career/new/confirm/page.tsx",
+        "src/stores/career-store.ts",
+        "src/app/dashboard/page.tsx",
+        "src/app/dashboard/my-gm/page.tsx"
+      ],
+      "files_to_delete": [
+        "src/app/career/new/archetype/page.tsx",
+        "src/app/career/new/background/page.tsx",
+        "src/app/career/new/persona/page.tsx"
+      ]
+    },
+    "4_key_features": [
+      {
+        "id": "F1",
+        "name": "League Generation Step",
+        "description": "Loading screen that generates all league data via 8 API calls"
+      },
+      {
+        "id": "F2",
+        "name": "Team Selection with GM Preview",
+        "description": "Show 32 teams with tier and assigned GM name"
+      },
+      {
+        "id": "F3",
+        "name": "GM Profile Confirmation",
+        "description": "Show assigned GM's archetype, background, and skills"
+      },
+      {
+        "id": "F4",
+        "name": "Dashboard Integration",
+        "description": "Load team and GM data from session storage"
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-OWNER-MODEL-001",
+        "name": "Owner Model",
+        "feature_dir": "coderef/working/owner-model"
+      },
+      "tasks": [
+        {
+          "id": "API-001",
+          "workorder_id": "WO-OWNER-MODEL-001",
+          "description": "Modify generate-gm API to make player params optional",
+          "file": "src/app/api/dev/generate-gm/route.ts",
+          "phase": 1
+        },
+        {
+          "id": "GEN-001",
+          "workorder_id": "WO-OWNER-MODEL-001",
+          "description": "Create league generation page with loading UI and API calls",
+          "file": "src/app/career/new/generate/page.tsx",
+          "phase": 1
+        },
+        {
+          "id": "NAV-001",
+          "workorder_id": "WO-OWNER-MODEL-001",
+          "description": "Update career entry to redirect to generate",
+          "file": "src/app/career/new/page.tsx",
+          "phase": 1
+        },
+        {
+          "id": "TEAM-001",
+          "workorder_id": "WO-OWNER-MODEL-001",
+          "description": "Update team selection to show generated teams with GM preview",
+          "file": "src/app/career/new/team/page.tsx",
+          "phase": 2
+        },
+        {
+          "id": "CONF-001",
+          "workorder_id": "WO-OWNER-MODEL-001",
+          "description": "Update confirm page to show GM profile",
+          "file": "src/app/career/new/confirm/page.tsx",
+          "phase": 2
+        },
+        {
+          "id": "STORE-001",
+          "workorder_id": "WO-OWNER-MODEL-001",
+          "description": "Update career store to use playerTeamId",
+          "file": "src/stores/career-store.ts",
+          "phase": 2
+        },
+        {
+          "id": "DASH-001",
+          "workorder_id": "WO-OWNER-MODEL-001",
+          "description": "Update dashboard to use session storage data",
+          "file": "src/app/dashboard/page.tsx",
+          "phase": 3
+        },
+        {
+          "id": "GM-001",
+          "workorder_id": "WO-OWNER-MODEL-001",
+          "description": "Update my-gm page to show real GM data",
+          "file": "src/app/dashboard/my-gm/page.tsx",
+          "phase": 3
+        },
+        {
+          "id": "CLEAN-001",
+          "workorder_id": "WO-OWNER-MODEL-001",
+          "description": "Delete old archetype/background/persona pages",
+          "files": [
+            "src/app/career/new/archetype/page.tsx",
+            "src/app/career/new/background/page.tsx",
+            "src/app/career/new/persona/page.tsx"
+          ],
+          "phase": 4
+        }
+      ]
+    },
+    "6_implementation_phases": [
+      {
+        "phase": 1,
+        "name": "API and Generation",
+        "tasks": ["API-001", "GEN-001", "NAV-001"]
+      },
+      {
+        "phase": 2,
+        "name": "Career Flow",
+        "tasks": ["TEAM-001", "CONF-001", "STORE-001"]
+      },
+      {
+        "phase": 3,
+        "name": "Dashboard Integration",
+        "tasks": ["DASH-001", "GM-001"]
+      },
+      {
+        "phase": 4,
+        "name": "Cleanup",
+        "tasks": ["CLEAN-001"]
+      }
+    ],
+    "7_testing_strategy": {
+      "manual_tests": [
+        "New Career flow generates all league data",
+        "Team selection shows 32 teams with GM names",
+        "Confirm page shows GM profile",
+        "Dashboard loads with team data",
+        "My GM page shows assigned GM"
+      ]
+    },
+    "8_success_criteria": [
+      "New career flow generates full league data",
+      "User can pick team and see assigned GM",
+      "Dashboard displays real data from session storage",
+      "Dev tools GM generation still works"
+    ],
+    "9_implementation_checklist": {
+      "phase_1": ["API-001", "GEN-001", "NAV-001"],
+      "phase_2": ["TEAM-001", "CONF-001", "STORE-001"],
+      "phase_3": ["DASH-001", "GM-001"],
+      "phase_4": ["CLEAN-001"]
+    }
+  }
+}
