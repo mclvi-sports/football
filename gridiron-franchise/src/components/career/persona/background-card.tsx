@@ -62,17 +62,11 @@ export function BackgroundCard({
         {background.description}
       </p>
 
-      {/* Bonuses */}
+      {/* Passive Bonus */}
       <div className="space-y-1.5 mb-3">
-        {background.bonuses.map((bonus, i) => (
-          <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-            <span className="text-green-500 mt-0.5">•</span>
-            <span>{bonus}</span>
-          </div>
-        ))}
         <div className="flex items-start gap-2 text-sm text-muted-foreground">
-          <span className="text-red-500 mt-0.5">•</span>
-          <span>{background.weakness}</span>
+          <span className="text-green-500 mt-0.5">•</span>
+          <span>{background.passiveBonus}</span>
         </div>
       </div>
 

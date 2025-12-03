@@ -60,8 +60,8 @@ export function ArchetypeCard({
           Starting Skill
         </p>
         <p className="text-sm font-medium">
-          {archetype.skill.name}{" "}
-          <span className="text-muted-foreground">({archetype.skill.tier})</span>
+          {archetype.startingSkill.name}{" "}
+          <span className="text-muted-foreground">({archetype.startingSkill.tier})</span>
         </p>
       </div>
     </button>

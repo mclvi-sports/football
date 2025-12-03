@@ -1,75 +1,80 @@
 // GM Persona Types
-// Defines all types for the GM Persona Creation system
+// Aligned with FINAL-gm-skills-perks-system.md specification
 
-// Background type identifiers
+// Background type identifiers (from FINAL spec Part 1)
 export type GMBackgroundId =
-  | "former_player"
-  | "analytics_expert"
-  | "college_scout"
-  | "coaching_tree"
-  | "agent_specialist"
-  | "media_insider";
+  | 'scout'
+  | 'cap_analyst'
+  | 'coach'
+  | 'agent'
+  | 'analytics'
+  | 'legacy';
 
-// Archetype type identifiers
+// Archetype type identifiers (from FINAL spec Part 1)
 export type GMArchetypeId =
-  | "scout_guru"
-  | "cap_wizard"
-  | "trade_shark"
-  | "player_developer"
-  | "win_now_executive"
-  | "motivator";
+  | 'the_builder'
+  | 'the_closer'
+  | 'the_economist'
+  | 'the_talent_scout'
+  | 'the_culture_builder'
+  | 'the_innovator';
 
-// Synergy type identifiers
+// Synergy occurs when background + archetype align (1:1 mapping)
 export type GMSynergyId =
-  | "the_mentor"
-  | "the_moneyball"
-  | "the_draft_whisperer"
-  | "the_dealmaker"
-  | "the_academy"
-  | "the_insider"
-  | "the_closer"
-  | "the_optimizer";
+  | 'scout_talent_scout'
+  | 'cap_analyst_economist'
+  | 'coach_builder'
+  | 'agent_closer'
+  | 'analytics_innovator'
+  | 'legacy_culture_builder';
 
-// Skill category for discounts
+// Skill category for discounts and organization
 export type SkillCategory =
-  | "scouting_draft"
-  | "contracts_money"
-  | "trades"
-  | "player_development"
-  | "team_management";
+  | 'scouting_draft'
+  | 'contracts_money'
+  | 'trades'
+  | 'player_development'
+  | 'team_management'
+  | 'coaching_staff'
+  | 'facilities_operations'
+  | 'meta_qol';
+
+// Skill tier levels
+export type SkillTier = 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond';
 
 // Starting skill definition
 export interface GMSkill {
+  id: string;
   name: string;
-  tier: "Bronze" | "Silver" | "Gold";
+  tier: SkillTier;
   description: string;
+  category: SkillCategory;
 }
 
-// Background definition
+// Background definition (from FINAL spec)
 export interface GMBackground {
   id: GMBackgroundId;
   name: string;
   icon: string;
   description: string;
-  bonuses: string[];
-  weakness: string;
-  bestPairedWith: string[];
+  passiveBonus: string; // Single passive bonus as per FINAL spec
+  bestArchetype: GMArchetypeId; // The archetype that triggers synergy
 }
 
-// Archetype definition
+// Archetype definition (from FINAL spec)
 export interface GMArchetype {
   id: GMArchetypeId;
   name: string;
   icon: string;
   philosophy: string;
   description: string;
-  bonuses: string[];
-  skill: GMSkill;
+  startingSkill: GMSkill;
+  synergyBonus: string; // Bonus when paired with matching background
   skillDiscountCategory: SkillCategory;
   recommendedFor: string;
 }
 
-// Synergy definition
+// Synergy definition (1:1 mapping from FINAL spec)
 export interface GMSynergy {
   id: GMSynergyId;
   name: string;
@@ -84,10 +89,12 @@ export interface GMBonuses {
   contractNegotiation: number;
   tradeAcceptance: number;
   playerDevelopment: number;
-  playerTrust: number;
+  faAppeal: number;
   teamMorale: number;
-  capSpace: number;
+  capSpace: number; // in millions
   ownerPatience: number;
+  coachAppeal: number;
+  fanLoyalty: number;
 }
 
 // Complete GM persona combining background, archetype, and optional synergy
@@ -98,7 +105,7 @@ export interface GMPersona {
   bonuses: GMBonuses;
   startingSkill: GMSkill;
   skillDiscountCategory: SkillCategory;
-  skillDiscountPercent: number;
+  skillDiscountPercent: number; // Always 15% as per spec
 }
 
 // Synergy key for lookup (format: backgroundId_archetypeId)

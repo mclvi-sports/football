@@ -7,8 +7,8 @@ import type {
   GMPersona,
   GMSynergy,
   SynergyKey,
-} from "@/types/gm-persona";
-import { synergyMap } from "@/data/gm-personas";
+} from '@/types/gm-persona';
+import { synergyMap } from '@/data/gm-personas';
 
 /**
  * Get synergy for a background and archetype combination
@@ -51,16 +51,18 @@ function getDefaultBonuses(): GMBonuses {
     contractNegotiation: 0,
     tradeAcceptance: 0,
     playerDevelopment: 0,
-    playerTrust: 0,
+    faAppeal: 0,
     teamMorale: 0,
     capSpace: 0,
     ownerPatience: 0,
+    coachAppeal: 0,
+    fanLoyalty: 0,
   };
 }
 
 /**
  * Calculate combined bonuses for a GM persona
- * Note: This is a simplified version - actual values would need game balancing
+ * Based on FINAL-gm-skills-perks-system.md bonuses
  */
 export function calculateBonuses(
   background: GMBackground,
@@ -69,84 +71,78 @@ export function calculateBonuses(
 ): GMBonuses {
   const bonuses = getDefaultBonuses();
 
-  // Apply background bonuses (simplified mapping)
+  // Apply background bonuses (from FINAL spec)
   switch (background.id) {
-    case "former_player":
-      bonuses.playerTrust += 15;
-      bonuses.teamMorale += 10;
-      bonuses.ownerPatience -= 10;
-      break;
-    case "analytics_expert":
-      bonuses.scoutingAccuracy += 20;
-      bonuses.playerTrust -= 10;
-      break;
-    case "college_scout":
-      bonuses.scoutingAccuracy += 25;
-      break;
-    case "coaching_tree":
-      bonuses.playerDevelopment += 15;
-      bonuses.contractNegotiation -= 10;
-      break;
-    case "agent_specialist":
-      bonuses.contractNegotiation += 20;
-      bonuses.scoutingAccuracy -= 10;
-      break;
-    case "media_insider":
-      bonuses.tradeAcceptance += 15;
-      bonuses.scoutingAccuracy -= 15;
-      break;
-  }
-
-  // Apply archetype bonuses
-  switch (archetype.id) {
-    case "scout_guru":
+    case 'scout':
       bonuses.scoutingAccuracy += 10;
+      // +1 sleeper/draft is tracked separately
       break;
-    case "cap_wizard":
-      bonuses.capSpace += 5000000;
-      bonuses.contractNegotiation += 10;
+    case 'cap_analyst':
+      bonuses.capSpace += 5; // +$5M
+      bonuses.contractNegotiation += 5; // -5% demands
       break;
-    case "trade_shark":
-      bonuses.tradeAcceptance += 10;
+    case 'coach':
+      bonuses.playerDevelopment += 10;
+      bonuses.coachAppeal += 5;
       break;
-    case "player_developer":
-      bonuses.playerDevelopment += 20;
+    case 'agent':
+      bonuses.contractNegotiation += 10; // -10% demands
+      bonuses.faAppeal += 10;
       break;
-    case "win_now_executive":
-      bonuses.teamMorale += 20;
+    case 'analytics':
+      bonuses.scoutingAccuracy += 5; // +5% all evaluation
       break;
-    case "motivator":
-      bonuses.teamMorale += 25;
-      bonuses.playerTrust += 10;
+    case 'legacy':
+      bonuses.fanLoyalty += 15;
+      bonuses.ownerPatience += 10;
       break;
   }
 
-  // Apply synergy bonuses
+  // Apply archetype bonuses (from starting skill effects)
+  switch (archetype.id) {
+    case 'the_builder':
+      bonuses.playerDevelopment += 10; // Training Boost effect
+      break;
+    case 'the_closer':
+      bonuses.tradeAcceptance += 10; // Trade Master effect
+      break;
+    case 'the_economist':
+      bonuses.capSpace += 3; // +$3M from Salary Cap Wizard
+      break;
+    case 'the_talent_scout':
+      bonuses.scoutingAccuracy += 10; // Hidden Gem effect
+      break;
+    case 'the_culture_builder':
+      bonuses.teamMorale += 15; // Morale Master effect (60% min floor)
+      break;
+    case 'the_innovator':
+      bonuses.scoutingAccuracy += 5; // Inside Sources effect
+      break;
+  }
+
+  // Apply synergy bonuses (from FINAL spec)
   if (synergy) {
     switch (synergy.id) {
-      case "the_mentor":
-        bonuses.playerDevelopment += 10;
+      case 'scout_talent_scout':
+        bonuses.scoutingAccuracy += 15; // +3 sleepers + exact OVR R1
         break;
-      case "the_moneyball":
-        bonuses.scoutingAccuracy += 10;
+      case 'cap_analyst_economist':
+        bonuses.capSpace += 8; // +$8M total
+        bonuses.contractNegotiation += 10; // -10% demands
         break;
-      case "the_draft_whisperer":
-        bonuses.scoutingAccuracy += 10;
+      case 'coach_builder':
+        bonuses.playerDevelopment += 40; // +40% young player dev
         break;
-      case "the_dealmaker":
-        bonuses.contractNegotiation += 10;
+      case 'agent_closer':
+        bonuses.contractNegotiation += 15; // -15% demands
+        bonuses.tradeAcceptance += 25; // +25% trade acceptance
         break;
-      case "the_academy":
-        bonuses.playerDevelopment += 15;
+      case 'analytics_innovator':
+        bonuses.scoutingAccuracy += 20; // Full opponent scouting
         break;
-      case "the_insider":
-        bonuses.tradeAcceptance += 10;
-        break;
-      case "the_closer":
-        bonuses.playerTrust += 10;
-        break;
-      case "the_optimizer":
-        bonuses.capSpace += 2000000;
+      case 'legacy_culture_builder':
+        bonuses.teamMorale += 25;
+        bonuses.fanLoyalty += 20;
         break;
     }
   }
@@ -169,25 +165,39 @@ export function createGMPersona(
     archetype,
     synergy,
     bonuses,
-    startingSkill: archetype.skill,
+    startingSkill: archetype.startingSkill,
     skillDiscountCategory: archetype.skillDiscountCategory,
-    skillDiscountPercent: 15,
+    skillDiscountPercent: 15, // Always 15% as per FINAL spec
   };
 }
 
 /**
- * Get all strengths (bonuses) for display
+ * Get passive bonus display string for a background
  */
-export function getAllStrengths(
-  background: GMBackground,
-  archetype: GMArchetype
-): string[] {
-  return [...archetype.bonuses, ...background.bonuses];
+export function getPassiveBonus(background: GMBackground): string {
+  return background.passiveBonus;
 }
 
 /**
- * Get all weaknesses for display
+ * Get synergy bonus display string for an archetype
  */
-export function getAllWeaknesses(background: GMBackground): string[] {
-  return [background.weakness];
+export function getSynergyBonusText(archetype: GMArchetype): string {
+  return archetype.synergyBonus;
+}
+
+/**
+ * Check if selecting this archetype would trigger synergy with the current background
+ */
+export function wouldTriggerSynergy(
+  background: GMBackground,
+  archetype: GMArchetype
+): boolean {
+  return background.bestArchetype === archetype.id;
+}
+
+/**
+ * Get the recommended archetype for a background (the one that triggers synergy)
+ */
+export function getRecommendedArchetype(background: GMBackground): GMArchetypeId {
+  return background.bestArchetype;
 }

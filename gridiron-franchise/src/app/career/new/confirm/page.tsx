@@ -106,9 +106,9 @@ export default function ConfirmCareerPage() {
         <div className="bg-secondary/50 border border-border rounded-xl p-3">
           <p className="text-xs text-muted-foreground mb-1">Starting Skill</p>
           <p className="font-medium text-sm">
-            {archetype.skill.name}{" "}
+            {archetype.startingSkill.name}{" "}
             <span className="text-muted-foreground">
-              ({archetype.skill.tier})
+              ({archetype.startingSkill.tier})
             </span>
           </p>
         </div>

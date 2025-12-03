@@ -1,8 +1,6 @@
 "use client";
 
 import type { GMPersona } from "@/types/gm-persona";
-import { cn } from "@/lib/utils";
-import { getAllStrengths, getAllWeaknesses } from "@/lib/gm-persona-utils";
 
 interface PersonaSummaryProps {
   persona: GMPersona;
@@ -10,8 +8,6 @@ interface PersonaSummaryProps {
 
 export function PersonaSummary({ persona }: PersonaSummaryProps) {
   const { archetype, background, synergy, startingSkill } = persona;
-  const strengths = getAllStrengths(background, archetype);
-  const weaknesses = getAllWeaknesses(background);
 
   return (
     <div className="space-y-4 pb-24">
@@ -44,34 +40,29 @@ export function PersonaSummary({ persona }: PersonaSummaryProps) {
         </p>
       </div>
 
-      {/* Strengths Section */}
+      {/* Background Passive Bonus */}
       <div className="bg-secondary/50 border border-border rounded-2xl p-4">
         <h3 className="text-xs font-bold text-green-500 uppercase tracking-wide mb-3 flex items-center gap-2">
-          <span>✓</span> Your Strengths
+          <span>✓</span> Background Bonus
         </h3>
-        <div className="space-y-2">
-          {strengths.map((strength, i) => (
-            <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-              <span className="text-green-500 mt-0.5">•</span>
-              <span>{strength}</span>
-            </div>
-          ))}
+        <div className="flex items-start gap-2 text-sm text-muted-foreground">
+          <span className="text-green-500 mt-0.5">•</span>
+          <span>{background.passiveBonus}</span>
         </div>
       </div>
 
-      {/* Weaknesses Section */}
+      {/* Archetype Synergy Bonus */}
       <div className="bg-secondary/50 border border-border rounded-2xl p-4">
-        <h3 className="text-xs font-bold text-red-500 uppercase tracking-wide mb-3 flex items-center gap-2">
-          <span>✗</span> Your Weaknesses
+        <h3 className="text-xs font-bold text-blue-500 uppercase tracking-wide mb-3 flex items-center gap-2">
+          <span>⚡</span> Archetype Bonus
         </h3>
-        <div className="space-y-2">
-          {weaknesses.map((weakness, i) => (
-            <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-              <span className="text-red-500 mt-0.5">•</span>
-              <span>{weakness}</span>
-            </div>
-          ))}
+        <div className="flex items-start gap-2 text-sm text-muted-foreground">
+          <span className="text-blue-500 mt-0.5">•</span>
+          <span>{archetype.synergyBonus}</span>
         </div>
+        <p className="text-xs text-muted-foreground mt-2 italic">
+          {archetype.recommendedFor}
+        </p>
       </div>
 
       {/* Starting Skill Section */}
@@ -92,9 +83,9 @@ export function PersonaSummary({ persona }: PersonaSummaryProps) {
 
       {/* Synergy Bonus Section */}
       {synergy && (
-        <div className="bg-secondary/50 border border-border rounded-2xl p-4">
+        <div className="bg-secondary/50 border border-amber-500/30 rounded-2xl p-4">
           <h3 className="text-xs font-bold text-amber-500 uppercase tracking-wide mb-3">
-            Synergy: {synergy.name}
+            ★ Synergy: {synergy.name}
           </h3>
           <div className="flex items-start gap-2 text-sm text-muted-foreground">
             <span className="text-amber-500 mt-0.5">•</span>
@@ -102,6 +93,16 @@ export function PersonaSummary({ persona }: PersonaSummaryProps) {
           </div>
         </div>
       )}
+
+      {/* Skill Discount */}
+      <div className="bg-secondary/50 border border-border rounded-2xl p-4">
+        <h3 className="text-xs font-bold text-purple-500 uppercase tracking-wide mb-3 flex items-center gap-2">
+          <span>💰</span> Skill Discount
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          15% discount on <span className="font-medium text-purple-400">{archetype.skillDiscountCategory.replace('_', ' ')}</span> skills
+        </p>
+      </div>
     </div>
   );
 }

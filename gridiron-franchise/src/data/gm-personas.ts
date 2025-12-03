@@ -3,253 +3,215 @@ import type {
   GMBackground,
   GMSynergy,
   SynergyKey,
-} from "@/types/gm-persona";
+} from '@/types/gm-persona';
 
-// All 6 GM Archetypes
-export const archetypes: GMArchetype[] = [
-  {
-    id: "scout_guru",
-    name: "Scout Guru",
-    icon: "SG",
-    philosophy: '"The draft is where championships are built."',
-    description:
-      "You believe in building through the draft. Finding diamonds in the rough and developing homegrown talent is your specialty.",
-    bonuses: [
-      "+2 scouting points per prospect",
-      "15% discount: Scouting & Draft skills",
-      "+1 extra 5th round pick in Year 1",
-    ],
-    skill: {
-      name: "Hidden Gem",
-      tier: "Bronze",
-      description: "Reveal true potential of 1 late-round prospect per draft",
-    },
-    skillDiscountCategory: "scouting_draft",
-    recommendedFor: "Patient players who enjoy long-term team building",
-  },
-  {
-    id: "cap_wizard",
-    name: "Cap Wizard",
-    icon: "CW",
-    philosophy: '"Every dollar matters. Cap space is a resource."',
-    description:
-      "You're a master of the salary cap. You structure deals, find bargains, and always have cap flexibility when you need it.",
-    bonuses: [
-      "+$5M cap space in Year 1",
-      "15% discount: Contracts & Money skills",
-      "See cap implications before confirming",
-    ],
-    skill: {
-      name: "Salary Cap Wizard",
-      tier: "Bronze",
-      description: "+$3M extra cap space each season",
-    },
-    skillDiscountCategory: "contracts_money",
-    recommendedFor: "Players who enjoy roster construction puzzles",
-  },
-  {
-    id: "trade_shark",
-    name: "Trade Shark",
-    icon: "TS",
-    philosophy: '"The phone is always ringing. Every player has a price."',
-    description:
-      "You're always looking for the next deal. You believe in acquiring value through trades and aren't afraid to make bold moves.",
-    bonuses: [
-      "+1 trade offer per week from other teams",
-      "15% discount: Trades skills",
-      "See trade interest for roster players",
-    ],
-    skill: {
-      name: "Trade Master",
-      tier: "Bronze",
-      description: "CPU teams 10% more willing to accept fair trades",
-    },
-    skillDiscountCategory: "trades",
-    recommendedFor: "Active players who enjoy wheeling and dealing",
-  },
-  {
-    id: "player_developer",
-    name: "Player Developer",
-    icon: "PD",
-    philosophy: '"Give me potential. I\'ll unlock greatness."',
-    description:
-      "You have a gift for developing talent. Raw prospects become stars under your guidance. Veterans extend their careers.",
-    bonuses: [
-      "+20% XP gain for all players in Year 1",
-      "15% discount: Player Development skills",
-      "Free development focus slot",
-    ],
-    skill: {
-      name: "Training Boost",
-      tier: "Bronze",
-      description: "All players under 25 gain +1 to development speed",
-    },
-    skillDiscountCategory: "player_development",
-    recommendedFor: "Players who enjoy watching players grow",
-  },
-  {
-    id: "win_now_executive",
-    name: "Win-Now Executive",
-    icon: "WN",
-    philosophy: '"Championships are the only thing that matters."',
-    description:
-      "You're aggressive. You trade picks for proven talent, sign big free agents, and push all your chips to the middle.",
-    bonuses: [
-      "+15% chance to sign top free agents",
-      "15% discount: Team Management skills",
-      "+20 starting team morale",
-    ],
-    skill: {
-      name: "Free Agent Magnet",
-      tier: "Bronze",
-      description: "Your team gets +5 appeal rating for free agents",
-    },
-    skillDiscountCategory: "team_management",
-    recommendedFor: "Players who want to compete immediately",
-  },
-  {
-    id: "motivator",
-    name: "Motivator",
-    icon: "MO",
-    philosophy: '"Culture beats talent. Belief beats ability."',
-    description:
-      "You're a leader of men. Players play harder for you. Locker rooms are united. Teams exceed the sum of their parts.",
-    bonuses: [
-      "+25% team chemistry in Year 1",
-      "15% discount: Team Management skills",
-      "Players less likely to hold out",
-    ],
-    skill: {
-      name: "Morale Master",
-      tier: "Bronze",
-      description: "Team morale minimum is 60% (never drops below)",
-    },
-    skillDiscountCategory: "team_management",
-    recommendedFor: "Players who enjoy team chemistry management",
-  },
-];
-
-// All 6 GM Backgrounds
+// All 6 GM Backgrounds (from FINAL-gm-skills-perks-system.md Part 1)
 export const backgrounds: GMBackground[] = [
   {
-    id: "former_player",
-    name: "Former Player",
-    icon: "FP",
-    description:
-      "You played in the league before transitioning to the front office. You understand the game from a player's perspective.",
-    bonuses: ["+15% player trust", "+10% locker room morale"],
-    weakness: "-10% owner patience",
-    bestPairedWith: ["Player Developer", "Motivator"],
+    id: 'scout',
+    name: 'Scout',
+    icon: 'SC',
+    description: 'Former scouting director with an eye for talent.',
+    passiveBonus: '+10% scouting accuracy, +1 sleeper/draft',
+    bestArchetype: 'the_talent_scout',
   },
   {
-    id: "analytics_expert",
-    name: "Analytics Expert",
-    icon: "AE",
-    description:
-      "You rose through the ranks using data, statistics, and advanced metrics. You see the game through numbers.",
-    bonuses: ["+20% hidden attribute scouting", "Access to advanced stats"],
-    weakness: "-10% player trust",
-    bestPairedWith: ["Scout Guru", "Cap Wizard"],
+    id: 'cap_analyst',
+    name: 'Cap Analyst',
+    icon: 'CA',
+    description: 'Salary cap expert who maximizes every dollar.',
+    passiveBonus: '+$5M cap space, -5% contract demands',
+    bestArchetype: 'the_economist',
   },
   {
-    id: "college_scout",
-    name: "College Scout",
-    icon: "CS",
-    description:
-      "You spent years evaluating college talent before getting your shot. You know prospects better than anyone.",
-    bonuses: ["+25% prospect scouting accuracy", "+15% sleeper identification"],
-    weakness: "-10% free agent evaluation",
-    bestPairedWith: ["Scout Guru", "Trade Shark"],
+    id: 'coach',
+    name: 'Coach',
+    icon: 'CO',
+    description: 'Former coordinator/HC who understands player development.',
+    passiveBonus: '+10% player development, +5 coach appeal',
+    bestArchetype: 'the_builder',
   },
   {
-    id: "coaching_tree",
-    name: "Coaching Tree",
-    icon: "CT",
-    description:
-      "You worked your way up through coaching staffs before moving to the front office. You understand schemes and player development.",
-    bonuses: ["+15% player development speed", "Coaches are 15% cheaper"],
-    weakness: "-10% contract negotiation",
-    bestPairedWith: ["Player Developer", "Motivator"],
+    id: 'agent',
+    name: 'Agent',
+    icon: 'AG',
+    description: 'Former player agent who knows contract negotiations.',
+    passiveBonus: '-10% contract demands, +10% FA appeal',
+    bestArchetype: 'the_closer',
   },
   {
-    id: "agent_specialist",
-    name: "Agent / Contract Specialist",
-    icon: "AS",
-    description:
-      "You represented players before switching sides. You know every trick in the negotiation playbook.",
-    bonuses: ["+20% contract negotiation", "See exact salary demands"],
-    weakness: "-10% scouting accuracy",
-    bestPairedWith: ["Cap Wizard", "Trade Shark"],
+    id: 'analytics',
+    name: 'Analytics',
+    icon: 'AN',
+    description: 'Data-driven executive who sees the game through numbers.',
+    passiveBonus: '+5% all evaluation accuracy, advanced stats',
+    bestArchetype: 'the_innovator',
   },
   {
-    id: "media_insider",
-    name: "Media / Front Office Insider",
-    icon: "MI",
-    description:
-      "You covered the league or worked in league operations before becoming a GM. You know how the business works.",
-    bonuses: ["+15% trade acceptance rate", "See other teams' needs"],
-    weakness: "-15% player evaluation",
-    bestPairedWith: ["Trade Shark", "Cap Wizard"],
+    id: 'legacy',
+    name: 'Legacy',
+    icon: 'LE',
+    description: 'Family football dynasty with deep connections.',
+    passiveBonus: '+15% fan loyalty, +10% owner patience',
+    bestArchetype: 'the_culture_builder',
   },
 ];
 
-// All 8 Synergies
+// All 6 GM Archetypes (from FINAL-gm-skills-perks-system.md Part 1)
+export const archetypes: GMArchetype[] = [
+  {
+    id: 'the_builder',
+    name: 'The Builder',
+    icon: 'TB',
+    philosophy: '"Draft and develop - build from within."',
+    description:
+      'You believe in building through the draft and developing homegrown talent. Patience and player growth are your strengths.',
+    startingSkill: {
+      id: 'training_boost',
+      name: 'Training Boost',
+      tier: 'Bronze',
+      description: 'All players under 25 gain +1 dev speed',
+      category: 'player_development',
+    },
+    synergyBonus: '+25% XP for players under 25',
+    skillDiscountCategory: 'player_development',
+    recommendedFor: 'Patient players who enjoy long-term team building',
+  },
+  {
+    id: 'the_closer',
+    name: 'The Closer',
+    icon: 'TC',
+    philosophy: '"Win now - make the big moves."',
+    description:
+      'You are aggressive and ready to win. Trade picks for proven talent, sign big free agents, and push all chips to the middle.',
+    startingSkill: {
+      id: 'trade_master',
+      name: 'Trade Master',
+      tier: 'Bronze',
+      description: 'CPU teams 10% more willing to accept trades',
+      category: 'trades',
+    },
+    synergyBonus: '+15% trade acceptance',
+    skillDiscountCategory: 'trades',
+    recommendedFor: 'Players who want to compete immediately',
+  },
+  {
+    id: 'the_economist',
+    name: 'The Economist',
+    icon: 'TE',
+    philosophy: '"Cap efficiency - every dollar matters."',
+    description:
+      'You are a master of the salary cap. Structure deals, find bargains, and always have cap flexibility when you need it.',
+    startingSkill: {
+      id: 'salary_cap_wizard',
+      name: 'Salary Cap Wizard',
+      tier: 'Bronze',
+      description: '+$3M extra cap space each season',
+      category: 'contracts_money',
+    },
+    synergyBonus: '+$3M cap space',
+    skillDiscountCategory: 'contracts_money',
+    recommendedFor: 'Players who enjoy roster construction puzzles',
+  },
+  {
+    id: 'the_talent_scout',
+    name: 'The Talent Scout',
+    icon: 'TS',
+    philosophy: '"Find hidden gems - see what others miss."',
+    description:
+      'You have an eye for talent that others overlook. Finding diamonds in the rough and late-round steals is your specialty.',
+    startingSkill: {
+      id: 'hidden_gem',
+      name: 'Hidden Gem',
+      tier: 'Bronze',
+      description: 'Reveal true potential of 1 late-round (R5-7) prospect',
+      category: 'scouting_draft',
+    },
+    synergyBonus: '+2 sleepers/draft',
+    skillDiscountCategory: 'scouting_draft',
+    recommendedFor: 'Players who love the draft and finding value',
+  },
+  {
+    id: 'the_culture_builder',
+    name: 'The Culture Builder',
+    icon: 'CB',
+    philosophy: '"Culture beats talent - belief beats ability."',
+    description:
+      'You are a leader of men. Players play harder for you. Locker rooms are united. Teams exceed the sum of their parts.',
+    startingSkill: {
+      id: 'morale_master',
+      name: 'Morale Master',
+      tier: 'Bronze',
+      description: 'Team morale minimum 60%',
+      category: 'team_management',
+    },
+    synergyBonus: '+15% morale floor',
+    skillDiscountCategory: 'team_management',
+    recommendedFor: 'Players who enjoy team chemistry management',
+  },
+  {
+    id: 'the_innovator',
+    name: 'The Innovator',
+    icon: 'TI',
+    philosophy: '"Analytics edge - data drives decisions."',
+    description:
+      'You leverage data and advanced metrics to gain an edge. You see patterns and opportunities others miss.',
+    startingSkill: {
+      id: 'inside_sources',
+      name: 'Inside Sources',
+      tier: 'Bronze',
+      description: "See other teams' biggest needs",
+      category: 'meta_qol',
+    },
+    synergyBonus: 'Opponent tendencies revealed',
+    skillDiscountCategory: 'meta_qol',
+    recommendedFor: 'Players who enjoy data-driven decisions',
+  },
+];
+
+// All 6 Synergies (1:1 mapping from FINAL-gm-skills-perks-system.md)
 export const synergies: GMSynergy[] = [
   {
-    id: "the_mentor",
-    name: "The Mentor",
-    backgroundId: "former_player",
-    archetypeId: "player_developer",
-    bonus: "+25% mentor XP, can mentor 2 players per season",
+    id: 'scout_talent_scout',
+    name: 'The Draft Whisperer',
+    backgroundId: 'scout',
+    archetypeId: 'the_talent_scout',
+    bonus: '+3 sleepers/draft, exact OVR Round 1',
   },
   {
-    id: "the_moneyball",
-    name: "The Moneyball",
-    backgroundId: "analytics_expert",
-    archetypeId: "scout_guru",
-    bonus: "See 3-year statistical projections for all prospects",
+    id: 'cap_analyst_economist',
+    name: 'The Moneyball',
+    backgroundId: 'cap_analyst',
+    archetypeId: 'the_economist',
+    bonus: '+$8M total cap, -10% demands',
   },
   {
-    id: "the_draft_whisperer",
-    name: "The Draft Whisperer",
-    backgroundId: "college_scout",
-    archetypeId: "scout_guru",
-    bonus: "+35% prospect scouting accuracy, see other teams' top 3 targets",
+    id: 'coach_builder',
+    name: 'The Academy',
+    backgroundId: 'coach',
+    archetypeId: 'the_builder',
+    bonus: '+40% young player development',
   },
   {
-    id: "the_dealmaker",
-    name: "The Dealmaker",
-    backgroundId: "agent_specialist",
-    archetypeId: "cap_wizard",
-    bonus: "All contracts have 10% lower cap hit, players never hold out",
+    id: 'agent_closer',
+    name: 'The Dealmaker',
+    backgroundId: 'agent',
+    archetypeId: 'the_closer',
+    bonus: '-15% demands, +25% trade acceptance',
   },
   {
-    id: "the_academy",
-    name: "The Academy",
-    backgroundId: "coaching_tree",
-    archetypeId: "player_developer",
-    bonus: "+40% development speed, rookies adjust to NFL faster",
+    id: 'analytics_innovator',
+    name: 'The Optimizer',
+    backgroundId: 'analytics',
+    archetypeId: 'the_innovator',
+    bonus: 'Full opponent scouting, advanced projections',
   },
   {
-    id: "the_insider",
-    name: "The Insider",
-    backgroundId: "media_insider",
-    archetypeId: "trade_shark",
-    bonus: "See exact trade values, advance notice when players available",
-  },
-  {
-    id: "the_closer",
-    name: "The Closer",
-    backgroundId: "former_player",
-    archetypeId: "win_now_executive",
-    bonus: "Top free agents seek you out, veterans take discounts",
-  },
-  {
-    id: "the_optimizer",
-    name: "The Optimizer",
-    backgroundId: "analytics_expert",
-    archetypeId: "cap_wizard",
-    bonus: "See projected cap hits for 3 seasons, identify declining value",
+    id: 'legacy_culture_builder',
+    name: 'The Dynasty',
+    backgroundId: 'legacy',
+    archetypeId: 'the_culture_builder',
+    bonus: '+25% morale, +20% fan loyalty',
   },
 ];
 
@@ -276,4 +238,19 @@ export function getBackgroundById(id: string): GMBackground | undefined {
 // Helper to get synergy by ID
 export function getSynergyById(id: string): GMSynergy | undefined {
   return synergies.find((s) => s.id === id);
+}
+
+// Helper to check if a background-archetype combo has synergy
+export function hasSynergy(backgroundId: string, archetypeId: string): boolean {
+  const background = getBackgroundById(backgroundId);
+  return background?.bestArchetype === archetypeId;
+}
+
+// Helper to get synergy for a background-archetype combo
+export function getSynergyForCombo(
+  backgroundId: string,
+  archetypeId: string
+): GMSynergy | null {
+  const key = `${backgroundId}_${archetypeId}` as SynergyKey;
+  return synergyMap[key] || null;
 }
