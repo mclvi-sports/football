@@ -104,6 +104,7 @@ export default function GenerateLeaguePage() {
       const faRes = await fetch("/api/dev/generate-fa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
       });
       const faData = await faRes.json();
       if (!faData.success) throw new Error("Failed to generate free agents");
@@ -115,6 +116,7 @@ export default function GenerateLeaguePage() {
       const draftRes = await fetch("/api/dev/generate-draft", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
       });
       const draftData = await draftRes.json();
       if (!draftData.success) throw new Error("Failed to generate draft class");
