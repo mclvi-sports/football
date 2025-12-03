@@ -4,9 +4,7 @@ import { useState, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ScheduleView } from './schedule-view';
-import { StandingsView } from './standings-view';
-import { StatsView } from './stats-view';
+import { ScheduleView, StandingsView, StatsView } from '@/components/modules';
 import { PlayoffBracket } from './playoff-bracket';
 import { SeasonState, TeamStanding, GameResult, PlayoffBracket as PlayoffBracketType } from '@/lib/season/types';
 import { LEAGUE_TEAMS, TeamInfo } from '@/lib/data/teams';
@@ -233,19 +231,19 @@ export function SeasonHub({
 
         <TabsContent value="schedule" className="mt-4">
           <ScheduleView
-            games={seasonState.completedGames}
-            teams={teamsMap}
-            currentWeek={Math.min(currentWeek, 18)}
-            totalWeeks={18}
+            mode="embedded"
+            seasonState={seasonState}
+            teamsMap={teamsMap}
           />
         </TabsContent>
 
         <TabsContent value="standings" className="mt-4">
-          <StandingsView standings={seasonState.standings} />
+          <StandingsView mode="embedded" standings={seasonState.standings} />
         </TabsContent>
 
         <TabsContent value="stats" className="mt-4">
           <StatsView
+            mode="embedded"
             games={seasonState.completedGames}
             standings={seasonState.standings}
           />

@@ -14,12 +14,14 @@ import {
   ScoutingReport,
   SCOUT_ROLES,
   ProspectTier,
+  ScoutingDepartment,
 } from '@/lib/scouting/types';
 import {
   generateScoutingReport,
   ProspectData,
   calculateScoutingCost,
 } from '@/lib/scouting/scouting-utils';
+import { Card, CardContent } from '@/components/ui/card';
 import { Search, Users, ClipboardList } from 'lucide-react';
 
 // ============================================================================
@@ -28,6 +30,26 @@ import { Search, Users, ClipboardList } from 'lucide-react';
 
 type ViewTab = 'prospects' | 'reports' | 'department';
 type PositionFilter = 'all' | 'offense' | 'defense' | 'special';
+
+// ============================================================================
+// PROPS
+// ============================================================================
+
+interface ScoutingLoopProps {
+  // Mode controls layout
+  mode: 'standalone' | 'embedded';
+
+  // Data - can be provided or loaded internally
+  department?: ScoutingDepartment;
+  draftClass?: Player[];
+  teamId?: string;
+
+  // Embedded mode options
+  maxHeight?: string;
+
+  // Callbacks
+  onProspectScout?: (prospectId: string, report: ScoutingReport) => void;
+}
 
 // ============================================================================
 // HELPERS
@@ -51,16 +73,16 @@ const RATING_COLOR = (rating: number): string => {
 
 const GRADE_COLORS: Record<string, string> = {
   'A+': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40',
-  'A': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40',
+  A: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40',
   'A-': 'bg-green-500/20 text-green-400 border-green-500/40',
   'B+': 'bg-green-500/20 text-green-400 border-green-500/40',
-  'B': 'bg-blue-500/20 text-blue-400 border-blue-500/40',
+  B: 'bg-blue-500/20 text-blue-400 border-blue-500/40',
   'B-': 'bg-blue-500/20 text-blue-400 border-blue-500/40',
   'C+': 'bg-zinc-500/20 text-zinc-400 border-zinc-500/40',
-  'C': 'bg-zinc-500/20 text-zinc-400 border-zinc-500/40',
+  C: 'bg-zinc-500/20 text-zinc-400 border-zinc-500/40',
   'C-': 'bg-orange-500/20 text-orange-400 border-orange-500/40',
-  'D': 'bg-red-500/20 text-red-400 border-red-500/40',
-  'F': 'bg-red-500/20 text-red-400 border-red-500/40',
+  D: 'bg-red-500/20 text-red-400 border-red-500/40',
+  F: 'bg-red-500/20 text-red-400 border-red-500/40',
 };
 
 function getPositionGroup(position: string): PositionFilter {
@@ -99,7 +121,7 @@ function playerToProspectData(player: Player): ProspectData {
 }
 
 // ============================================================================
-// COMPONENTS
+// SUB-COMPONENTS
 // ============================================================================
 
 function ProspectCard({
@@ -125,16 +147,20 @@ function ProspectCard({
             {prospect.position}
           </div>
           <div>
-            <div className="font-bold">{prospect.firstName} {prospect.lastName}</div>
+            <div className="font-bold">
+              {prospect.firstName} {prospect.lastName}
+            </div>
             <div className="text-xs text-muted-foreground">{prospect.college}</div>
           </div>
         </div>
 
         {hasReport ? (
-          <div className={cn(
-            'px-2 py-1 rounded border text-sm font-bold',
-            GRADE_COLORS[report.draftGrade]
-          )}>
+          <div
+            className={cn(
+              'px-2 py-1 rounded border text-sm font-bold',
+              GRADE_COLORS[report.draftGrade]
+            )}
+          >
             {report.draftGrade}
           </div>
         ) : (
@@ -150,7 +176,9 @@ function ProspectCard({
         </div>
         <div className="bg-secondary rounded p-1.5 text-center">
           <div className="text-muted-foreground">Ht</div>
-          <div className="font-medium">{Math.floor(prospect.height / 12)}&apos;{prospect.height % 12}&quot;</div>
+          <div className="font-medium">
+            {Math.floor(prospect.height / 12)}&apos;{prospect.height % 12}&quot;
+          </div>
         </div>
         <div className="bg-secondary rounded p-1.5 text-center">
           <div className="text-muted-foreground">Wt</div>
@@ -168,7 +196,8 @@ function ProspectCard({
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Scouted OVR</span>
             <span className={cn('font-bold', RATING_COLOR(report.scoutedOvr))}>
-              {report.scoutedOvr} <span className="text-xs text-zinc-500">({report.ovrConfidence}% conf)</span>
+              {report.scoutedOvr}{' '}
+              <span className="text-xs text-zinc-500">({report.ovrConfidence}% conf)</span>
             </span>
           </div>
           <div className="flex justify-between text-sm">
@@ -182,8 +211,8 @@ function ProspectCard({
                 {typeof report.potentialValue === 'number'
                   ? report.potentialValue
                   : Array.isArray(report.potentialValue)
-                    ? `${report.potentialValue[0]}-${report.potentialValue[1]}`
-                    : report.potentialValue}
+                  ? `${report.potentialValue[0]}-${report.potentialValue[1]}`
+                  : report.potentialValue}
               </span>
             </div>
           )}
@@ -245,13 +274,13 @@ function ScoutSelector({
             <div className="flex items-center gap-2">
               <span>{ROLE_ICONS[scout.role]}</span>
               <div>
-                <div className="font-medium text-sm">{scout.firstName} {scout.lastName}</div>
+                <div className="font-medium text-sm">
+                  {scout.firstName} {scout.lastName}
+                </div>
                 <div className="text-xs text-muted-foreground">{SCOUT_ROLES[scout.role].name}</div>
               </div>
             </div>
-            <div className={cn('text-lg font-bold', RATING_COLOR(scout.ovr))}>
-              {scout.ovr}
-            </div>
+            <div className={cn('text-lg font-bold', RATING_COLOR(scout.ovr))}>{scout.ovr}</div>
           </div>
         </button>
       ))}
@@ -264,17 +293,23 @@ function ReportCard({ report, prospect }: { report: ScoutingReport; prospect?: P
     <div className="bg-secondary/50 border border-border rounded-xl p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
-          <div className={cn(
-            'px-3 py-1.5 rounded border text-lg font-bold',
-            GRADE_COLORS[report.draftGrade]
-          )}>
+          <div
+            className={cn(
+              'px-3 py-1.5 rounded border text-lg font-bold',
+              GRADE_COLORS[report.draftGrade]
+            )}
+          >
             {report.draftGrade}
           </div>
           <div>
             {prospect && (
               <>
-                <div className="font-bold">{prospect.firstName} {prospect.lastName}</div>
-                <div className="text-xs text-muted-foreground">{prospect.position} · {prospect.college}</div>
+                <div className="font-bold">
+                  {prospect.firstName} {prospect.lastName}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {prospect.position} · {prospect.college}
+                </div>
               </>
             )}
           </div>
@@ -298,10 +333,10 @@ function ReportCard({ report, prospect }: { report: ScoutingReport; prospect?: P
             {report.potentialValue === undefined
               ? '???'
               : typeof report.potentialValue === 'number'
-                ? report.potentialValue
-                : Array.isArray(report.potentialValue)
-                  ? `${report.potentialValue[0]}-${report.potentialValue[1]}`
-                  : report.potentialValue}
+              ? report.potentialValue
+              : Array.isArray(report.potentialValue)
+              ? `${report.potentialValue[0]}-${report.potentialValue[1]}`
+              : report.potentialValue}
           </div>
         </div>
       </div>
@@ -344,10 +379,7 @@ function ReportCard({ report, prospect }: { report: ScoutingReport; prospect?: P
           </div>
           <div className="flex flex-wrap gap-1">
             {report.traitsRevealed.map((trait) => (
-              <span
-                key={trait}
-                className="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-400"
-              >
+              <span key={trait} className="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-400">
                 {trait}
               </span>
             ))}
@@ -364,12 +396,19 @@ function ReportCard({ report, prospect }: { report: ScoutingReport; prospect?: P
 }
 
 // ============================================================================
-// SCOUTING SECTION COMPONENT
+// MAIN COMPONENT
 // ============================================================================
 
-export function ScoutingSection() {
+export function ScoutingLoop({
+  mode,
+  department: providedDepartment,
+  draftClass: providedDraftClass,
+  teamId: providedTeamId,
+  maxHeight = mode === 'embedded' ? '500px' : undefined,
+  onProspectScout,
+}: ScoutingLoopProps) {
   // Scouting store
-  const department = useScoutingStore((s) => s.department);
+  const storeDepartment = useScoutingStore((s) => s.department);
   const currentWeek = useScoutingStore((s) => s.currentWeek);
   const currentPeriod = useScoutingStore((s) => s.currentPeriod);
   const weeklyPointsAvailable = useScoutingStore((s) => s.weeklyPointsAvailable);
@@ -380,8 +419,11 @@ export function ScoutingSection() {
   const generateReportAction = useScoutingStore((s) => s.generateReport);
   const initializeDepartment = useScoutingStore((s) => s.initializeDepartment);
 
+  // Use provided data or store data
+  const department = providedDepartment || storeDepartment;
+
   // Local state
-  const [draftClass, setDraftClass] = useState<Player[]>([]);
+  const [draftClass, setDraftClass] = useState<Player[]>(providedDraftClass || []);
   const [activeTab, setActiveTab] = useState<ViewTab>('prospects');
   const [positionFilter, setPositionFilter] = useState<PositionFilter>('all');
   const [selectedScoutId, setSelectedScoutId] = useState<string | null>(null);
@@ -391,23 +433,26 @@ export function ScoutingSection() {
 
   // Load draft class and initialize department if needed
   useEffect(() => {
-    const draft = getDraftClass();
-    if (draft) {
-      setDraftClass(draft);
+    if (!providedDraftClass) {
+      const draft = getDraftClass();
+      if (draft) {
+        setDraftClass(draft);
+      }
     }
 
-    // Initialize department from storage if not in store
+    // Initialize department from storage if not in store and not provided
     if (!department) {
       const gms = getGMs();
       const scouting = getScouting();
       if (gms && scouting) {
-        const dept = scouting.teams[gms.playerTeamId];
+        const teamId = providedTeamId || gms.playerTeamId;
+        const dept = scouting.teams[teamId];
         if (dept) {
-          initializeDepartment(dept, gms.playerTeamId);
+          initializeDepartment(dept, teamId);
         }
       }
     }
-  }, [department, initializeDepartment]);
+  }, [department, initializeDepartment, providedDraftClass, providedTeamId]);
 
   // Get all scouts
   const allScouts = useMemo(() => {
@@ -471,6 +516,9 @@ export function ScoutingSection() {
       generateReportAction(assignment.id, report);
     }
 
+    // Callback
+    onProspectScout?.(scoutingProspectId, report);
+
     setScoutingProspectId(null);
   };
 
@@ -480,20 +528,23 @@ export function ScoutingSection() {
     { id: 'department', label: 'My Scouts', icon: <Users className="w-4 h-4" /> },
   ];
 
-  // No department - show setup message
+  // Empty state - no department
   if (!department) {
     return (
-      <div className="bg-secondary/50 border border-dashed border-border rounded-xl p-8 text-center">
-        <Search className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-        <h3 className="text-lg font-medium mb-2">No Scouting Department</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          Generate a scouting department in Setup to use scouting features.
-        </p>
-      </div>
+      <Card className="border-dashed">
+        <CardContent className="p-8 text-center">
+          <Search className="h-12 w-12 mx-auto text-zinc-600 mb-4" />
+          <p className="text-zinc-400">
+            {mode === 'standalone'
+              ? 'Generate a scouting department from the Full Game page first'
+              : 'No scouting department available'}
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 
-  // No draft class
+  // Empty state - no draft class
   if (draftClass.length === 0) {
     return (
       <div className="space-y-4">
@@ -505,19 +556,32 @@ export function ScoutingSection() {
           currentPeriod={currentPeriod}
           assignmentCount={assignments.filter((a) => a.week === currentWeek).length}
         />
-        <div className="bg-secondary/50 border border-dashed border-border rounded-xl p-8 text-center">
-          <Search className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-          <h3 className="text-lg font-medium mb-2">No Draft Class</h3>
-          <p className="text-sm text-muted-foreground">
-            Generate a draft class in Setup to scout prospects.
-          </p>
-        </div>
+        <Card className="border-dashed">
+          <CardContent className="p-8 text-center">
+            <Search className="h-12 w-12 mx-auto text-zinc-600 mb-4" />
+            <p className="text-zinc-400">
+              {mode === 'standalone'
+                ? 'Generate a draft class from the Full Game page first'
+                : 'No draft class available'}
+            </p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
+      {/* Header - Standalone only */}
+      {mode === 'standalone' && (
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-bold">Scouting Department</h3>
+            <p className="text-sm text-zinc-400">{department.scoutCount} scouts · Week {currentWeek}</p>
+          </div>
+        </div>
+      )}
+
       {/* Points Display */}
       <ScoutingPointsDisplay
         available={weeklyPointsAvailable}
@@ -528,178 +592,188 @@ export function ScoutingSection() {
         assignmentCount={assignments.filter((a) => a.week === currentWeek).length}
       />
 
-      {/* Tabs */}
-      <div className="bg-secondary/80 backdrop-blur-xl border border-border rounded-xl overflow-hidden">
-        <div className="flex">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                'flex-1 px-4 py-3 text-xs font-bold uppercase tracking-wide transition-all flex items-center justify-center gap-2',
-                activeTab === tab.id
-                  ? 'text-foreground bg-white/5 border-b-2 border-primary'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              {tab.icon}
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Tab Content */}
-      {activeTab === 'prospects' && (
-        <div className="space-y-4">
-          {/* Position Filter */}
-          <div className="flex gap-2">
-            {(['all', 'offense', 'defense', 'special'] as PositionFilter[]).map((filter) => (
+      {/* Content Container */}
+      <div
+        className="space-y-4"
+        style={{ maxHeight: maxHeight, overflowY: maxHeight ? 'auto' : undefined }}
+      >
+        {/* Tabs */}
+        <div className="bg-secondary/80 backdrop-blur-xl border border-border rounded-xl overflow-hidden">
+          <div className="flex">
+            {tabs.map((tab) => (
               <button
-                key={filter}
-                onClick={() => setPositionFilter(filter)}
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'px-3 py-1.5 rounded-lg text-sm font-medium transition-all capitalize',
-                  positionFilter === filter
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-secondary text-muted-foreground hover:text-foreground'
+                  'flex-1 px-4 py-3 text-xs font-bold uppercase tracking-wide transition-all flex items-center justify-center gap-2',
+                  activeTab === tab.id
+                    ? 'text-foreground bg-white/5 border-b-2 border-primary'
+                    : 'text-muted-foreground hover:text-foreground'
                 )}
               >
-                {filter}
+                {tab.icon}
+                {tab.label}
               </button>
             ))}
           </div>
-
-          {/* Prospect Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredProspects.map((prospect) => {
-              const report = storeReports[prospect.id];
-              const tier = getProspectTier(prospect.overall);
-              const cost = calculateScoutingCost(tier, currentPeriod);
-              const canScout = cost <= pointsRemaining && !report;
-
-              return (
-                <ProspectCard
-                  key={prospect.id}
-                  prospect={prospect}
-                  report={report}
-                  onScout={() => handleScoutProspect(prospect.id)}
-                  canScout={canScout}
-                  scoutingCost={cost}
-                />
-              );
-            })}
-          </div>
         </div>
-      )}
 
-      {activeTab === 'reports' && (
-        <div className="space-y-4">
-          {reportsArray.length === 0 ? (
-            <div className="bg-secondary/50 border border-border rounded-xl p-8 text-center">
-              <ClipboardList className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-              <p className="text-muted-foreground">No scouting reports yet</p>
-              <p className="text-sm text-zinc-500 mt-1">Scout prospects to generate reports</p>
+        {/* Tab Content */}
+        {activeTab === 'prospects' && (
+          <div className="space-y-4">
+            {/* Position Filter */}
+            <div className="flex gap-2">
+              {(['all', 'offense', 'defense', 'special'] as PositionFilter[]).map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setPositionFilter(filter)}
+                  className={cn(
+                    'px-3 py-1.5 rounded-lg text-sm font-medium transition-all capitalize',
+                    positionFilter === filter
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-secondary text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  {filter}
+                </button>
+              ))}
             </div>
-          ) : (
-            reportsArray
-              .sort((a, b) => b.scoutedOvr - a.scoutedOvr)
-              .map((report) => {
-                const prospect = draftClass.find((p) => p.id === report.prospectId);
-                return <ReportCard key={report.id} report={report} prospect={prospect} />;
-              })
-          )}
-        </div>
-      )}
 
-      {activeTab === 'department' && (
-        <div className="space-y-4">
-          <div className="bg-secondary/50 border border-border rounded-xl p-4">
-            <div className="flex justify-between items-center mb-3">
-              <div>
-                <div className="font-bold">Scouting Department</div>
-                <div className="text-sm text-muted-foreground">{department.scoutCount} scouts</div>
+            {/* Prospect Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredProspects.map((prospect) => {
+                const report = storeReports[prospect.id];
+                const tier = getProspectTier(prospect.overall);
+                const cost = calculateScoutingCost(tier, currentPeriod);
+                const canScout = cost <= pointsRemaining && !report;
+
+                return (
+                  <ProspectCard
+                    key={prospect.id}
+                    prospect={prospect}
+                    report={report}
+                    onScout={() => handleScoutProspect(prospect.id)}
+                    canScout={canScout}
+                    scoutingCost={cost}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'reports' && (
+          <div className="space-y-4">
+            {reportsArray.length === 0 ? (
+              <div className="bg-secondary/50 border border-border rounded-xl p-8 text-center">
+                <ClipboardList className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+                <p className="text-muted-foreground">No scouting reports yet</p>
+                <p className="text-sm text-zinc-500 mt-1">Scout prospects to generate reports</p>
               </div>
-              <div className="text-right">
-                <div className={cn('text-2xl font-bold', RATING_COLOR(department.avgOvr))}>
-                  {department.avgOvr}
+            ) : (
+              reportsArray
+                .sort((a, b) => b.scoutedOvr - a.scoutedOvr)
+                .map((report) => {
+                  const prospect = draftClass.find((p) => p.id === report.prospectId);
+                  return <ReportCard key={report.id} report={report} prospect={prospect} />;
+                })
+            )}
+          </div>
+        )}
+
+        {activeTab === 'department' && (
+          <div className="space-y-4">
+            <div className="bg-secondary/50 border border-border rounded-xl p-4">
+              <div className="flex justify-between items-center mb-3">
+                <div>
+                  <div className="font-bold">Scouting Department</div>
+                  <div className="text-sm text-muted-foreground">{department.scoutCount} scouts</div>
                 </div>
-                <div className="text-xs text-muted-foreground">Avg OVR</div>
+                <div className="text-right">
+                  <div className={cn('text-2xl font-bold', RATING_COLOR(department.avgOvr))}>
+                    {department.avgOvr}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Avg OVR</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="bg-secondary rounded-lg p-2 text-center">
+                  <div className="text-xs text-muted-foreground">Weekly Points</div>
+                  <div className="font-bold text-green-400">{department.weeklyPoints}</div>
+                </div>
+                <div className="bg-secondary rounded-lg p-2 text-center">
+                  <div className="text-xs text-muted-foreground">Budget</div>
+                  <div className="font-bold">${department.totalBudget.toFixed(1)}M</div>
+                </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-secondary rounded-lg p-2 text-center">
-                <div className="text-xs text-muted-foreground">Weekly Points</div>
-                <div className="font-bold text-green-400">{department.weeklyPoints}</div>
-              </div>
-              <div className="bg-secondary rounded-lg p-2 text-center">
-                <div className="text-xs text-muted-foreground">Budget</div>
-                <div className="font-bold">${department.totalBudget.toFixed(1)}M</div>
-              </div>
-            </div>
-          </div>
 
-          {allScouts.map((scout) => (
-            <div key={scout.id} className="bg-secondary/50 border border-border rounded-xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{ROLE_ICONS[scout.role]}</span>
-                  <div>
-                    <div className="font-bold">{scout.firstName} {scout.lastName}</div>
-                    <div className="text-sm text-muted-foreground">{SCOUT_ROLES[scout.role].name}</div>
+            {allScouts.map((scout) => (
+              <div key={scout.id} className="bg-secondary/50 border border-border rounded-xl p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{ROLE_ICONS[scout.role]}</span>
+                    <div>
+                      <div className="font-bold">
+                        {scout.firstName} {scout.lastName}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {SCOUT_ROLES[scout.role].name}
+                      </div>
+                    </div>
+                  </div>
+                  <div className={cn('text-2xl font-bold', RATING_COLOR(scout.ovr))}>
+                    {scout.ovr}
                   </div>
                 </div>
-                <div className={cn('text-2xl font-bold', RATING_COLOR(scout.ovr))}>
-                  {scout.ovr}
-                </div>
-              </div>
 
-              <div className="grid grid-cols-3 gap-2 text-xs mb-3">
-                <div className="bg-secondary rounded p-1.5 text-center">
-                  <div className="text-muted-foreground">Age</div>
-                  <div className="font-medium">{scout.age}</div>
+                <div className="grid grid-cols-3 gap-2 text-xs mb-3">
+                  <div className="bg-secondary rounded p-1.5 text-center">
+                    <div className="text-muted-foreground">Age</div>
+                    <div className="font-medium">{scout.age}</div>
+                  </div>
+                  <div className="bg-secondary rounded p-1.5 text-center">
+                    <div className="text-muted-foreground">Exp</div>
+                    <div className="font-medium">{scout.experience} yrs</div>
+                  </div>
+                  <div className="bg-secondary rounded p-1.5 text-center">
+                    <div className="text-muted-foreground">Pts/Wk</div>
+                    <div className="font-medium text-green-400">{scout.weeklyPoints}</div>
+                  </div>
                 </div>
-                <div className="bg-secondary rounded p-1.5 text-center">
-                  <div className="text-muted-foreground">Exp</div>
-                  <div className="font-medium">{scout.experience} yrs</div>
-                </div>
-                <div className="bg-secondary rounded p-1.5 text-center">
-                  <div className="text-muted-foreground">Pts/Wk</div>
-                  <div className="font-medium text-green-400">{scout.weeklyPoints}</div>
-                </div>
-              </div>
 
-              {/* Key Attributes */}
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="flex justify-between bg-secondary/50 rounded px-2 py-1">
-                  <span className="text-muted-foreground">Talent Eval</span>
-                  <span className={RATING_COLOR(scout.attributes.talentEvaluation)}>
-                    {scout.attributes.talentEvaluation}
-                  </span>
-                </div>
-                <div className="flex justify-between bg-secondary/50 rounded px-2 py-1">
-                  <span className="text-muted-foreground">Potential</span>
-                  <span className={RATING_COLOR(scout.attributes.potentialAssessment)}>
-                    {scout.attributes.potentialAssessment}
-                  </span>
-                </div>
-                <div className="flex justify-between bg-secondary/50 rounded px-2 py-1">
-                  <span className="text-muted-foreground">Bust Detection</span>
-                  <span className={RATING_COLOR(scout.attributes.bustDetection)}>
-                    {scout.attributes.bustDetection}
-                  </span>
-                </div>
-                <div className="flex justify-between bg-secondary/50 rounded px-2 py-1">
-                  <span className="text-muted-foreground">Sleeper</span>
-                  <span className={RATING_COLOR(scout.attributes.sleeperDiscovery)}>
-                    {scout.attributes.sleeperDiscovery}
-                  </span>
+                {/* Key Attributes */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="flex justify-between bg-secondary/50 rounded px-2 py-1">
+                    <span className="text-muted-foreground">Talent Eval</span>
+                    <span className={RATING_COLOR(scout.attributes.talentEvaluation)}>
+                      {scout.attributes.talentEvaluation}
+                    </span>
+                  </div>
+                  <div className="flex justify-between bg-secondary/50 rounded px-2 py-1">
+                    <span className="text-muted-foreground">Potential</span>
+                    <span className={RATING_COLOR(scout.attributes.potentialAssessment)}>
+                      {scout.attributes.potentialAssessment}
+                    </span>
+                  </div>
+                  <div className="flex justify-between bg-secondary/50 rounded px-2 py-1">
+                    <span className="text-muted-foreground">Bust Detection</span>
+                    <span className={RATING_COLOR(scout.attributes.bustDetection)}>
+                      {scout.attributes.bustDetection}
+                    </span>
+                  </div>
+                  <div className="flex justify-between bg-secondary/50 rounded px-2 py-1">
+                    <span className="text-muted-foreground">Sleeper</span>
+                    <span className={RATING_COLOR(scout.attributes.sleeperDiscovery)}>
+                      {scout.attributes.sleeperDiscovery}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Scout Selection Modal */}
       {scoutingProspectId && (
@@ -716,8 +790,12 @@ export function ScoutingSection() {
                 <>
                   {prospect && (
                     <div className="bg-secondary rounded-lg p-3 mb-4">
-                      <div className="font-medium">{prospect.firstName} {prospect.lastName}</div>
-                      <div className="text-sm text-muted-foreground">{prospect.position} · {prospect.college}</div>
+                      <div className="font-medium">
+                        {prospect.firstName} {prospect.lastName}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {prospect.position} · {prospect.college}
+                      </div>
                       <div className="text-sm text-green-400 mt-1">Cost: {cost} points</div>
                     </div>
                   )}

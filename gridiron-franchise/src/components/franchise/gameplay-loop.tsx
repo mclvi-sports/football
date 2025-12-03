@@ -4,13 +4,15 @@ import { useState, useMemo, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { SeasonState } from '@/lib/season/types';
 import { LEAGUE_TEAMS, TeamInfo } from '@/lib/data/teams';
-import { StandingsView } from './standings-view';
-import { StatsView } from './stats-view';
 import { PlayoffBracket } from './playoff-bracket';
-import { ScheduleSection } from './schedule-section';
-import { ScoutingSection } from './scouting-section';
-import { RosterSection } from './roster-section';
-import { TrainingDashboard } from '@/components/training';
+import {
+  RosterView,
+  ScheduleView,
+  StandingsView,
+  StatsView,
+  ScoutingLoop,
+  TrainingLoop,
+} from '@/components/modules';
 import { getPlayerTeamId } from '@/lib/gm';
 import { getFullGameData } from '@/lib/dev-player-store';
 import { initializeTeamTraining, getTeamTrainingState } from '@/lib/training';
@@ -32,6 +34,8 @@ import {
   Loader2,
   Lock,
 } from 'lucide-react';
+
+// Note: Calendar, ListOrdered, BarChart3 still used for section tab icons
 
 // ============================================================================
 // TYPES
@@ -387,50 +391,28 @@ export function GameplayLoop({
       <div className="min-h-[400px]">
         {/* Schedule Section */}
         {activeSection === 'schedule' && (
-          seasonState ? (
-            <ScheduleSection
-              seasonState={seasonState}
-              teamsMap={teamsMap}
-            />
-          ) : (
-            <Card className="border-dashed">
-              <CardContent className="p-8 text-center">
-                <Calendar className="h-12 w-12 mx-auto text-zinc-600 mb-4" />
-                <p className="text-zinc-400">No season data available</p>
-              </CardContent>
-            </Card>
-          )
+          <ScheduleView
+            mode="embedded"
+            seasonState={seasonState || undefined}
+            teamsMap={teamsMap}
+          />
         )}
 
         {/* Standings Section */}
         {activeSection === 'standings' && (
-          seasonState && seasonState.standings?.length > 0 ? (
-            <StandingsView standings={seasonState.standings} />
-          ) : (
-            <Card className="border-dashed">
-              <CardContent className="p-8 text-center">
-                <ListOrdered className="h-12 w-12 mx-auto text-zinc-600 mb-4" />
-                <p className="text-zinc-400">Standings will appear after games are played</p>
-              </CardContent>
-            </Card>
-          )
+          <StandingsView
+            mode="embedded"
+            standings={seasonState?.standings}
+          />
         )}
 
         {/* Stats Section */}
         {activeSection === 'stats' && (
-          seasonState ? (
-            <StatsView
-              games={seasonState.completedGames || []}
-              standings={seasonState.standings || []}
-            />
-          ) : (
-            <Card className="border-dashed">
-              <CardContent className="p-8 text-center">
-                <BarChart3 className="h-12 w-12 mx-auto text-zinc-600 mb-4" />
-                <p className="text-zinc-400">Stats will appear after games are played</p>
-              </CardContent>
-            </Card>
-          )
+          <StatsView
+            mode="embedded"
+            games={seasonState?.completedGames}
+            standings={seasonState?.standings}
+          />
         )}
 
         {/* Playoffs Section */}
@@ -448,45 +430,32 @@ export function GameplayLoop({
         )}
 
         {/* Scouting Section */}
-        {activeSection === 'scouting' && <ScoutingSection />}
+        {activeSection === 'scouting' && (
+          <ScoutingLoop
+            mode="embedded"
+            teamId={playerTeamId || undefined}
+          />
+        )}
 
         {/* Roster Section */}
         {activeSection === 'roster' && (
-          playerTeamId && playerRoster.length > 0 ? (
-            <RosterSection
-              teamId={playerTeamId}
-              teamName={playerTeamName}
-              roster={playerRoster}
-            />
-          ) : (
-            <div className="bg-secondary/50 border border-dashed border-border rounded-xl p-8 text-center">
-              <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-              <h3 className="text-lg font-medium mb-2">Roster Management</h3>
-              <p className="text-sm text-muted-foreground">
-                Select a team as GM to view your roster.
-              </p>
-            </div>
-          )
+          <RosterView
+            mode="embedded"
+            teamId={playerTeamId || undefined}
+            teamName={playerTeamName || undefined}
+            roster={playerRoster.length > 0 ? playerRoster : undefined}
+          />
         )}
 
         {/* Training Section */}
         {activeSection === 'training' && (
-          playerTeamId && playerRoster.length > 0 ? (
-            <TrainingDashboard
-              teamId={playerTeamId}
-              roster={playerRoster}
-              week={seasonState?.week || 1}
-              season={seasonState?.year || 1}
-            />
-          ) : (
-            <div className="bg-secondary/50 border border-dashed border-border rounded-xl p-8 text-center">
-              <Dumbbell className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-              <h3 className="text-lg font-medium mb-2">Training & Development</h3>
-              <p className="text-sm text-muted-foreground">
-                Select a team as GM to access training features.
-              </p>
-            </div>
-          )
+          <TrainingLoop
+            mode="embedded"
+            teamId={playerTeamId || undefined}
+            roster={playerRoster.length > 0 ? playerRoster : undefined}
+            week={seasonState?.week}
+            season={seasonState?.year}
+          />
         )}
 
         {/* Game Prep Section (Placeholder) */}

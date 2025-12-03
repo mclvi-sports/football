@@ -2,8 +2,10 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Player, Position } from '@/lib/types';
+import { Player, Position, Tier } from '@/lib/types';
 import { RosterPlayerCard } from '@/components/dev-tools/roster-player-card';
+import { getFullGameData, TeamRosterData } from '@/lib/dev-player-store';
+import { LEAGUE_TEAMS } from '@/lib/data/teams';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, Search } from 'lucide-react';
@@ -16,44 +18,93 @@ type TabType = 'all' | 'offense' | 'defense' | 'special';
 type SortOption = 'ovr' | 'position' | 'age' | 'potential';
 
 const OFFENSE_POSITIONS = [
-  Position.QB,
-  Position.RB,
-  Position.WR,
-  Position.TE,
-  Position.LT,
-  Position.LG,
-  Position.C,
-  Position.RG,
-  Position.RT,
+  Position.QB, Position.RB, Position.WR, Position.TE,
+  Position.LT, Position.LG, Position.C, Position.RG, Position.RT,
 ];
 
 const DEFENSE_POSITIONS = [
-  Position.DE,
-  Position.DT,
-  Position.MLB,
-  Position.OLB,
-  Position.CB,
-  Position.FS,
-  Position.SS,
+  Position.DE, Position.DT, Position.MLB, Position.OLB,
+  Position.CB, Position.FS, Position.SS,
 ];
 
 const SPECIAL_POSITIONS = [Position.K, Position.P];
 
 // ============================================================================
+// PROPS
+// ============================================================================
+
+interface RosterViewProps {
+  // Mode controls layout
+  mode: 'standalone' | 'embedded';
+
+  // Data - can be provided or loaded internally
+  roster?: Player[];
+  teamId?: string;
+  teamName?: string;
+
+  // Standalone mode options
+  showTeamSelector?: boolean;
+
+  // Embedded mode options
+  maxHeight?: string;
+
+  // Callbacks
+  onPlayerClick?: (playerId: string) => void;
+}
+
+// ============================================================================
 // COMPONENT
 // ============================================================================
 
-interface RosterSectionProps {
-  teamId: string;
-  teamName: string;
-  roster: Player[];
-}
-
-export function RosterSection({ teamId, teamName, roster }: RosterSectionProps) {
+export function RosterView({
+  mode,
+  roster: providedRoster,
+  teamId: providedTeamId,
+  teamName: providedTeamName,
+  showTeamSelector = mode === 'standalone',
+  maxHeight = mode === 'embedded' ? '500px' : undefined,
+  onPlayerClick,
+}: RosterViewProps) {
   const router = useRouter();
+
+  // State for team selection (standalone mode)
+  const [selectedTeamId, setSelectedTeamId] = useState<string>(providedTeamId || 'BOS');
+
+  // State for filtering/sorting
   const [activeTab, setActiveTab] = useState<TabType>('all');
   const [sortBy, setSortBy] = useState<SortOption>('ovr');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Load roster data
+  const { roster, teamId, teamName, tier } = useMemo(() => {
+    // If roster is provided, use it
+    if (providedRoster && providedTeamId) {
+      return {
+        roster: providedRoster,
+        teamId: providedTeamId,
+        teamName: providedTeamName || providedTeamId,
+        tier: null,
+      };
+    }
+
+    // Otherwise, load from storage
+    const gameData = getFullGameData();
+    if (!gameData) {
+      return { roster: [], teamId: selectedTeamId, teamName: '', tier: null };
+    }
+
+    const teamData = gameData.teams.find(t => t.team.id === selectedTeamId);
+    if (!teamData) {
+      return { roster: [], teamId: selectedTeamId, teamName: '', tier: null };
+    }
+
+    return {
+      roster: teamData.roster.players,
+      teamId: teamData.team.id,
+      teamName: `${teamData.team.city} ${teamData.team.name}`,
+      tier: teamData.tier,
+    };
+  }, [providedRoster, providedTeamId, providedTeamName, selectedTeamId]);
 
   // Calculate stats
   const stats = useMemo(() => {
@@ -117,15 +168,24 @@ export function RosterSection({ teamId, teamName, roster }: RosterSectionProps) 
   }, [roster, activeTab, sortBy, searchQuery]);
 
   const handlePlayerClick = (playerId: string) => {
-    router.push(`/dashboard/dev-tools/player/${playerId}`);
+    if (onPlayerClick) {
+      onPlayerClick(playerId);
+    } else {
+      router.push(`/dashboard/dev-tools/player/${playerId}`);
+    }
   };
 
+  // Empty state
   if (roster.length === 0) {
     return (
       <Card className="border-dashed">
         <CardContent className="p-8 text-center">
           <Users className="h-12 w-12 mx-auto text-zinc-600 mb-4" />
-          <p className="text-zinc-400">No roster data available</p>
+          <p className="text-zinc-400">
+            {mode === 'standalone'
+              ? 'Generate rosters from the Full Game page first'
+              : 'No roster data available'}
+          </p>
         </CardContent>
       </Card>
     );
@@ -133,13 +193,50 @@ export function RosterSection({ teamId, teamName, roster }: RosterSectionProps) 
 
   return (
     <div className="space-y-4">
-      {/* Team Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-bold">{teamName}</h3>
-          <p className="text-sm text-zinc-400">{stats.totalPlayers} players</p>
+      {/* Header - Standalone only */}
+      {mode === 'standalone' && (
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-bold">{teamName}</h3>
+            {tier && (
+              <span className={cn(
+                "text-xs px-2 py-0.5 rounded",
+                tier === Tier.Elite ? "bg-yellow-500/20 text-yellow-400" :
+                tier === Tier.Good ? "bg-green-500/20 text-green-400" :
+                tier === Tier.Average ? "bg-blue-500/20 text-blue-400" :
+                tier === Tier.BelowAverage ? "bg-orange-500/20 text-orange-400" :
+                "bg-red-500/20 text-red-400"
+              )}>
+                {tier}
+              </span>
+            )}
+          </div>
+
+          {showTeamSelector && (
+            <select
+              value={selectedTeamId}
+              onChange={(e) => setSelectedTeamId(e.target.value)}
+              className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm"
+            >
+              {LEAGUE_TEAMS.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.city} {team.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
-      </div>
+      )}
+
+      {/* Embedded header */}
+      {mode === 'embedded' && (
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-bold">{teamName}</h3>
+            <p className="text-sm text-zinc-400">{stats.totalPlayers} players</p>
+          </div>
+        </div>
+      )}
 
       {/* Stats Bar */}
       <div className="grid grid-cols-4 gap-2">
@@ -214,7 +311,10 @@ export function RosterSection({ teamId, teamName, roster }: RosterSectionProps) 
       </div>
 
       {/* Player List */}
-      <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+      <div
+        className="space-y-2 overflow-y-auto pr-1"
+        style={{ maxHeight: maxHeight }}
+      >
         {filteredPlayers.map((player) => (
           <RosterPlayerCard
             key={player.id}

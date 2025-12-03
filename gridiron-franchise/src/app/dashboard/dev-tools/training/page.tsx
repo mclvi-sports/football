@@ -5,19 +5,16 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { TrainingDashboard, PlayerDevelopmentCard, PracticeFocusSelector } from '@/components/training';
+import { TrainingLoop } from '@/components/modules';
 import { Player, Position, Archetype, PlayerAttributes } from '@/lib/types';
 import {
   initializeTeamTraining,
-  getTrainingStore,
   clearTrainingStore,
   addPlayerXP,
-  getPlayerProgress,
   advanceWeek,
   startNewSeason,
   exportTrainingStore,
-  PracticeFocusType,
-  PracticeIntensity,
+  getTeamTrainingState,
 } from '@/lib/training';
 import { RefreshCw, Play, Plus, Trash2 } from 'lucide-react';
 
@@ -40,76 +37,23 @@ function generateTestPlayer(index: number): Player {
   const pos = positions[index % positions.length];
   const baseValue = 70 + (index % 20);
 
-  // Create attributes that satisfy PlayerAttributes type
   const attributes: PlayerAttributes = {
-    // Physical
-    SPD: baseValue,
-    ACC: baseValue,
-    AGI: baseValue,
-    STR: baseValue,
-    JMP: baseValue,
-    STA: baseValue,
-    INJ: baseValue,
-    // Mental
-    AWR: baseValue,
-    PRC: baseValue,
-    // Passing (QB)
-    THP: pos === Position.QB ? 80 : 40,
-    SAC: pos === Position.QB ? 80 : 40,
-    MAC: pos === Position.QB ? 75 : 40,
-    DAC: pos === Position.QB ? 70 : 40,
-    TUP: pos === Position.QB ? 70 : 40,
-    TOR: pos === Position.QB ? 70 : 40,
-    PAC: pos === Position.QB ? 70 : 40,
-    BSK: pos === Position.QB ? 70 : 40,
-    // Ball Carrier
-    CAR: baseValue,
-    BTK: baseValue,
-    TRK: baseValue,
-    ELU: baseValue,
-    SPM: baseValue,
-    JKM: baseValue,
-    SFA: baseValue,
-    VIS: baseValue,
-    // Receiving
-    CTH: baseValue,
-    CIT: baseValue,
-    SPC: baseValue,
-    RTE: baseValue,
-    REL: baseValue,
-    RAC: baseValue,
-    SRR: baseValue,
-    MRR: baseValue,
-    DRR: baseValue,
-    // Blocking
-    PBK: baseValue,
-    RBK: baseValue,
-    IBL: baseValue,
-    PBP: baseValue,
-    PBF: baseValue,
-    RBP: baseValue,
-    RBF: baseValue,
-    LBK: baseValue,
-    // Defense
-    TAK: baseValue,
-    POW: baseValue,
-    PMV: baseValue,
-    FMV: baseValue,
-    BSH: baseValue,
-    PUR: baseValue,
-    // Coverage
-    MCV: baseValue,
-    ZCV: baseValue,
-    PRS: baseValue,
-    // Kicking
-    KPW: pos === Position.K ? 85 : 40,
-    KAC: pos === Position.K ? 85 : 40,
-    KOP: 40,
-    PPW: 40,
-    PUA: 40,
-    CLU: 40,
-    CON: 40,
-    RET: 40,
+    SPD: baseValue, ACC: baseValue, AGI: baseValue, STR: baseValue,
+    JMP: baseValue, STA: baseValue, INJ: baseValue, AWR: baseValue, PRC: baseValue,
+    THP: pos === Position.QB ? 80 : 40, SAC: pos === Position.QB ? 80 : 40,
+    MAC: pos === Position.QB ? 75 : 40, DAC: pos === Position.QB ? 70 : 40,
+    TUP: pos === Position.QB ? 70 : 40, TOR: pos === Position.QB ? 70 : 40,
+    PAC: pos === Position.QB ? 70 : 40, BSK: pos === Position.QB ? 70 : 40,
+    CAR: baseValue, BTK: baseValue, TRK: baseValue, ELU: baseValue,
+    SPM: baseValue, JKM: baseValue, SFA: baseValue, VIS: baseValue,
+    CTH: baseValue, CIT: baseValue, SPC: baseValue, RTE: baseValue,
+    REL: baseValue, RAC: baseValue, SRR: baseValue, MRR: baseValue, DRR: baseValue,
+    PBK: baseValue, RBK: baseValue, IBL: baseValue, PBP: baseValue,
+    PBF: baseValue, RBP: baseValue, RBF: baseValue, LBK: baseValue,
+    TAK: baseValue, POW: baseValue, PMV: baseValue, FMV: baseValue,
+    BSH: baseValue, PUR: baseValue, MCV: baseValue, ZCV: baseValue, PRS: baseValue,
+    KPW: pos === Position.K ? 85 : 40, KAC: pos === Position.K ? 85 : 40,
+    KOP: 40, PPW: 40, PUA: 40, CLU: 40, CON: 40, RET: 40,
   };
 
   return {
@@ -149,6 +93,15 @@ export default function TrainingDevPage() {
       players.push(generateTestPlayer(i));
     }
     setTestRoster(players);
+  }, []);
+
+  // Check if already initialized
+  useEffect(() => {
+    const existingState = getTeamTrainingState(teamId);
+    if (existingState) {
+      setInitialized(true);
+      updateStoreDisplay();
+    }
   }, []);
 
   // Initialize training system
@@ -197,11 +150,6 @@ export default function TrainingDevPage() {
   const updateStoreDisplay = () => {
     const store = exportTrainingStore();
     setStoreState(JSON.stringify(store, null, 2));
-  };
-
-  // Handle practice focus change
-  const handlePracticeFocusChange = (focus: PracticeFocusType, intensity: PracticeIntensity) => {
-    updateStoreDisplay();
   };
 
   return (
@@ -268,24 +216,22 @@ export default function TrainingDevPage() {
           </CardContent>
         </Card>
 
-        {/* Tabs for different views */}
-        <Tabs defaultValue="dashboard">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="cards">Player Cards</TabsTrigger>
-            <TabsTrigger value="focus">Practice Focus</TabsTrigger>
+        {/* Tabs */}
+        <Tabs defaultValue="training">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="training">Training Loop</TabsTrigger>
             <TabsTrigger value="store">Store State</TabsTrigger>
           </TabsList>
 
-          {/* Training Dashboard */}
-          <TabsContent value="dashboard" className="mt-4">
+          {/* Training Loop Module */}
+          <TabsContent value="training" className="mt-4">
             {initialized ? (
-              <TrainingDashboard
+              <TrainingLoop
+                mode="standalone"
                 teamId={teamId}
                 roster={testRoster}
                 week={week}
                 season={season}
-                onPracticeFocusChange={handlePracticeFocusChange}
               />
             ) : (
               <div className="bg-secondary/50 border border-border rounded-2xl p-8 text-center">
@@ -300,39 +246,6 @@ export default function TrainingDevPage() {
                 </Button>
               </div>
             )}
-          </TabsContent>
-
-          {/* Player Cards Demo */}
-          <TabsContent value="cards" className="mt-4">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {testRoster.slice(0, 6).map((player) => {
-                const progress = initialized ? getPlayerProgress(teamId, player.id) : null;
-                return (
-                  <PlayerDevelopmentCard
-                    key={player.id}
-                    player={player}
-                    progress={progress}
-                  />
-                );
-              })}
-            </div>
-          </TabsContent>
-
-          {/* Practice Focus Demo */}
-          <TabsContent value="focus" className="mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Practice Focus Selector</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <PracticeFocusSelector
-                  currentFocus="conditioning"
-                  currentIntensity="normal"
-                  onFocusChange={(focus) => console.log('Focus:', focus)}
-                  onIntensityChange={(intensity) => console.log('Intensity:', intensity)}
-                />
-              </CardContent>
-            </Card>
           </TabsContent>
 
           {/* Store State */}

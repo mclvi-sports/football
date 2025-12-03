@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ScoutingSection } from '@/components/franchise/scouting-section';
+import { ScoutingLoop } from '@/components/modules';
 
 export default function ScoutingGameplayPage() {
   return (
@@ -20,7 +20,7 @@ export default function ScoutingGameplayPage() {
       </header>
 
       <main className="px-5">
-        <ScoutingSection />
+        <ScoutingLoop mode="standalone" />
       </main>
     </div>
   );
