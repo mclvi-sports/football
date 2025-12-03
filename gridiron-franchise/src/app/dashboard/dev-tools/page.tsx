@@ -73,6 +73,12 @@ export default function DevToolsPage() {
             icon="SCH"
             href="/dashboard/dev-tools/schemes"
           />
+          <NavCard
+            title="GM Skills"
+            icon="GM"
+            href="/dashboard/dev-tools/gm-skills"
+            variant="highlight"
+          />
         </div>
       </main>
     </div>
