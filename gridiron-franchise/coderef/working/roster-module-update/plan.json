@@ -1,0 +1,188 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "roster-module-update",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": false,
+    "has_analysis": false,
+    "created_at": "2025-12-02"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "architecture": "Next.js App Router with React components",
+        "patterns": "Module pages load from sessionStorage on mount, display generated data from Full page"
+      },
+      "reference_implementations": [
+        {
+          "file": "src/app/dashboard/dev-tools/coaching/page.tsx",
+          "pattern": "Team dropdown with LEAGUE_TEAMS, loads from getCoaching() on mount"
+        },
+        {
+          "file": "src/app/dashboard/dev-tools/facilities/page.tsx",
+          "pattern": "Team dropdown selector, loads from getFacilities() on mount"
+        },
+        {
+          "file": "src/lib/dev-player-store.ts",
+          "pattern": "getFullGameData(), getTeamById() for accessing team rosters"
+        }
+      ],
+      "coding_standards": {
+        "storage_pattern": "Load from storage on mount with useEffect, store when generating",
+        "team_selector": "Dropdown with LEAGUE_TEAMS.map() pattern"
+      }
+    },
+    "1_executive_summary": {
+      "description": "Update roster-view page to function as a proper module that integrates with the Full page, adding team selection and loading rosters from storage",
+      "goal": "Make roster-view consistent with other modules (coaching, facilities, schedule) by adding team dropdown and loading generated data from Full page",
+      "requirements": [
+        "Add team dropdown to select from 32 teams",
+        "Load selected team's roster from getFullGameData() on mount",
+        "Display roster generated from Full page",
+        "Keep generate button for standalone use (optional)"
+      ],
+      "out_of_scope": [
+        "Changing roster generation logic",
+        "Modifying player card components",
+        "Adding new roster management features"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity": "low",
+      "estimated_tasks": 4,
+      "risks": [
+        {
+          "risk": "Data structure mismatch between generated roster and Full page roster",
+          "mitigation": "Use existing TeamRosterData type from dev-player-store",
+          "severity": "low"
+        }
+      ],
+      "dependencies": [
+        "getFullGameData() and getTeamById() already exist in dev-player-store.ts",
+        "LEAGUE_TEAMS already available from lib/data/teams"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/app/dashboard/dev-tools/roster-view/page.tsx",
+          "changes": "Add team dropdown, add useEffect to load from storage, update UI"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_reference": [
+        "src/app/dashboard/dev-tools/coaching/page.tsx",
+        "src/app/dashboard/dev-tools/facilities/page.tsx",
+        "src/lib/dev-player-store.ts",
+        "src/lib/data/teams.ts"
+      ]
+    },
+    "4_key_features": [
+      {
+        "id": "TEAM-SELECT",
+        "name": "Team Selection Dropdown",
+        "description": "Add dropdown to select from 32 teams using LEAGUE_TEAMS"
+      },
+      {
+        "id": "STORAGE-LOAD",
+        "name": "Load from Storage on Mount",
+        "description": "Add useEffect to load selected team's roster from getFullGameData()"
+      },
+      {
+        "id": "DYNAMIC-DISPLAY",
+        "name": "Dynamic Roster Display",
+        "description": "Update roster display when team selection changes"
+      },
+      {
+        "id": "STANDALONE-MODE",
+        "name": "Standalone Generate Mode",
+        "description": "Keep generate button for when no Full page data exists"
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-ROSTER-MODULE-UPDATE-001",
+        "name": "Roster Module Update",
+        "feature_dir": "coderef/working/roster-module-update"
+      },
+      "tasks": [
+        {
+          "id": "ROSTER-001",
+          "workorder_id": "WO-ROSTER-MODULE-UPDATE-001",
+          "description": "Add imports for getFullGameData, getTeamById, and LEAGUE_TEAMS",
+          "feature": "STORAGE-LOAD",
+          "phase": 1,
+          "complexity": "trivial"
+        },
+        {
+          "id": "ROSTER-002",
+          "workorder_id": "WO-ROSTER-MODULE-UPDATE-001",
+          "description": "Add selectedTeamId state and team dropdown UI",
+          "feature": "TEAM-SELECT",
+          "phase": 1,
+          "complexity": "small"
+        },
+        {
+          "id": "ROSTER-003",
+          "workorder_id": "WO-ROSTER-MODULE-UPDATE-001",
+          "description": "Add useEffect to load roster from storage on mount and team change",
+          "feature": "STORAGE-LOAD",
+          "phase": 2,
+          "complexity": "small"
+        },
+        {
+          "id": "ROSTER-004",
+          "workorder_id": "WO-ROSTER-MODULE-UPDATE-001",
+          "description": "Update UI to show team name and handle empty state",
+          "feature": "DYNAMIC-DISPLAY",
+          "phase": 2,
+          "complexity": "small"
+        }
+      ]
+    },
+    "6_implementation_phases": [
+      {
+        "phase": 1,
+        "name": "Add Team Selection",
+        "description": "Add team dropdown and required imports",
+        "tasks": ["ROSTER-001", "ROSTER-002"]
+      },
+      {
+        "phase": 2,
+        "name": "Storage Integration",
+        "description": "Load roster from storage and update display",
+        "tasks": ["ROSTER-003", "ROSTER-004"]
+      }
+    ],
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Generate data on Full page, navigate to roster-view, verify roster loads",
+        "Change team dropdown, verify roster updates",
+        "Clear Full page data, verify generate button still works",
+        "Verify all 32 teams can be selected and display correctly"
+      ]
+    },
+    "8_success_criteria": [
+      "Team dropdown displays all 32 teams",
+      "Selecting a team loads that team's roster from Full page data",
+      "Roster displays correctly with all existing filters and sorting",
+      "Generate button works when no Full page data exists",
+      "Page follows same pattern as coaching/facilities modules"
+    ],
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Add getFullGameData, getTeamById imports",
+        "[ ] Add LEAGUE_TEAMS import",
+        "[ ] Add selectedTeamId state",
+        "[ ] Add team dropdown in header"
+      ],
+      "phase_2": [
+        "[ ] Add useEffect to load roster on mount",
+        "[ ] Add useEffect to reload when team changes",
+        "[ ] Update header to show team name",
+        "[ ] Handle empty state when no Full page data"
+      ]
+    }
+  }
+}

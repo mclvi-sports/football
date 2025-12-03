@@ -20,6 +20,7 @@ import {
   diamondSkills,
 } from '@/data/gm-skills';
 import type { SkillCategoryId, SkillTierId, GMSkillDefinition } from '@/types/gm-skills';
+import type { EquipmentSlot } from '@/types/gm-equipment';
 import { ownsSkill, getOwnedTier } from '@/lib/gm-skills-utils';
 
 interface SkillsMenuProps {
@@ -32,16 +33,27 @@ export function SkillsMenu({ className }: SkillsMenuProps) {
   );
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
 
-  // Store hooks
+  // Store hooks - access raw state to avoid infinite loop from new array refs
   const availableGP = useGMPointsStore((s) => s.getAvailablePoints());
   const purchaseSkill = useGMPointsStore((s) => s.purchaseSkill);
-  const equippedSkills = useGMEquipmentStore((s) => s.getEquipped());
+  const slots = useGMEquipmentStore((s) => s.equipment.slots);
   const isEquipped = useGMEquipmentStore((s) => s.isEquipped);
   const equip = useGMEquipmentStore((s) => s.equip);
   const unequip = useGMEquipmentStore((s) => s.unequip);
-  const emptySlots = useGMEquipmentStore((s) => s.getEmpty());
   const canAccessPlatinum = useGMPrestigeStore((s) => s.canAccessPlatinum());
   const canAccessDiamond = useGMPrestigeStore((s) => s.canAccessDiamond());
+
+  // Derive equipped and empty slots from raw state
+  const equippedSkills = useMemo(
+    () => slots.filter((s): s is EquipmentSlot & { equippedSkillId: string } =>
+      s.isUnlocked && s.equippedSkillId !== null
+    ),
+    [slots]
+  );
+  const emptySlots = useMemo(
+    () => slots.filter((s) => s.isUnlocked && s.equippedSkillId === null),
+    [slots]
+  );
 
   // Mock owned skills state (in real app, this would come from a store)
   const [ownedSkills, setOwnedSkills] = useState<
@@ -165,7 +177,16 @@ interface SkillsMenuCompactProps {
 }
 
 export function SkillsMenuCompact({ onOpenFull, className }: SkillsMenuCompactProps) {
-  const equippedSkills = useGMEquipmentStore((s) => s.getEquipped());
+  // Access raw state to avoid infinite loop from new array refs
+  const slots = useGMEquipmentStore((s) => s.equipment.slots);
+
+  // Derive equipped skills from raw state
+  const equippedSkills = useMemo(
+    () => slots.filter((s): s is EquipmentSlot & { equippedSkillId: string } =>
+      s.isUnlocked && s.equippedSkillId !== null
+    ),
+    [slots]
+  );
 
   return (
     <div className={cn('space-y-3', className)}>

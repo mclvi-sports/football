@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ModuleCard, ModuleStatus } from './module-card';
 import { ReadyIndicator, ReadyCheck } from './ready-indicator';
+import { TeamSelectionModal } from './team-selection-modal';
+import { GMCreationModal } from './gm-creation-modal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +18,7 @@ import {
   Loader2,
   RefreshCw,
   Trash2,
+  UserCog,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -24,6 +27,7 @@ import { getFullGameData, FullGameData, TeamRosterData, getFreeAgents, getDraftC
 import { getCoaching } from '@/lib/coaching/coaching-store';
 import { getFacilities } from '@/lib/facilities/facilities-store';
 import { getSchedule } from '@/lib/schedule/schedule-store';
+import { getGMs, storeGMs, clearGMs, LeagueGMs, GMBackground, GMArchetype } from '@/lib/gm';
 import { Player } from '@/lib/types';
 
 // Store setters and clearers
@@ -37,6 +41,7 @@ interface ModuleData {
   rosters: FullGameData | null;
   freeAgents: Player[];
   draftClass: Player[];
+  gm: LeagueGMs | null;
   coaching: ReturnType<typeof getCoaching>;
   facilities: ReturnType<typeof getFacilities>;
   schedule: ReturnType<typeof getSchedule>;
@@ -54,10 +59,20 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     rosters: null,
     freeAgents: [],
     draftClass: [],
+    gm: null,
     coaching: null,
     facilities: null,
     schedule: null,
   });
+
+  // GM selection modal state
+  const [showTeamSelection, setShowTeamSelection] = useState(false);
+  const [showGMCreation, setShowGMCreation] = useState(false);
+  const [selectedTeamForGM, setSelectedTeamForGM] = useState<{
+    id: string;
+    name: string;
+    city: string;
+  } | null>(null);
 
   // Load existing data on mount
   useEffect(() => {
@@ -69,6 +84,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       rosters: getFullGameData(),
       freeAgents: getFreeAgents(),
       draftClass: getDraftClass(),
+      gm: getGMs(),
       coaching: getCoaching(),
       facilities: getFacilities(),
       schedule: getSchedule(),
@@ -238,6 +254,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     clearDevPlayers();
     clearFreeAgents();
     clearDraftClass();
+    clearGMs();
     clearCoaching();
     clearFacilities();
     clearSchedule();
@@ -255,8 +272,12 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         clearFreeAgents();
         clearDraftClass();
         // Also clear dependent modules
+        clearGMs();
         clearCoaching();
         clearFacilities();
+        break;
+      case 'gm':
+        clearGMs();
         break;
       case 'coaching':
         clearCoaching();
@@ -301,6 +322,15 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       countLabel: 'prospects',
     },
     {
+      id: 'gm',
+      name: 'General Manager',
+      description: 'Your GM + 31 CPU GMs',
+      icon: <UserCog className="h-5 w-5" />,
+      isGenerated: !!modules.gm,
+      count: modules.gm ? 32 : 0,
+      countLabel: 'GMs',
+    },
+    {
       id: 'coaching',
       name: 'Coaching Staff',
       description: 'HC, OC, DC with perks',
@@ -332,6 +362,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
   // Build ready checks for ReadyIndicator
   const readyChecks: ReadyCheck[] = [
     { id: 'rosters', label: 'Rosters', isReady: !!modules.rosters, required: true },
+    { id: 'gm', label: 'General Manager', isReady: !!modules.gm, required: true },
     { id: 'coaching', label: 'Coaching', isReady: !!modules.coaching, required: true },
     { id: 'facilities', label: 'Facilities', isReady: !!modules.facilities, required: true },
     { id: 'schedule', label: 'Schedule', isReady: !!modules.schedule, required: true },
@@ -343,6 +374,10 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       case 'freeagents':
       case 'draft':
         generateRosters();
+        break;
+      case 'gm':
+        // Open team selection modal to start GM creation flow
+        setShowTeamSelection(true);
         break;
       case 'coaching':
         generateCoachingStaff();
@@ -367,6 +402,9 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       case 'draft':
         router.push('/dashboard/dev-tools/draft');
         break;
+      case 'gm':
+        // TODO: Add GM view page when available
+        break;
       case 'coaching':
         router.push('/dashboard/dev-tools/coaching');
         break;
@@ -377,6 +415,57 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         router.push('/dashboard/dev-tools/schedule');
         break;
     }
+  };
+
+  // GM Selection Flow Handlers
+  const handleTeamSelect = (teamId: string) => {
+    const team = modules.rosters?.teams.find((t) => t.team.id === teamId);
+    if (team) {
+      setSelectedTeamForGM({
+        id: team.team.id,
+        name: team.team.name,
+        city: team.team.city,
+      });
+      setShowTeamSelection(false);
+      setShowGMCreation(true);
+    }
+  };
+
+  const handleGMComplete = async (background: GMBackground, archetype: GMArchetype) => {
+    if (!selectedTeamForGM || !modules.rosters) return;
+
+    setGeneratingModules((prev) => ({ ...prev, gm: true }));
+    setShowGMCreation(false);
+
+    try {
+      const teamTiers = getTeamTiers();
+      const tierObj: Record<string, Tier> = {};
+      teamTiers.forEach((tier, teamId) => {
+        tierObj[teamId] = tier;
+      });
+
+      const response = await fetch('/api/dev/generate-gm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          playerTeamId: selectedTeamForGM.id,
+          playerBackground: background,
+          playerArchetype: archetype,
+          teamTiers: tierObj,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        storeGMs(data.gms);
+        loadModuleStatus();
+      }
+    } catch (error) {
+      console.error('Failed to generate GMs:', error);
+    }
+
+    setGeneratingModules((prev) => ({ ...prev, gm: false }));
+    setSelectedTeamForGM(null);
   };
 
   const isAnyGenerating = isGeneratingAll || Object.values(generatingModules).some(Boolean);
@@ -449,8 +538,8 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
             onView={() => handleModuleView(module.id)}
             disabled={
               isAnyGenerating ||
-              // Disable coaching/facilities/schedule if no rosters
-              (['coaching', 'facilities'].includes(module.id) && !modules.rosters)
+              // Disable gm/coaching/facilities if no rosters
+              (['gm', 'coaching', 'facilities'].includes(module.id) && !modules.rosters)
             }
           />
         ))}
@@ -493,6 +582,20 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         disabled={isAnyGenerating}
       />
 
+      {/* GM Selection Modals */}
+      <TeamSelectionModal
+        open={showTeamSelection}
+        onOpenChange={setShowTeamSelection}
+        teams={modules.rosters?.teams || []}
+        onSelectTeam={handleTeamSelect}
+      />
+
+      <GMCreationModal
+        open={showGMCreation}
+        onOpenChange={setShowGMCreation}
+        selectedTeam={selectedTeamForGM}
+        onComplete={handleGMComplete}
+      />
     </div>
   );
 }

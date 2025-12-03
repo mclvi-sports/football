@@ -1,10 +1,11 @@
 'use client';
 
+import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useGMPrestigeStore } from '@/stores/gm-prestige-store';
-import { getPrestigeTier, prestigeTiers } from '@/data/gm-prestige';
+import { getPrestigeTier, prestigeTiers, getPrestigeProgress } from '@/data/gm-prestige';
 import { Crown, Trophy, Star, Sparkles } from 'lucide-react';
 import type { PrestigeTierId } from '@/types/gm-prestige';
 
@@ -38,10 +39,16 @@ export function PrestigeDisplay({
   className,
   showProgress = true,
 }: PrestigeDisplayProps) {
-  const currentTier = useGMPrestigeStore((s) => s.getCurrentTier());
-  const championships = useGMPrestigeStore((s) => s.getChampionships());
-  const dynasties = useGMPrestigeStore((s) => s.getDynasties());
-  const progress = useGMPrestigeStore((s) => s.getProgress());
+  // Access raw state to avoid infinite loop from getProgress returning new objects
+  const currentTier = useGMPrestigeStore((s) => s.prestige.currentTier);
+  const championships = useGMPrestigeStore((s) => s.prestige.championships);
+  const dynasties = useGMPrestigeStore((s) => s.prestige.dynasties);
+
+  // Derive progress from raw state
+  const progress = useMemo(
+    () => getPrestigeProgress(championships, dynasties),
+    [championships, dynasties]
+  );
   const tierData = getPrestigeTier(currentTier);
 
   if (currentTier === 'none' && !showProgress) {
@@ -131,7 +138,8 @@ interface PrestigeBadgeProps {
 }
 
 export function PrestigeBadge({ className }: PrestigeBadgeProps) {
-  const currentTier = useGMPrestigeStore((s) => s.getCurrentTier());
+  // Access raw state to avoid potential issues
+  const currentTier = useGMPrestigeStore((s) => s.prestige.currentTier);
 
   if (currentTier === 'none') {
     return null;
@@ -159,8 +167,9 @@ interface PrestigeRoadmapProps {
 }
 
 export function PrestigeRoadmap({ className }: PrestigeRoadmapProps) {
-  const currentTier = useGMPrestigeStore((s) => s.getCurrentTier());
-  const championships = useGMPrestigeStore((s) => s.getChampionships());
+  // Access raw state to avoid potential issues
+  const currentTier = useGMPrestigeStore((s) => s.prestige.currentTier);
+  const championships = useGMPrestigeStore((s) => s.prestige.championships);
 
   const tiers = prestigeTiers.filter((t) => t.id !== 'none');
   const currentIndex = tiers.findIndex((t) => t.id === currentTier);

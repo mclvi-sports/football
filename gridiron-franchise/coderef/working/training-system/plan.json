@@ -1,0 +1,624 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "training-system",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-03T10:50:00.000Z",
+    "has_context": true,
+    "has_analysis": true,
+    "workorder_id": "WO-TRAINING-SYSTEM-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": [
+        "FINAL-season-calendar-system.md - XP earning periods, weekly activities, training camp",
+        "FINAL-facilities-system.md - Training room and weight room bonuses",
+        "FINAL-gm-skills-perks-system.md - Category 4 Player Development skills",
+        "FINAL-badge-system.md - Badge XP costs and progression",
+        "FINAL-traits-system.md - Trait evolution triggers"
+      ],
+      "existing_patterns_identified": [
+        "Player type in src/lib/types.ts - must extend, not replace",
+        "Session storage pattern used throughout (localStorage)",
+        "Generator pattern in src/lib/generators/*",
+        "Store pattern in src/lib/*-store.ts files",
+        "Component pattern in src/components/franchise/*"
+      ],
+      "key_integrations": [
+        "facilities-store.ts - read facility bonuses",
+        "coaching-store.ts - read staff bonuses",
+        "gm-skills-utils.ts - read GM perk bonuses",
+        "season-simulator.ts - hook into weekly/game events"
+      ],
+      "reference_files": {
+        "types": "src/lib/types.ts",
+        "facilities": "src/lib/facilities/facilities-store.ts",
+        "coaching": "src/lib/coaching/coaching-store.ts",
+        "gm_skills": "src/lib/gm-skills-utils.ts",
+        "season": "src/lib/season/season-simulator.ts",
+        "badges": "src/lib/data/badges.ts"
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Player Training & Development System",
+      "description": "Complete XP-based player progression system with weekly practice focus, offseason development, age curves, and integration with facilities/staff/GM skills. Players earn XP from games and practice, then spend on attribute growth and badge upgrades.",
+      "goal": "Add meaningful gameplay depth through player development decisions, realistic progression curves, and resource management via XP economy",
+      "scope": {
+        "in_scope": [
+          "XP earning from game performance",
+          "XP earning from weekly practice sessions",
+          "Training camp XP boost periods",
+          "Focus training for specific attributes",
+          "Age-based progression/regression curves",
+          "Potential ceiling enforcement",
+          "Facility bonus integration",
+          "Staff bonus integration",
+          "GM skill/perk bonus integration",
+          "Badge progression via XP spending",
+          "Trait evolution based on performance",
+          "Position change training paths",
+          "Injury rehab training mode",
+          "AI team auto-progression"
+        ],
+        "out_of_scope": [],
+        "constraints": [
+          "Must use existing Player type interface (extend via TrainingProgress)",
+          "Session storage only (no backend/database)",
+          "Must integrate with existing GM skills system",
+          "Must integrate with existing facilities system"
+        ]
+      },
+      "estimated_complexity": "medium-high",
+      "estimated_tasks": 24
+    },
+    "2_risk_assessment": {
+      "technical_risks": [
+        {
+          "risk": "Player type modification could break existing generators",
+          "severity": "high",
+          "mitigation": "Create separate TrainingProgress interface, link via playerId"
+        },
+        {
+          "risk": "XP calculations could unbalance game progression",
+          "severity": "medium",
+          "mitigation": "Follow FINAL spec XP rates exactly, add caps"
+        },
+        {
+          "risk": "Storage size growth with 32 teams × 53 players",
+          "severity": "low",
+          "mitigation": "Compress training data, only store deltas"
+        }
+      ],
+      "integration_risks": [
+        {
+          "risk": "Season simulator changes could break existing flow",
+          "severity": "medium",
+          "mitigation": "Add training hooks without modifying core sim logic"
+        },
+        {
+          "risk": "GM skills system may not expose needed methods",
+          "severity": "low",
+          "mitigation": "Review gm-skills-utils.ts API first"
+        }
+      ],
+      "timeline_risks": [
+        {
+          "risk": "UI complexity for training interface",
+          "severity": "medium",
+          "mitigation": "Start with minimal viable UI, iterate"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        {
+          "path": "context/FINALS/FINAL-training-system.md",
+          "purpose": "Master spec document defining all training mechanics"
+        },
+        {
+          "path": "src/lib/training/types.ts",
+          "purpose": "TypeScript interfaces for training system"
+        },
+        {
+          "path": "src/lib/training/training-constants.ts",
+          "purpose": "XP rates, age curves, caps from spec"
+        },
+        {
+          "path": "src/lib/training/xp-calculator.ts",
+          "purpose": "Calculate XP earned from games/practice"
+        },
+        {
+          "path": "src/lib/training/progression-engine.ts",
+          "purpose": "Apply XP to attributes, handle age curves"
+        },
+        {
+          "path": "src/lib/training/training-store.ts",
+          "purpose": "Session storage for training progress"
+        },
+        {
+          "path": "src/lib/training/index.ts",
+          "purpose": "Barrel export for training module"
+        },
+        {
+          "path": "src/components/franchise/training-dashboard.tsx",
+          "purpose": "Main training UI component"
+        },
+        {
+          "path": "src/components/franchise/player-development-card.tsx",
+          "purpose": "Individual player training card"
+        },
+        {
+          "path": "src/components/franchise/practice-focus-selector.tsx",
+          "purpose": "Weekly practice focus selection UI"
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/training/page.tsx",
+          "purpose": "Replace coming soon with actual training view"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "src/lib/types.ts",
+          "changes": "Add TrainingProgress interface, extend Player with xp field"
+        },
+        {
+          "path": "src/lib/season/season-simulator.ts",
+          "changes": "Add training hooks for weekly/game XP events"
+        },
+        {
+          "path": "src/lib/generators/player-generator.ts",
+          "changes": "Initialize XP/training progress for new players"
+        }
+      ],
+      "files_to_read": [
+        "src/lib/facilities/facilities-store.ts",
+        "src/lib/coaching/coaching-store.ts",
+        "src/lib/gm-skills-utils.ts",
+        "src/lib/data/badges.ts"
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "XP Earning System",
+          "description": "Players earn XP from game performance, weekly practice, training camp, and special focus training",
+          "requirements": [
+            "Game XP: 50 base + 25 win + 10-100 performance",
+            "Practice XP: varies by focus and facility",
+            "Training Camp XP: 200-400 based on participation",
+            "Bye Week: +50% XP bonus"
+          ]
+        },
+        {
+          "id": "F2",
+          "name": "Attribute Progression",
+          "description": "Spend XP to improve player attributes within age-based limits",
+          "requirements": [
+            "XP cost per attribute point scales with current value",
+            "Age curves: 21-24 physical growth, 25-28 mental peak, 28+ decline",
+            "Potential ceiling limits max attribute values",
+            "Position-appropriate attributes cost less"
+          ]
+        },
+        {
+          "id": "F3",
+          "name": "Development Modifiers",
+          "description": "Multiple systems affect XP earning and attribute growth rates",
+          "requirements": [
+            "Facility bonuses: Training Room up to +30% XP, Weight Room up to +40%",
+            "Staff bonuses: Position coaches provide XP bonuses",
+            "GM perks: Coach's Favorite, Training Boost, Position Coach skills",
+            "Traits: Gym Rat, Quick Learner affect rates"
+          ]
+        },
+        {
+          "id": "F4",
+          "name": "Badge Progression",
+          "description": "Players spend XP to unlock and upgrade badges",
+          "requirements": [
+            "Bronze: 500 XP, Silver: 1500 XP, Gold: 3500 XP, HoF: 8000 XP",
+            "Badge slots based on OVR (2-6 slots)",
+            "Position-appropriate badges unlocked first"
+          ]
+        },
+        {
+          "id": "F5",
+          "name": "Offseason Development",
+          "description": "Major progression during offseason periods",
+          "requirements": [
+            "End of season: Major attribute changes applied",
+            "Age regression/progression calculated",
+            "Training camp intensive period",
+            "Voluntary workouts option"
+          ]
+        },
+        {
+          "id": "F6",
+          "name": "Training UI",
+          "description": "User interface for managing player development",
+          "requirements": [
+            "Player list with XP totals and potential",
+            "Attribute upgrade interface with costs",
+            "Practice focus selector (offense/defense/special)",
+            "Badge shop interface",
+            "Progress tracking and history"
+          ]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-TRAINING-SYSTEM-001",
+        "name": "Training System",
+        "feature_dir": "coderef/working/training-system"
+      },
+      "tasks": [
+        {
+          "id": "SPEC-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Write FINAL-training-system.md spec document",
+          "feature_id": "F1-F5",
+          "phase": 1,
+          "estimated_loc": 800,
+          "dependencies": []
+        },
+        {
+          "id": "TYPE-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Create training/types.ts with TrainingProgress, XPSource, PracticeFocus interfaces",
+          "feature_id": "F1",
+          "phase": 1,
+          "estimated_loc": 120,
+          "dependencies": ["SPEC-001"]
+        },
+        {
+          "id": "TYPE-002",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Add xp and trainingProgress fields to Player interface in types.ts",
+          "feature_id": "F1",
+          "phase": 1,
+          "estimated_loc": 15,
+          "dependencies": ["TYPE-001"]
+        },
+        {
+          "id": "CONST-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Create training-constants.ts with XP rates, age curves, cost formulas",
+          "feature_id": "F1-F2",
+          "phase": 1,
+          "estimated_loc": 200,
+          "dependencies": ["SPEC-001"]
+        },
+        {
+          "id": "XP-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Create xp-calculator.ts with calculateGameXP function",
+          "feature_id": "F1",
+          "phase": 2,
+          "estimated_loc": 100,
+          "dependencies": ["TYPE-001", "CONST-001"]
+        },
+        {
+          "id": "XP-002",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Add calculatePracticeXP function with facility/staff modifiers",
+          "feature_id": "F1",
+          "phase": 2,
+          "estimated_loc": 80,
+          "dependencies": ["XP-001"]
+        },
+        {
+          "id": "XP-003",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Add calculateTrainingCampXP and calculateByeWeekXP functions",
+          "feature_id": "F1",
+          "phase": 2,
+          "estimated_loc": 60,
+          "dependencies": ["XP-002"]
+        },
+        {
+          "id": "PROG-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Create progression-engine.ts with calculateAttributeCost function",
+          "feature_id": "F2",
+          "phase": 2,
+          "estimated_loc": 80,
+          "dependencies": ["CONST-001"]
+        },
+        {
+          "id": "PROG-002",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Add applyAttributeUpgrade function with potential ceiling enforcement",
+          "feature_id": "F2",
+          "phase": 2,
+          "estimated_loc": 100,
+          "dependencies": ["PROG-001"]
+        },
+        {
+          "id": "PROG-003",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Add calculateAgeProgression function for yearly attribute changes",
+          "feature_id": "F2",
+          "phase": 2,
+          "estimated_loc": 120,
+          "dependencies": ["PROG-002"]
+        },
+        {
+          "id": "PROG-004",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Add applyDevelopmentModifiers function integrating facilities/staff/GM",
+          "feature_id": "F3",
+          "phase": 2,
+          "estimated_loc": 100,
+          "dependencies": ["PROG-003"]
+        },
+        {
+          "id": "BADGE-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Add badge progression functions to progression-engine.ts",
+          "feature_id": "F4",
+          "phase": 2,
+          "estimated_loc": 80,
+          "dependencies": ["PROG-001"]
+        },
+        {
+          "id": "STORE-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Create training-store.ts with session storage CRUD operations",
+          "feature_id": "F1-F5",
+          "phase": 2,
+          "estimated_loc": 150,
+          "dependencies": ["TYPE-001"]
+        },
+        {
+          "id": "STORE-002",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Add practice focus tracking and weekly reset logic to store",
+          "feature_id": "F1",
+          "phase": 2,
+          "estimated_loc": 60,
+          "dependencies": ["STORE-001"]
+        },
+        {
+          "id": "INDEX-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Create training/index.ts barrel export",
+          "feature_id": "F1-F5",
+          "phase": 2,
+          "estimated_loc": 20,
+          "dependencies": ["STORE-002", "PROG-004", "XP-003", "BADGE-001"]
+        },
+        {
+          "id": "INT-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Add training hooks to season-simulator.ts for weekly XP",
+          "feature_id": "F1",
+          "phase": 3,
+          "estimated_loc": 50,
+          "dependencies": ["INDEX-001"]
+        },
+        {
+          "id": "INT-002",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Add game XP calculation hook to season-simulator.ts",
+          "feature_id": "F1",
+          "phase": 3,
+          "estimated_loc": 40,
+          "dependencies": ["INT-001"]
+        },
+        {
+          "id": "INT-003",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Add offseason progression hook to season-simulator.ts",
+          "feature_id": "F5",
+          "phase": 3,
+          "estimated_loc": 60,
+          "dependencies": ["INT-002"]
+        },
+        {
+          "id": "GEN-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Update player-generator.ts to initialize XP for new players",
+          "feature_id": "F1",
+          "phase": 3,
+          "estimated_loc": 30,
+          "dependencies": ["TYPE-002"]
+        },
+        {
+          "id": "UI-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Create player-development-card.tsx component",
+          "feature_id": "F6",
+          "phase": 4,
+          "estimated_loc": 150,
+          "dependencies": ["INDEX-001"]
+        },
+        {
+          "id": "UI-002",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Create practice-focus-selector.tsx component",
+          "feature_id": "F6",
+          "phase": 4,
+          "estimated_loc": 100,
+          "dependencies": ["STORE-002"]
+        },
+        {
+          "id": "UI-003",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Create training-dashboard.tsx main component",
+          "feature_id": "F6",
+          "phase": 4,
+          "estimated_loc": 200,
+          "dependencies": ["UI-001", "UI-002"]
+        },
+        {
+          "id": "UI-004",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Update dev-tools/training/page.tsx to use TrainingDashboard",
+          "feature_id": "F6",
+          "phase": 4,
+          "estimated_loc": 40,
+          "dependencies": ["UI-003"]
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-TRAINING-SYSTEM-001",
+          "description": "Manual testing of XP calculation and attribute progression",
+          "feature_id": "F1-F5",
+          "phase": 4,
+          "estimated_loc": 0,
+          "dependencies": ["UI-004"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "id": 1,
+          "name": "Foundation",
+          "description": "Spec document and type definitions",
+          "tasks": ["SPEC-001", "TYPE-001", "TYPE-002", "CONST-001"],
+          "deliverables": [
+            "FINAL-training-system.md spec",
+            "TypeScript interfaces",
+            "Constants and formulas"
+          ],
+          "success_criteria": "All types compile, constants match spec"
+        },
+        {
+          "id": 2,
+          "name": "Core Logic",
+          "description": "XP calculation, progression engine, storage",
+          "tasks": ["XP-001", "XP-002", "XP-003", "PROG-001", "PROG-002", "PROG-003", "PROG-004", "BADGE-001", "STORE-001", "STORE-002", "INDEX-001"],
+          "deliverables": [
+            "xp-calculator.ts module",
+            "progression-engine.ts module",
+            "training-store.ts module"
+          ],
+          "success_criteria": "All calculation functions work correctly, store persists data"
+        },
+        {
+          "id": 3,
+          "name": "Integration",
+          "description": "Hook training into season simulator and generators",
+          "tasks": ["INT-001", "INT-002", "INT-003", "GEN-001"],
+          "deliverables": [
+            "Season simulator training hooks",
+            "Player generator XP initialization"
+          ],
+          "success_criteria": "XP awarded during season simulation, new players have XP initialized"
+        },
+        {
+          "id": 4,
+          "name": "UI & Testing",
+          "description": "Training dashboard UI and manual testing",
+          "tasks": ["UI-001", "UI-002", "UI-003", "UI-004", "TEST-001"],
+          "deliverables": [
+            "Training dashboard page",
+            "Player development cards",
+            "Practice focus selector"
+          ],
+          "success_criteria": "UI displays XP, allows upgrades, shows progression"
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "module": "xp-calculator",
+          "tests": [
+            "calculateGameXP returns correct values for win/loss",
+            "calculatePracticeXP applies facility modifiers",
+            "calculateByeWeekXP applies 50% bonus"
+          ]
+        },
+        {
+          "module": "progression-engine",
+          "tests": [
+            "calculateAttributeCost scales correctly",
+            "applyAttributeUpgrade respects potential ceiling",
+            "calculateAgeProgression applies correct curves by age"
+          ]
+        }
+      ],
+      "integration_tests": [
+        {
+          "scenario": "Full season XP accumulation",
+          "steps": ["Sim 17 games", "Check XP totals", "Verify modifiers applied"]
+        },
+        {
+          "scenario": "Offseason progression",
+          "steps": ["Trigger offseason", "Verify age changes", "Check attribute adjustments"]
+        }
+      ],
+      "manual_tests": [
+        "Create new roster, verify XP initialized",
+        "Sim week, check XP increased",
+        "Upgrade attribute via UI, verify cost deducted",
+        "Check facility bonus reflected in XP gain"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "Players earn XP from games matching spec rates",
+        "Players earn XP from practice matching spec rates",
+        "Facility bonuses correctly modify XP gain",
+        "Staff bonuses correctly modify XP gain",
+        "GM perks correctly modify XP gain",
+        "Attribute upgrades cost correct XP amounts",
+        "Potential ceiling prevents over-development",
+        "Age curves apply correctly by age bracket",
+        "Badges can be upgraded with XP",
+        "AI teams progress automatically"
+      ],
+      "non_functional": [
+        "Training data persists across sessions",
+        "UI loads in under 2 seconds",
+        "Storage footprint under 500KB for full league"
+      ],
+      "acceptance": [
+        "User can view player XP totals",
+        "User can set weekly practice focus",
+        "User can upgrade player attributes",
+        "User can upgrade player badges",
+        "Progression feels meaningful and balanced"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] SPEC-001: Write FINAL-training-system.md",
+        "[ ] TYPE-001: Create training/types.ts",
+        "[ ] TYPE-002: Extend Player interface",
+        "[ ] CONST-001: Create training-constants.ts"
+      ],
+      "phase_2_checklist": [
+        "[ ] XP-001: Create xp-calculator.ts with game XP",
+        "[ ] XP-002: Add practice XP calculation",
+        "[ ] XP-003: Add training camp and bye week XP",
+        "[ ] PROG-001: Create progression-engine.ts",
+        "[ ] PROG-002: Add attribute upgrade logic",
+        "[ ] PROG-003: Add age progression curves",
+        "[ ] PROG-004: Add development modifiers",
+        "[ ] BADGE-001: Add badge progression",
+        "[ ] STORE-001: Create training-store.ts",
+        "[ ] STORE-002: Add practice focus tracking",
+        "[ ] INDEX-001: Create barrel export"
+      ],
+      "phase_3_checklist": [
+        "[ ] INT-001: Add weekly training hooks",
+        "[ ] INT-002: Add game XP hooks",
+        "[ ] INT-003: Add offseason hooks",
+        "[ ] GEN-001: Update player generator"
+      ],
+      "phase_4_checklist": [
+        "[ ] UI-001: Create player-development-card.tsx",
+        "[ ] UI-002: Create practice-focus-selector.tsx",
+        "[ ] UI-003: Create training-dashboard.tsx",
+        "[ ] UI-004: Update dev-tools training page",
+        "[ ] TEST-001: Complete manual testing"
+      ]
+    }
+  }
+}

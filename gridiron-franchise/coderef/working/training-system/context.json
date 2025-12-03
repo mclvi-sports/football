@@ -1,0 +1,35 @@
+{
+  "feature_name": "training-system",
+  "description": "Player training and development system with weekly practice focus, offseason development, and full XP system. Players earn XP from games/practice and can spend on attributes. AI teams use automatic progression based on age/potential.",
+  "goal": "Add gameplay depth with meaningful player development decisions, realistic progression curves, and resource management through XP economy",
+  "requirements": [
+    "XP earned from game performance (stats/grades)",
+    "XP earned from weekly practice sessions",
+    "Training camp offseason XP boost",
+    "Special/focus training for specific attributes",
+    "Age-based progression curves (young grow, old decline)",
+    "Potential ceiling limits max growth",
+    "Training facility bonuses affect rate",
+    "Coaching staff bonuses affect rate",
+    "GM skill/perk bonuses affect rate",
+    "Traits affect development",
+    "Badge progression via XP",
+    "Trait acquisition via training",
+    "Position change training",
+    "Injury rehab training"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Must use existing Player type interface",
+    "Session storage only (no backend)",
+    "Must integrate with existing GM skills system",
+    "Must integrate with existing facilities system"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-TRAINING-SYSTEM-001",
+    "workorder_assigned_at": "2025-12-03T15:43:33.609230+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -9,6 +10,7 @@ import {
   allAchievements,
   getAchievementsByCategory,
 } from '@/data/gm-achievements';
+import { getCareerStats } from '@/lib/gm-points-utils';
 import type { Achievement, AchievementCategory } from '@/types/gm-points';
 import { Trophy, Star, Users, Sparkles, Check } from 'lucide-react';
 
@@ -136,7 +138,11 @@ interface AchievementProgressProps {
 }
 
 export function AchievementProgress({ className }: AchievementProgressProps) {
-  const stats = useGMPointsStore((s) => s.getStats());
+  // Access raw state to avoid infinite loop from getStats returning new objects
+  const points = useGMPointsStore((s) => s.points);
+
+  // Derive stats from raw state
+  const stats = useMemo(() => getCareerStats(points), [points]);
   const totalAchievements = allAchievements.length;
   const progressPercent = (stats.uniqueAchievements / totalAchievements) * 100;
 

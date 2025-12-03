@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -8,6 +9,7 @@ import { SkillCardMini } from './skill-card';
 import { useGMEquipmentStore } from '@/stores/gm-equipment-store';
 import { getSkillById, skillCategories } from '@/data/gm-skills';
 import { SLOT_UNLOCK_CONDITIONS } from '@/types/gm-equipment';
+import { canChangeEquipment } from '@/lib/gm-equipment-utils';
 import { Lock, Plus, X } from 'lucide-react';
 
 interface EquipmentSlotsProps {
@@ -21,12 +23,23 @@ export function EquipmentSlots({
   onUnequip,
   className,
 }: EquipmentSlotsProps) {
+  // Access raw state to avoid infinite loop from getChangeWindow returning new objects
   const slots = useGMEquipmentStore((s) => s.equipment.slots);
-  const changeWindow = useGMEquipmentStore((s) => s.getChangeWindow());
   const maxSlots = useGMEquipmentStore((s) => s.equipment.maxSlots);
+  const isOffseason = useGMEquipmentStore((s) => s.isOffseason);
+  const currentPhase = useGMEquipmentStore((s) => s.currentPhase);
+
+  // Derive changeWindow from raw state
+  const changeWindow = useMemo(
+    () => canChangeEquipment(isOffseason, currentPhase),
+    [isOffseason, currentPhase]
+  );
 
   // Only show slots up to maxSlots
-  const visibleSlots = slots.filter((s) => s.slotIndex <= maxSlots);
+  const visibleSlots = useMemo(
+    () => slots.filter((s) => s.slotIndex <= maxSlots),
+    [slots, maxSlots]
+  );
 
   return (
     <div className={cn('space-y-4', className)}>
@@ -203,9 +216,19 @@ interface EquipmentSlotsCompactProps {
 }
 
 export function EquipmentSlotsCompact({ className }: EquipmentSlotsCompactProps) {
-  const unlockedCount = useGMEquipmentStore((s) => s.getUnlockedCount());
-  const equippedCount = useGMEquipmentStore((s) => s.getEquipped().length);
+  // Access raw state to avoid infinite loop from new array refs
+  const slots = useGMEquipmentStore((s) => s.equipment.slots);
   const maxSlots = useGMEquipmentStore((s) => s.equipment.maxSlots);
+
+  // Derive counts from raw state
+  const unlockedCount = useMemo(
+    () => slots.filter((s) => s.isUnlocked).length,
+    [slots]
+  );
+  const equippedCount = useMemo(
+    () => slots.filter((s) => s.isUnlocked && s.equippedSkillId !== null).length,
+    [slots]
+  );
 
   return (
     <div className={cn('flex items-center gap-2', className)}>

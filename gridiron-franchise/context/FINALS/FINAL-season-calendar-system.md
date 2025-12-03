@@ -60,7 +60,7 @@ W1                   W13   W16   W19                                W37   W40
 | Season End | Week 1 | Awards, coach firings, exit interviews |
 | Early Offseason | Weeks 2-4 | Franchise tags, coaching hires, facility planning |
 | Free Agency | Weeks 5-8 | Signing period, market activity |
-| Pre-Draft | Weeks 9-11 | Pro days, workouts, scouting finalization |
+| Pre-Draft | Weeks 9-11 | Pro days, workouts, scouting finalization, Combine |
 | Draft | Week 12 | 7-round draft event |
 
 ---

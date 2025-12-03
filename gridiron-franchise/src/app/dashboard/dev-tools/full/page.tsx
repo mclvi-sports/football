@@ -1,14 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Tier } from "@/lib/types";
 import {
-  storeTeamRoster,
   getFullGameData,
   TeamRosterData,
-  FullGameData,
 } from "@/lib/dev-player-store";
 import { getTeamCoachingById } from "@/lib/coaching/coaching-store";
 import { getTeamFacilitiesById } from "@/lib/facilities/facilities-store";
@@ -19,26 +15,11 @@ import { SeasonSimulator, SeasonTeam } from "@/lib/season";
 import { SeasonState } from "@/lib/season/types";
 import { generateSchedule } from "@/lib/schedule/schedule-generator";
 import { WeekSchedule } from "@/lib/schedule/types";
-import { cn } from "@/lib/utils";
 import { GameSetupDashboard } from "@/components/franchise/game-setup-dashboard";
-import { SeasonHub } from "@/components/franchise/season-hub";
+import { GameplayLoop } from "@/components/franchise/gameplay-loop";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-const TIER_COLORS: Record<Tier, string> = {
-  [Tier.Elite]: "text-yellow-400",
-  [Tier.Good]: "text-green-400",
-  [Tier.Average]: "text-blue-400",
-  [Tier.BelowAverage]: "text-orange-400",
-  [Tier.Rebuilding]: "text-red-400",
-};
-
-const TIER_BG: Record<Tier, string> = {
-  [Tier.Elite]: "bg-yellow-500/20 border-yellow-500/40",
-  [Tier.Good]: "bg-green-500/20 border-green-500/40",
-  [Tier.Average]: "bg-blue-500/20 border-blue-500/40",
-  [Tier.BelowAverage]: "bg-orange-500/20 border-orange-500/40",
-  [Tier.Rebuilding]: "bg-red-500/20 border-red-500/40",
-};
+import { Card, CardContent } from "@/components/ui/card";
+import { LayoutDashboard } from "lucide-react";
 
 // Division assignments for teams
 const DIVISION_MAP: Record<number, { division: string; conference: 'Atlantic' | 'Pacific' }> = {
@@ -98,59 +79,20 @@ function toSeasonTeam(team: SimTeam, division: string, conference: 'Atlantic' | 
   };
 }
 
-type ViewTab = "setup" | "teams" | "overview" | "season";
+type ViewTab = "setup" | "gameplay" | "dashboard";
 
 export default function FullGameGeneratorPage() {
-  const router = useRouter();
   const simulatorRef = useRef<SeasonSimulator | null>(null);
 
-  const [gameData, setGameData] = useState<FullGameData | null>(null);
   const [activeTab, setActiveTab] = useState<ViewTab>("setup");
-  const [selectedConference, setSelectedConference] = useState<string>("all");
 
   // Season state
   const [seasonState, setSeasonState] = useState<SeasonState | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
 
-  // Load existing data on mount
-  useEffect(() => {
-    const data = getFullGameData();
-    setGameData(data);
-  }, []);
-
-  // Refresh data when tab changes
+  // Handle tab changes
   const handleTabChange = (tab: string) => {
     setActiveTab(tab as ViewTab);
-    const data = getFullGameData();
-    setGameData(data);
-  };
-
-  const getFilteredTeams = () => {
-    if (!gameData) return [];
-    if (selectedConference === "all") return gameData.teams;
-    return gameData.teams.filter((t) => t.team.conference === selectedConference);
-  };
-
-  const filteredTeams = getFilteredTeams();
-
-  // Group teams by division
-  const teamsByDivision = filteredTeams.reduce((acc, team) => {
-    if (!acc[team.team.division]) {
-      acc[team.team.division] = [];
-    }
-    acc[team.team.division].push(team);
-    return acc;
-  }, {} as Record<string, TeamRosterData[]>);
-
-  // Sort teams within division by OVR
-  Object.keys(teamsByDivision).forEach((div) => {
-    teamsByDivision[div].sort((a, b) => b.stats.avgOvr - a.stats.avgOvr);
-  });
-
-  // Handle team click - store team and navigate to roster view
-  const handleTeamClick = (teamData: TeamRosterData) => {
-    storeTeamRoster(teamData);
-    router.push("/dashboard/dev-tools/team-roster");
   };
 
   // Start a new season
@@ -203,9 +145,9 @@ export default function FullGameGeneratorPage() {
       verboseLogging: false,
     });
 
-    // Update state and switch to season tab
+    // Update state and switch to gameplay tab (gameplay loop before sim each week)
     setSeasonState(simulatorRef.current.getState());
-    setActiveTab("season");
+    setActiveTab("gameplay");
   }, []);
 
   // Simulate one week
@@ -286,16 +228,13 @@ export default function FullGameGeneratorPage() {
       <main className="px-5 space-y-6">
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="setup">Setup</TabsTrigger>
-            <TabsTrigger value="teams" disabled={!gameData}>
-              Teams
+            <TabsTrigger value="gameplay" disabled={!seasonState}>
+              Gameplay
             </TabsTrigger>
-            <TabsTrigger value="overview" disabled={!gameData}>
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="season" disabled={!seasonState}>
-              Season
+            <TabsTrigger value="dashboard" disabled={!seasonState}>
+              Dashboard
             </TabsTrigger>
           </TabsList>
 
@@ -304,135 +243,9 @@ export default function FullGameGeneratorPage() {
             <GameSetupDashboard onStartSeason={handleStartSeason} />
           </TabsContent>
 
-          {/* Teams Tab */}
-          <TabsContent value="teams" className="mt-6 space-y-4">
-            {gameData && (
-              <>
-                {/* Conference Filter */}
-                <div className="flex gap-2">
-                  {["all", "Atlantic", "Pacific"].map((conf) => (
-                    <button
-                      key={conf}
-                      onClick={() => setSelectedConference(conf)}
-                      className={cn(
-                        "flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all",
-                        selectedConference === conf
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-secondary/50 text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      {conf === "all" ? "All Teams" : conf}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Teams by Division */}
-                {Object.entries(teamsByDivision)
-                  .sort()
-                  .map(([division, teams]) => (
-                    <div key={division} className="space-y-2">
-                      <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wide">
-                        {division}
-                      </h3>
-                      <div className="space-y-2">
-                        {teams.map((teamData) => (
-                          <div
-                            key={teamData.team.id}
-                            onClick={() => handleTeamClick(teamData)}
-                            className="bg-secondary/50 border border-border rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-secondary/80 hover:border-primary/50 transition-all active:scale-[0.99]"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center font-bold text-sm">
-                                {teamData.team.id}
-                              </div>
-                              <div>
-                                <div className="font-semibold">
-                                  {teamData.team.city} {teamData.team.name}
-                                </div>
-                                <div className="text-xs text-muted-foreground">
-                                  {teamData.stats.totalPlayers} players · Avg Age{" "}
-                                  {teamData.stats.avgAge}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <div className="text-right">
-                                <div
-                                  className={cn(
-                                    "text-xl font-bold",
-                                    teamData.stats.avgOvr >= 80
-                                      ? "text-green-400"
-                                      : teamData.stats.avgOvr >= 75
-                                      ? "text-blue-400"
-                                      : teamData.stats.avgOvr >= 70
-                                      ? "text-yellow-400"
-                                      : "text-orange-400"
-                                  )}
-                                >
-                                  {teamData.stats.avgOvr}
-                                </div>
-                                <div
-                                  className={cn(
-                                    "text-[10px] uppercase font-bold",
-                                    TIER_COLORS[teamData.tier]
-                                  )}
-                                >
-                                  {teamData.tier}
-                                </div>
-                              </div>
-                              <div className="text-muted-foreground">→</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-              </>
-            )}
-          </TabsContent>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="mt-6 space-y-4">
-            {gameData && (
-              <>
-                {/* Tier Distribution */}
-                <div className="bg-secondary/50 border border-border rounded-xl p-4">
-                  <h3 className="text-sm font-bold mb-3">Team Tier Distribution</h3>
-                  <div className="grid grid-cols-5 gap-2">
-                    {Object.entries(gameData.tierDistribution).map(([tier, count]) => (
-                      <div
-                        key={tier}
-                        className={cn(
-                          "rounded-lg p-2 text-center border",
-                          TIER_BG[tier as Tier]
-                        )}
-                      >
-                        <div className={cn("text-xl font-bold", TIER_COLORS[tier as Tier])}>
-                          {count}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">{tier}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Total Stats */}
-                <div className="bg-gradient-to-r from-blue-600/20 to-green-600/20 border border-blue-500/30 rounded-xl p-4 text-center">
-                  <div className="text-4xl font-black">{gameData.totalPlayers}</div>
-                  <div className="text-sm text-muted-foreground">Total Players Generated</div>
-                </div>
-
-                {/* Generation Time */}
-                <div className="text-center text-xs text-muted-foreground">
-                  Generated at: {new Date(gameData.generatedAt).toLocaleString()}
-                </div>
-              </>
-            )}
-          </TabsContent>
-
-          {/* Season Tab */}
-          <TabsContent value="season" className="mt-6">
-            <SeasonHub
+          {/* Gameplay Tab - Weekly gameplay loop with season info */}
+          <TabsContent value="gameplay" className="mt-6">
+            <GameplayLoop
               seasonState={seasonState}
               isSimulating={isSimulating}
               onSimulateWeek={handleSimulateWeek}
@@ -440,6 +253,22 @@ export default function FullGameGeneratorPage() {
               onSimulatePlayoffs={handleSimulatePlayoffs}
               onReset={handleReset}
             />
+          </TabsContent>
+
+          {/* Dashboard Tab - Coming Soon */}
+          <TabsContent value="dashboard" className="mt-6">
+            <Card className="border-dashed">
+              <CardContent className="p-12 text-center">
+                <LayoutDashboard className="h-16 w-16 mx-auto text-zinc-600 mb-4" />
+                <h3 className="text-xl font-bold text-zinc-400 mb-2">Dashboard</h3>
+                <p className="text-sm text-zinc-500 max-w-md mx-auto">
+                  Team overview, financial summaries, and franchise analytics coming soon.
+                </p>
+                <div className="mt-6 text-xs text-zinc-600 uppercase tracking-wide">
+                  Coming Soon
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </main>
