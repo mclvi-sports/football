@@ -20,10 +20,11 @@ import {
 import { cn } from '@/lib/utils';
 
 // Store getters
-import { getFullGameData, FullGameData, TeamRosterData } from '@/lib/dev-player-store';
+import { getFullGameData, FullGameData, TeamRosterData, getFreeAgents, getDraftClass } from '@/lib/dev-player-store';
 import { getCoaching } from '@/lib/coaching/coaching-store';
 import { getFacilities } from '@/lib/facilities/facilities-store';
 import { getSchedule } from '@/lib/schedule/schedule-store';
+import { Player } from '@/lib/types';
 
 // Store setters and clearers
 import { storeFullGameData, storeDevPlayers, clearFullGameData, clearDevPlayers, storeFreeAgents, storeDraftClass, clearFreeAgents, clearDraftClass } from '@/lib/dev-player-store';
@@ -34,6 +35,8 @@ import { Tier } from '@/lib/types';
 
 interface ModuleData {
   rosters: FullGameData | null;
+  freeAgents: Player[];
+  draftClass: Player[];
   coaching: ReturnType<typeof getCoaching>;
   facilities: ReturnType<typeof getFacilities>;
   schedule: ReturnType<typeof getSchedule>;
@@ -49,6 +52,8 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
   const [generatingModules, setGeneratingModules] = useState<Record<string, boolean>>({});
   const [modules, setModules] = useState<ModuleData>({
     rosters: null,
+    freeAgents: [],
+    draftClass: [],
     coaching: null,
     facilities: null,
     schedule: null,
@@ -62,6 +67,8 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
   const loadModuleStatus = () => {
     setModules({
       rosters: getFullGameData(),
+      freeAgents: getFreeAgents(),
+      draftClass: getDraftClass(),
       coaching: getCoaching(),
       facilities: getFacilities(),
       schedule: getSchedule(),
@@ -280,17 +287,17 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       name: 'Free Agents',
       description: 'Available veteran players',
       icon: <UserPlus className="h-5 w-5" />,
-      isGenerated: !!modules.rosters,
-      count: modules.rosters ? 150 : 0, // Approx count
+      isGenerated: modules.freeAgents.length > 0,
+      count: modules.freeAgents.length,
       countLabel: 'players',
     },
     {
       id: 'draft',
       name: 'Draft Class',
-      description: '224 draft prospects',
+      description: 'Draft prospects',
       icon: <GraduationCap className="h-5 w-5" />,
-      isGenerated: !!modules.rosters,
-      count: 224,
+      isGenerated: modules.draftClass.length > 0,
+      count: modules.draftClass.length,
       countLabel: 'prospects',
     },
     {
@@ -299,7 +306,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       description: 'HC, OC, DC with perks',
       icon: <Briefcase className="h-5 w-5" />,
       isGenerated: !!modules.coaching,
-      count: modules.coaching ? 32 : 0,
+      count: modules.coaching ? Object.keys(modules.coaching.teams).length : 0,
       countLabel: 'staffs',
     },
     {
@@ -308,7 +315,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       description: 'Stadium, training, medical, scouting',
       icon: <Building2 className="h-5 w-5" />,
       isGenerated: !!modules.facilities,
-      count: modules.facilities ? 32 : 0,
+      count: modules.facilities ? Object.keys(modules.facilities.teams).length : 0,
       countLabel: 'teams',
     },
     {
@@ -317,7 +324,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       description: '18-week regular season',
       icon: <Calendar className="h-5 w-5" />,
       isGenerated: !!modules.schedule,
-      count: modules.schedule ? 272 : 0, // 17 games * 32 teams / 2
+      count: modules.schedule ? modules.schedule.weeks.reduce((sum, week) => sum + week.games.length, 0) : 0,
       countLabel: 'games',
     },
   ];
