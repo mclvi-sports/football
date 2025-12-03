@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { RosterPlayerCard } from "@/components/dev-tools/roster-player-card";
 import { Player, Position, Tier } from "@/lib/types";
-import { storeDevPlayers } from "@/lib/dev-player-store";
+import { storeDevPlayers, getFullGameData, getTeamById, TeamRosterData } from "@/lib/dev-player-store";
+import { LEAGUE_TEAMS } from "@/lib/data/teams";
 import { cn } from "@/lib/utils";
 
 type TabType = "all" | "offense" | "defense" | "special";
@@ -83,12 +84,36 @@ export default function RosterViewPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(false);
   const [tier, setTier] = useState<Tier>(Tier.Good);
+  const [selectedTeamId, setSelectedTeamId] = useState<string>("BOS");
+  const [teamData, setTeamData] = useState<TeamRosterData | null>(null);
 
   // UI State
   const [activeTab, setActiveTab] = useState<TabType>("all");
   const [positionFilter, setPositionFilter] = useState<PositionFilter>("ALL");
   const [sortBy, setSortBy] = useState<SortOption>("ovr");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Load roster from storage on mount and when team changes
+  useEffect(() => {
+    const fullGameData = getFullGameData();
+    if (fullGameData) {
+      const team = fullGameData.teams.find(t => t.team.id === selectedTeamId);
+      if (team) {
+        setTeamData(team);
+        setTier(team.tier);
+        // Add jersey numbers and contracts if missing
+        const playersWithExtras = team.roster.players.map((p: Player, i: number) => ({
+          ...p,
+          jerseyNumber: p.jerseyNumber || getJerseyNumber(p.position, i),
+          contract: p.contract || {
+            years: Math.floor(Math.random() * 4) + 1,
+            salary: generateSalary(p.overall),
+          },
+        }));
+        setPlayers(playersWithExtras);
+      }
+    }
+  }, [selectedTeamId]);
 
   // Store players whenever they change
   useEffect(() => {
@@ -233,32 +258,59 @@ export default function RosterViewPage() {
                 Back to Dev Tools
               </Link>
               <h1 className="text-2xl font-black uppercase tracking-wide">
-                Roster
+                {teamData ? `${teamData.team.city} ${teamData.team.name}` : "Roster"}
               </h1>
+              {teamData && (
+                <span className={cn(
+                  "text-xs px-2 py-0.5 rounded",
+                  teamData.tier === Tier.Elite ? "bg-yellow-500/20 text-yellow-400" :
+                  teamData.tier === Tier.Good ? "bg-green-500/20 text-green-400" :
+                  teamData.tier === Tier.Average ? "bg-blue-500/20 text-blue-400" :
+                  teamData.tier === Tier.BelowAverage ? "bg-orange-500/20 text-orange-400" :
+                  "bg-red-500/20 text-red-400"
+                )}>
+                  {teamData.tier}
+                </span>
+              )}
             </div>
             <div className="flex gap-2">
               <select
-                value={tier}
-                onChange={(e) => setTier(e.target.value as Tier)}
+                value={selectedTeamId}
+                onChange={(e) => setSelectedTeamId(e.target.value)}
                 className="bg-background/50 border border-border/50 rounded-lg px-2 py-1.5 text-xs"
               >
-                <option value={Tier.Elite}>Elite</option>
-                <option value={Tier.Good}>Good</option>
-                <option value={Tier.Average}>Average</option>
-                <option value={Tier.BelowAverage}>Below Avg</option>
-                <option value={Tier.Rebuilding}>Rebuilding</option>
+                {LEAGUE_TEAMS.map((team) => (
+                  <option key={team.id} value={team.id}>
+                    {team.city} {team.name}
+                  </option>
+                ))}
               </select>
-              <button
-                onClick={generateRoster}
-                disabled={loading}
-                className={cn(
-                  "px-3 py-1.5 rounded-lg text-xs font-bold",
-                  "bg-primary text-primary-foreground",
-                  "disabled:opacity-50"
-                )}
-              >
-                {loading ? "..." : "Generate"}
-              </button>
+              {!getFullGameData() && (
+                <>
+                  <select
+                    value={tier}
+                    onChange={(e) => setTier(e.target.value as Tier)}
+                    className="bg-background/50 border border-border/50 rounded-lg px-2 py-1.5 text-xs"
+                  >
+                    <option value={Tier.Elite}>Elite</option>
+                    <option value={Tier.Good}>Good</option>
+                    <option value={Tier.Average}>Average</option>
+                    <option value={Tier.BelowAverage}>Below Avg</option>
+                    <option value={Tier.Rebuilding}>Rebuilding</option>
+                  </select>
+                  <button
+                    onClick={generateRoster}
+                    disabled={loading}
+                    className={cn(
+                      "px-3 py-1.5 rounded-lg text-xs font-bold",
+                      "bg-primary text-primary-foreground",
+                      "disabled:opacity-50"
+                    )}
+                  >
+                    {loading ? "..." : "Generate"}
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -401,7 +453,9 @@ export default function RosterViewPage() {
         <div className="text-center py-16">
           <div className="text-5xl mb-4 opacity-30">🏈</div>
           <p className="text-muted-foreground text-sm">
-            Select a tier and click Generate to create a roster
+            {getFullGameData()
+              ? "Select a team to view their roster"
+              : "Generate rosters from the Full page first, or use Generate button above"}
           </p>
         </div>
       )}
