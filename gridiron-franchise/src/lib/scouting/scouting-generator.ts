@@ -19,7 +19,9 @@ import {
   RegionalExpertise,
   Perk,
   PerkTier,
+  ScoutPool,
   SCOUT_PERKS,
+  SCOUT_POOL_SIZES,
 } from './types';
 
 // ============================================================================
@@ -516,6 +518,72 @@ export function getScoutingStats(scouting: LeagueScouting): ScoutingStats {
       avgOvr: d.avgOvr,
       weeklyPoints: d.weeklyPoints,
     })),
+  };
+}
+
+// ============================================================================
+// SCOUT POOL GENERATION (Part 8)
+// ============================================================================
+
+export function generateScoutPool(): ScoutPool {
+  const directors: Scout[] = [];
+  const areaScouts: Scout[] = [];
+  const proScouts: Scout[] = [];
+  const nationalScouts: Scout[] = [];
+
+  // Generate directors (10-15)
+  const directorCount = randomInRange(SCOUT_POOL_SIZES.directors.min, SCOUT_POOL_SIZES.directors.max);
+  // Distribution: 2 Elite, 3 Great, 5 Good, rest Average
+  for (let i = 0; i < directorCount; i++) {
+    let targetOvr: number;
+    if (i < 2) targetOvr = randomInRange(90, 95); // Elite
+    else if (i < 5) targetOvr = randomInRange(85, 89); // Great
+    else if (i < 10) targetOvr = randomInRange(80, 84); // Good
+    else targetOvr = randomInRange(75, 79); // Average
+    directors.push(generateScout('director', targetOvr));
+  }
+
+  // Generate area scouts (20-30)
+  const areaCount = randomInRange(SCOUT_POOL_SIZES.areaScouts.min, SCOUT_POOL_SIZES.areaScouts.max);
+  // Distribution: 3 Elite, 6 Great, 10 Good, rest below
+  for (let i = 0; i < areaCount; i++) {
+    let targetOvr: number;
+    if (i < 3) targetOvr = randomInRange(90, 95);
+    else if (i < 9) targetOvr = randomInRange(85, 89);
+    else if (i < 19) targetOvr = randomInRange(80, 84);
+    else targetOvr = randomInRange(70, 79);
+    areaScouts.push(generateScout('area', targetOvr));
+  }
+
+  // Generate pro scouts (8-12)
+  const proCount = randomInRange(SCOUT_POOL_SIZES.proScouts.min, SCOUT_POOL_SIZES.proScouts.max);
+  // Distribution: 2 Elite, 3 Great, 4 Good, rest below
+  for (let i = 0; i < proCount; i++) {
+    let targetOvr: number;
+    if (i < 2) targetOvr = randomInRange(90, 95);
+    else if (i < 5) targetOvr = randomInRange(85, 89);
+    else if (i < 9) targetOvr = randomInRange(80, 84);
+    else targetOvr = randomInRange(70, 79);
+    proScouts.push(generateScout('pro', targetOvr));
+  }
+
+  // Generate national scouts (10-15)
+  const nationalCount = randomInRange(SCOUT_POOL_SIZES.nationalScouts.min, SCOUT_POOL_SIZES.nationalScouts.max);
+  // Distribution: 2 Great, 4 Good, rest Average
+  for (let i = 0; i < nationalCount; i++) {
+    let targetOvr: number;
+    if (i < 2) targetOvr = randomInRange(85, 89);
+    else if (i < 6) targetOvr = randomInRange(80, 84);
+    else targetOvr = randomInRange(75, 79);
+    nationalScouts.push(generateScout('national', targetOvr));
+  }
+
+  return {
+    directors,
+    areaScouts,
+    proScouts,
+    nationalScouts,
+    lastRefresh: Date.now(),
   };
 }
 

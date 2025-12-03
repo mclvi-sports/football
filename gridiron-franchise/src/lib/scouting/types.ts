@@ -347,3 +347,228 @@ export const PERK_XP_COSTS: Record<PerkTier, number> = {
   2: 3000,
   3: 7000,
 };
+
+// ============================================================================
+// XP SYSTEM (Part 9)
+// ============================================================================
+
+export interface XPRecord {
+  amount: number;
+  reason: string;
+  season: number;
+  draftPickId?: string;
+  timestamp: number;
+}
+
+export const XP_GAIN_VALUES = {
+  CORRECT_GRADE: 50, // ±2 OVR accuracy
+  HIDDEN_GEM: 200, // Late pick becomes star
+  BUST_AVOIDED: 150, // Flagged player busts elsewhere
+  DRAFT_HIT_EARLY: 300, // Rounds 1-3
+  DRAFT_HIT_LATE: 500, // Rounds 4-7
+  UDFA_MAKES_ROSTER: 250,
+} as const;
+
+export const XP_SPEND_COSTS = {
+  ATTRIBUTE_POINT: 500,
+  TIER_1_PERK: 1000,
+  TIER_2_PERK: 3000,
+  TIER_3_PERK: 7000,
+} as const;
+
+// ============================================================================
+// SCOUTING POINTS (Part 10)
+// ============================================================================
+
+export type ProspectTier = 'top' | 'mid' | 'late' | 'udfa' | 'free_agent' | 'trade_target';
+export type SeasonPeriod = 'pre_season' | 'mid_season' | 'late_season' | 'combine' | 'pro_days' | 'draft';
+
+export interface ScoutingAssignment {
+  id: string;
+  scoutId: string;
+  prospectId: string;
+  pointsSpent: number;
+  week: number;
+  period: SeasonPeriod;
+  reportGenerated: boolean;
+  reportId?: string;
+}
+
+export interface WeeklyPointsState {
+  week: number;
+  available: number;
+  spent: number;
+  assignments: ScoutingAssignment[];
+}
+
+export const SCOUTING_POINT_COSTS: Record<ProspectTier, number> = {
+  top: 50, // Rounds 1-2
+  mid: 30, // Rounds 3-4
+  late: 15, // Rounds 5-7
+  udfa: 10,
+  free_agent: 25,
+  trade_target: 40,
+};
+
+export const PERIOD_MODIFIERS: Record<SeasonPeriod, number> = {
+  pre_season: 0.75, // -25% cost
+  mid_season: 1.0, // Normal
+  late_season: 1.25, // +25% cost
+  combine: 0, // Free physical data
+  pro_days: 0, // Free position data
+  draft: 1.0, // Normal
+};
+
+// Week ranges for each period
+export const SEASON_PERIODS: Record<SeasonPeriod, [number, number]> = {
+  pre_season: [1, 8],
+  mid_season: [9, 14],
+  late_season: [15, 18],
+  combine: [19, 19],
+  pro_days: [20, 20],
+  draft: [21, 21],
+};
+
+// ============================================================================
+// SCOUTING REPORTS (Part 11)
+// ============================================================================
+
+export type PotentialVisibility = 'exact' | 'range' | 'tier' | 'vague' | 'hidden';
+export type DraftGrade = 'A+' | 'A' | 'A-' | 'B+' | 'B' | 'B-' | 'C+' | 'C' | 'C-' | 'D' | 'F';
+
+export interface ScoutingReport {
+  id: string;
+  prospectId: string;
+  scoutId: string;
+  generatedAt: number;
+  week: number;
+
+  // Revealed info (based on scout quality)
+  scoutedOvr: number; // True OVR ± error
+  ovrConfidence: number; // 0-100%
+  potentialVisibility: PotentialVisibility;
+  potentialValue?: number | [number, number] | string;
+
+  traitsRevealed: string[];
+  traitsHidden: number;
+
+  attributesRevealed: string[]; // Which attrs shown
+
+  bustRisk: number; // 0-100%
+  sleeperFlag: boolean;
+
+  draftGrade: DraftGrade;
+  roundProjection: number; // 1-7
+
+  textSummary: string; // Generated report text
+}
+
+// Report quality thresholds by scout OVR
+export const REPORT_QUALITY_TIERS = {
+  ELITE: { minOvr: 95, ovrError: 1, potential: 'exact', traitCount: 'all', confidence: 95 },
+  GREAT: { minOvr: 85, ovrError: 2, potential: 'range', traitCount: 4, confidence: 85 },
+  GOOD: { minOvr: 75, ovrError: 4, potential: 'tier', traitCount: 3, confidence: 72 },
+  AVERAGE: { minOvr: 65, ovrError: 6, potential: 'vague', traitCount: 2, confidence: 55 },
+  POOR: { minOvr: 60, ovrError: 8, potential: 'hidden', traitCount: 1, confidence: 45 },
+} as const;
+
+// ============================================================================
+// SCOUT MARKET & HIRING (Part 8)
+// ============================================================================
+
+export interface ScoutPool {
+  directors: Scout[];
+  areaScouts: Scout[];
+  proScouts: Scout[];
+  nationalScouts: Scout[];
+  lastRefresh: number;
+}
+
+export interface HiringOffer {
+  scoutId: string;
+  teamId: string;
+  salaryOffer: number;
+  contractYears: number;
+  timestamp: number;
+}
+
+export interface HiringCompetition {
+  scoutId: string;
+  offers: HiringOffer[];
+  winningTeamId: string | null;
+  resolved: boolean;
+}
+
+// Pool sizes per role
+export const SCOUT_POOL_SIZES = {
+  directors: { min: 10, max: 15 },
+  areaScouts: { min: 20, max: 30 },
+  proScouts: { min: 8, max: 12 },
+  nationalScouts: { min: 10, max: 15 },
+} as const;
+
+// Hiring competition weights
+export const HIRING_WEIGHTS = {
+  salary: 0.40,
+  teamSuccess: 0.20,
+  facilities: 0.15,
+  jobSecurity: 0.15,
+  location: 0.10,
+} as const;
+
+// ============================================================================
+// RECOMMENDATIONS (Part 12)
+// ============================================================================
+
+export type RecommendationType = 'top_prospect' | 'sleeper' | 'bust_warning' | 'best_available';
+
+export interface ScoutRecommendation {
+  id: string;
+  type: RecommendationType;
+  prospectId: string;
+  scoutId: string;
+  confidence: number;
+  reason: string;
+  position: string;
+  timestamp: number;
+}
+
+// ============================================================================
+// DRAFT INTEGRATION (Part 14)
+// ============================================================================
+
+export interface DraftPickAccuracy {
+  pickId: string;
+  prospectId: string;
+  scoutId: string;
+  scoutedOvr: number;
+  trueOvr: number;
+  error: number;
+  xpAwarded: number;
+  season: number;
+  revealed: boolean; // True OVR revealed after Year 2
+}
+
+export interface ScoutAccuracyReport {
+  scoutId: string;
+  season: number;
+  totalPicks: number;
+  avgError: number;
+  correctGrades: number; // ±2 OVR
+  hiddenGemsFound: number;
+  bustsAvoided: number;
+  totalXpEarned: number;
+}
+
+// ============================================================================
+// RETIREMENT
+// ============================================================================
+
+export const RETIREMENT_RISK_BY_AGE: Record<string, number> = {
+  '25-62': 0,
+  '63-68': 0.15,
+  '69-72': 0.30,
+  '73+': 0.50,
+};
+
+export const RETENTION_BONUS_RANGE: [number, number] = [0.025, 0.1]; // $25K-$100K
