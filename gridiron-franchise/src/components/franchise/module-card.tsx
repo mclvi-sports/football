@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Check, X, RefreshCw } from 'lucide-react';
+import { Loader2, Check, X, RefreshCw, Trash2, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface ModuleStatus {
@@ -20,10 +20,12 @@ interface ModuleCardProps {
   module: ModuleStatus;
   isGenerating: boolean;
   onGenerate: () => void;
+  onClear?: () => void;
+  onView?: () => void;
   disabled?: boolean;
 }
 
-export function ModuleCard({ module, isGenerating, onGenerate, disabled }: ModuleCardProps) {
+export function ModuleCard({ module, isGenerating, onGenerate, onClear, onView, disabled }: ModuleCardProps) {
   return (
     <Card
       className={cn(
@@ -63,31 +65,55 @@ export function ModuleCard({ module, isGenerating, onGenerate, disabled }: Modul
             </div>
           </div>
 
-          {/* Generate Button */}
-          <Button
-            variant={module.isGenerated ? 'outline' : 'default'}
-            size="sm"
-            onClick={onGenerate}
-            disabled={isGenerating || disabled}
-            className={cn(
-              'min-w-[90px]',
-              module.isGenerated && 'border-zinc-700 text-zinc-400 hover:text-white'
+          {/* Action Buttons */}
+          <div className="flex items-center gap-1">
+            {module.isGenerated && onView && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onView}
+                disabled={isGenerating || disabled}
+                className="h-8 w-8 p-0 text-zinc-500 hover:text-blue-400 hover:bg-blue-500/10"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
             )}
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                ...
-              </>
-            ) : module.isGenerated ? (
-              <>
-                <RefreshCw className="mr-1 h-3 w-3" />
-                Regen
-              </>
-            ) : (
-              'Generate'
+            {module.isGenerated && onClear && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClear}
+                disabled={isGenerating || disabled}
+                className="h-8 w-8 p-0 text-zinc-500 hover:text-red-400 hover:bg-red-500/10"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             )}
-          </Button>
+            <Button
+              variant={module.isGenerated ? 'outline' : 'default'}
+              size="sm"
+              onClick={onGenerate}
+              disabled={isGenerating || disabled}
+              className={cn(
+                'min-w-[90px]',
+                module.isGenerated && 'border-zinc-700 text-zinc-400 hover:text-white'
+              )}
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                  ...
+                </>
+              ) : module.isGenerated ? (
+                <>
+                  <RefreshCw className="mr-1 h-3 w-3" />
+                  Regen
+                </>
+              ) : (
+                'Generate'
+              )}
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

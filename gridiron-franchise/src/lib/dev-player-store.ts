@@ -8,6 +8,8 @@ import { Player, Position, Tier } from "./types";
 const STORAGE_KEY = "dev-generated-players";
 const TEAM_ROSTER_KEY = "dev-selected-team-roster";
 const FULL_GAME_KEY = "dev-full-game-data";
+const FREE_AGENTS_KEY = "dev-free-agents";
+const DRAFT_CLASS_KEY = "dev-draft-class";
 
 // Team roster data structure
 export interface TeamRosterData {
@@ -104,4 +106,42 @@ export function getTeamById(teamId: string): TeamRosterData | null {
   const fullGame = getFullGameData();
   if (!fullGame) return null;
   return fullGame.teams.find((t) => t.team.id === teamId) || null;
+}
+
+// Free Agents storage
+export function storeFreeAgents(players: Player[]): void {
+  if (typeof window !== "undefined") {
+    sessionStorage.setItem(FREE_AGENTS_KEY, JSON.stringify(players));
+  }
+}
+
+export function getFreeAgents(): Player[] {
+  if (typeof window === "undefined") return [];
+  const stored = sessionStorage.getItem(FREE_AGENTS_KEY);
+  return stored ? JSON.parse(stored) : [];
+}
+
+export function clearFreeAgents(): void {
+  if (typeof window !== "undefined") {
+    sessionStorage.removeItem(FREE_AGENTS_KEY);
+  }
+}
+
+// Draft Class storage
+export function storeDraftClass(players: Player[]): void {
+  if (typeof window !== "undefined") {
+    sessionStorage.setItem(DRAFT_CLASS_KEY, JSON.stringify(players));
+  }
+}
+
+export function getDraftClass(): Player[] {
+  if (typeof window === "undefined") return [];
+  const stored = sessionStorage.getItem(DRAFT_CLASS_KEY);
+  return stored ? JSON.parse(stored) : [];
+}
+
+export function clearDraftClass(): void {
+  if (typeof window !== "undefined") {
+    sessionStorage.removeItem(DRAFT_CLASS_KEY);
+  }
 }

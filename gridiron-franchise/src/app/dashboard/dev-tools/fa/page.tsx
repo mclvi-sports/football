@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PlayerCard } from "@/components/dev-tools/player-card";
 import { Player, Position } from "@/lib/types";
-import { storeDevPlayers } from "@/lib/dev-player-store";
+import { storeDevPlayers, getFreeAgents, storeFreeAgents } from "@/lib/dev-player-store";
 import { cn } from "@/lib/utils";
 
 type FAQuality = "high" | "medium" | "low" | "mixed";
@@ -53,9 +53,43 @@ export default function FAGeneratorPage() {
   const [positionFilter, setPositionFilter] = useState<PositionFilter>("all");
   const [viewMode, setViewMode] = useState<"cards" | "compact">("compact");
 
+  // Load existing FA data on mount
+  useEffect(() => {
+    const existingFA = getFreeAgents();
+    if (existingFA.length > 0) {
+      setPlayers(existingFA);
+      // Calculate stats from existing data
+      const avgOvr = Math.round(existingFA.reduce((sum, p) => sum + p.overall, 0) / existingFA.length);
+      const avgAge = Math.round(existingFA.reduce((sum, p) => sum + p.age, 0) / existingFA.length);
+      const positionCounts = existingFA.reduce((acc, p) => {
+        acc[p.position] = (acc[p.position] || 0) + 1;
+        return acc;
+      }, {} as Record<Position, number>);
+      const ovrRanges = [
+        { range: "80+", min: 80, max: 99 },
+        { range: "70-79", min: 70, max: 79 },
+        { range: "60-69", min: 60, max: 69 },
+        { range: "<60", min: 0, max: 59 },
+      ];
+      const ovrDistribution = ovrRanges.map(({ range, min, max }) => ({
+        range,
+        count: existingFA.filter((p) => p.overall >= min && p.overall <= max).length,
+      }));
+      setStats({
+        totalPlayers: existingFA.length,
+        avgOvr,
+        avgAge,
+        positionCounts,
+        ovrDistribution,
+      });
+    }
+  }, []);
+
+  // Store players when generated
   useEffect(() => {
     if (players.length > 0) {
       storeDevPlayers(players);
+      storeFreeAgents(players);
     }
   }, [players]);
 

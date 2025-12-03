@@ -15,6 +15,7 @@ import {
   Calendar,
   Loader2,
   RefreshCw,
+  Trash2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -24,15 +25,11 @@ import { getCoaching } from '@/lib/coaching/coaching-store';
 import { getFacilities } from '@/lib/facilities/facilities-store';
 import { getSchedule } from '@/lib/schedule/schedule-store';
 
-// Store setters / generators
-import { storeFullGameData, storeDevPlayers } from '@/lib/dev-player-store';
-import { generateCoaching } from '@/lib/coaching/coaching-generator';
-import { storeCoaching } from '@/lib/coaching/coaching-store';
-import { generateFacilities } from '@/lib/facilities/facilities-generator';
-import { storeFacilities } from '@/lib/facilities/facilities-store';
-import { generateSchedule } from '@/lib/schedule/schedule-generator';
-import { ScheduleGeneratorConfig } from '@/lib/schedule/types';
-import { storeSchedule } from '@/lib/schedule/schedule-store';
+// Store setters and clearers
+import { storeFullGameData, storeDevPlayers, clearFullGameData, clearDevPlayers, storeFreeAgents, storeDraftClass, clearFreeAgents, clearDraftClass } from '@/lib/dev-player-store';
+import { storeCoaching, clearCoaching } from '@/lib/coaching/coaching-store';
+import { storeFacilities, clearFacilities } from '@/lib/facilities/facilities-store';
+import { storeSchedule, clearSchedule } from '@/lib/schedule/schedule-store';
 import { Tier } from '@/lib/types';
 
 interface ModuleData {
@@ -71,11 +68,12 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     });
   };
 
-  // Get team tiers from rosters
+  // Get team tiers from rosters (reads directly from storage, not state)
   const getTeamTiers = (): Map<string, Tier> => {
     const teamTiers = new Map<string, Tier>();
-    if (modules.rosters) {
-      for (const teamData of modules.rosters.teams) {
+    const rosters = getFullGameData(); // Read from storage, not state
+    if (rosters) {
+      for (const teamData of rosters.teams) {
         teamTiers.set(teamData.team.id, teamData.tier);
       }
     }
@@ -109,6 +107,10 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         ];
         storeDevPlayers(allPlayers);
 
+        // Store FA and Draft separately for module pages
+        storeFreeAgents(data.data.freeAgents);
+        storeDraftClass(data.data.draftClass);
+
         loadModuleStatus();
       }
     } catch (error) {
@@ -117,55 +119,87 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     setGeneratingModules((prev) => ({ ...prev, rosters: false }));
   };
 
-  // Generate coaching staff
-  const generateCoachingStaff = () => {
+  // Generate coaching staff via API
+  const generateCoachingStaff = async () => {
     setGeneratingModules((prev) => ({ ...prev, coaching: true }));
     try {
       const teamTiers = getTeamTiers();
       if (teamTiers.size === 0) {
         console.warn('No rosters found - generate rosters first');
+        setGeneratingModules((prev) => ({ ...prev, coaching: false }));
         return;
       }
-      const coachingData = generateCoaching(teamTiers);
-      storeCoaching(coachingData);
-      loadModuleStatus();
+      // Convert Map to object for API
+      const tierObj: Record<string, Tier> = {};
+      teamTiers.forEach((tier, teamId) => {
+        tierObj[teamId] = tier;
+      });
+
+      const response = await fetch('/api/dev/generate-coaching', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamTiers: tierObj }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        storeCoaching(data.coaching);
+        loadModuleStatus();
+      }
     } catch (error) {
       console.error('Failed to generate coaching:', error);
     }
     setGeneratingModules((prev) => ({ ...prev, coaching: false }));
   };
 
-  // Generate facilities
-  const generateFacilitiesData = () => {
+  // Generate facilities via API
+  const generateFacilitiesData = async () => {
     setGeneratingModules((prev) => ({ ...prev, facilities: true }));
     try {
       const teamTiers = getTeamTiers();
       if (teamTiers.size === 0) {
         console.warn('No rosters found - generate rosters first');
+        setGeneratingModules((prev) => ({ ...prev, facilities: false }));
         return;
       }
-      const facilitiesData = generateFacilities(teamTiers);
-      storeFacilities(facilitiesData);
-      loadModuleStatus();
+      // Convert Map to object for API
+      const tierObj: Record<string, Tier> = {};
+      teamTiers.forEach((tier, teamId) => {
+        tierObj[teamId] = tier;
+      });
+
+      const response = await fetch('/api/dev/generate-facilities', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamTiers: tierObj }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        storeFacilities(data.facilities);
+        loadModuleStatus();
+      }
     } catch (error) {
       console.error('Failed to generate facilities:', error);
     }
     setGeneratingModules((prev) => ({ ...prev, facilities: false }));
   };
 
-  // Generate schedule
-  const generateScheduleData = () => {
+  // Generate schedule via API
+  const generateScheduleData = async () => {
     setGeneratingModules((prev) => ({ ...prev, schedule: true }));
     try {
-      // Get previous year standings from rosters if available
-      // For now, use default config with randomized standings
-      const config: ScheduleGeneratorConfig = {
-        season: new Date().getFullYear(),
-        randomizeStandings: true,
-      };
-      const scheduleData = generateSchedule(config);
-      storeSchedule(scheduleData);
-      loadModuleStatus();
+      const response = await fetch('/api/dev/generate-schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          season: new Date().getFullYear(),
+          randomizeStandings: true,
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        storeSchedule(data.schedule);
+        loadModuleStatus();
+      }
     } catch (error) {
       console.error('Failed to generate schedule:', error);
     }
@@ -183,16 +217,51 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // 2. Generate coaching and facilities (can be parallel)
-    generateCoachingStaff();
-    generateFacilitiesData();
-
-    // Wait for those to complete
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await Promise.all([generateCoachingStaff(), generateFacilitiesData()]);
 
     // 3. Generate schedule
-    generateScheduleData();
+    await generateScheduleData();
 
     setIsGeneratingAll(false);
+  };
+
+  // Clear all data
+  const clearAll = () => {
+    clearFullGameData();
+    clearDevPlayers();
+    clearFreeAgents();
+    clearDraftClass();
+    clearCoaching();
+    clearFacilities();
+    clearSchedule();
+    loadModuleStatus();
+  };
+
+  // Clear individual modules
+  const handleModuleClear = (moduleId: string) => {
+    switch (moduleId) {
+      case 'rosters':
+      case 'freeagents':
+      case 'draft':
+        clearFullGameData();
+        clearDevPlayers();
+        clearFreeAgents();
+        clearDraftClass();
+        // Also clear dependent modules
+        clearCoaching();
+        clearFacilities();
+        break;
+      case 'coaching':
+        clearCoaching();
+        break;
+      case 'facilities':
+        clearFacilities();
+        break;
+      case 'schedule':
+        clearSchedule();
+        break;
+    }
+    loadModuleStatus();
   };
 
   // Build module status list
@@ -280,8 +349,32 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     }
   };
 
+  const handleModuleView = (moduleId: string) => {
+    switch (moduleId) {
+      case 'rosters':
+        router.push('/dashboard/dev-tools/roster-view');
+        break;
+      case 'freeagents':
+        router.push('/dashboard/dev-tools/fa');
+        break;
+      case 'draft':
+        router.push('/dashboard/dev-tools/draft');
+        break;
+      case 'coaching':
+        router.push('/dashboard/dev-tools/coaching');
+        break;
+      case 'facilities':
+        router.push('/dashboard/dev-tools/facilities');
+        break;
+      case 'schedule':
+        router.push('/dashboard/dev-tools/schedule');
+        break;
+    }
+  };
+
   const isAnyGenerating = isGeneratingAll || Object.values(generatingModules).some(Boolean);
   const allReady = readyChecks.every((c) => c.isReady);
+  const anyGenerated = readyChecks.some((c) => c.isReady);
 
   const handleStartSeason = () => {
     if (onStartSeason) {
@@ -294,34 +387,47 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header with Generate All */}
+      {/* Header with Generate All / Clear All */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold">Game Setup</h2>
           <p className="text-sm text-zinc-400">Generate all required data before starting a season</p>
         </div>
-        <Button
-          onClick={generateAll}
-          disabled={isAnyGenerating}
-          className={cn(
-            'min-w-[140px]',
-            allReady ? 'bg-zinc-700 hover:bg-zinc-600' : 'bg-blue-600 hover:bg-blue-700'
+        <div className="flex items-center gap-2">
+          {anyGenerated && (
+            <Button
+              variant="outline"
+              onClick={clearAll}
+              disabled={isAnyGenerating}
+              className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Clear All
+            </Button>
           )}
-        >
-          {isGeneratingAll ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating...
-            </>
-          ) : allReady ? (
-            <>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Regenerate All
-            </>
-          ) : (
-            'Generate All'
-          )}
-        </Button>
+          <Button
+            onClick={generateAll}
+            disabled={isAnyGenerating}
+            className={cn(
+              'min-w-[140px]',
+              allReady ? 'bg-zinc-700 hover:bg-zinc-600' : 'bg-blue-600 hover:bg-blue-700'
+            )}
+          >
+            {isGeneratingAll ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : allReady ? (
+              <>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Regenerate All
+              </>
+            ) : (
+              'Generate All'
+            )}
+          </Button>
+        </div>
       </div>
 
       {/* Module Cards Grid */}
@@ -332,6 +438,8 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
             module={module}
             isGenerating={generatingModules[module.id] || false}
             onGenerate={() => handleModuleGenerate(module.id)}
+            onClear={() => handleModuleClear(module.id)}
+            onView={() => handleModuleView(module.id)}
             disabled={
               isAnyGenerating ||
               // Disable coaching/facilities/schedule if no rosters
@@ -377,6 +485,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         onStartSeason={handleStartSeason}
         disabled={isAnyGenerating}
       />
+
     </div>
   );
 }

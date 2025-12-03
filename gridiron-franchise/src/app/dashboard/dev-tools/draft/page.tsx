@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PlayerCard } from "@/components/dev-tools/player-card";
 import { Player, Position } from "@/lib/types";
-import { storeDevPlayers } from "@/lib/dev-player-store";
+import { storeDevPlayers, getDraftClass, storeDraftClass } from "@/lib/dev-player-store";
 import { cn } from "@/lib/utils";
 
 type DraftDepth = "shallow" | "normal" | "deep";
@@ -55,9 +55,57 @@ export default function DraftGeneratorPage() {
   const [positionFilter, setPositionFilter] = useState<PositionFilter>("all");
   const [viewMode, setViewMode] = useState<"cards" | "compact">("compact");
 
+  // Load existing draft data on mount
+  useEffect(() => {
+    const existingDraft = getDraftClass();
+    if (existingDraft.length > 0) {
+      setPlayers(existingDraft);
+      // Calculate stats from existing data
+      const avgOvr = Math.round(existingDraft.reduce((sum, p) => sum + p.overall, 0) / existingDraft.length);
+      const avgPotential = Math.round(existingDraft.reduce((sum, p) => sum + (p.potential || p.overall), 0) / existingDraft.length);
+      const positionCounts = existingDraft.reduce((acc, p) => {
+        acc[p.position] = (acc[p.position] || 0) + 1;
+        return acc;
+      }, {} as Record<Position, number>);
+
+      // Sort by OVR to get top prospects
+      const sortedByOvr = [...existingDraft].sort((a, b) => b.overall - a.overall);
+      const topProspects = sortedByOvr.slice(0, 10).map(p => ({
+        name: `${p.firstName} ${p.lastName}`,
+        position: p.position,
+        ovr: p.overall,
+        potential: p.potential || p.overall
+      }));
+
+      // Round breakdown (approximate based on OVR ranges)
+      const roundBreakdown = Array.from({ length: 7 }, (_, i) => {
+        const round = i + 1;
+        const minOvr = round === 1 ? 70 : round === 2 ? 65 : round === 3 ? 60 : round === 4 ? 55 : round === 5 ? 50 : round === 6 ? 45 : 40;
+        const maxOvr = round === 1 ? 99 : round === 2 ? 74 : round === 3 ? 69 : round === 4 ? 64 : round === 5 ? 59 : round === 6 ? 54 : 49;
+        const roundPlayers = existingDraft.filter(p => p.overall >= minOvr && p.overall <= maxOvr);
+        return {
+          round,
+          count: roundPlayers.length,
+          avgOvr: roundPlayers.length > 0 ? Math.round(roundPlayers.reduce((sum, p) => sum + p.overall, 0) / roundPlayers.length) : 0
+        };
+      });
+
+      setStats({
+        totalPlayers: existingDraft.length,
+        avgOvr,
+        avgPotential,
+        positionCounts,
+        roundBreakdown,
+        topProspects
+      });
+    }
+  }, []);
+
+  // Store players when generated
   useEffect(() => {
     if (players.length > 0) {
       storeDevPlayers(players);
+      storeDraftClass(players);
     }
   }, [players]);
 

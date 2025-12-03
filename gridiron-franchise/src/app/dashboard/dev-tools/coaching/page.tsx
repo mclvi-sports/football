@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { storeCoaching } from '@/lib/coaching/coaching-store';
+import { storeCoaching, getCoaching, getCachedStats } from '@/lib/coaching/coaching-store';
 import { LEAGUE_TEAMS } from '@/lib/data/teams';
 import {
   LeagueCoaching,
@@ -84,6 +84,18 @@ export default function CoachingGeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<ViewTab>('overview');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('BOS');
+
+  // Load existing coaching data on mount
+  useEffect(() => {
+    const existingCoaching = getCoaching();
+    const existingStats = getCachedStats();
+    if (existingCoaching) {
+      setCoaching(existingCoaching);
+      if (existingStats) {
+        setStats(existingStats);
+      }
+    }
+  }, []);
 
   // Store coaching when generated
   useEffect(() => {

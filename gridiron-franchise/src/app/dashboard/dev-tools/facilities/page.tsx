@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { storeFacilities } from '@/lib/facilities/facilities-store';
+import { storeFacilities, getFacilities, getCachedStats } from '@/lib/facilities/facilities-store';
 import { LEAGUE_TEAMS } from '@/lib/data/teams';
 import {
   LeagueFacilities,
@@ -68,6 +68,18 @@ export default function FacilitiesGeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<ViewTab>('overview');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('BOS');
+
+  // Load existing facilities data on mount
+  useEffect(() => {
+    const existingFacilities = getFacilities();
+    const existingStats = getCachedStats();
+    if (existingFacilities) {
+      setFacilities(existingFacilities);
+      if (existingStats) {
+        setStats(existingStats);
+      }
+    }
+  }, []);
 
   // Store facilities when generated
   useEffect(() => {

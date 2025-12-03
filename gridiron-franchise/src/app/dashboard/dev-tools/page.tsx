@@ -22,79 +22,56 @@ export default function DevToolsPage() {
       <main className="px-5 space-y-6">
         <div className="grid grid-cols-2 gap-3">
           <NavCard
-            title="Roster"
-            icon="R"
-            href="/dashboard/dev-tools/roster"
-            description="Generate team rosters"
-          />
-          <NavCard
-            title="Roster View"
-            icon="RV"
-            href="/dashboard/dev-tools/roster-view"
-            description="Mockup roster UI"
-            variant="highlight"
-          />
-          <NavCard
-            title="Free Agents"
-            icon="FA"
-            href="/dashboard/dev-tools/fa"
-            description="Generate FA pool"
-          />
-          <NavCard
-            title="Draft Class"
-            icon="DC"
-            href="/dashboard/dev-tools/draft"
-            description="Generate draft class"
-          />
-          <NavCard
             title="Full New Game"
             icon="ALL"
             href="/dashboard/dev-tools/full"
-            description="Generate all data"
+            variant="highlight"
           />
           <NavCard
             title="Game Simulator"
             icon="SIM"
             href="/dashboard/dev-tools/sim"
-            description="Simulate games"
             variant="highlight"
+          />
+          <NavCard
+            title="Roster View"
+            icon="RV"
+            href="/dashboard/dev-tools/roster-view"
+          />
+          <NavCard
+            title="Free Agents"
+            icon="FA"
+            href="/dashboard/dev-tools/fa"
+          />
+          <NavCard
+            title="Draft Class"
+            icon="DC"
+            href="/dashboard/dev-tools/draft"
           />
           <NavCard
             title="Schedule"
             icon="CAL"
             href="/dashboard/dev-tools/schedule"
-            description="Generate schedule"
-          />
-          <NavCard
-            title="Facilities"
-            icon="FAC"
-            href="/dashboard/dev-tools/facilities"
-            description="Team facilities"
           />
           <NavCard
             title="Coaching"
             icon="HC"
             href="/dashboard/dev-tools/coaching"
-            description="Coaching staff"
+          />
+          <NavCard
+            title="Facilities"
+            icon="FAC"
+            href="/dashboard/dev-tools/facilities"
           />
           <NavCard
             title="Scouting"
             icon="SCT"
             href="/dashboard/dev-tools/scouting"
-            description="Scouting department"
           />
           <NavCard
             title="Schemes"
             icon="SCH"
             href="/dashboard/dev-tools/schemes"
-            description="View scheme details"
-          />
-          <NavCard
-            title="Season"
-            icon="SZN"
-            href="/dashboard/dev-tools/season"
-            description="Simulate full season"
-            variant="highlight"
           />
         </div>
       </main>

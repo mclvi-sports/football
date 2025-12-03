@@ -92,7 +92,6 @@ export default function DashboardPage() {
             title="Dev Tools"
             icon="DEV"
             href="/dashboard/dev-tools"
-            description="Test generation"
           />
         </div>
       </main>
