@@ -312,8 +312,8 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     // Wait for state to update
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    // 2. Generate coaching, facilities, and scouting (can be parallel, need rosters for tiers)
-    await Promise.all([generateCoachingStaff(), generateFacilitiesData(), generateScoutingData()]);
+    // 2. Generate GMs, coaching, facilities, and scouting (can be parallel, need rosters for tiers)
+    await Promise.all([generateGMs(), generateCoachingStaff(), generateFacilitiesData(), generateScoutingData()]);
 
     // 3. Generate schedule
     await generateScheduleData();
