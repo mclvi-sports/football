@@ -93,6 +93,11 @@ export default function DashboardPage() {
             icon="DEV"
             href="/dashboard/dev-tools"
           />
+          <NavCard
+            title="About"
+            icon="?"
+            href="/dashboard/about"
+          />
         </div>
       </main>
 
