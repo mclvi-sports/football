@@ -270,6 +270,10 @@
       <span class="tab-icon">🏟️</span>
       <span>Facilities</span>
     </button>
+    <button class="tab" data-tab="schemes">
+      <span class="tab-icon">📊</span>
+      <span>Schemes</span>
+    </button>
   </div>
 
   <div class="content">
@@ -287,6 +291,9 @@
     </div>
     <div id="facilities" class="tab-content">
       <div class="loading">Loading facilities data</div>
+    </div>
+    <div id="schemes" class="tab-content">
+      <div class="loading">Loading schemes data</div>
     </div>
   </div>
 
@@ -1774,6 +1781,358 @@ interface FacilitiesStats {
 | Surface Types | 2 |
 | Stadium Types | 3 |
 | Climate Types | 3 |
+`,
+
+      schemes: `# Schemes Data Reference
+
+Complete inventory of offensive, defensive, and special teams schemes.
+
+---
+
+## Scheme Types
+
+\`\`\`typescript
+type OffensiveScheme =
+  | 'west_coast' | 'spread' | 'pro_style'
+  | 'air_raid' | 'power_run' | 'zone_run';
+
+type DefensiveScheme =
+  | '4-3' | '3-4' | 'cover_2'
+  | 'cover_3' | 'man_blitz' | 'zone_blitz';
+
+type STPhilosophy =
+  | 'aggressive' | 'conservative' | 'coverage_specialist';
+\`\`\`
+
+---
+
+## Scheme Fit System
+
+| Fit Level | OVR Modifier |
+|-----------|--------------|
+| perfect | +5 |
+| good | +2 |
+| neutral | 0 |
+| poor | -2 |
+| terrible | -5 |
+
+### Adjustment Period
+- Base: 4 weeks to learn new scheme
+- Same family: -1 week
+- High awareness (85+): -1 week
+- Quick learner trait: -1 week
+- Slow learner trait: +2 weeks
+- Age 30+: +1 week
+- Range: 1-6 weeks
+
+---
+
+## Scheme Families
+
+| Family | Schemes |
+|--------|---------|
+| Passing | west_coast, air_raid, spread |
+| Running | power_run, zone_run |
+| Balanced | pro_style |
+| Man Defense | man_blitz |
+| Zone Defense | cover_2, cover_3, zone_blitz |
+| Front Based | 4-3, 3-4 |
+
+---
+
+## Offensive Schemes (6)
+
+### West Coast
+
+| Property | Value |
+|----------|-------|
+| Philosophy | Short timing passes |
+| Play Style | Short, timing-based passing attack that uses the pass to set up the run |
+| Pass Distribution | Short 55%, Medium 35%, Deep 10% |
+| Strong Against | man_blitz |
+| Weak Against | cover_2 |
+
+**Attribute Bonuses:** +3 Short Accuracy, +2 Short Route Running, +2 Catch In Traffic, +1 Awareness
+
+**Attribute Penalties:** -2 Deep Accuracy, -1 Deep Route Running
+
+---
+
+### Spread
+
+| Property | Value |
+|----------|-------|
+| Philosophy | Space the field, tempo |
+| Play Style | Space the defense horizontally/vertically using multiple receivers |
+| Pass Distribution | Short 40%, Medium 35%, Deep 25% |
+| Strong Against | 3-4, zone_blitz |
+| Weak Against | 4-3, man_blitz |
+
+**Attribute Bonuses:** +3 Speed (skill positions), +2 Route Running, +2 Agility, +2 Throw On Run
+
+**Attribute Penalties:** -2 Run Blocking, -1 Trucking
+
+---
+
+### Pro Style
+
+| Property | Value |
+|----------|-------|
+| Philosophy | Balanced attack |
+| Play Style | Most versatile scheme - can adjust to any situation |
+| Pass Distribution | Short 40%, Medium 40%, Deep 20% |
+| Strong Against | None |
+| Weak Against | None |
+
+**Attribute Bonuses:** +2 All Offensive, +2 Play Action
+
+**Attribute Penalties:** None
+
+---
+
+### Air Raid
+
+| Property | Value |
+|----------|-------|
+| Philosophy | Vertical passing |
+| Play Style | Pass-heavy, high risk/high reward with emphasis on big plays |
+| Pass Distribution | Short 25%, Medium 35%, Deep 40% |
+| Strong Against | cover_3 |
+| Weak Against | cover_2, man_blitz |
+
+**Attribute Bonuses:** +4 Deep Accuracy, +3 Deep Route Running, +2 Throw Power, +2 WR Speed
+
+**Attribute Penalties:** -3 Run Blocking, -2 Carrying, -2 Trucking
+
+---
+
+### Power Run
+
+| Property | Value |
+|----------|-------|
+| Philosophy | Physical downhill |
+| Play Style | Physical running attack that controls clock and wears down defenses |
+| Pass Distribution | Short 50%, Medium 35%, Deep 15% |
+| Strong Against | 3-4 |
+| Weak Against | 4-3, cover_2 |
+
+**Attribute Bonuses:** +4 Trucking, +3 Run Blocking, +2 Strength, +2 Break Tackle, +2 Carrying
+
+**Attribute Penalties:** -3 All Passing, -2 Route Running
+
+---
+
+### Zone Run
+
+| Property | Value |
+|----------|-------|
+| Philosophy | Outside zone, misdirection |
+| Play Style | Creates cutback lanes using athletic linemen and patient runners |
+| Pass Distribution | Short 45%, Medium 40%, Deep 15% |
+| Strong Against | 4-3 |
+| Weak Against | 3-4, zone_blitz |
+
+**Attribute Bonuses:** +4 Elusiveness, +3 Agility, +3 Ball Carrier Vision, +2 Juke Move, +2 Play Action
+
+**Attribute Penalties:** -2 Trucking, -1 OL Power Moves
+
+---
+
+## Defensive Schemes (6)
+
+### 4-3 Base
+
+| Property | Value |
+|----------|-------|
+| Formation | 4 DL, 3 LB |
+| Philosophy | Strong against the run with natural pass rush from D-Line |
+| Strong Against | spread, power_run |
+| Weak Against | zone_run |
+
+**Attribute Bonuses:** +3 Pass Rush (DE/DT), +2 Tackle (LB), +2 Block Shedding, +2 Run Defense
+
+**Attribute Penalties:** -2 Coverage (CB/S), -1 Zone Coverage (LB)
+
+**Personnel Packages:**
+- Base: 4 DL, 3 LB, 4 DB
+- Nickel: 4 DL, 2 LB, 5 DB
+- Dime: 4 DL, 1 LB, 6 DB
+- Goal Line: 5 DL, 4 LB, 2 DB
+
+---
+
+### 3-4 Base
+
+| Property | Value |
+|----------|-------|
+| Formation | 3 DL, 4 LB |
+| Philosophy | Versatility and disguised pressure from anywhere |
+| Strong Against | zone_run |
+| Weak Against | spread, power_run |
+
+**Attribute Bonuses:** +3 Pass Rush (OLB), +2 Flexibility, +2 Zone Coverage, +1 Play Recognition
+
+**Attribute Penalties:** -2 Run Stopping (DL), -1 Interior Pressure
+
+**Personnel Packages:**
+- Base: 3 DL, 4 LB, 4 DB
+- Nickel: 3 DL, 3 LB, 5 DB
+- Big Nickel: 3 DL, 2 LB, 6 DB
+- Bear: 4 DL, 4 LB, 3 DB
+
+---
+
+### Cover 2
+
+| Property | Value |
+|----------|-------|
+| Formation | 2 Deep Safeties |
+| Philosophy | Protects against deep passes, vulnerable in middle |
+| Strong Against | air_raid, power_run |
+| Weak Against | west_coast |
+
+**Attribute Bonuses:** +4 Zone Coverage, +3 Deep Ball Defense, +2 Safety Range, +2 LB Coverage
+
+**Attribute Penalties:** -3 Man Coverage, -2 Intermediate Defense
+
+---
+
+### Cover 3
+
+| Property | Value |
+|----------|-------|
+| Formation | 3 Deep Zones |
+| Philosophy | Creates turnover opportunities with deep defenders reading QB |
+| Strong Against | None |
+| Weak Against | air_raid |
+
+**Attribute Bonuses:** +3 Zone Coverage, +2 Interception, +2 Ball Hawk Ability, +2 Play Recognition
+
+**Attribute Penalties:** -2 Run Defense, -2 Man Coverage
+
+---
+
+### Man Blitz
+
+| Property | Value |
+|----------|-------|
+| Formation | Man Coverage + Pressure |
+| Philosophy | High risk, high reward - can dominate or get burned |
+| Strong Against | spread |
+| Weak Against | west_coast, air_raid |
+
+**Attribute Bonuses:** +5 Man Coverage, +4 Pass Rush, +3 Press Coverage, +2 Blitzing
+
+**Attribute Penalties:** -4 Zone Coverage, -3 Deep Ball Defense, -1 Run Defense
+
+---
+
+### Zone Blitz
+
+| Property | Value |
+|----------|-------|
+| Formation | Zone + Disguised Pressure |
+| Philosophy | Drops linemen into coverage, blitzes from unexpected positions |
+| Strong Against | zone_run |
+| Weak Against | spread |
+
+**Attribute Bonuses:** +3 Play Recognition, +3 Blitzing, +2 Zone Coverage, +2 Disguise
+
+**Attribute Penalties:** -2 Man Coverage, -1 Deep Ball Defense
+
+---
+
+## Special Teams Philosophies (3)
+
+### Aggressive Returns
+
+| Focus | Return everything possible |
+|-------|---------------------------|
+| Risk Level | High |
+| Bonuses | +5 return yards, +3% TD chance, -40% fair catch |
+| Penalties | +2% turnover risk, high variance |
+
+---
+
+### Conservative
+
+| Focus | Ball security first |
+|-------|---------------------|
+| Risk Level | Low |
+| Bonuses | -3% turnover risk, +5 yard avg position, -50% muff chance |
+| Penalties | -5 return yards, -2% TD chance |
+
+---
+
+### Coverage Specialist
+
+| Focus | Elite coverage units |
+|-------|----------------------|
+| Risk Level | Medium |
+| Bonuses | -10 opp return yards, +25% coverage tackles, +20% big play prevention |
+| Penalties | +5% ST injuries |
+
+---
+
+## Archetype Scheme Affinities
+
+### QB Archetypes
+
+| Archetype | Perfect | Good | Poor | Terrible |
+|-----------|---------|------|------|----------|
+| Field General | west_coast | pro_style | power_run | - |
+| Scrambler | spread | zone_run | pro_style, power_run | - |
+| Dual-Threat | spread | zone_run | air_raid, power_run | - |
+| Gunslinger | air_raid | spread | west_coast, zone_run | power_run |
+| Pocket Passer | pro_style | west_coast, air_raid | power_run | zone_run |
+| Game Manager | power_run | zone_run, pro_style | spread | air_raid |
+
+### RB Archetypes
+
+| Archetype | Perfect | Good | Poor | Terrible |
+|-----------|---------|------|------|----------|
+| Power Back | power_run | pro_style | west_coast, spread | air_raid |
+| Speed Back | zone_run | spread | power_run, air_raid | - |
+| Receiving Back | west_coast | spread, air_raid | power_run | - |
+| All Purpose | pro_style | west_coast, spread | - | - |
+| Bruiser | power_run | pro_style | zone_run, west_coast | spread, air_raid |
+
+### WR Archetypes
+
+| Archetype | Perfect | Good | Poor | Terrible |
+|-----------|---------|------|------|----------|
+| Deep Threat | air_raid | spread | zone_run, west_coast | power_run |
+| Possession | west_coast | pro_style | zone_run, power_run | - |
+| Playmaker | spread | west_coast, pro_style | power_run | - |
+| Slot | west_coast, spread | pro_style | zone_run, power_run | - |
+| Blocking WR | power_run, zone_run | pro_style | west_coast, spread | air_raid |
+
+---
+
+## Play Calling Tendencies
+
+| Scheme | 1st & 10 | 2nd Short | 2nd Long | 3rd Short | 3rd Long | Red Zone | Goal Line |
+|--------|----------|-----------|----------|-----------|----------|----------|-----------|
+| West Coast | 55/45 | 50/50 | 70/30 | 45/55 | 85/15 | 55/45 | 40/60 |
+| Spread | 60/40 | 55/45 | 75/25 | 50/50 | 90/10 | 60/40 | 50/50 |
+| Pro Style | 50/50 | 45/55 | 65/35 | 40/60 | 80/20 | 50/50 | 35/65 |
+| Air Raid | 70/30 | 65/35 | 85/15 | 60/40 | 95/5 | 65/35 | 55/45 |
+| Power Run | 30/70 | 25/75 | 45/55 | 20/80 | 65/35 | 30/70 | 15/85 |
+| Zone Run | 40/60 | 35/65 | 55/45 | 30/70 | 70/30 | 40/60 | 30/70 |
+
+*Format: Pass/Run %*
+
+---
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Offensive Schemes | 6 |
+| Defensive Schemes | 6 |
+| ST Philosophies | 3 |
+| Scheme Fit Levels | 5 |
+| Scheme Families | 6 |
 `
     };
 
