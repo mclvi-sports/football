@@ -2,8 +2,30 @@
   "$schema": "./schema.json",
   "project": "gridiron-franchise",
   "changelog_version": "1.0",
-  "current_version": "0.1.1",
+  "current_version": "0.2.0",
   "entries": [
+    {
+      "version": "0.2.0",
+      "date": "2025-12-03",
+      "summary": "Version 0.2.0 changes",
+      "changes": [
+        {
+          "id": "change-002",
+          "type": "feature",
+          "severity": "minor",
+          "title": "Added comprehensive offseason and weekly flow system specifications - FINAL-offseason-system.md (18-phase offseason from awards through Week 1) and FINAL-weekly-flow-system.md (in-season weekly activities including practice, gameplan, injuries, scouting, XP development)",
+          "description": "Workorder WO-SPECS-001: Added comprehensive offseason and weekly flow system specifications - FINAL-offseason-system.md (18-phase offseason from awards through Week 1) and FINAL-weekly-flow-system.md (in-season weekly activities including practice, gameplan, injuries, scouting, XP development)",
+          "files": [
+            "context/FINALS/FINAL-offseason-system.md",
+            "context/FINALS/FINAL-weekly-flow-system.md"
+          ],
+          "reason": "Feature completion: offseason-weekly-flow-specs",
+          "impact": "Documentation now reflects 0.2.0 changes",
+          "breaking": false
+        }
+      ],
+      "contributors": []
+    },
     {
       "version": "0.1.1",
       "date": "2025-12-03",
