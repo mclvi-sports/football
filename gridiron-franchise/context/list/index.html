@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gridiron Franchise - Data Reference</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: #e4e4e7;
+    }
+
+    .header {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1rem 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #a1a1aa;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tab:hover {
+      color: #e4e4e7;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab.active {
+      color: #60a5fa;
+      border-bottom-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .tab-icon {
+      font-size: 1.1rem;
+    }
+
+    .content {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Markdown Styles */
+    .markdown-body {
+      line-height: 1.7;
+    }
+
+    .markdown-body h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #f4f4f5;
+    }
+
+    .markdown-body h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: #60a5fa;
+    }
+
+    .markdown-body h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: #a78bfa;
+    }
+
+    .markdown-body p {
+      margin-bottom: 1rem;
+      color: #d4d4d8;
+    }
+
+    .markdown-body hr {
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin: 2rem 0;
+    }
+
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+
+    .markdown-body th {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .markdown-body td {
+      padding: 0.75rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #d4d4d8;
+    }
+
+    .markdown-body tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .markdown-body tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .markdown-body code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 0.85em;
+      color: #f472b6;
+    }
+
+    .markdown-body pre {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .markdown-body pre code {
+      background: transparent;
+      padding: 0;
+      color: #e4e4e7;
+    }
+
+    .markdown-body ul, .markdown-body ol {
+      margin: 1rem 0;
+      padding-left: 2rem;
+    }
+
+    .markdown-body li {
+      margin-bottom: 0.5rem;
+      color: #d4d4d8;
+    }
+
+    .markdown-body strong {
+      color: #f4f4f5;
+      font-weight: 600;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 4rem;
+      color: #71717a;
+    }
+
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #3b82f6;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .tabs {
+        flex-wrap: nowrap;
+      }
+
+      .tab {
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+      }
+
+      .content {
+        padding: 1rem;
+      }
+
+      .markdown-body table {
+        font-size: 0.8rem;
+      }
+
+      .markdown-body th, .markdown-body td {
+        padding: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Gridiron Franchise - Data Reference</h1>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="players">
+      <span class="tab-icon">🏈</span>
+      <span>Players</span>
+    </button>
+    <button class="tab" data-tab="coaches">
+      <span class="tab-icon">📋</span>
+      <span>Coaches</span>
+    </button>
+    <button class="tab" data-tab="gms">
+      <span class="tab-icon">👔</span>
+      <span>GMs</span>
+    </button>
+    <button class="tab" data-tab="scouts">
+      <span class="tab-icon">🔍</span>
+      <span>Scouts</span>
+    </button>
+    <button class="tab" data-tab="facilities">
+      <span class="tab-icon">🏟️</span>
+      <span>Facilities</span>
+    </button>
+  </div>
+
+  <div class="content">
+    <div id="players" class="tab-content active">
+      <div class="loading">Loading player data</div>
+    </div>
+    <div id="coaches" class="tab-content">
+      <div class="loading">Loading coach data</div>
+    </div>
+    <div id="gms" class="tab-content">
+      <div class="loading">Loading GM data</div>
+    </div>
+    <div id="scouts" class="tab-content">
+      <div class="loading">Loading scout data</div>
+    </div>
+    <div id="facilities" class="tab-content">
+      <div class="loading">Loading facilities data</div>
+    </div>
+  </div>
+
+  <script>
+    const files = {
+      players: 'player-data.md',
+      coaches: 'coach-data.md',
+      gms: 'gm-data.md',
+      scouts: 'scout-data.md',
+      facilities: 'facilities-data.md'
+    };
+
+    const loaded = {};
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabId = tab.dataset.tab;
+
+        // Update tab buttons
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Update tab content
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+
+        // Load content if not already loaded
+        if (!loaded[tabId]) {
+          loadMarkdown(tabId);
+        }
+      });
+    });
+
+    // Load markdown content
+    async function loadMarkdown(tabId) {
+      const container = document.getElementById(tabId);
+      const file = files[tabId];
+
+      try {
+        const response = await fetch(file);
+        if (!response.ok) throw new Error('File not found');
+        const markdown = await response.text();
+        container.innerHTML = `<div class="markdown-body">${marked.parse(markdown)}</div>`;
+        loaded[tabId] = true;
+      } catch (error) {
+        container.innerHTML = `<div class="markdown-body"><p>Error loading ${file}: ${error.message}</p></div>`;
+      }
+    }
+
+    // Load first tab on page load
+    loadMarkdown('players');
+  </script>
+</body>
+</html>
