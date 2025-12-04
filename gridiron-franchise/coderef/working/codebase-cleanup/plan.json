@@ -1,0 +1,329 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "codebase-cleanup",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude",
+    "generated_at": "2025-12-03",
+    "has_context": false,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "existing_patterns": {
+        "data_location": "src/lib/data/ for player data, src/data/ for GM data (inconsistent)",
+        "import_alias": "@/lib/data/* and @/data/*",
+        "team_data": "Two teams.ts files with different schemas"
+      },
+      "key_files": {
+        "active_teams": "src/lib/data/teams.ts (LEAGUE_TEAMS, 51 lines, no colors)",
+        "unused_teams": "src/data/teams.ts (teams, 339 lines, has colors)",
+        "gm_data": [
+          "src/data/gm-achievements.ts",
+          "src/data/gm-personas.ts",
+          "src/data/gm-prestige.ts",
+          "src/data/gm-skills.ts",
+          "src/data/gm-team-tiers.ts"
+        ]
+      },
+      "dependencies": {
+        "league_teams_imports": "58 files import from @/lib/data/teams",
+        "gm_data_imports": "13 files import from @/data/*"
+      }
+    },
+    "1_executive_summary": {
+      "goal": "Consolidate data folders and eliminate duplication",
+      "problem": "Two separate data directories (src/data and src/lib/data) with duplicate teams.ts files using different schemas",
+      "solution": "Merge teams.ts with colors, move GM data to lib/data, delete src/data folder",
+      "scope": "Code organization only - no functional changes"
+    },
+    "2_risk_assessment": {
+      "complexity": "low",
+      "risk_level": "low",
+      "risks": [
+        {
+          "risk": "Import path breakage",
+          "mitigation": "Update all imports before deleting files",
+          "severity": "medium"
+        },
+        {
+          "risk": "Team ID mismatch (uppercase vs lowercase)",
+          "mitigation": "Keep uppercase IDs from active file",
+          "severity": "low"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/lib/data/teams.ts",
+          "action": "modify",
+          "description": "Add colors field from unused teams.ts"
+        }
+      ],
+      "files_to_move": [
+        {
+          "from": "src/data/gm-achievements.ts",
+          "to": "src/lib/data/gm-achievements.ts"
+        },
+        {
+          "from": "src/data/gm-personas.ts",
+          "to": "src/lib/data/gm-personas.ts"
+        },
+        {
+          "from": "src/data/gm-prestige.ts",
+          "to": "src/lib/data/gm-prestige.ts"
+        },
+        {
+          "from": "src/data/gm-skills.ts",
+          "to": "src/lib/data/gm-skills.ts"
+        },
+        {
+          "from": "src/data/gm-team-tiers.ts",
+          "to": "src/lib/data/gm-team-tiers.ts"
+        }
+      ],
+      "files_to_delete": [
+        "src/data/teams.ts",
+        "src/data/ (entire folder after moves)"
+      ],
+      "imports_to_update": {
+        "pattern": "@/data/* -> @/lib/data/*",
+        "affected_files": 13
+      }
+    },
+    "4_key_features": [
+      {
+        "id": "F1",
+        "name": "Merge teams.ts",
+        "description": "Add colors to active LEAGUE_TEAMS, keeping uppercase IDs"
+      },
+      {
+        "id": "F2",
+        "name": "Relocate GM data",
+        "description": "Move all gm-*.ts files from src/data to src/lib/data"
+      },
+      {
+        "id": "F3",
+        "name": "Update imports",
+        "description": "Change all @/data/* imports to @/lib/data/*"
+      },
+      {
+        "id": "F4",
+        "name": "Delete src/data",
+        "description": "Remove the now-empty src/data folder"
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-CODEBASE-CLEANUP-001",
+        "name": "Codebase Cleanup",
+        "feature_dir": "coderef/working/codebase-cleanup"
+      },
+      "tasks": [
+        {
+          "id": "TEAMS-001",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Add colors to TeamInfo interface in src/lib/data/teams.ts",
+          "feature": "F1",
+          "phase": 1,
+          "effort": "small"
+        },
+        {
+          "id": "TEAMS-002",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Add color data to each team in LEAGUE_TEAMS array",
+          "feature": "F1",
+          "phase": 1,
+          "effort": "medium"
+        },
+        {
+          "id": "MOVE-001",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Move gm-achievements.ts to src/lib/data/",
+          "feature": "F2",
+          "phase": 2,
+          "effort": "small"
+        },
+        {
+          "id": "MOVE-002",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Move gm-personas.ts to src/lib/data/",
+          "feature": "F2",
+          "phase": 2,
+          "effort": "small"
+        },
+        {
+          "id": "MOVE-003",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Move gm-prestige.ts to src/lib/data/",
+          "feature": "F2",
+          "phase": 2,
+          "effort": "small"
+        },
+        {
+          "id": "MOVE-004",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Move gm-skills.ts to src/lib/data/",
+          "feature": "F2",
+          "phase": 2,
+          "effort": "small"
+        },
+        {
+          "id": "MOVE-005",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Move gm-team-tiers.ts to src/lib/data/",
+          "feature": "F2",
+          "phase": 2,
+          "effort": "small"
+        },
+        {
+          "id": "IMPORT-001",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Update imports in src/app/dashboard/dev-tools/gm-skills/page.tsx",
+          "feature": "F3",
+          "phase": 3,
+          "effort": "small"
+        },
+        {
+          "id": "IMPORT-002",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Update imports in src/components/gm/*.tsx files",
+          "feature": "F3",
+          "phase": 3,
+          "effort": "small"
+        },
+        {
+          "id": "IMPORT-003",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Update imports in src/lib/gm-*.ts files",
+          "feature": "F3",
+          "phase": 3,
+          "effort": "small"
+        },
+        {
+          "id": "IMPORT-004",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Update imports in src/stores/gm-prestige-store.ts",
+          "feature": "F3",
+          "phase": 3,
+          "effort": "small"
+        },
+        {
+          "id": "DELETE-001",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Delete src/data/teams.ts (unused)",
+          "feature": "F4",
+          "phase": 4,
+          "effort": "small"
+        },
+        {
+          "id": "DELETE-002",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Delete src/data/ folder",
+          "feature": "F4",
+          "phase": 4,
+          "effort": "small"
+        },
+        {
+          "id": "VERIFY-001",
+          "workorder_id": "WO-CODEBASE-CLEANUP-001",
+          "description": "Run TypeScript compilation to verify no broken imports",
+          "feature": "F4",
+          "phase": 4,
+          "effort": "small"
+        }
+      ]
+    },
+    "6_implementation_phases": [
+      {
+        "phase": 1,
+        "name": "Merge Teams Data",
+        "tasks": ["TEAMS-001", "TEAMS-002"],
+        "description": "Add colors to active teams.ts file"
+      },
+      {
+        "phase": 2,
+        "name": "Move GM Data Files",
+        "tasks": ["MOVE-001", "MOVE-002", "MOVE-003", "MOVE-004", "MOVE-005"],
+        "description": "Relocate all gm-*.ts files to src/lib/data/"
+      },
+      {
+        "phase": 3,
+        "name": "Update Imports",
+        "tasks": ["IMPORT-001", "IMPORT-002", "IMPORT-003", "IMPORT-004"],
+        "description": "Change @/data/* to @/lib/data/* in all affected files"
+      },
+      {
+        "phase": 4,
+        "name": "Cleanup and Verify",
+        "tasks": ["DELETE-001", "DELETE-002", "VERIFY-001"],
+        "description": "Delete unused files and verify compilation"
+      }
+    ],
+    "7_testing_strategy": {
+      "approach": "Compilation-based verification",
+      "tests": [
+        {
+          "type": "compilation",
+          "description": "Run tsc to verify no import errors"
+        },
+        {
+          "type": "runtime",
+          "description": "Start dev server and verify pages load"
+        },
+        {
+          "type": "manual",
+          "description": "Check dev-tools pages that use GM data"
+        }
+      ]
+    },
+    "8_success_criteria": [
+      {
+        "id": "SC-1",
+        "criteria": "Single data folder at src/lib/data/"
+      },
+      {
+        "id": "SC-2",
+        "criteria": "Single teams.ts with colors field"
+      },
+      {
+        "id": "SC-3",
+        "criteria": "No @/data/* imports in codebase"
+      },
+      {
+        "id": "SC-4",
+        "criteria": "TypeScript compiles without errors"
+      },
+      {
+        "id": "SC-5",
+        "criteria": "Dev tools pages function correctly"
+      }
+    ],
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Add colors field to TeamInfo interface",
+        "[ ] Add primary/secondary colors to all 32 teams"
+      ],
+      "phase_2": [
+        "[ ] Move gm-achievements.ts",
+        "[ ] Move gm-personas.ts",
+        "[ ] Move gm-prestige.ts",
+        "[ ] Move gm-skills.ts",
+        "[ ] Move gm-team-tiers.ts"
+      ],
+      "phase_3": [
+        "[ ] Update gm-skills page imports",
+        "[ ] Update gm component imports",
+        "[ ] Update gm utility imports",
+        "[ ] Update gm store imports"
+      ],
+      "phase_4": [
+        "[ ] Delete src/data/teams.ts",
+        "[ ] Delete src/data/ folder",
+        "[ ] Run TypeScript compilation",
+        "[ ] Test dev tools pages"
+      ]
+    }
+  }
+}
