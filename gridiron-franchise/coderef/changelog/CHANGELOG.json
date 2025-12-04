@@ -1,0 +1,44 @@
+{
+  "$schema": "./schema.json",
+  "project": "gridiron-franchise",
+  "changelog_version": "1.0",
+  "current_version": "0.1.1",
+  "entries": [
+    {
+      "version": "0.1.1",
+      "date": "2025-12-03",
+      "summary": "Version 0.1.1 changes",
+      "changes": [
+        {
+          "id": "change-001",
+          "type": "enhancement",
+          "severity": "minor",
+          "title": "Consolidated data folders - merged src/data into src/lib/data, added team colors, moved GM data files, updated all import references",
+          "description": "Workorder WO-CODEBASE-CLEANUP-001: Consolidated data folders - merged src/data into src/lib/data, added team colors, moved GM data files, updated all import references",
+          "files": [
+            "src/lib/data/teams.ts",
+            "src/lib/data/gm-achievements.ts",
+            "src/lib/data/gm-personas.ts",
+            "src/lib/data/gm-prestige.ts",
+            "src/lib/data/gm-skills.ts",
+            "src/lib/data/gm-team-tiers.ts",
+            "src/app/career/new/team/page.tsx",
+            "src/app/career/new/confirm/page.tsx",
+            "src/components/career/team-card.tsx",
+            "src/components/career/team-list.tsx",
+            "src/components/dashboard/team-card.tsx",
+            "src/stores/career-store.ts",
+            "src/stores/gm-prestige-store.ts",
+            "src/lib/gm-skills-utils.ts",
+            "src/lib/gm-points-utils.ts",
+            "src/lib/gm-persona-utils.ts"
+          ],
+          "reason": "Feature completion: codebase-cleanup",
+          "impact": "Documentation now reflects 0.1.1 changes",
+          "breaking": false
+        }
+      ],
+      "contributors": []
+    }
+  ]
+}
