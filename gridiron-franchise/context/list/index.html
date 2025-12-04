@@ -291,15 +291,1491 @@
   </div>
 
   <script>
-    const files = {
-      players: 'player-data.md',
-      coaches: 'coach-data.md',
-      gms: 'gm-data.md',
-      scouts: 'scout-data.md',
-      facilities: 'facilities-data.md'
-    };
+    // Embedded markdown content (works without server)
+    const content = {
+      players: `# Player Data Reference
 
-    const loaded = {};
+Complete inventory of all player fields, attributes, traits, badges, and archetypes.
+
+---
+
+## Player Interface (Core Structure)
+
+\`\`\`typescript
+interface Player {
+  // Identity
+  id: string;
+  firstName: string;
+  lastName: string;
+
+  // Bio
+  position: Position;
+  archetype: Archetype;
+  age: number;              // 21-36+
+  experience: number;       // 0-15+ years
+  height: number;           // inches
+  weight: number;           // lbs
+  fortyTime: number;        // 40-yard dash (seconds)
+  college: string;
+  jerseyNumber: number;     // 1-99
+
+  // Ratings
+  overall: number;          // 40-99
+  potential: number;        // 0-99
+  attributes: PlayerAttributes;
+  traits: string[];         // 0-5 trait IDs
+  badges: PlayerBadge[];    // badges with tiers
+
+  // Contract
+  contract?: {
+    years: number;
+    salary: number;         // millions
+  };
+
+  // Training/XP
+  currentXP?: number;
+  totalXPEarned?: number;
+  seasonXP?: number;
+}
+\`\`\`
+
+---
+
+## Positions (18)
+
+| Position | Code | Category |
+|----------|------|----------|
+| Quarterback | QB | Offense |
+| Running Back | RB | Offense |
+| Wide Receiver | WR | Offense |
+| Tight End | TE | Offense |
+| Left Tackle | LT | O-Line |
+| Left Guard | LG | O-Line |
+| Center | C | O-Line |
+| Right Guard | RG | O-Line |
+| Right Tackle | RT | O-Line |
+| Defensive End | DE | D-Line |
+| Defensive Tackle | DT | D-Line |
+| Middle Linebacker | MLB | Linebacker |
+| Outside Linebacker | OLB | Linebacker |
+| Cornerback | CB | Secondary |
+| Free Safety | FS | Secondary |
+| Strong Safety | SS | Secondary |
+| Kicker | K | Special Teams |
+| Punter | P | Special Teams |
+
+---
+
+## Attributes (34 Total)
+
+### Physical (7)
+| Code | Name | Range |
+|------|------|-------|
+| SPD | Speed | 1-99 |
+| ACC | Acceleration | 1-99 |
+| AGI | Agility | 1-99 |
+| STR | Strength | 1-99 |
+| JMP | Jumping | 1-99 |
+| STA | Stamina | 1-99 |
+| INJ | Injury | 1-99 |
+
+### Mental (2)
+| Code | Name | Range |
+|------|------|-------|
+| AWR | Awareness | 1-99 |
+| PRC | Play Recognition | 1-99 |
+
+### Passing (8) - QB
+| Code | Name | Range |
+|------|------|-------|
+| THP | Throw Power | 1-99 |
+| SAC | Short Accuracy | 1-99 |
+| MAC | Medium Accuracy | 1-99 |
+| DAC | Deep Accuracy | 1-99 |
+| TUP | Throw Under Pressure | 1-99 |
+| TOR | Throw on Run | 1-99 |
+| PAC | Play Action | 1-99 |
+| BSK | Break Sack | 1-99 |
+
+### Rushing (8) - RB/WR
+| Code | Name | Range |
+|------|------|-------|
+| CAR | Carrying | 1-99 |
+| BTK | Break Tackle | 1-99 |
+| TRK | Trucking | 1-99 |
+| ELU | Elusiveness | 1-99 |
+| SPM | Spin Move | 1-99 |
+| JKM | Juke Move | 1-99 |
+| SFA | Stiff Arm | 1-99 |
+| VIS | Vision | 1-99 |
+
+### Receiving (9) - WR/RB/TE
+| Code | Name | Range |
+|------|------|-------|
+| CTH | Catching | 1-99 |
+| CIT | Catch In Traffic | 1-99 |
+| SPC | Spectacular Catch | 1-99 |
+| RTE | Route Running | 1-99 |
+| REL | Release | 1-99 |
+| RAC | Run After Catch | 1-99 |
+| SRR | Short Route Running | 1-99 |
+| MRR | Medium Route Running | 1-99 |
+| DRR | Deep Route Running | 1-99 |
+
+### Blocking (8) - OL/RB/TE
+| Code | Name | Range |
+|------|------|-------|
+| PBK | Pass Block | 1-99 |
+| RBK | Run Block | 1-99 |
+| IBL | Impact Block | 1-99 |
+| PBP | Pass Block Power | 1-99 |
+| PBF | Pass Block Finesse | 1-99 |
+| RBP | Run Block Power | 1-99 |
+| RBF | Run Block Finesse | 1-99 |
+| LBK | Lead Block | 1-99 |
+
+### Defense (9) - DL/LB/DB
+| Code | Name | Range |
+|------|------|-------|
+| TAK | Tackling | 1-99 |
+| POW | Hit Power | 1-99 |
+| PMV | Power Moves | 1-99 |
+| FMV | Finesse Moves | 1-99 |
+| BSH | Block Shedding | 1-99 |
+| PUR | Pursuit | 1-99 |
+| MCV | Man Coverage | 1-99 |
+| ZCV | Zone Coverage | 1-99 |
+| PRS | Press | 1-99 |
+
+### Special Teams (8) - K/P
+| Code | Name | Range |
+|------|------|-------|
+| KPW | Kick Power | 1-99 |
+| KAC | Kick Accuracy | 1-99 |
+| KOP | Kickoff Power | 1-99 |
+| PPW | Punt Power | 1-99 |
+| PUA | Punt Accuracy | 1-99 |
+| CLU | Clutch | 1-99 |
+| CON | Consistency | 1-99 |
+| RET | Return | 1-99 |
+
+---
+
+## Traits (46 Total)
+
+Rarity: common, uncommon, rare, very_rare
+
+### Leadership & Locker Room (6)
+| ID | Name | Rarity |
+|----|------|--------|
+| vocal_leader | Vocal Leader | uncommon |
+| veteran_mentor | Veteran Mentor | rare |
+| team_first | Team First | uncommon |
+| diva | Diva | rare |
+| quiet | Quiet | common |
+| locker_room_cancer | Locker Room Cancer | very_rare |
+
+### Work Ethic & Development (7)
+| ID | Name | Rarity |
+|----|------|--------|
+| gym_rat | Gym Rat | uncommon |
+| film_junkie | Film Junkie | uncommon |
+| focused | Focused | uncommon |
+| lazy | Lazy | rare |
+| early_bloomer | Early Bloomer | uncommon |
+| late_bloomer | Late Bloomer | uncommon |
+| winners_mentality | Winner's Mentality | uncommon |
+
+### On-Field Mentality (7)
+| ID | Name | Rarity |
+|----|------|--------|
+| hot_head | Hot Head | rare |
+| cool_under_pressure | Cool Under Pressure | rare |
+| showboat | Showboat | uncommon |
+| business_like | Business-Like | common |
+| aggressive | Aggressive | common |
+| conservative | Conservative | common |
+| trash_talker | Trash Talker | uncommon |
+
+### Durability & Health (7)
+| ID | Name | Rarity |
+|----|------|--------|
+| iron_man | Iron Man | rare |
+| injury_prone | Injury Prone | uncommon |
+| slow_healer | Slow Healer | uncommon |
+| fast_healer | Fast Healer | uncommon |
+| plays_through_pain | Plays Through Pain | uncommon |
+| durable | Durable | common |
+| fragile | Fragile | uncommon |
+
+### Contract & Loyalty (6)
+| ID | Name | Rarity |
+|----|------|--------|
+| money_motivated | Money Motivated | common |
+| ring_chaser | Ring Chaser | uncommon |
+| loyal | Loyal | uncommon |
+| mercenary | Mercenary | common |
+| team_player_contract | Team Player Contract | uncommon |
+| holdout_risk | Holdout Risk | rare |
+
+### Clutch & Pressure (6)
+| ID | Name | Rarity |
+|----|------|--------|
+| ice_in_veins | Ice In Veins | rare |
+| chokes_under_pressure | Chokes Under Pressure | rare |
+| prime_time_player | Prime Time Player | uncommon |
+| stage_fright | Stage Fright | rare |
+| comeback_artist | Comeback Artist | rare |
+| closer | Closer | uncommon |
+
+### Character & Discipline (7)
+| ID | Name | Rarity |
+|----|------|--------|
+| high_character | High Character | common |
+| character_concerns | Character Concerns | rare |
+| disciplined | Disciplined | common |
+| undisciplined | Undisciplined | uncommon |
+| high_football_iq | High Football IQ | uncommon |
+| low_football_iq | Low Football IQ | rare |
+| football_genius | Football Genius | very_rare |
+
+---
+
+## Badges (45 Total)
+
+Tiers: bronze (2-5 boost), silver (4-8), gold (6-12), hof (9-15)
+
+### Universal (12)
+| ID | Name | Condition |
+|----|------|-----------|
+| clutch | Clutch | Final 2 min of half/game, OT |
+| prime_time | Prime Time | Nationally televised |
+| playoff_performer | Playoff Performer | Playoffs only |
+| home_field_hero | Home Field Hero | Home games |
+| road_warrior | Road Warrior | Away games |
+| weather_proof | Weather Proof | Rain, snow, wind |
+| fourth_quarter_closer | 4th Quarter Closer | 4Q when winning |
+| comeback_kid | Comeback Kid | 4Q when losing |
+| division_rival_killer | Division Rival Killer | Division games |
+| big_game_player | Big Game Player | Playoff implications |
+| underdog_mentality | Underdog Mentality | Team is underdog |
+| giant_slayer | Giant Slayer | vs 85+ OVR opponent |
+
+### QB (4)
+| ID | Name | Condition |
+|----|------|-----------|
+| red_zone_qb | Red Zone QB | Inside opp 20 |
+| deep_ball_threat_qb | Deep Ball Threat | 30+ yard passes |
+| no_huddle_specialist | No Huddle Specialist | Up-tempo offense |
+| pocket_presence | Pocket Presence | Under pressure |
+
+### RB (4)
+| ID | Name | Condition |
+|----|------|-----------|
+| red_zone_back | Red Zone Back | Inside opp 20 |
+| goal_line_back | Goal Line Back | Inside opp 5 |
+| open_field_runner | Open Field Runner | Clear lane |
+| third_down_back | 3rd Down Back | 3rd downs |
+
+### WR (4)
+| ID | Name | Condition |
+|----|------|-----------|
+| red_zone_threat_wr | Red Zone Threat | Inside opp 20 |
+| deep_threat_wr | Deep Threat | 30+ yard routes |
+| possession_receiver | Possession Receiver | Contested catches |
+| slot_specialist_badge | Slot Specialist | Slot alignment |
+
+### TE (3)
+| ID | Name | Condition |
+|----|------|-----------|
+| red_zone_weapon | Red Zone Weapon | Inside opp 20 |
+| seam_router | Seam Router | 15-25 yard routes |
+| run_blocking_te | Run Blocking TE | Run plays |
+
+### OL (4)
+| ID | Name | Condition |
+|----|------|-----------|
+| pass_protector_badge | Pass Protector | Pass plays |
+| road_grader_badge | Road Grader | Run plays |
+| pulling_guard | Pulling Guard | Pull plays (LG/RG) |
+| short_yardage_specialist | Short Yardage | 3rd/4th & 2 or less |
+
+### DL (3)
+| ID | Name | Condition |
+|----|------|-----------|
+| pass_rush_elite | Pass Rush Elite | Pass rush |
+| run_stuffer_badge | Run Stuffer | Run defense |
+| third_down_rusher | 3rd Down Rusher | 3rd down pass rush |
+
+### LB (3)
+| ID | Name | Condition |
+|----|------|-----------|
+| coverage_lb_badge | Coverage LB | Pass coverage |
+| blitz_specialist | Blitz Specialist | Blitzing |
+| run_stopper_badge | Run Stopper | Run defense |
+
+### DB (4)
+| ID | Name | Condition |
+|----|------|-----------|
+| lockdown_corner | Lockdown Corner | Man coverage |
+| ball_hawk_badge | Ball Hawk | Ball in air |
+| zone_defender | Zone Defender | Zone coverage |
+| run_support | Run Support | Run defense |
+
+### K (3)
+| ID | Name | Condition |
+|----|------|-----------|
+| ice_in_veins_k | Ice In Veins | Game-winning kicks |
+| long_range_sniper | Long Range Sniper | 50+ yard FGs |
+| short_range_specialist | Short Range | Inside 40 FGs |
+
+### P (2)
+| ID | Name | Condition |
+|----|------|-----------|
+| coffin_corner | Coffin Corner | Punts inside 20 |
+| big_leg | Big Leg | All punts |
+
+---
+
+## Archetypes (70 Total)
+
+Each archetype defines primary/secondary/tertiary attribute priorities.
+
+### QB (6)
+- Pocket Passer (25%)
+- Dual-Threat (20%)
+- Gunslinger (15%)
+- Field General (10%)
+- Scrambler (15%)
+- Game Manager (15%)
+
+### RB (6)
+- Power Back (20%)
+- Speed Back (20%)
+- Elusive Back (20%)
+- All-Purpose (15%)
+- Receiving Back (15%)
+- Bruiser (10%)
+
+### WR (6)
+- Deep Threat (20%)
+- Possession (20%)
+- Route Technician (15%)
+- Playmaker (15%)
+- Red Zone Threat (15%)
+- Slot Specialist (15%)
+
+### TE (6)
+- Receiving TE (25%)
+- Blocking TE (20%)
+- Hybrid TE (20%)
+- Seam Stretcher (15%)
+- Move TE (10%)
+- H-Back (10%)
+
+### OL (6) - LT/LG/C/RG/RT
+- Pass Protector (25%)
+- Road Grader (20%)
+- Technician (20%)
+- Mauler (15%)
+- Athletic OL (10%)
+- Balanced OL (10%)
+
+### DE (6)
+- Speed Rusher (25%)
+- Power Rusher (20%)
+- Complete (15%)
+- Run Stuffer (15%)
+- Hybrid DE (15%)
+- Raw Athlete (10%)
+
+### DT (6)
+- Nose Tackle (25%)
+- Interior Rusher (20%)
+- Run Plugger (20%)
+- 3-Tech (15%)
+- Hybrid DT (10%)
+- Athletic DT (10%)
+
+### LB (6) - MLB/OLB
+- Run Stopper (20%)
+- Coverage LB (20%)
+- Pass Rusher LB (15%)
+- Field General LB (15%)
+- Hybrid LB (15%)
+- Athletic LB (15%)
+
+### CB (6)
+- Man Cover (25%)
+- Zone Cover (20%)
+- Ball Hawk CB (15%)
+- Physical (15%)
+- Slot Corner (15%)
+- Hybrid CB (10%)
+
+### S (6) - FS/SS
+- Free Safety (25%)
+- Strong Safety (20%)
+- Hybrid S (20%)
+- Ball Hawk S (15%)
+- Enforcer (10%)
+- Coverage S (10%)
+
+### K (5)
+- Accurate K (30%)
+- Power K (25%)
+- Clutch K (20%)
+- Balanced K (15%)
+- Kickoff Specialist (10%)
+
+### P (5)
+- Accurate P (30%)
+- Power P (25%)
+- Directional (20%)
+- Balanced P (15%)
+- Hangtime (10%)
+
+---
+
+## Physical Measurables
+
+### Height Ranges (inches)
+| Position | Min | Max |
+|----------|-----|-----|
+| QB | 70 | 78 |
+| RB | 68 | 74 |
+| WR | 68 | 77 |
+| TE | 73 | 79 |
+| OL | 73 | 80 |
+| DE | 74 | 78 |
+| DT | 72 | 77 |
+| LB | 72 | 76 |
+| CB | 69 | 75 |
+| FS | 71 | 74 |
+| SS | 72 | 75 |
+| K | 69 | 76 |
+| P | 71 | 77 |
+
+### Weight Ranges (lbs)
+| Position | Min | Max |
+|----------|-----|-----|
+| QB | 195 | 245 |
+| RB | 185 | 250 |
+| WR | 175 | 235 |
+| TE | 235 | 275 |
+| OL | 295 | 340 |
+| DE | 250 | 300 |
+| DT | 280 | 350 |
+| LB | 230 | 255 |
+| CB | 175 | 215 |
+| FS | 195 | 215 |
+| SS | 205 | 225 |
+| K | 175 | 225 |
+| P | 190 | 235 |
+
+### 40-Yard Dash (seconds)
+| Position | Fast | Slow |
+|----------|------|------|
+| QB | 4.35 | 5.10 |
+| RB | 4.30 | 4.75 |
+| WR | 4.28 | 4.65 |
+| TE | 4.50 | 4.95 |
+| OL | 5.00 | 5.40 |
+| DE | 4.50 | 5.00 |
+| DT | 4.75 | 5.45 |
+| LB | 4.50 | 4.80 |
+| CB | 4.35 | 4.60 |
+| FS | 4.40 | 4.55 |
+| SS | 4.45 | 4.60 |
+
+---
+
+## Bio Fields
+
+| Field | Source |
+|-------|--------|
+| firstName | name-pools.csv |
+| lastName | name-pools.csv |
+| college | 20 schools (Alabama, Ohio State, Georgia, etc.) |
+| jerseyNumber | Position-specific ranges |
+
+### Jersey Number Ranges
+| Position | Primary | Secondary |
+|----------|---------|-----------|
+| QB, K, P | 1-19 | - |
+| RB | 20-49 | 1-9 |
+| WR | 10-19 | 80-89 |
+| TE | 80-89 | 40-49 |
+| LT, RT | 70-79 | 60-69 |
+| LG, RG | 60-69 | 70-79 |
+| C | 50-59 | 60-69 |
+| DE | 90-99 | 50-59 |
+| DT | 90-99 | 70-79 |
+| MLB | 50-59 | 40-49 |
+| OLB | 40-59 | 90-99 |
+| CB, FS, SS | 20-39 | 40-49 |
+
+---
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Positions | 18 |
+| Attributes | 34 |
+| Traits | 46 |
+| Badges | 45 |
+| Archetypes | 70 |
+| Physical Measurables | 3 |
+| Bio Fields | 4 |
+`,
+
+      coaches: `# Coach Data Reference
+
+Complete inventory of all coaching staff fields, attributes, perks, and contracts.
+
+---
+
+## Coach Interface
+
+\`\`\`typescript
+interface Coach {
+  id: string;
+  firstName: string;
+  lastName: string;
+  position: CoachPosition;
+  age: number;
+  experience: number;           // Years as coach
+  ovr: number;                  // 60-99
+  attributes: CoachAttributes;
+  offensiveScheme?: OffensiveScheme;  // HC & OC
+  defensiveScheme?: DefensiveScheme;  // HC & DC
+  stPhilosophy?: STPhilosophy;        // STC
+  philosophy: CoachPhilosophy;
+  perks: Perk[];
+  contract: CoachContract;
+  xp: number;
+  retirementRisk: number;       // 0-100%
+}
+\`\`\`
+
+---
+
+## Positions (4)
+
+| Position | Code | Description |
+|----------|------|-------------|
+| Head Coach | HC | Leads entire team |
+| Offensive Coordinator | OC | Runs offense |
+| Defensive Coordinator | DC | Runs defense |
+| Special Teams Coordinator | STC | Runs special teams |
+
+---
+
+## Philosophy (4)
+
+| Philosophy | Description |
+|------------|-------------|
+| aggressive | High risk, high reward |
+| balanced | Mix of styles |
+| conservative | Safe, controlled |
+| innovative | Unconventional approaches |
+
+---
+
+## Attributes
+
+### Base Attributes (All Coaches)
+
+| Attribute | Range | Description |
+|-----------|-------|-------------|
+| schemeMastery | 60-99 | System expertise |
+| playerDevelopment | 60-99 | Growing talent |
+| motivation | 60-99 | Inspiring players |
+| gamePlanning | 60-99 | Weekly preparation |
+| adaptability | 60-99 | In-game adjustments |
+
+### HC-Specific Attributes
+
+| Attribute | Range | Description |
+|-----------|-------|-------------|
+| leadership | 60-99 | Team leadership |
+| clockManagement | 60-99 | Time decisions |
+| challengeSuccess | 60-99 | Challenge accuracy |
+| discipline | 60-99 | Penalty prevention |
+| mediaHandling | 60-99 | Press management |
+
+### OC-Specific Attributes
+
+| Attribute | Range | Description |
+|-----------|-------|-------------|
+| playCalling | 60-99 | Play selection |
+| redZoneOffense | 60-99 | Scoring inside 20 |
+| qbDevelopment | 60-99 | QB coaching |
+| tempoControl | 60-99 | Pace management |
+| creativity | 60-99 | Play design innovation |
+
+### DC-Specific Attributes
+
+| Attribute | Range | Description |
+|-----------|-------|-------------|
+| playCalling | 60-99 | Play selection |
+| redZoneDefense | 60-99 | Preventing scores |
+| turnoverCreation | 60-99 | Forcing turnovers |
+| blitzDesign | 60-99 | Pressure packages |
+| coverageDisguise | 60-99 | Coverage deception |
+
+### STC-Specific Attributes
+
+| Attribute | Range | Description |
+|-----------|-------|-------------|
+| kickingGame | 60-99 | FG/PAT success |
+| returnGame | 60-99 | Return success |
+| coverageUnits | 60-99 | Coverage tackling |
+| situational | 60-99 | Fake/onside calls |
+| gunnerDevelopment | 60-99 | Gunner coaching |
+
+---
+
+## Perks (22 Total)
+
+Tiers: 1 (1000 XP), 2 (3000 XP), 3 (7000 XP)
+
+### HC Perks (6)
+
+| ID | Name | Tier | Effect |
+|----|------|------|--------|
+| motivator | Motivator | 1 | Team morale boost |
+| genius_mind | Genius Mind | 2 | Game planning boost |
+| disciplinarian | Disciplinarian | 1 | Reduce penalties |
+| winners_mentality | Winner's Mentality | 2 | Clutch performance |
+| clock_master | Clock Master | 3 | Perfect clock management |
+| players_coach | Players' Coach | 1 | Player development |
+
+### OC Perks (6)
+
+| ID | Name | Tier | Effect |
+|----|------|------|--------|
+| qb_whisperer | QB Whisperer | 2 | Elite QB development |
+| red_zone_specialist | Red Zone Specialist | 1 | Better red zone |
+| tempo_tactician | Tempo Tactician | 1 | Tempo control |
+| run_game_architect | Run Game Architect | 2 | Run scheme boost |
+| passing_guru | Passing Guru | 2 | Pass scheme boost |
+| play_designer | Play Designer | 3 | Custom plays |
+
+### DC Perks (6)
+
+| ID | Name | Tier | Effect |
+|----|------|------|--------|
+| turnover_machine | Turnover Machine | 2 | Force turnovers |
+| pass_rush_specialist | Pass Rush Specialist | 1 | Sack production |
+| coverage_master | Coverage Master | 2 | Coverage boost |
+| run_stuffer | Run Stuffer | 1 | Run defense |
+| blitz_master | Blitz Master | 3 | Elite pressure |
+| bend_dont_break | Bend Don't Break | 1 | Prevent big plays |
+
+### STC Perks (4)
+
+| ID | Name | Tier | Effect |
+|----|------|------|--------|
+| leg_whisperer | Leg Whisperer | 1 | Kicker development |
+| return_specialist | Return Specialist | 2 | Return TD boost |
+| coverage_ace | Coverage Ace | 1 | Coverage tackling |
+| situational_genius | Situational Genius | 3 | Fake/onside success |
+
+---
+
+## Contracts
+
+\`\`\`typescript
+interface CoachContract {
+  salary: number;               // Millions/year
+  yearsTotal: number;
+  yearsRemaining: number;
+  guaranteedRemaining: number;  // Millions
+}
+\`\`\`
+
+### HC Salary Ranges (millions)
+
+| OVR | Min | Max |
+|-----|-----|-----|
+| 95-99 | 12 | 15 |
+| 90-94 | 9 | 12 |
+| 85-89 | 6 | 9 |
+| 80-84 | 4 | 6 |
+| 75-79 | 2 | 4 |
+| 70-74 | 1 | 2 |
+| 60-69 | 0.5 | 1 |
+
+### Coordinator Salary Ranges (millions)
+
+| OVR | OC Min | OC Max | DC Min | DC Max | STC Min | STC Max |
+|-----|--------|--------|--------|--------|---------|---------|
+| 90-99 | 6 | 8 | 6 | 8 | 2 | 3 |
+| 85-89 | 4 | 6 | 4 | 6 | 1.5 | 2 |
+| 80-84 | 2.5 | 4 | 2.5 | 4 | 1 | 1.5 |
+| 75-79 | 1.5 | 2.5 | 1.5 | 2.5 | 0.8 | 1 |
+| 70-74 | 0.8 | 1.5 | 0.8 | 1.5 | 0.5 | 0.8 |
+| 60-69 | 0.5 | 0.8 | 0.5 | 0.8 | 0.3 | 0.5 |
+
+---
+
+## Coaching Staff
+
+\`\`\`typescript
+interface CoachingStaff {
+  teamId: string;
+  headCoach: Coach;
+  offensiveCoordinator: Coach;
+  defensiveCoordinator: Coach;
+  specialTeamsCoordinator: Coach;
+  totalSalary: number;          // Combined annual
+  staffChemistry: number;       // 0-100
+  avgOvr: number;
+}
+\`\`\`
+
+---
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Positions | 4 |
+| Base Attributes | 5 |
+| Position-Specific Attributes | 5 each |
+| Perks | 22 |
+| Philosophies | 4 |
+`,
+
+      gms: `# GM Data Reference
+
+Complete inventory of all GM fields, backgrounds, archetypes, bonuses, and synergies.
+
+---
+
+## GM Interface
+
+\`\`\`typescript
+interface GM {
+  id: string;
+  teamId: string;
+  firstName: string;
+  lastName: string;
+  background: GMBackground;
+  archetype: GMArchetype;
+  hasSynergy: boolean;
+  bonuses: GMBonuses;
+  age: number;
+  experience: number;           // Years as GM
+  contract: GMContract;
+  isPlayer: boolean;            // true = user's GM
+}
+\`\`\`
+
+---
+
+## Backgrounds (6)
+
+| ID | Name | Description | Synergy Archetype |
+|----|------|-------------|-------------------|
+| scout | Scout | Former scouting director | talent_scout |
+| cap_analyst | Cap Analyst | Salary cap expert | economist |
+| coach | Coach | Former coordinator/HC | builder |
+| agent | Agent | Former player agent | closer |
+| analytics | Analytics | Data-driven executive | innovator |
+| legacy | Legacy | Family football dynasty | culture_builder |
+
+### Background Bonuses
+
+| Background | Bonuses |
+|------------|---------|
+| scout | +10 scoutingAccuracy, +1 sleepersPerDraft |
+| cap_analyst | +5 capSpace, -5 contractDemands |
+| coach | +10 playerDevelopment, +5 coachAppeal |
+| agent | -10 contractDemands, +10 freeAgentAppeal |
+| analytics | +5 scoutingAccuracy |
+| legacy | +15 fanLoyalty, +10 ownerPatience |
+
+---
+
+## Archetypes (6)
+
+| ID | Name | Description | Synergy Background |
+|----|------|-------------|-------------------|
+| builder | The Builder | Draft and develop | coach |
+| closer | The Closer | Win now, big moves | agent |
+| economist | The Economist | Cap efficiency | cap_analyst |
+| talent_scout | The Talent Scout | Find hidden gems | scout |
+| culture_builder | The Culture Builder | Team chemistry | legacy |
+| innovator | The Innovator | Analytics edge | analytics |
+
+### Archetype Bonuses
+
+| Archetype | Bonuses |
+|-----------|---------|
+| builder | +25 playerDevelopment |
+| closer | +15 tradeAcceptance |
+| economist | +3 capSpace |
+| talent_scout | +2 sleepersPerDraft |
+| culture_builder | +15 teamMorale |
+| innovator | +10 scoutingAccuracy |
+
+---
+
+## Synergies (6)
+
+When background + archetype match, bonus synergy unlocks.
+
+| Background | Archetype | Synergy Name | Bonuses |
+|------------|-----------|--------------|---------|
+| scout | talent_scout | The Eye | +3 sleepersPerDraft, +15 scoutingAccuracy |
+| cap_analyst | economist | Cap Wizard | +8 capSpace, -10 contractDemands |
+| coach | builder | Player Whisperer | +40 playerDevelopment |
+| agent | closer | The Dealmaker | -15 contractDemands, +25 tradeAcceptance |
+| analytics | innovator | The Oracle | +20 scoutingAccuracy |
+| legacy | culture_builder | The Dynasty | +25 teamMorale, +20 fanLoyalty |
+
+---
+
+## Bonuses
+
+\`\`\`typescript
+interface GMBonuses {
+  scoutingAccuracy: number;     // % bonus to prospect eval
+  contractDemands: number;      // % reduction in salary demands
+  tradeAcceptance: number;      // % bonus to CPU trade accept
+  playerDevelopment: number;    // % bonus to young player XP
+  freeAgentAppeal: number;      // % bonus to FA preference
+  teamMorale: number;           // % bonus to morale floor
+  capSpace: number;             // Bonus cap space (millions)
+  ownerPatience: number;        // Bonus years before hot seat
+  coachAppeal: number;          // % bonus to hire elite coaches
+  fanLoyalty: number;           // % bonus to fan satisfaction
+  sleepersPerDraft: number;     // Extra sleeper prospects revealed
+}
+\`\`\`
+
+### Bonus Effects
+
+| Bonus | Effect |
+|-------|--------|
+| scoutingAccuracy | More accurate OVR/potential evaluations |
+| contractDemands | Players ask for less money |
+| tradeAcceptance | CPU more likely to accept trades |
+| playerDevelopment | Young players gain more XP |
+| freeAgentAppeal | FAs prefer your team |
+| teamMorale | Higher morale floor |
+| capSpace | Extra millions in cap |
+| ownerPatience | More time before firing |
+| coachAppeal | Attract better coaches |
+| fanLoyalty | Fans more forgiving |
+| sleepersPerDraft | More hidden gems revealed |
+
+---
+
+## Contracts
+
+\`\`\`typescript
+interface GMContract {
+  years: number;
+  salary: number;               // Millions/year
+}
+\`\`\`
+
+---
+
+## Game Modes
+
+### Player GM Mode (Legacy)
+
+\`\`\`typescript
+interface LeagueGMs {
+  playerTeamId: string;
+  playerGM: GM;
+  cpuGMs: Record<string, GM>;
+  generatedAt: string;
+}
+\`\`\`
+
+### Owner Mode
+
+\`\`\`typescript
+interface OwnerModeGMs {
+  mode: 'owner';
+  allGMs: Record<string, GM>;   // All 32 CPU GMs
+  playerTeamId: string | null;  // Set when user picks team
+  generatedAt: string;
+}
+\`\`\`
+
+---
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Backgrounds | 6 |
+| Archetypes | 6 |
+| Synergies | 6 |
+| Bonus Types | 11 |
+`,
+
+      scouts: `# Scout Data Reference
+
+Complete inventory of all scout fields, attributes, perks, and scouting system.
+
+---
+
+## Scout Interface
+
+\`\`\`typescript
+interface Scout {
+  id: string;
+  firstName: string;
+  lastName: string;
+  role: ScoutRole;
+  age: number;
+  experience: number;           // Years as scout
+  ovr: number;                  // 60-99
+  attributes: ScoutAttributes;
+  positionExpertise: PositionExpertise;
+  regionalExpertise: RegionalExpertise;
+  perks: Perk[];
+  contract: ScoutContract;
+  xp: number;
+  weeklyPoints: number;         // From work ethic
+  retirementRisk: number;       // 0-100%
+}
+\`\`\`
+
+---
+
+## Roles (4)
+
+| Role | Description | Per Team |
+|------|-------------|----------|
+| director | Lead all scouting | 1 |
+| area | Cover college region | 0-2 |
+| pro | Evaluate FA/trades | 0-1 |
+| national | Generalist coverage | 0-1 |
+
+---
+
+## Position Expertise (4)
+
+| Expertise | Positions | Bonus | Penalty |
+|-----------|-----------|-------|---------|
+| offensive | QB, RB, WR, TE, OL | +10 offense | -5 defense |
+| defensive | DL, LB, DB | +10 defense | -5 offense |
+| special_teams | K, P | +15 specialists | -5 others |
+| generalist | All | None | None |
+
+---
+
+## Regional Expertise (5)
+
+| Region | Conferences | Bonus |
+|--------|-------------|-------|
+| east_coast | ACC, Big Ten (E), SEC (E) | +10 region, +5% sleeper |
+| west_coast | Pac-12, Mountain West, Big 12 (W) | +10 region, +5% sleeper |
+| midwest | Big Ten (W), Big 12 (C) | +10 region, +5% sleeper |
+| south | SEC (W), ACC (S), C-USA | +10 region, +5% sleeper |
+| national | All regions | None |
+
+---
+
+## Attributes (6)
+
+| Attribute | Range | Description |
+|-----------|-------|-------------|
+| talentEvaluation | 60-99 | OVR assessment accuracy |
+| potentialAssessment | 60-99 | Projecting player ceiling |
+| traitRecognition | 60-99 | Identifying player traits |
+| bustDetection | 60-99 | Spotting underperformers |
+| sleeperDiscovery | 60-99 | Finding hidden talent |
+| workEthic | 60-99 | Coverage thoroughness |
+
+---
+
+## Perks (21 Total)
+
+### Tier 1 (1000 XP)
+
+| ID | Name | Effect |
+|----|------|--------|
+| sharp_eye | Sharp Eye | +5 Talent Evaluation |
+| data_analyst | Data Analyst | +5 Potential Assessment |
+| trait_hunter | Trait Hunter | +5 Trait Recognition, +1 trait revealed |
+| red_flag_detector | Red Flag Detector | +5 Bust Detection |
+| diamond_finder | Diamond Finder | +5 Sleeper Discovery, +1 hidden gem |
+| college_connections | College Connections | +10 at 5 chosen schools |
+| raw_talent_spotter | Raw Talent Spotter | +10 physical, -5 mental |
+| cerebral_scout | Cerebral Scout | +10 mental, -5 physical |
+| speed_scout | Speed Scout | See exact Speed rating |
+
+### Tier 2 (3000 XP)
+
+| ID | Name | Requires | Effect |
+|----|------|----------|--------|
+| elite_evaluator | Elite Evaluator | sharp_eye | +10 Talent, +/-2 OVR accuracy |
+| future_sight | Future Sight | data_analyst | +10 Potential, see range +/-3 |
+| mind_reader | Mind Reader | trait_hunter | +10 Trait, reveal all major traits |
+| bust_buster | Bust Buster | red_flag_detector | +10 Bust, 75% accuracy |
+| hidden_gem_expert | Hidden Gem Expert | diamond_finder | +10 Sleeper, 3-4/draft |
+| pro_scout_expert | Pro Scout Expert | - | +15 FA evaluation |
+| durability_expert | Durability Expert | - | +15 injury rating eval |
+
+### Tier 3 (7000 XP)
+
+| ID | Name | Requires | Effect |
+|----|------|----------|--------|
+| perfect_scout | Perfect Scout | elite_evaluator | +15 Talent, exact OVR |
+| oracle | Oracle | future_sight | +15 Potential, exact ceiling |
+| psychologist | Psychologist | mind_reader | +15 Trait, ALL revealed |
+| bust_proof | Bust Proof | bust_buster | +15 Bust, 90%+ accuracy |
+| treasure_hunter | Treasure Hunter | hidden_gem_expert | +15 Sleeper, 5+/draft |
+
+---
+
+## Contracts
+
+\`\`\`typescript
+interface ScoutContract {
+  salary: number;               // Millions/year
+  yearsTotal: number;
+  yearsRemaining: number;
+}
+\`\`\`
+
+### Salary Ranges (millions)
+
+**Director:**
+| OVR | Min | Max |
+|-----|-----|-----|
+| 95-99 | 1.8 | 2.2 |
+| 90-94 | 1.4 | 1.8 |
+| 85-89 | 1.0 | 1.4 |
+| 80-84 | 0.7 | 1.0 |
+| 75-79 | 0.5 | 0.7 |
+| 70-74 | 0.35 | 0.5 |
+| 60-69 | 0.2 | 0.35 |
+
+**Area/National Scout:**
+| OVR | Min | Max |
+|-----|-----|-----|
+| 90-99 | 0.8 | 1.2 |
+| 85-89 | 0.6 | 0.8 |
+| 80-84 | 0.45 | 0.6 |
+| 75-79 | 0.3 | 0.45 |
+| 70-74 | 0.2 | 0.3 |
+| 60-69 | 0.15 | 0.2 |
+
+**Pro Scout:**
+| OVR | Min | Max |
+|-----|-----|-----|
+| 90-99 | 1.0 | 1.5 |
+| 85-89 | 0.7 | 1.0 |
+| 80-84 | 0.5 | 0.7 |
+| 75-79 | 0.35 | 0.5 |
+| 70-74 | 0.25 | 0.35 |
+| 60-69 | 0.175 | 0.25 |
+
+---
+
+## Scouting Points System
+
+### Prospect Tiers & Costs
+
+| Tier | Rounds | Points |
+|------|--------|--------|
+| top | 1-2 | 50 |
+| mid | 3-4 | 30 |
+| late | 5-7 | 15 |
+| udfa | Undrafted | 10 |
+| free_agent | FA | 25 |
+| trade_target | Trade | 40 |
+
+### Season Period Modifiers
+
+| Period | Weeks | Cost Modifier |
+|--------|-------|---------------|
+| pre_season | 1-8 | 0.75x (-25%) |
+| mid_season | 9-14 | 1.0x (normal) |
+| late_season | 15-18 | 1.25x (+25%) |
+| combine | 19 | Free |
+| pro_days | 20 | Free |
+| draft | 21 | 1.0x (normal) |
+
+---
+
+## Scouting Reports
+
+\`\`\`typescript
+interface ScoutingReport {
+  id: string;
+  prospectId: string;
+  scoutId: string;
+  generatedAt: number;
+  week: number;
+
+  scoutedOvr: number;           // True OVR +/- error
+  ovrConfidence: number;        // 0-100%
+  potentialVisibility: PotentialVisibility;
+  potentialValue?: number | [number, number] | string;
+
+  traitsRevealed: string[];
+  traitsHidden: number;
+  attributesRevealed: string[];
+
+  bustRisk: number;             // 0-100%
+  sleeperFlag: boolean;
+
+  draftGrade: DraftGrade;       // A+ to F
+  roundProjection: number;      // 1-7
+  textSummary: string;
+}
+\`\`\`
+
+### Report Quality Tiers
+
+| Tier | Min OVR | OVR Error | Potential | Traits | Confidence |
+|------|---------|-----------|-----------|--------|------------|
+| ELITE | 95 | +/-1 | Exact | All | 95% |
+| GREAT | 85 | +/-2 | Range | 4 | 85% |
+| GOOD | 75 | +/-4 | Tier | 3 | 72% |
+| AVERAGE | 65 | +/-6 | Vague | 2 | 55% |
+| POOR | 60 | +/-8 | Hidden | 1 | 45% |
+
+---
+
+## Scouting Department
+
+\`\`\`typescript
+interface ScoutingDepartment {
+  teamId: string;
+  director: Scout;
+  areaScouts: Scout[];          // 0-2
+  proScout: Scout | null;       // 0-1
+  nationalScout: Scout | null;  // 0-1
+  totalBudget: number;          // Millions
+  weeklyPoints: number;         // Combined
+  scoutCount: number;
+  avgOvr: number;
+}
+\`\`\`
+
+---
+
+## XP System
+
+### XP Gains
+
+| Action | XP |
+|--------|-----|
+| Correct grade (+/-2 OVR) | 50 |
+| Hidden gem found | 200 |
+| Bust avoided | 150 |
+| Draft hit (Rd 1-3) | 300 |
+| Draft hit (Rd 4-7) | 500 |
+| UDFA makes roster | 250 |
+
+### XP Costs
+
+| Action | XP |
+|--------|-----|
+| Attribute point | 500 |
+| Tier 1 perk | 1000 |
+| Tier 2 perk | 3000 |
+| Tier 3 perk | 7000 |
+
+---
+
+## Retirement Risk
+
+| Age | Risk |
+|-----|------|
+| 25-62 | 0% |
+| 63-68 | 15% |
+| 69-72 | 30% |
+| 73+ | 50% |
+
+---
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Roles | 4 |
+| Attributes | 6 |
+| Position Expertise | 4 |
+| Regional Expertise | 5 |
+| Perks | 21 |
+| Prospect Tiers | 6 |
+| Season Periods | 6 |
+`,
+
+      facilities: `# Facilities Data Reference
+
+Complete inventory of all facility types, ratings, bonuses, and effects.
+
+---
+
+## Team Facilities Interface
+
+\`\`\`typescript
+interface TeamFacilities {
+  teamId: string;
+  ownerTier: OwnerTier;
+  annualBudget: number;         // Millions
+  upgradeFund: number;          // Millions
+  stadium: Stadium;
+  practice: PracticeFacility;
+  training: TrainingRoom;
+  weight: WeightRoom;
+
+  // Computed
+  averageRating: number;
+  faAppealBonus: number;        // Percentage
+  leagueRank: number;           // 1-32
+  totalMaintenanceCost: number; // Millions/year
+}
+\`\`\`
+
+---
+
+## Facility Types (4)
+
+| Type | Description |
+|------|-------------|
+| stadium | Main game venue |
+| practice | Practice facility |
+| training | Medical/training room |
+| weight | Weight room |
+
+---
+
+## Owner Tiers (5)
+
+| Tier | Budget (M) | Upgrade Fund (M) | Teams |
+|------|------------|------------------|-------|
+| wealthy | 150 | 500-700 | 4 |
+| solid | 120 | 250-400 | 8 |
+| moderate | 90 | 100-200 | 12 |
+| budget | 70 | 50-100 | 6 |
+| cheap | 50 | 25-50 | 2 |
+
+---
+
+## Stadium
+
+\`\`\`typescript
+interface Stadium {
+  rating: number;               // 1-10
+  capacity: number;             // 55,000-85,000
+  surface: SurfaceType;
+  type: StadiumType;
+  climate: Climate;
+  noiseLevel: number;           // 1-10
+  luxurySuites: number;         // 50-150+
+  yearBuilt: number;
+
+  // Effects
+  homeAdvantage: number;        // OVR bonus
+  attendance: number;           // Percentage
+  revenue: number;              // Millions/season
+  moraleBonus: number;          // Percentage
+}
+\`\`\`
+
+### Surface Types
+- grass
+- turf
+
+### Stadium Types
+- dome
+- retractable
+- open
+
+### Climate
+- cold
+- hot
+- neutral
+
+### Stadium Effects by Rating
+
+| Rating | Home Adv | Attendance | Revenue | Morale |
+|--------|----------|------------|---------|--------|
+| 10 | +5 OVR | 100% | High | +15% |
+| 8-9 | +4 OVR | 95% | Good | +10% |
+| 6-7 | +3 OVR | 85% | Average | +5% |
+| 4-5 | +2 OVR | 75% | Low | 0% |
+| 1-3 | +1 OVR | 60% | Poor | -5% |
+
+---
+
+## Practice Facility
+
+\`\`\`typescript
+interface PracticeFacility {
+  rating: number;               // 1-10
+  practiceFields: number;       // 2-6
+  filmRoomTech: number;         // 1-10
+  meetingRooms: number;         // 5-15
+  hasIndoor: boolean;
+
+  // Effects
+  xpGainBonus: number;          // Percentage
+  injuryPrevention: number;     // Percentage reduction
+  schemeInstallWeeks: number;   // Weeks for new scheme
+}
+\`\`\`
+
+### Practice Effects by Rating
+
+| Rating | XP Bonus | Injury Prevention | Scheme Install |
+|--------|----------|-------------------|----------------|
+| 10 | +25% | -20% | 2 weeks |
+| 8-9 | +20% | -15% | 3 weeks |
+| 6-7 | +15% | -10% | 4 weeks |
+| 4-5 | +10% | -5% | 5 weeks |
+| 1-3 | +5% | 0% | 6 weeks |
+
+---
+
+## Training Room (Medical)
+
+\`\`\`typescript
+interface TrainingRoom {
+  rating: number;               // 1-10
+  treatmentRooms: number;       // 5-20
+  hasTherapyPool: boolean;
+  hasSportsLab: boolean;
+
+  // Effects
+  recoverySpeedBonus: number;   // Percentage faster
+  injuryRateReduction: number;  // Percentage
+  severityReduction: number;    // Percentage
+  longevityBonus: number;       // Years added
+}
+\`\`\`
+
+### Training Room Effects by Rating
+
+| Rating | Recovery | Injury Rate | Severity | Longevity |
+|--------|----------|-------------|----------|-----------|
+| 10 | +40% | -25% | -30% | +2 years |
+| 8-9 | +30% | -20% | -25% | +1.5 years |
+| 6-7 | +20% | -15% | -15% | +1 year |
+| 4-5 | +10% | -10% | -10% | +0.5 years |
+| 1-3 | +5% | -5% | -5% | 0 years |
+
+---
+
+## Weight Room
+
+\`\`\`typescript
+interface WeightRoom {
+  rating: number;               // 1-10
+  equipmentQuality: number;     // 1-10
+  spaceSqFt: number;            // 5,000-20,000
+  cardioMachines: number;       // 20-50
+  speedAgilityYards: number;    // 30-100
+  hasRecoveryEquipment: boolean;
+
+  // Effects
+  physicalXpBonus: number;      // Percentage
+  strengthPerSeason: number;
+  speedPerSeason: number;
+  injuryPrevention: number;     // Percentage
+  ageDeclineReduction: number;  // Percentage
+}
+\`\`\`
+
+### Weight Room Effects by Rating
+
+| Rating | Physical XP | STR/Season | SPD/Season | Injury Prev | Age Decline |
+|--------|-------------|------------|------------|-------------|-------------|
+| 10 | +30% | +2 | +1 | -15% | -25% |
+| 8-9 | +25% | +1.5 | +0.75 | -12% | -20% |
+| 6-7 | +20% | +1 | +0.5 | -8% | -15% |
+| 4-5 | +15% | +0.5 | +0.25 | -5% | -10% |
+| 1-3 | +10% | +0.25 | +0.1 | -2% | -5% |
+
+---
+
+## Maintenance Costs
+
+| Rating | Cost (M/year) |
+|--------|---------------|
+| 10 | 5.0 |
+| 9 | 4.0 |
+| 8 | 3.0 |
+| 7 | 2.5 |
+| 6 | 2.0 |
+| 5 | 1.5 |
+| 4 | 1.0 |
+| 3 | 0.75 |
+| 2 | 0.5 |
+| 1 | 0.25 |
+
+---
+
+## League Facilities
+
+\`\`\`typescript
+interface LeagueFacilities {
+  teams: Record<string, TeamFacilities>;
+  generatedAt: string;
+}
+\`\`\`
+
+### Facilities Stats
+
+\`\`\`typescript
+interface FacilitiesStats {
+  avgStadiumRating: number;
+  avgPracticeRating: number;
+  avgTrainingRating: number;
+  avgWeightRating: number;
+  avgOverallRating: number;
+  eliteFacilities: number;      // 9-10 rating
+  goodFacilities: number;       // 7-8 rating
+  averageFacilities: number;    // 5-6 rating
+  poorFacilities: number;       // 1-4 rating
+  ownerTierDistribution: Record<OwnerTier, number>;
+  totalLeagueRevenue: number;
+  topTeams: { teamId: string; rating: number }[];
+  bottomTeams: { teamId: string; rating: number }[];
+}
+\`\`\`
+
+---
+
+## Rating Tiers
+
+| Tier | Rating | Description |
+|------|--------|-------------|
+| Elite | 9-10 | Best in league |
+| Good | 7-8 | Above average |
+| Average | 5-6 | Middle of pack |
+| Poor | 1-4 | Needs upgrade |
+
+---
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Facility Types | 4 |
+| Owner Tiers | 5 |
+| Rating Scale | 1-10 |
+| Surface Types | 2 |
+| Stadium Types | 3 |
+| Climate Types | 3 |
+`
+    };
 
     // Tab switching
     document.querySelectorAll('.tab').forEach(tab => {
@@ -314,31 +1790,19 @@
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
 
-        // Load content if not already loaded
-        if (!loaded[tabId]) {
-          loadMarkdown(tabId);
+        // Render content if not already rendered
+        const container = document.getElementById(tabId);
+        if (!container.dataset.loaded) {
+          container.innerHTML = '<div class="markdown-body">' + marked.parse(content[tabId]) + '</div>';
+          container.dataset.loaded = 'true';
         }
       });
     });
 
-    // Load markdown content
-    async function loadMarkdown(tabId) {
-      const container = document.getElementById(tabId);
-      const file = files[tabId];
-
-      try {
-        const response = await fetch(file);
-        if (!response.ok) throw new Error('File not found');
-        const markdown = await response.text();
-        container.innerHTML = `<div class="markdown-body">${marked.parse(markdown)}</div>`;
-        loaded[tabId] = true;
-      } catch (error) {
-        container.innerHTML = `<div class="markdown-body"><p>Error loading ${file}: ${error.message}</p></div>`;
-      }
-    }
-
     // Load first tab on page load
-    loadMarkdown('players');
+    const playersContainer = document.getElementById('players');
+    playersContainer.innerHTML = '<div class="markdown-body">' + marked.parse(content.players) + '</div>';
+    playersContainer.dataset.loaded = 'true';
   </script>
 </body>
 </html>
