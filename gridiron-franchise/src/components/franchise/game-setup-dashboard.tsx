@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { ModuleCard, ModuleStatus } from './module-card';
 import { ReadyIndicator, ReadyCheck } from './ready-indicator';
 import { TeamSelectionModal } from './team-selection-modal';
-import { GMCreationModal } from './gm-creation-modal';
+import { useCareerStore } from '@/stores/career-store';
+import { LEAGUE_TEAMS } from '@/lib/data/teams';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -29,7 +30,7 @@ import { getFullGameData, FullGameData, TeamRosterData, getFreeAgents, getDraftC
 import { getCoaching } from '@/lib/coaching/coaching-store';
 import { getFacilities } from '@/lib/facilities/facilities-store';
 import { getSchedule } from '@/lib/schedule/schedule-store';
-import { getGMs, storeGMs, clearGMs, getOwnerModeGMs, LeagueGMs, OwnerModeGMs, GMBackground, GMArchetype } from '@/lib/gm';
+import { getGMs, storeGMs, clearGMs, getOwnerModeGMs, storeOwnerModeGMs, LeagueGMs, OwnerModeGMs } from '@/lib/gm';
 import { getScouting, storeScouting, clearScouting } from '@/lib/scouting/scouting-store';
 import { LeagueScouting } from '@/lib/scouting/types';
 import { Player } from '@/lib/types';
@@ -71,14 +72,9 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     schedule: null,
   });
 
-  // GM selection modal state
+  // Team selection modal state (Owner model - pick team to own)
   const [showTeamSelection, setShowTeamSelection] = useState(false);
-  const [showGMCreation, setShowGMCreation] = useState(false);
-  const [selectedTeamForGM, setSelectedTeamForGM] = useState<{
-    id: string;
-    name: string;
-    city: string;
-  } | null>(null);
+  const { selectedTeam, setTeam } = useCareerStore();
 
   // Load existing data on mount
   useEffect(() => {
@@ -148,6 +144,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       const response = await fetch('/api/dev/generate-fa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
       });
       const data = await response.json();
       if (data.success) {
@@ -170,6 +167,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       const response = await fetch('/api/dev/generate-draft', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
       });
       const data = await response.json();
       if (data.success) {
@@ -418,8 +416,8 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     },
     {
       id: 'gm',
-      name: 'General Manager',
-      description: 'Your GM + 31 CPU GMs',
+      name: 'General Managers',
+      description: '32 CPU GMs for all teams',
       icon: <UserCog className="h-5 w-5" />,
       isGenerated: !!modules.gm,
       count: modules.gm ? 32 : 0,
@@ -477,11 +475,12 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     { id: 'rosters', label: 'Rosters', isReady: !!modules.rosters, required: true },
     { id: 'freeagents', label: 'Free Agents', isReady: modules.freeAgents.length > 0, required: true },
     { id: 'draft', label: 'Draft Class', isReady: modules.draftClass.length > 0, required: true },
-    { id: 'gm', label: 'General Manager', isReady: !!modules.gm, required: true },
+    { id: 'gm', label: 'GMs', isReady: !!modules.gm, required: true },
     { id: 'coaching', label: 'Coaching', isReady: !!modules.coaching, required: true },
     { id: 'facilities', label: 'Facilities', isReady: !!modules.facilities, required: true },
     { id: 'scouting', label: 'Scouting', isReady: !!modules.scouting, required: true },
     { id: 'schedule', label: 'Schedule', isReady: !!modules.schedule, required: true },
+    { id: 'team', label: 'Your Team', isReady: !!selectedTeam, required: true },
   ];
 
   const handleModuleGenerate = (moduleId: string) => {
@@ -496,8 +495,8 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         generateDraftClassData();
         break;
       case 'gm':
-        // Open team selection modal to start GM creation flow
-        setShowTeamSelection(true);
+        // Generate 32 CPU GMs (Owner model)
+        generateGMs();
         break;
       case 'coaching':
         generateCoachingStaff();
@@ -550,25 +549,19 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     }
   };
 
-  // GM Selection Flow Handlers
+  // Team Selection Handler (Owner model - user picks team to own)
   const handleTeamSelect = (teamId: string) => {
-    const team = modules.rosters?.teams.find((t) => t.team.id === teamId);
-    if (team) {
-      setSelectedTeamForGM({
-        id: team.team.id,
-        name: team.team.name,
-        city: team.team.city,
-      });
+    // Look up full team info from LEAGUE_TEAMS (includes colors)
+    const teamInfo = LEAGUE_TEAMS.find((t) => t.id === teamId);
+    if (teamInfo) {
+      setTeam(teamInfo);
       setShowTeamSelection(false);
-      setShowGMCreation(true);
     }
   };
 
-  const handleGMComplete = async (background: GMBackground, archetype: GMArchetype) => {
-    if (!selectedTeamForGM || !modules.rosters) return;
-
+  // Generate 32 CPU GMs (Owner model - no player GM creation)
+  const generateGMs = async () => {
     setGeneratingModules((prev) => ({ ...prev, gm: true }));
-    setShowGMCreation(false);
 
     try {
       const teamTiers = getTeamTiers();
@@ -581,16 +574,18 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          playerTeamId: selectedTeamForGM.id,
-          playerBackground: background,
-          playerArchetype: archetype,
           teamTiers: tierObj,
         }),
       });
 
       const data = await response.json();
       if (data.success) {
-        storeGMs(data.gms);
+        // Owner mode returns Record<string, GM>, Player mode returns LeagueGMs
+        if (data.mode === 'owner') {
+          storeOwnerModeGMs(data.gms);
+        } else {
+          storeGMs(data.gms);
+        }
         loadModuleStatus();
       }
     } catch (error) {
@@ -598,7 +593,6 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     }
 
     setGeneratingModules((prev) => ({ ...prev, gm: false }));
-    setSelectedTeamForGM(null);
   };
 
   const isAnyGenerating = isGeneratingAll || Object.values(generatingModules).some(Boolean);
@@ -708,6 +702,39 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         </Card>
       )}
 
+      {/* Team Selection (Owner model) */}
+      {modules.rosters && (
+        <Card className={cn(
+          "border",
+          selectedTeam
+            ? "bg-gradient-to-r from-green-500/10 to-emerald-500/10 border-green-500/30"
+            : "bg-gradient-to-r from-orange-500/10 to-amber-500/10 border-orange-500/30"
+        )}>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-sm">
+                  {selectedTeam ? 'Your Team' : 'Select Your Team'}
+                </h3>
+                <p className="text-xs text-zinc-400">
+                  {selectedTeam
+                    ? `${selectedTeam.city} ${selectedTeam.name}`
+                    : 'Choose a team to own as franchise owner'}
+                </p>
+              </div>
+              <Button
+                variant={selectedTeam ? "outline" : "default"}
+                size="sm"
+                onClick={() => setShowTeamSelection(true)}
+                className={selectedTeam ? "" : "bg-orange-600 hover:bg-orange-700"}
+              >
+                {selectedTeam ? 'Change Team' : 'Select Team'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Ready Indicator */}
       <ReadyIndicator
         checks={readyChecks}
@@ -715,19 +742,12 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         disabled={isAnyGenerating}
       />
 
-      {/* GM Selection Modals */}
+      {/* Team Selection Modal (Owner model - pick team to own) */}
       <TeamSelectionModal
         open={showTeamSelection}
         onOpenChange={setShowTeamSelection}
         teams={modules.rosters?.teams || []}
         onSelectTeam={handleTeamSelect}
-      />
-
-      <GMCreationModal
-        open={showGMCreation}
-        onOpenChange={setShowGMCreation}
-        selectedTeam={selectedTeamForGM}
-        onComplete={handleGMComplete}
       />
     </div>
   );
