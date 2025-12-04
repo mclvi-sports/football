@@ -1,0 +1,27 @@
+{
+  "feature_name": "gamestats-generator",
+  "description": "Feed generated roster data into existing sim engine to produce realistic individual player game statistics",
+  "goal": "Full integration - connect roster generators to sim engine and output per-player stats",
+  "requirements": [
+    "Roster to Sim connection - generated rosters feed into sim engine",
+    "Per-player stats output - individual player game statistics",
+    "Use existing sim logic - don't rebuild sim engine, just integrate",
+    "Support full 53-man roster - all roster positions tracked"
+  ],
+  "out_of_scope": [
+    "Rebuilding sim engine - don't rewrite core sim logic"
+  ],
+  "constraints": [
+    "Must use existing sim engine (src/lib/sim/simulator.ts)",
+    "Must use existing roster types (TeamInfo, Player interfaces)",
+    "TypeScript only",
+    "No external APIs - all local processing"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+    "workorder_assigned_at": "2025-12-04T16:16:30.783506+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (coderef/foundation-docs)",
+      "ARCHITECTURE.md (coderef/foundation-docs)",
+      "COMPONENTS.md (coderef/foundation-docs)",
+      "SCHEMA.md (coderef/foundation-docs)"
+    ],
+    "missing": [
+      "USER-GUIDE.md"
+    ]
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "note": "Reference component matching requires feature name - not yet implemented"
+  },
+  "key_patterns_identified": [
+    "Error handling: try-catch blocks found in 11 files",
+    "File organization: barrel exports (export from) found in 8 files",
+    "Naming: camelCase for functions (599/788 functions)"
+  ],
+  "technology_stack": {
+    "language": "JavaScript/TypeScript",
+    "framework": "React",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "Webpack"
+  },
+  "project_structure": {
+    "main_directories": [
+      "context\\FINALS",
+      "src\\components\\franchise",
+      "src\\components\\ui",
+      "src\\lib\\data"
+    ],
+    "file_counts": {
+      "context\\FINALS": 19,
+      "src\\components\\ui": 14,
+      "src\\components\\franchise": 13,
+      "src\\lib\\data": 11,
+      "public": 8,
+      "context\\mocks": 8,
+      "context\\players-and-roster": 8,
+      "src\\lib": 8,
+      "src\\components\\gm": 8,
+      "src\\lib\\sim": 8
+    },
+    "organization_pattern": "component-based"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: USER-GUIDE.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No test directory found (tests/, test/, or __tests__/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ]
+}

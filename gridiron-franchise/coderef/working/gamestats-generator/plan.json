@@ -1,0 +1,366 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "gamestats-generator",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": [
+        "README.md",
+        "ARCHITECTURE.md",
+        "SCHEMA.md"
+      ],
+      "key_files_identified": [
+        "src/lib/sim/simulator.ts - Core simulation engine (1286 lines)",
+        "src/lib/sim/trait-effects.ts - Trait application during games",
+        "src/lib/sim/badge-effects.ts - Badge bonuses during games",
+        "src/lib/sim/scheme-modifiers.ts - Offensive scheme effects",
+        "src/lib/generators/player-generator.ts - Player generation",
+        "src/lib/generators/roster-generator.ts - Roster generation",
+        "src/types/player.ts - Player interfaces",
+        "src/lib/data/teams.ts - Team data"
+      ],
+      "patterns_to_follow": [
+        "TypeScript interfaces for data contracts",
+        "Existing sim engine play loop structure",
+        "Generator pattern from player-generator"
+      ],
+      "risks_identified": [
+        "Sim engine expects specific data structure - need adapter",
+        "Player generator may not output sim-compatible format",
+        "Performance with 53 players per team per game"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_description": "Connect generated roster data to the existing simulation engine to produce realistic individual player game statistics",
+      "primary_goal": "Full integration between roster generators and sim engine with per-player stat output",
+      "scope": "Integration layer only - no sim engine rewrites",
+      "estimated_complexity": "medium",
+      "key_deliverables": [
+        "Roster-to-SimTeam adapter",
+        "Player stat output interface",
+        "Integration tests"
+      ]
+    },
+    "2_risk_assessment": {
+      "technical_risks": [
+        {
+          "risk": "Data structure mismatch between generators and sim engine",
+          "likelihood": "high",
+          "impact": "medium",
+          "mitigation": "Create adapter layer to transform data"
+        },
+        {
+          "risk": "Missing player attributes required by sim engine",
+          "likelihood": "medium",
+          "impact": "high",
+          "mitigation": "Audit sim engine requirements, add defaults"
+        },
+        {
+          "risk": "Performance degradation with full rosters",
+          "likelihood": "low",
+          "impact": "medium",
+          "mitigation": "Profile and optimize hot paths if needed"
+        }
+      ],
+      "dependency_risks": [
+        {
+          "risk": "Player generator interface changes",
+          "mitigation": "Use stable interface, version lock"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/lib/sim/simulator.ts",
+          "changes": "Add roster loading method, update team initialization"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "src/lib/sim/roster-adapter.ts",
+          "purpose": "Transform generated roster to SimTeam format"
+        },
+        {
+          "path": "src/lib/sim/game-stats-output.ts",
+          "purpose": "Format and export per-player game statistics"
+        },
+        {
+          "path": "src/types/game-stats.ts",
+          "purpose": "TypeScript interfaces for game stats"
+        },
+        {
+          "path": "src/lib/sim/index.ts",
+          "purpose": "Barrel export for sim module"
+        }
+      ],
+      "files_to_delete": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "ROSTER-ADAPTER",
+          "name": "Roster to SimTeam Adapter",
+          "description": "Transform generated roster data into SimTeam format compatible with simulator",
+          "priority": "critical",
+          "requirements": [
+            "Map Player interface to SimPlayer",
+            "Build depth chart from roster",
+            "Calculate team OVR from players"
+          ]
+        },
+        {
+          "id": "STATS-OUTPUT",
+          "name": "Per-Player Stats Output",
+          "description": "Extract and format individual player statistics after game simulation",
+          "priority": "critical",
+          "requirements": [
+            "Passing stats (att, comp, yds, td, int)",
+            "Rushing stats (car, yds, td)",
+            "Receiving stats (tgt, rec, yds, td)",
+            "Defensive stats (tackles, sacks, int)",
+            "Kicking stats (fg, xp, punts)"
+          ]
+        },
+        {
+          "id": "INTEGRATION",
+          "name": "End-to-End Integration",
+          "description": "Connect roster generator output to sim engine input seamlessly",
+          "priority": "high",
+          "requirements": [
+            "Single function call to simulate game with rosters",
+            "Error handling for missing data",
+            "Logging for debugging"
+          ]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-GAMESTATS-GENERATOR-001",
+        "name": "Gamestats Generator",
+        "feature_dir": "coderef/working/gamestats-generator"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Audit sim engine data requirements",
+          "feature": "ROSTER-ADAPTER",
+          "estimated_effort": "small",
+          "dependencies": []
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Create game-stats TypeScript interfaces",
+          "feature": "STATS-OUTPUT",
+          "estimated_effort": "small",
+          "dependencies": []
+        },
+        {
+          "id": "ADAPT-001",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Create roster-adapter.ts with Player to SimPlayer mapping",
+          "feature": "ROSTER-ADAPTER",
+          "estimated_effort": "medium",
+          "dependencies": ["SETUP-001"]
+        },
+        {
+          "id": "ADAPT-002",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Implement depth chart builder from roster",
+          "feature": "ROSTER-ADAPTER",
+          "estimated_effort": "medium",
+          "dependencies": ["ADAPT-001"]
+        },
+        {
+          "id": "ADAPT-003",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Implement team OVR calculation from player attributes",
+          "feature": "ROSTER-ADAPTER",
+          "estimated_effort": "small",
+          "dependencies": ["ADAPT-001"]
+        },
+        {
+          "id": "STATS-001",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Create game-stats-output.ts extractor",
+          "feature": "STATS-OUTPUT",
+          "estimated_effort": "medium",
+          "dependencies": ["SETUP-002"]
+        },
+        {
+          "id": "STATS-002",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Implement passing stats extraction",
+          "feature": "STATS-OUTPUT",
+          "estimated_effort": "small",
+          "dependencies": ["STATS-001"]
+        },
+        {
+          "id": "STATS-003",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Implement rushing/receiving stats extraction",
+          "feature": "STATS-OUTPUT",
+          "estimated_effort": "small",
+          "dependencies": ["STATS-001"]
+        },
+        {
+          "id": "STATS-004",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Implement defensive stats extraction",
+          "feature": "STATS-OUTPUT",
+          "estimated_effort": "small",
+          "dependencies": ["STATS-001"]
+        },
+        {
+          "id": "INTEG-001",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Create simulateGameWithRosters() wrapper function",
+          "feature": "INTEGRATION",
+          "estimated_effort": "medium",
+          "dependencies": ["ADAPT-002", "ADAPT-003", "STATS-001"]
+        },
+        {
+          "id": "INTEG-002",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Add error handling and validation",
+          "feature": "INTEGRATION",
+          "estimated_effort": "small",
+          "dependencies": ["INTEG-001"]
+        },
+        {
+          "id": "INTEG-003",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Create barrel export index.ts",
+          "feature": "INTEGRATION",
+          "estimated_effort": "small",
+          "dependencies": ["INTEG-001"]
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+          "description": "Test adapter with mock roster data",
+          "feature": "INTEGRATION",
+          "estimated_effort": "medium",
+          "dependencies": ["INTEG-002"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Setup & Interfaces",
+          "description": "Audit requirements and create TypeScript interfaces",
+          "tasks": ["SETUP-001", "SETUP-002"],
+          "deliverables": [
+            "src/types/game-stats.ts",
+            "Documentation of sim engine data requirements"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Roster Adapter",
+          "description": "Build the adapter layer to transform roster data",
+          "tasks": ["ADAPT-001", "ADAPT-002", "ADAPT-003"],
+          "deliverables": [
+            "src/lib/sim/roster-adapter.ts"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Stats Output",
+          "description": "Implement per-player statistics extraction",
+          "tasks": ["STATS-001", "STATS-002", "STATS-003", "STATS-004"],
+          "deliverables": [
+            "src/lib/sim/game-stats-output.ts"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Integration & Testing",
+          "description": "Connect all components and validate",
+          "tasks": ["INTEG-001", "INTEG-002", "INTEG-003", "TEST-001"],
+          "deliverables": [
+            "src/lib/sim/index.ts",
+            "Working end-to-end integration"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "roster-adapter transforms Player to SimPlayer correctly",
+        "depth chart builder assigns correct positions",
+        "team OVR calculation matches expected formula",
+        "stats extractor returns all required fields"
+      ],
+      "integration_tests": [
+        "simulateGameWithRosters() produces valid game result",
+        "All 53 players have stats tracked",
+        "Stats totals match game score (TDs * 6 + FGs * 3 etc)"
+      ],
+      "manual_tests": [
+        "Run simulation with generated roster, verify realistic stats",
+        "Compare stats distribution to real NFL averages"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "Can simulate a game using generated roster data",
+        "All 22 starters have tracked statistics",
+        "Stats are realistic (QB: 200-400 yds, RB: 50-150 yds)",
+        "No TypeScript errors or runtime exceptions"
+      ],
+      "performance": [
+        "Single game simulation completes in under 2 seconds",
+        "Memory usage remains stable"
+      ],
+      "quality": [
+        "Code follows existing patterns in src/lib/sim/",
+        "All new functions have JSDoc comments",
+        "Exported via barrel index.ts"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Review simulator.ts for data requirements",
+        "[ ] Document SimPlayer interface needs",
+        "[ ] Create src/types/game-stats.ts",
+        "[ ] Define PlayerGameStats interface",
+        "[ ] Define GameResult interface"
+      ],
+      "phase_2_checklist": [
+        "[ ] Create src/lib/sim/roster-adapter.ts",
+        "[ ] Implement playerToSimPlayer() function",
+        "[ ] Implement buildDepthChart() function",
+        "[ ] Implement calculateTeamOVR() function",
+        "[ ] Implement rosterToSimTeam() main function"
+      ],
+      "phase_3_checklist": [
+        "[ ] Create src/lib/sim/game-stats-output.ts",
+        "[ ] Implement extractPlayerStats() function",
+        "[ ] Implement formatPassingStats() function",
+        "[ ] Implement formatRushingStats() function",
+        "[ ] Implement formatReceivingStats() function",
+        "[ ] Implement formatDefensiveStats() function"
+      ],
+      "phase_4_checklist": [
+        "[ ] Create simulateGameWithRosters() wrapper",
+        "[ ] Add input validation",
+        "[ ] Add error handling with meaningful messages",
+        "[ ] Create src/lib/sim/index.ts barrel export",
+        "[ ] Test with mock data",
+        "[ ] Test with generated roster"
+      ]
+    }
+  }
+}
