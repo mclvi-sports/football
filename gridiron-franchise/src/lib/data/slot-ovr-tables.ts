@@ -27,12 +27,13 @@ export const SLOT_OVR_TABLES: Record<Position, SlotOvrRange[]> = {
     { slot: 3, role: '3rd String', min: 58, max: 70 },
   ],
 
-  // Running Backs (4)
+  // Running Backs (5)
   [Position.RB]: [
     { slot: 1, role: 'Feature Back', min: 80, max: 94 },
     { slot: 2, role: 'Complementary', min: 74, max: 84 },
     { slot: 3, role: '3rd Down/Backup', min: 68, max: 78 },
     { slot: 4, role: 'Depth', min: 60, max: 72 },
+    { slot: 5, role: 'FB/Special Teams', min: 58, max: 68 },
   ],
 
   // Wide Receivers (6)
@@ -112,13 +113,14 @@ export const SLOT_OVR_TABLES: Record<Position, SlotOvrRange[]> = {
     { slot: 4, role: 'Depth', min: 62, max: 72 },
   ],
 
-  // Cornerbacks (5)
+  // Cornerbacks (6)
   [Position.CB]: [
     { slot: 1, role: 'CB1 Outside', min: 82, max: 96 },
     { slot: 2, role: 'CB2 Outside', min: 78, max: 88 },
     { slot: 3, role: 'Slot Corner', min: 74, max: 84 },
     { slot: 4, role: 'Rotational', min: 68, max: 78 },
     { slot: 5, role: 'Depth', min: 62, max: 72 },
+    { slot: 6, role: 'Bottom Roster', min: 58, max: 68 },
   ],
 
   // Free Safeties (2)
@@ -171,7 +173,7 @@ export const STAR_PLAYER_EXPECTATIONS: Record<Tier, { min: number; max: number }
  */
 export const ROSTER_SLOT_COUNTS: Record<Position, number> = {
   [Position.QB]: 3,
-  [Position.RB]: 4,
+  [Position.RB]: 5,  // +1 (includes FB types)
   [Position.WR]: 6,
   [Position.TE]: 3,
   [Position.LT]: 2,
@@ -183,7 +185,7 @@ export const ROSTER_SLOT_COUNTS: Record<Position, number> = {
   [Position.DT]: 4,
   [Position.MLB]: 2,
   [Position.OLB]: 4,
-  [Position.CB]: 5,
+  [Position.CB]: 6,  // +1 (nickel/depth)
   [Position.FS]: 2,
   [Position.SS]: 2,
   [Position.K]: 1,
