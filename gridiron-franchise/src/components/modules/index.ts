@@ -10,7 +10,19 @@
  */
 
 // Views - Read-only data display
-export { RosterView, ScheduleView, StandingsView, StatsView } from './views';
+export {
+  CoachingView,
+  DraftView,
+  FacilitiesView,
+  FAView,
+  GMSkillsView,
+  RosterView,
+  ScheduleView,
+  SchemesView,
+  ScoutingDeptView,
+  StandingsView,
+  StatsView,
+} from './views';
 
 // Loops - Interactive gameplay
 export { ScoutingLoop, TrainingLoop } from './loops';
