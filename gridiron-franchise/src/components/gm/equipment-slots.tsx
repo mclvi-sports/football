@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { SkillTierBadge } from './skill-tier-badge';
 import { SkillCardMini } from './skill-card';
 import { useGMEquipmentStore } from '@/stores/gm-equipment-store';
-import { getSkillById, skillCategories } from '@/data/gm-skills';
+import { getSkillById, skillCategories } from '@/lib/data/gm-skills';
 import { SLOT_UNLOCK_CONDITIONS } from '@/types/gm-equipment';
 import { canChangeEquipment } from '@/lib/gm-equipment-utils';
 import { Lock, Plus, X } from 'lucide-react';

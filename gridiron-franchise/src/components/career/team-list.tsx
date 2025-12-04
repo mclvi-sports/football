@@ -1,12 +1,12 @@
 "use client";
 
-import { Team } from "@/data/teams";
+import { TeamInfo } from "@/lib/data/teams";
 import { TeamCard } from "./team-card";
 
 interface TeamListProps {
-  teams: Team[];
-  selectedTeam?: Team | null;
-  onSelectTeam: (team: Team) => void;
+  teams: TeamInfo[];
+  selectedTeam?: TeamInfo | null;
+  onSelectTeam: (team: TeamInfo) => void;
 }
 
 export function TeamList({ teams, selectedTeam, onSelectTeam }: TeamListProps) {

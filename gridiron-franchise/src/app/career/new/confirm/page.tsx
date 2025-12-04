@@ -66,7 +66,7 @@ export default function ConfirmCareerPage() {
             color: selectedTeam.colors.secondary,
           }}
         >
-          {selectedTeam.abbreviation}
+          {selectedTeam.id}
         </div>
 
         {/* Team Info */}

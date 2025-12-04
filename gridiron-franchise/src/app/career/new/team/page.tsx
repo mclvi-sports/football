@@ -9,7 +9,7 @@ import { getFullGameData, TeamRosterData } from "@/lib/dev-player-store";
 import { getOwnerModeGMs, setOwnerTeam, GM } from "@/lib/gm";
 import { cn } from "@/lib/utils";
 import { Tier } from "@/lib/types";
-import { teams as staticTeams, Team } from "@/data/teams";
+import { LEAGUE_TEAMS, TeamInfo } from "@/lib/data/teams";
 
 // Tier display config
 const TIER_CONFIG: Record<Tier, { label: string; color: string }> = {
@@ -20,16 +20,16 @@ const TIER_CONFIG: Record<Tier, { label: string; color: string }> = {
   [Tier.Rebuilding]: { label: "Rebuilding", color: "text-red-500" },
 };
 
-// Build lookup map for static team data (abbreviation, colors)
-const teamLookup = new Map<string, Team>();
-for (const t of staticTeams) {
+// Build lookup map for static team data (colors)
+const teamLookup = new Map<string, TeamInfo>();
+for (const t of LEAGUE_TEAMS) {
   teamLookup.set(t.id.toUpperCase(), t);
   teamLookup.set(t.id.toLowerCase(), t);
 }
 
 interface TeamWithData {
   teamInfo: TeamRosterData["team"];
-  staticTeam: Team | null;
+  staticTeam: TeamInfo | null;
   tier: Tier;
   gm: GM | null;
   avgOvr: number;
@@ -119,7 +119,7 @@ export default function TeamSelectionPage() {
             const isSelected = selectedTeam?.id === teamData.staticTeam?.id;
             const tierConfig = TIER_CONFIG[teamData.tier];
             const colors = teamData.staticTeam?.colors || { primary: "#333", secondary: "#fff" };
-            const abbrev = teamData.staticTeam?.abbreviation || teamData.teamInfo.id.substring(0, 3);
+            const abbrev = teamData.staticTeam?.id || teamData.teamInfo.id.substring(0, 3);
 
             return (
               <button

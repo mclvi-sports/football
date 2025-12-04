@@ -1,12 +1,12 @@
 "use client";
 
-import { Team } from "@/data/teams";
+import { TeamInfo } from "@/lib/data/teams";
 import { cn } from "@/lib/utils";
 
 interface TeamCardProps {
-  team: Team;
+  team: TeamInfo;
   selected?: boolean;
-  onSelect?: (team: Team) => void;
+  onSelect?: (team: TeamInfo) => void;
 }
 
 export function TeamCard({ team, selected, onSelect }: TeamCardProps) {
@@ -29,7 +29,7 @@ export function TeamCard({ team, selected, onSelect }: TeamCardProps) {
           color: team.colors.secondary,
         }}
       >
-        {team.abbreviation}
+        {team.id}
       </div>
 
       {/* Team Info */}

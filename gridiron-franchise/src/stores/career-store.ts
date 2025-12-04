@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Team } from "@/data/teams";
+import type { TeamInfo } from "@/lib/data/teams";
 
 /**
  * Career Store - Owner Model
@@ -9,11 +9,11 @@ import type { Team } from "@/data/teams";
  */
 interface CareerCreationState {
   // Team selection (Owner picks team, inherits GM)
-  selectedTeam: Team | null;
+  selectedTeam: TeamInfo | null;
   playerTeamId: string | null;
 
   // Actions
-  setTeam: (team: Team) => void;
+  setTeam: (team: TeamInfo) => void;
   reset: () => void;
 
   // Computed helpers

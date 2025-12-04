@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { SkillTierBadge } from './skill-tier-badge';
 import type { GMSkillDefinition, SkillTierId } from '@/types/gm-skills';
-import { skillCategories } from '@/data/gm-skills';
+import { skillCategories } from '@/lib/data/gm-skills';
 import { Lock, Check, ChevronRight } from 'lucide-react';
 
 interface SkillCardProps {

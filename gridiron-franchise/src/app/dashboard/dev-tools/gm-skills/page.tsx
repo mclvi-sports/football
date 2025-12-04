@@ -23,9 +23,9 @@ import {
 import { useGMPointsStore } from '@/stores/gm-points-store';
 import { useGMEquipmentStore } from '@/stores/gm-equipment-store';
 import { useGMPrestigeStore } from '@/stores/gm-prestige-store';
-import { allSkills, skillCategories } from '@/data/gm-skills';
-import { allAchievements } from '@/data/gm-achievements';
-import { teamTierConfigs } from '@/data/gm-team-tiers';
+import { allSkills, skillCategories } from '@/lib/data/gm-skills';
+import { allAchievements } from '@/lib/data/gm-achievements';
+import { teamTierConfigs } from '@/lib/data/gm-team-tiers';
 import type { TeamTierLevel } from '@/types/gm-team-tier';
 import { RefreshCw, Trophy, Zap, Award } from 'lucide-react';
 

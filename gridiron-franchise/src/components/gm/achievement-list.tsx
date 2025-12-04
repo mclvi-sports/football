@@ -9,7 +9,7 @@ import { useGMPointsStore } from '@/stores/gm-points-store';
 import {
   allAchievements,
   getAchievementsByCategory,
-} from '@/data/gm-achievements';
+} from '@/lib/data/gm-achievements';
 import { getCareerStats } from '@/lib/gm-points-utils';
 import type { Achievement, AchievementCategory } from '@/types/gm-points';
 import { Trophy, Star, Users, Sparkles, Check } from 'lucide-react';

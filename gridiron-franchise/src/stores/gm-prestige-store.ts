@@ -9,7 +9,7 @@ import {
   hasDiamondAccess,
   hasCustomSkillAccess,
   getPrestigeTier,
-} from '@/data/gm-prestige';
+} from '@/lib/data/gm-prestige';
 
 interface GMPrestigeStoreState {
   // State

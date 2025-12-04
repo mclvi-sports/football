@@ -1,9 +1,9 @@
 "use client";
 
-import type { Team } from "@/data/teams";
+import type { TeamInfo } from "@/lib/data/teams";
 
 interface TeamCardProps {
-  team: Team;
+  team: TeamInfo;
 }
 
 export function TeamCard({ team }: TeamCardProps) {
@@ -18,7 +18,7 @@ export function TeamCard({ team }: TeamCardProps) {
             color: team.colors.secondary,
           }}
         >
-          {team.abbreviation}
+          {team.id}
         </div>
 
         {/* Team Info */}

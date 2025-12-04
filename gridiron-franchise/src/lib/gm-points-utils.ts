@@ -5,7 +5,7 @@ import type {
   GPTransaction,
   SeasonPointsSummary,
 } from '@/types/gm-points';
-import { getAchievementById, allAchievements } from '@/data/gm-achievements';
+import { getAchievementById, allAchievements } from '@/lib/data/gm-achievements';
 import type { SkillTierId } from '@/types/gm-skills';
 import { SKILL_TIER_COSTS } from '@/types/gm-skills';
 

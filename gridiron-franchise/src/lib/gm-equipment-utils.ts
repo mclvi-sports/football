@@ -13,7 +13,7 @@ import {
   SLOT_UNLOCK_CONDITIONS,
 } from '@/types/gm-equipment';
 import type { SkillTierId, PositionGroup, GMSkillDefinition } from '@/types/gm-skills';
-import { getSkillById } from '@/data/gm-skills';
+import { getSkillById } from '@/lib/data/gm-skills';
 
 // ============================================================================
 // INITIALIZATION

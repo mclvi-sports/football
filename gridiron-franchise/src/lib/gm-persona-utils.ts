@@ -8,7 +8,7 @@ import type {
   GMSynergy,
   SynergyKey,
 } from '@/types/gm-persona';
-import { synergyMap } from '@/data/gm-personas';
+import { synergyMap } from '@/lib/data/gm-personas';
 
 /**
  * Get synergy for a background and archetype combination

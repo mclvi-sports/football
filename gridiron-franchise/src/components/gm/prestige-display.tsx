@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useGMPrestigeStore } from '@/stores/gm-prestige-store';
-import { getPrestigeTier, prestigeTiers, getPrestigeProgress } from '@/data/gm-prestige';
+import { getPrestigeTier, prestigeTiers, getPrestigeProgress } from '@/lib/data/gm-prestige';
 import { Crown, Trophy, Star, Sparkles } from 'lucide-react';
 import type { PrestigeTierId } from '@/types/gm-prestige';
 

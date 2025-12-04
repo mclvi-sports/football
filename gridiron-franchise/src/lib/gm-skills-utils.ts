@@ -18,7 +18,7 @@ import {
   skillCategories,
   getStandardSkills,
   getPrestigeSkills,
-} from '@/data/gm-skills';
+} from '@/lib/data/gm-skills';
 import { SKILL_TIER_COSTS } from '@/types/gm-skills';
 
 // ============================================================================

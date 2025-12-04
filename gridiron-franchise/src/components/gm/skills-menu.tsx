@@ -18,7 +18,7 @@ import {
   getStandardSkills,
   platinumSkills,
   diamondSkills,
-} from '@/data/gm-skills';
+} from '@/lib/data/gm-skills';
 import type { SkillCategoryId, SkillTierId, GMSkillDefinition } from '@/types/gm-skills';
 import type { EquipmentSlot } from '@/types/gm-equipment';
 import { ownsSkill, getOwnedTier } from '@/lib/gm-skills-utils';
