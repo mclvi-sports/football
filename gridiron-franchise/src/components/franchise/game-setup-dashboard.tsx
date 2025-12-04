@@ -1,5 +1,19 @@
 'use client';
 
+/**
+ * Game Setup Dashboard
+ *
+ * Dev tools interface for generating and managing league data.
+ * "Generate All" uses shared generateLeagueData() from league-generator.ts.
+ *
+ * UI: Module cards with individual generate/clear/view buttons.
+ * Individual module functions (generateTeamRosters, generateGMs, etc.) remain
+ * for per-module regeneration - only "Generate All" uses the shared generator.
+ *
+ * Related: /career/new/generate uses the same generator but with
+ * auto-trigger on page load and vertical step list UI.
+ */
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ModuleCard, ModuleStatus } from './module-card';

@@ -1,5 +1,17 @@
 "use client";
 
+/**
+ * New Game Generation Page
+ *
+ * Auto-generates all league data when user starts a new career.
+ * Uses shared generateLeagueData() from league-generator.ts.
+ *
+ * UI: Vertical step list with progress bar, redirects to team selection on complete.
+ *
+ * Related: GameSetupDashboard (/dashboard/dev-tools/full) uses the same generator
+ * but with module cards UI and manual trigger via "Generate All" button.
+ */
+
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Check, AlertCircle } from "lucide-react";
