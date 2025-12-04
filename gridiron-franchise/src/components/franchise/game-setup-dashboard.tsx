@@ -28,7 +28,7 @@ import { getFullGameData, FullGameData, TeamRosterData, getFreeAgents, getDraftC
 import { getCoaching } from '@/lib/coaching/coaching-store';
 import { getFacilities } from '@/lib/facilities/facilities-store';
 import { getSchedule } from '@/lib/schedule/schedule-store';
-import { getGMs, storeGMs, clearGMs, LeagueGMs, GMBackground, GMArchetype } from '@/lib/gm';
+import { getGMs, storeGMs, clearGMs, getOwnerModeGMs, LeagueGMs, OwnerModeGMs, GMBackground, GMArchetype } from '@/lib/gm';
 import { getScouting, storeScouting, clearScouting } from '@/lib/scouting/scouting-store';
 import { LeagueScouting } from '@/lib/scouting/types';
 import { Player } from '@/lib/types';
@@ -44,7 +44,7 @@ interface ModuleData {
   rosters: FullGameData | null;
   freeAgents: Player[];
   draftClass: Player[];
-  gm: LeagueGMs | null;
+  gm: LeagueGMs | OwnerModeGMs | null;
   coaching: ReturnType<typeof getCoaching>;
   facilities: ReturnType<typeof getFacilities>;
   scouting: LeagueScouting | null;
@@ -89,7 +89,7 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       rosters: getFullGameData(),
       freeAgents: getFreeAgents(),
       draftClass: getDraftClass(),
-      gm: getGMs(),
+      gm: getOwnerModeGMs() || getGMs(), // Check Owner mode first, then legacy
       coaching: getCoaching(),
       facilities: getFacilities(),
       scouting: getScouting(),
