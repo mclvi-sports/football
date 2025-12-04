@@ -20,6 +20,7 @@ import {
   Trash2,
   UserCog,
   Search,
+  User,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -460,6 +461,15 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       count: modules.schedule ? modules.schedule.weeks.reduce((sum, week) => sum + week.games.length, 0) : 0,
       countLabel: 'games',
     },
+    {
+      id: 'player',
+      name: 'Single Player',
+      description: 'Test player generation',
+      icon: <User className="h-5 w-5" />,
+      isGenerated: true, // Always "ready" - it's a utility tool
+      count: 0,
+      countLabel: '',
+    },
   ];
 
   // Build ready checks for ReadyIndicator
@@ -501,6 +511,10 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
       case 'schedule':
         generateScheduleData();
         break;
+      case 'player':
+        // Navigate to player generator page
+        router.push('/dashboard/dev-tools/player');
+        break;
     }
   };
 
@@ -529,6 +543,9 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
         break;
       case 'schedule':
         router.push('/dashboard/dev-tools/schedule');
+        break;
+      case 'player':
+        router.push('/dashboard/dev-tools/player');
         break;
     }
   };

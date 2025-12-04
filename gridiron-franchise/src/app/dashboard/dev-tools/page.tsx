@@ -42,6 +42,11 @@ export default function DevToolsPage() {
           </h2>
           <div className="grid grid-cols-2 gap-3">
             <NavCard
+              title="Single Player Generator"
+              icon="PLR"
+              href="/dashboard/dev-tools/player"
+            />
+            <NavCard
               title="Free Agents Generator"
               icon="FA"
               href="/dashboard/dev-tools/fa"

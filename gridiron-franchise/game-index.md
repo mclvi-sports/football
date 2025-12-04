@@ -4,7 +4,7 @@
 
 | Generator | Library | API Endpoint |
 |-----------|---------|--------------|
-| Player | `lib/generators/player-generator.ts` | - |
+| Player | `lib/generators/player-generator.ts` | `/api/dev/generate-player` |
 | Roster | `lib/generators/roster-generator.ts` | `/api/dev/generate-roster` |
 | Team Rosters (32) | `lib/generators/full-game-generator.ts` | `/api/dev/generate-rosters` |
 | Full Game | `lib/generators/full-game-generator.ts` | `/api/dev/generate-full` |
