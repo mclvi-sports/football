@@ -45,8 +45,31 @@ export function getDevPlayers(): Player[] {
 }
 
 export function getDevPlayerById(id: string): Player | null {
+  // First check dev players store
   const players = getDevPlayers();
-  return players.find((p) => p.id === id) || null;
+  const found = players.find((p) => p.id === id);
+  if (found) return found;
+
+  // Fallback: search full game data
+  const fullGame = getFullGameData();
+  if (fullGame) {
+    for (const team of fullGame.teams) {
+      const player = team.roster.players.find((p) => p.id === id);
+      if (player) return player;
+    }
+  }
+
+  // Fallback: search free agents
+  const freeAgents = getFreeAgents();
+  const fa = freeAgents.find((p) => p.id === id);
+  if (fa) return fa;
+
+  // Fallback: search draft class
+  const draftClass = getDraftClass();
+  const prospect = draftClass.find((p) => p.id === id);
+  if (prospect) return prospect;
+
+  return null;
 }
 
 export function clearDevPlayers(): void {
@@ -87,6 +110,9 @@ export interface FullGameData {
 export function storeFullGameData(data: FullGameData): void {
   if (typeof window !== "undefined") {
     sessionStorage.setItem(FULL_GAME_KEY, JSON.stringify(data));
+    // Also store all players so they can be looked up by ID
+    const allPlayers = data.teams.flatMap((t) => t.roster.players);
+    storeDevPlayers(allPlayers);
   }
 }
 

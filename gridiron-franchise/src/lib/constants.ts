@@ -162,7 +162,7 @@ export const POSITION_ARCHETYPES: Record<Position, { archetype: Archetype; weigh
  */
 export const ROSTER_TEMPLATE: { position: Position; count: number }[] = [
   { position: Position.QB, count: 3 },
-  { position: Position.RB, count: 4 },
+  { position: Position.RB, count: 5 },  // +1 (includes FB types)
   { position: Position.WR, count: 6 },
   { position: Position.TE, count: 3 },
   { position: Position.LT, count: 2 },
@@ -174,9 +174,10 @@ export const ROSTER_TEMPLATE: { position: Position; count: number }[] = [
   { position: Position.DT, count: 4 },
   { position: Position.MLB, count: 2 },
   { position: Position.OLB, count: 4 },
-  { position: Position.CB, count: 5 },
+  { position: Position.CB, count: 6 },  // +1 (nickel/depth)
   { position: Position.FS, count: 2 },
   { position: Position.SS, count: 2 },
   { position: Position.K, count: 1 },
   { position: Position.P, count: 1 },
 ];
+// Total: 3+5+6+3+10+4+4+2+4+6+2+2+1+1 = 53
