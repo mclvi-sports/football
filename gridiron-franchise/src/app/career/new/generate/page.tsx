@@ -4,206 +4,78 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Check, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// Store imports
 import {
-  storeFullGameData,
-  storeDevPlayers,
-  storeFreeAgents,
-  storeDraftClass,
-  clearFullGameData,
-  clearDevPlayers,
-  clearFreeAgents,
-  clearDraftClass,
-  FullGameData,
-  TeamRosterData,
-} from "@/lib/dev-player-store";
-import { storeCoaching, clearCoaching } from "@/lib/coaching/coaching-store";
-import { storeFacilities, clearFacilities } from "@/lib/facilities/facilities-store";
-import { storeSchedule, clearSchedule } from "@/lib/schedule/schedule-store";
-import { storeOwnerModeGMs, clearGMs } from "@/lib/gm";
-import { storeScouting, clearScouting } from "@/lib/scouting/scouting-store";
-import { Tier } from "@/lib/types";
+  generateLeagueData,
+  GenerationStep,
+  StepStatus,
+  GENERATION_STEPS,
+} from "@/lib/generators/league-generator";
 
-type GenerationStep = {
-  id: string;
+type StepState = {
+  id: GenerationStep;
   label: string;
-  status: "pending" | "loading" | "complete" | "error";
+  status: StepStatus;
 };
 
-const INITIAL_STEPS: GenerationStep[] = [
-  { id: "rosters", label: "Team Rosters", status: "pending" },
-  { id: "freeagents", label: "Free Agents", status: "pending" },
-  { id: "draft", label: "Draft Class", status: "pending" },
-  { id: "gms", label: "General Managers", status: "pending" },
-  { id: "coaching", label: "Coaching Staffs", status: "pending" },
-  { id: "facilities", label: "Team Facilities", status: "pending" },
-  { id: "scouting", label: "Scouting Departments", status: "pending" },
-  { id: "schedule", label: "Season Schedule", status: "pending" },
-];
+const STEP_LABELS: Record<GenerationStep, string> = {
+  rosters: "Team Rosters",
+  freeagents: "Free Agents",
+  draft: "Draft Class",
+  gms: "General Managers",
+  coaching: "Coaching Staffs",
+  facilities: "Team Facilities",
+  scouting: "Scouting Departments",
+  schedule: "Season Schedule",
+};
 
 export default function GenerateLeaguePage() {
   const router = useRouter();
-  const [steps, setSteps] = useState<GenerationStep[]>(INITIAL_STEPS);
-  const [error, setError] = useState<string | null>(null);
-  const [teamTiers, setTeamTiers] = useState<Record<string, Tier>>({});
-
-  const updateStep = useCallback(
-    (stepId: string, status: GenerationStep["status"]) => {
-      setSteps((prev) =>
-        prev.map((s) => (s.id === stepId ? { ...s, status } : s))
-      );
-    },
-    []
+  const [steps, setSteps] = useState<StepState[]>(
+    GENERATION_STEPS.map((id) => ({
+      id,
+      label: STEP_LABELS[id],
+      status: "pending" as StepStatus,
+    }))
   );
+  const [error, setError] = useState<string | null>(null);
 
-  const generateAll = useCallback(async () => {
-    // Clear any existing data
-    clearFullGameData();
-    clearDevPlayers();
-    clearFreeAgents();
-    clearDraftClass();
-    clearGMs();
-    clearCoaching();
-    clearFacilities();
-    clearScouting();
-    clearSchedule();
+  const updateStep = useCallback((step: GenerationStep, status: StepStatus) => {
+    setSteps((prev) =>
+      prev.map((s) => (s.id === step ? { ...s, status } : s))
+    );
+  }, []);
 
-    try {
-      // Step 1: Generate Rosters
-      updateStep("rosters", "loading");
-      const rostersRes = await fetch("/api/dev/generate-rosters", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-      const rostersData = await rostersRes.json();
-      if (!rostersData.success) throw new Error("Failed to generate rosters");
+  const runGeneration = useCallback(async () => {
+    setError(null);
+    setSteps(
+      GENERATION_STEPS.map((id) => ({
+        id,
+        label: STEP_LABELS[id],
+        status: "pending" as StepStatus,
+      }))
+    );
 
-      const fullGameData: FullGameData = {
-        teams: rostersData.teams,
-        generatedAt: rostersData.generatedAt,
-        totalPlayers: rostersData.stats.totalPlayers,
-        tierDistribution: rostersData.stats.tierDistribution,
-      };
-      storeFullGameData(fullGameData);
-      const rosterPlayers = rostersData.teams.flatMap(
-        (t: TeamRosterData) => t.roster.players
-      );
-      storeDevPlayers(rosterPlayers);
+    const success = await generateLeagueData({
+      onStepChange: updateStep,
+      onError: (step, err) => {
+        setError(err.message);
+      },
+      onComplete: () => {
+        // Redirect to team selection after short delay
+        setTimeout(() => {
+          router.push("/career/new/team");
+        }, 500);
+      },
+    });
 
-      // Extract team tiers for dependent generators
-      const tiers: Record<string, Tier> = {};
-      for (const team of rostersData.teams) {
-        tiers[team.team.id] = team.tier;
-      }
-      setTeamTiers(tiers);
-      updateStep("rosters", "complete");
-
-      // Step 2: Generate Free Agents
-      updateStep("freeagents", "loading");
-      const faRes = await fetch("/api/dev/generate-fa", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
-      const faData = await faRes.json();
-      if (!faData.success) throw new Error("Failed to generate free agents");
-      storeFreeAgents(faData.players);
-      updateStep("freeagents", "complete");
-
-      // Step 3: Generate Draft Class
-      updateStep("draft", "loading");
-      const draftRes = await fetch("/api/dev/generate-draft", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
-      const draftData = await draftRes.json();
-      if (!draftData.success) throw new Error("Failed to generate draft class");
-      storeDraftClass(draftData.players);
-      // Update dev players with all players
-      storeDevPlayers([...rosterPlayers, ...faData.players, ...draftData.players]);
-      updateStep("draft", "complete");
-
-      // Steps 4-7: Generate in parallel (they all depend on rosters/tiers)
-      updateStep("gms", "loading");
-      updateStep("coaching", "loading");
-      updateStep("facilities", "loading");
-      updateStep("scouting", "loading");
-
-      const [gmsRes, coachingRes, facilitiesRes, scoutingRes] = await Promise.all([
-        fetch("/api/dev/generate-gm", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ teamTiers: tiers }), // No player params = Owner mode
-        }),
-        fetch("/api/dev/generate-coaching", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ teamTiers: tiers }),
-        }),
-        fetch("/api/dev/generate-facilities", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ teamTiers: tiers }),
-        }),
-        fetch("/api/dev/generate-scouting", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ teamTiers: tiers }),
-        }),
-      ]);
-
-      const [gmsData, coachingData, facilitiesData, scoutingData] = await Promise.all([
-        gmsRes.json(),
-        coachingRes.json(),
-        facilitiesRes.json(),
-        scoutingRes.json(),
-      ]);
-
-      if (!gmsData.success) throw new Error("Failed to generate GMs");
-      storeOwnerModeGMs(gmsData.gms);
-      updateStep("gms", "complete");
-
-      if (!coachingData.success) throw new Error("Failed to generate coaching");
-      storeCoaching(coachingData.coaching);
-      updateStep("coaching", "complete");
-
-      if (!facilitiesData.success) throw new Error("Failed to generate facilities");
-      storeFacilities(facilitiesData.facilities);
-      updateStep("facilities", "complete");
-
-      if (!scoutingData.success) throw new Error("Failed to generate scouting");
-      storeScouting(scoutingData.scouting);
-      updateStep("scouting", "complete");
-
-      // Step 8: Generate Schedule
-      updateStep("schedule", "loading");
-      const scheduleRes = await fetch("/api/dev/generate-schedule", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          season: new Date().getFullYear(),
-          randomizeStandings: true,
-        }),
-      });
-      const scheduleData = await scheduleRes.json();
-      if (!scheduleData.success) throw new Error("Failed to generate schedule");
-      storeSchedule(scheduleData.schedule);
-      updateStep("schedule", "complete");
-
-      // All done - redirect to team selection
-      setTimeout(() => {
-        router.push("/career/new/team");
-      }, 500);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Generation failed");
+    if (!success && !error) {
+      setError("Generation failed");
     }
-  }, [router, updateStep]);
+  }, [router, updateStep, error]);
 
   useEffect(() => {
-    generateAll();
-  }, [generateAll]);
+    runGeneration();
+  }, [runGeneration]);
 
   const completedCount = steps.filter((s) => s.status === "complete").length;
   const progress = Math.round((completedCount / steps.length) * 100);
@@ -280,8 +152,7 @@ export default function GenerateLeaguePage() {
             <button
               onClick={() => {
                 setError(null);
-                setSteps(INITIAL_STEPS);
-                generateAll();
+                runGeneration();
               }}
               className="mt-2 text-xs underline text-muted-foreground hover:text-foreground"
             >

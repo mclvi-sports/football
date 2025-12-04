@@ -41,6 +41,7 @@ import { storeCoaching, clearCoaching } from '@/lib/coaching/coaching-store';
 import { storeFacilities, clearFacilities } from '@/lib/facilities/facilities-store';
 import { storeSchedule, clearSchedule } from '@/lib/schedule/schedule-store';
 import { Tier } from '@/lib/types';
+import { generateLeagueData, GenerationStep } from '@/lib/generators/league-generator';
 
 interface ModuleData {
   rosters: FullGameData | null;
@@ -302,21 +303,38 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
     setGeneratingModules((prev) => ({ ...prev, schedule: false }));
   };
 
-  // Generate all modules in sequence
+  // Map GenerationStep to module IDs for UI updates
+  const stepToModuleId: Record<GenerationStep, string> = {
+    rosters: 'rosters',
+    freeagents: 'freeagents',
+    draft: 'draft',
+    gms: 'gm',
+    coaching: 'coaching',
+    facilities: 'facilities',
+    scouting: 'scouting',
+    schedule: 'schedule',
+  };
+
+  // Generate all modules using shared generator
   const generateAll = async () => {
     setIsGeneratingAll(true);
 
-    // 1. Generate rosters, FA, and draft (can be parallel)
-    await Promise.all([generateTeamRosters(), generateFreeAgentsData(), generateDraftClassData()]);
-
-    // Wait for state to update
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // 2. Generate GMs, coaching, facilities, and scouting (can be parallel, need rosters for tiers)
-    await Promise.all([generateGMs(), generateCoachingStaff(), generateFacilitiesData(), generateScoutingData()]);
-
-    // 3. Generate schedule
-    await generateScheduleData();
+    await generateLeagueData({
+      onStepChange: (step, status) => {
+        const moduleId = stepToModuleId[step];
+        if (status === 'loading') {
+          setGeneratingModules((prev) => ({ ...prev, [moduleId]: true }));
+        } else {
+          setGeneratingModules((prev) => ({ ...prev, [moduleId]: false }));
+          if (status === 'complete') {
+            loadModuleStatus(); // Refresh module status after each completion
+          }
+        }
+      },
+      onComplete: () => {
+        loadModuleStatus();
+      },
+    });
 
     setIsGeneratingAll(false);
   };

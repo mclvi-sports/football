@@ -1,0 +1,213 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "unified-league-generator",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": false,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": [
+        "src/app/career/new/generate/page.tsx",
+        "src/components/franchise/game-setup-dashboard.tsx"
+      ],
+      "coding_standards": "TypeScript, React hooks, async/await patterns",
+      "reference_components": [
+        "src/lib/generators/full-game-generator.ts",
+        "src/lib/dev-player-store.ts"
+      ],
+      "existing_patterns": "API route calls with fetch, sessionStorage for state persistence, callback-based progress reporting"
+    },
+    "1_executive_summary": {
+      "feature_description": "Extract shared league data generation logic into a single reusable function that both the career new game flow and dev tools dashboard can use",
+      "primary_goal": "Eliminate duplicate code between two generation flows, ensuring bug fixes apply to both automatically",
+      "scope": "Create new league-generator.ts module, refactor two existing files to use it",
+      "estimated_complexity": "Medium - moderate refactoring with clear extraction pattern"
+    },
+    "2_risk_assessment": {
+      "overall_risk": "Low",
+      "risks": [
+        {
+          "risk": "Breaking existing functionality during refactor",
+          "severity": "Medium",
+          "mitigation": "Test both flows after each change"
+        },
+        {
+          "risk": "Callback interface not flexible enough for both UIs",
+          "severity": "Low",
+          "mitigation": "Design callbacks based on both existing implementations"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        {
+          "path": "src/lib/generators/league-generator.ts",
+          "purpose": "Shared league data generation function with progress callbacks"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "src/app/career/new/generate/page.tsx",
+          "changes": "Replace inline API logic with generateLeagueData() call"
+        },
+        {
+          "path": "src/components/franchise/game-setup-dashboard.tsx",
+          "changes": "Replace generateAll() implementation with generateLeagueData() call"
+        }
+      ],
+      "files_to_delete": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Shared Generator Function",
+          "description": "Single generateLeagueData() function that handles all API calls and storage"
+        },
+        {
+          "id": "F2",
+          "name": "Progress Callbacks",
+          "description": "onStepChange, onError, onComplete callbacks for UI progress reporting"
+        },
+        {
+          "id": "F3",
+          "name": "Career Flow Integration",
+          "description": "Update career/new/generate to use shared generator"
+        },
+        {
+          "id": "F4",
+          "name": "Dev Tools Integration",
+          "description": "Update GameSetupDashboard to use shared generator for generateAll()"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-UNIFIED-LEAGUE-GENERATOR-001",
+        "name": "Unified League Generator",
+        "feature_dir": "coderef/working/unified-league-generator"
+      },
+      "tasks": [
+        {
+          "id": "GEN-001",
+          "workorder_id": "WO-UNIFIED-LEAGUE-GENERATOR-001",
+          "description": "Create league-generator.ts with types and interfaces",
+          "feature_id": "F1",
+          "estimated_loc": 50
+        },
+        {
+          "id": "GEN-002",
+          "workorder_id": "WO-UNIFIED-LEAGUE-GENERATOR-001",
+          "description": "Implement generateLeagueData() with all API calls and storage",
+          "feature_id": "F1",
+          "estimated_loc": 120
+        },
+        {
+          "id": "GEN-003",
+          "workorder_id": "WO-UNIFIED-LEAGUE-GENERATOR-001",
+          "description": "Add progress callback support",
+          "feature_id": "F2",
+          "estimated_loc": 30
+        },
+        {
+          "id": "INT-001",
+          "workorder_id": "WO-UNIFIED-LEAGUE-GENERATOR-001",
+          "description": "Refactor career/new/generate/page.tsx to use generateLeagueData()",
+          "feature_id": "F3",
+          "estimated_loc": -80
+        },
+        {
+          "id": "INT-002",
+          "workorder_id": "WO-UNIFIED-LEAGUE-GENERATOR-001",
+          "description": "Refactor GameSetupDashboard generateAll() to use generateLeagueData()",
+          "feature_id": "F4",
+          "estimated_loc": -60
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-UNIFIED-LEAGUE-GENERATOR-001",
+          "description": "Test career new game flow end-to-end",
+          "feature_id": "F3",
+          "estimated_loc": 0
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-UNIFIED-LEAGUE-GENERATOR-001",
+          "description": "Test dev tools Generate All flow end-to-end",
+          "feature_id": "F4",
+          "estimated_loc": 0
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Create Shared Generator",
+          "description": "Build the new league-generator.ts module",
+          "tasks": ["GEN-001", "GEN-002", "GEN-003"],
+          "deliverables": ["src/lib/generators/league-generator.ts"]
+        },
+        {
+          "phase": 2,
+          "name": "Integration",
+          "description": "Update both consuming flows to use the shared generator",
+          "tasks": ["INT-001", "INT-002"],
+          "deliverables": ["Updated career flow", "Updated dev tools dashboard"]
+        },
+        {
+          "phase": 3,
+          "name": "Testing",
+          "description": "Verify both flows work correctly",
+          "tasks": ["TEST-001", "TEST-002"],
+          "deliverables": ["Working career new game flow", "Working dev tools generateAll"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Navigate to /career/new/generate and verify all 8 steps complete",
+        "Navigate to /dashboard/dev-tools/full and click Generate All",
+        "Verify all modules show as generated in dev tools",
+        "Test individual module regeneration still works in dev tools"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "Both flows generate all 8 data modules successfully",
+        "Progress UI updates correctly in both flows",
+        "No duplicate generation logic exists",
+        "Individual module regeneration still works in dev tools"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Create src/lib/generators/league-generator.ts",
+        "[ ] Define GenerationStep and StepStatus types",
+        "[ ] Define GenerationCallbacks interface",
+        "[ ] Implement generateLeagueData() function",
+        "[ ] Add all API calls in correct order",
+        "[ ] Add storage calls for each module",
+        "[ ] Add callback invocations for progress"
+      ],
+      "phase_2": [
+        "[ ] Import generateLeagueData in career flow",
+        "[ ] Replace inline API logic with generator call",
+        "[ ] Wire up progress callbacks to updateStep",
+        "[ ] Import generateLeagueData in dashboard",
+        "[ ] Replace generateAll() body with generator call",
+        "[ ] Wire up progress callbacks to setGeneratingModules"
+      ],
+      "phase_3": [
+        "[ ] Test /career/new/generate flow",
+        "[ ] Test /dashboard/dev-tools/full Generate All",
+        "[ ] Test individual module regeneration",
+        "[ ] Verify data persists correctly"
+      ]
+    }
+  }
+}
