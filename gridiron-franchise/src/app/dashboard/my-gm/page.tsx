@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { getPlayerGM, GM, GM_BACKGROUNDS, GM_ARCHETYPES } from "@/lib/gm";
 import { useCareerStore } from "@/stores/career-store";
 
@@ -25,17 +24,8 @@ export default function MyGMPage() {
 
   if (!gm) {
     return (
-      <div className="min-h-screen">
-        <header className="px-5 pt-12 pb-4">
-          <Link
-            href="/dashboard"
-            className="text-muted-foreground hover:text-foreground transition-colors text-sm"
-          >
-            Back to Dashboard
-          </Link>
-          <h1 className="text-2xl font-bold mt-2">My GM</h1>
-        </header>
-        <main className="px-5">
+      <div>
+        <main className="px-5 pt-4">
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <p className="text-muted-foreground">Loading GM data...</p>
           </div>
@@ -68,18 +58,8 @@ export default function MyGMPage() {
   };
 
   return (
-    <div className="min-h-screen pb-8">
-      <header className="px-5 pt-12 pb-4">
-        <Link
-          href="/dashboard"
-          className="text-muted-foreground hover:text-foreground transition-colors text-sm"
-        >
-          ← Back to Dashboard
-        </Link>
-        <h1 className="text-2xl font-bold mt-2">My GM</h1>
-      </header>
-
-      <main className="px-5 space-y-6">
+    <div className="pb-8">
+      <main className="px-5 pt-4 space-y-6">
         {/* GM Profile Card */}
         <div className="bg-secondary/30 border border-border rounded-xl p-6 text-center">
           <div className="w-20 h-20 mx-auto rounded-full bg-primary/20 flex items-center justify-center text-3xl font-bold text-primary mb-4">

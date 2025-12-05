@@ -29,14 +29,8 @@ export default function DashboardPage() {
 
   return (
     <div className="pb-24">
-      {/* Header */}
-      <header className="px-5 pt-12 pb-4">
-        <p className="text-sm text-muted-foreground">Season 2025 - Week 1</p>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-      </header>
-
       {/* Content */}
-      <main className="px-5 space-y-6">
+      <main className="px-5 pt-4 space-y-6">
         {/* Team Card */}
         <TeamCard team={selectedTeam} />
 

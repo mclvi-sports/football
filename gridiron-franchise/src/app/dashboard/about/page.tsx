@@ -73,18 +73,7 @@ function SystemCard({
 
 export default function AboutPage() {
   return (
-    <div className="px-5 space-y-6 pb-32">
-      {/* Header */}
-      <div className="flex items-center gap-4 py-4">
-        <Link
-          href="/dashboard"
-          className="text-muted-foreground hover:text-foreground transition-colors text-xl"
-        >
-          ←
-        </Link>
-        <h1 className="text-xl font-bold">About Gridiron Franchise</h1>
-      </div>
-
+    <div className="px-5 pt-4 space-y-6 pb-32">
       {/* Hero Section */}
       <div className="text-center space-y-4 py-4">
         <div className="w-20 h-20 mx-auto bg-primary/20 rounded-2xl flex items-center justify-center">
