@@ -40,54 +40,16 @@ export default function DashboardPage() {
         {/* Team Card */}
         <TeamCard team={selectedTeam} />
 
+        {/* Schedule Card */}
+        <NavCard
+          title="Schedule"
+          icon="S"
+          href="/dashboard/schedule"
+          description="Week 1"
+        />
+
         {/* Navigation Grid */}
         <div className="grid grid-cols-2 gap-3">
-          <NavCard
-            title="Next Task"
-            icon="NT"
-            href="/dashboard/next-task"
-            variant="highlight"
-          />
-          <NavCard
-            title="Roster"
-            icon="R"
-            href="/dashboard/roster"
-          />
-          <NavCard
-            title="Schedule"
-            icon="S"
-            href="/dashboard/schedule"
-          />
-          <NavCard
-            title="Stats"
-            icon="ST"
-            href="/dashboard/stats"
-          />
-          <NavCard
-            title="Draft"
-            icon="D"
-            href="/dashboard/draft"
-          />
-          <NavCard
-            title="News"
-            icon="N"
-            href="/dashboard/news"
-          />
-          <NavCard
-            title="Facilities"
-            icon="F"
-            href="/dashboard/facilities"
-          />
-          <NavCard
-            title="Staff"
-            icon="ST"
-            href="/dashboard/staff"
-          />
-          <NavCard
-            title="My GM"
-            icon="GM"
-            href="/dashboard/my-gm"
-          />
           <NavCard
             title="Dev Tools"
             icon="DEV"
