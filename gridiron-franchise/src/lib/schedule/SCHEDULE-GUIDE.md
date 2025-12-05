@@ -101,9 +101,12 @@ interface TeamSchedule {
 
 | Function | Location | Purpose |
 |----------|----------|---------|
-| `generateSchedule(config)` | schedule-generator.ts:820 | Generate complete schedule |
-| `validateSchedule(schedule)` | schedule-generator.ts:870 | Validate schedule constraints |
-| `getScheduleStats(schedule)` | schedule-generator.ts:920 | Get breakdown statistics |
+| `generateSchedule(config)` | schedule-generator.ts | Generate complete schedule (with retry) |
+| `validateSchedule(schedule)` | schedule-generator.ts | Validate schedule constraints |
+| `getScheduleStats(schedule)` | schedule-generator.ts | Get breakdown statistics |
+| `distributeGamesToWeeks()` | schedule-generator.ts | MRV placement algorithm |
+| `hybridPlacement()` | schedule-generator.ts | Core MRV greedy placement |
+| `assignPrimeTimeSlots()` | schedule-generator.ts | Assign TNF/SNF/MNF slots |
 | `initializeSchedule(schedule)` | schedule-store.ts | Load into Zustand store |
 | `getSchedule()` | schedule-store.ts | Get current schedule from store |
 | `getWeekScheduleByNumber(week)` | schedule-store.ts | Get specific week |
@@ -221,21 +224,21 @@ With 272 games and 288 available slots (18 weeks × 16 games max), there's very 
 
 ### The Solution
 
-We use a "greedy with repair" approach:
+We use a "smart greedy with retry" approach:
 
 1. **First, figure out who plays whom** - Based on division standings and rotation schedules, we determine all 272 matchups.
 
-2. **Assign bye weeks** - We spread bye weeks across weeks 5-17, making sure an even number of teams are off each week (so remaining teams can pair up).
+2. **Assign bye weeks** - We spread bye weeks across weeks 5-17, making sure an even number of teams are off each week (so remaining teams can pair up). Division rivals get different bye weeks to maximize flexibility.
 
-3. **Place games greedily** - Starting with the most constrained games (division games), we slot each game into the week with the most room.
+3. **Place games using MRV** - The Most Constrained Variable (MRV) heuristic places games with the fewest valid weeks first. This prevents "painting into corners" where easy games block slots needed by hard-to-schedule games.
 
-4. **Fix conflicts with cascade swaps** - When a game can't fit anywhere, we try moving other games around to make room. If Game A is blocking, we try to move it. If Game A's new spot is blocked by Game B, we try to move Game B too. This "cascade" can go 4 levels deep.
+4. **Retry if needed** - If the first attempt doesn't place all 272 games, we regenerate bye weeks and try again (up to 10 retries). Different bye week configurations unlock different solutions.
 
 ### Why This Works
 
-The cascade repair is the key insight. Simple greedy algorithms get stuck at ~96% because they paint themselves into corners. By allowing games to "bump" other games (which can bump others), we can escape these dead ends.
+The MRV heuristic is the key insight. By always placing the most constrained game next, we avoid dead ends. Combined with the retry mechanism (which tries fresh bye week configurations), we achieve 100% success rate.
 
-The algorithm succeeds on the first attempt 100% of the time, completing in under 100ms.
+Typical generation completes in 100ms-3s depending on how many retries are needed.
 
 ---
 
@@ -317,10 +320,20 @@ clearSchedule(): void
 
 | Metric | Value |
 |--------|-------|
-| Generation time | 1.5-4.5 seconds |
-| Success rate | 100% |
+| Generation time | 100ms - 5s (typically under 3s) |
+| Success rate | 100% (with retry mechanism) |
 | Memory usage | ~2MB for full schedule |
-| Typical attempts | 26-114 (with MRV heuristic) |
+| Typical attempts per try | 1-130 |
+| Retries needed | Usually 0-1, rarely 2+ |
+
+### Retry Mechanism
+
+The generator uses a two-level retry strategy:
+
+1. **Inner loop** (5000 attempts, 4.5s limit): Tries different bye week shuffles with MRV placement
+2. **Outer loop** (10 retries): If inner loop fails to place all 272, regenerates bye weeks entirely
+
+Most generations succeed on the first try. When a retry is needed, it typically succeeds immediately with fresh bye weeks.
 
 ---
 
@@ -342,17 +355,19 @@ Runs 5 iterations validating:
 ## Troubleshooting
 
 ### "Not all teams have 17 games"
-The cascade repair failed. This shouldn't happen with current settings but if it does:
-- Increase `MAX_ATTEMPTS` in `distributeGamesToWeeksSmartGreedy`
-- Increase cascade depth in `CASCADE_DEPTHS` array
+The placement algorithm failed to place all 272 games after all retries. This is rare but if it happens:
+- Increase `MAX_RETRIES` in `generateSchedule()` (default: 10)
+- Increase `MAX_ATTEMPTS` in `distributeGamesToWeeks()` (default: 5000)
+- Increase `TIME_LIMIT_MS` in `distributeGamesToWeeks()` (default: 4500ms)
 
 ### "Bye weeks outside valid range"
-Check `BYE_WEEK_PATTERN` in `assignByeWeeks` function - weeks should be 5-17.
+Check `BYE_WEEK_START` and `BYE_WEEK_END` constants - weeks should be 5-17.
 
 ### Performance issues
-The algorithm should complete in <100ms. If slow:
-- Check for infinite loops in cascade (should be prevented by `movedSet`)
-- Reduce `MAX_ATTEMPTS` if not needed
+The algorithm typically completes in 100ms-3s. If consistently slow:
+- Check if many retries are happening (visible in console logs)
+- The MRV heuristic should prevent most failures
+- Consider if bye week distribution is causing conflicts
 
 ---
 
