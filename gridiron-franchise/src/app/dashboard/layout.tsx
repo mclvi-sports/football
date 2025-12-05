@@ -16,7 +16,9 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-background">
       {!isDevTools && <GameplayHeader />}
-      <div className={!isDevTools ? "pt-14" : ""}>
+      <div
+        style={!isDevTools ? { paddingTop: 'calc(3.5rem + env(safe-area-inset-top))' } : undefined}
+      >
         {children}
       </div>
     </div>
