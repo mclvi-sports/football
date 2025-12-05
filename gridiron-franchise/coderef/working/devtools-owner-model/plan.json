@@ -1,0 +1,226 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "devtools-owner-model",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": false,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "architecture": "Next.js app with Zustand stores, localStorage persistence",
+        "patterns": "Mobile-first UI, barrel exports, modular component structure"
+      },
+      "coding_standards": {
+        "typescript": "Strict mode, explicit types",
+        "react": "Functional components with hooks",
+        "styling": "Tailwind CSS with shadcn/ui components"
+      },
+      "reference_components": [
+        "src/stores/career-store.ts - Owner model implementation",
+        "src/components/franchise/game-setup-dashboard.tsx - Current GM model implementation"
+      ]
+    },
+    "1_executive_summary": {
+      "description": "Align Dev Tools game setup flow with the Owner model. Currently, the game-setup-dashboard expects users to create a GM persona (archetype/background). The Owner model instead has users pick a team to own and inherit the pre-assigned GM.",
+      "goal": "Remove GM creation flow from Dev Tools and replace with simple team ownership selection that aligns with career-store's Owner model",
+      "scope": "Dev Tools game setup dashboard - remove GMCreationModal, update GM generation to create 32 CPU GMs, integrate with career-store for team ownership",
+      "estimated_complexity": "low"
+    },
+    "2_risk_assessment": {
+      "risks": [
+        {
+          "risk": "Breaking existing saved game data",
+          "severity": "low",
+          "mitigation": "Dev tools data is ephemeral, stored in localStorage, easily regenerated"
+        },
+        {
+          "risk": "GM API changes affecting other parts of app",
+          "severity": "low",
+          "mitigation": "Check all GM API consumers before modifying"
+        }
+      ],
+      "breaking_changes": false,
+      "rollback_strategy": "Revert file changes via git"
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/components/franchise/game-setup-dashboard.tsx",
+          "changes": "Remove GMCreationModal, simplify team selection to set ownership, update GM module to generate 32 CPU GMs, remove archetype/background flow"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_delete": [
+        {
+          "path": "src/components/franchise/gm-creation-modal.tsx",
+          "reason": "No longer needed - Owner model doesn't create GM personas"
+        }
+      ],
+      "dependencies": {
+        "internal": ["career-store", "gm lib"],
+        "external": []
+      }
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Remove GM Creation Flow",
+          "description": "Remove GMCreationModal and all archetype/background selection UI from game setup",
+          "requirements": ["Remove import", "Remove state", "Remove modal render", "Remove handlers"]
+        },
+        {
+          "id": "F2",
+          "name": "Simplify Team Selection",
+          "description": "Change team selection from 'pick team then create GM' to 'pick team to own'",
+          "requirements": ["Update TeamSelectionModal usage", "Set team in career-store on selection"]
+        },
+        {
+          "id": "F3",
+          "name": "Update GM Generation",
+          "description": "Change GM generation to create 32 CPU GMs without player GM input",
+          "requirements": ["Remove playerBackground/playerArchetype from API call", "Update GM module description"]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-DEVTOOLS-OWNER-MODEL-001",
+        "name": "Devtools Owner Model",
+        "feature_dir": "coderef/working/devtools-owner-model"
+      },
+      "tasks": [
+        {
+          "id": "OWNER-001",
+          "workorder_id": "WO-DEVTOOLS-OWNER-MODEL-001",
+          "description": "Remove GMCreationModal import and state from game-setup-dashboard",
+          "feature": "F1",
+          "files": ["src/components/franchise/game-setup-dashboard.tsx"],
+          "estimated_loc": 20
+        },
+        {
+          "id": "OWNER-002",
+          "workorder_id": "WO-DEVTOOLS-OWNER-MODEL-001",
+          "description": "Remove handleGMComplete handler and GM creation flow",
+          "feature": "F1",
+          "files": ["src/components/franchise/game-setup-dashboard.tsx"],
+          "estimated_loc": 40
+        },
+        {
+          "id": "OWNER-003",
+          "workorder_id": "WO-DEVTOOLS-OWNER-MODEL-001",
+          "description": "Update handleTeamSelect to set ownership in career-store instead of opening GM modal",
+          "feature": "F2",
+          "files": ["src/components/franchise/game-setup-dashboard.tsx"],
+          "estimated_loc": 15
+        },
+        {
+          "id": "OWNER-004",
+          "workorder_id": "WO-DEVTOOLS-OWNER-MODEL-001",
+          "description": "Update GM module to generate 32 CPU GMs automatically (no user input)",
+          "feature": "F3",
+          "files": ["src/components/franchise/game-setup-dashboard.tsx"],
+          "estimated_loc": 25
+        },
+        {
+          "id": "OWNER-005",
+          "workorder_id": "WO-DEVTOOLS-OWNER-MODEL-001",
+          "description": "Update GM module description from 'Your GM + 31 CPU GMs' to '32 GMs'",
+          "feature": "F3",
+          "files": ["src/components/franchise/game-setup-dashboard.tsx"],
+          "estimated_loc": 2
+        },
+        {
+          "id": "OWNER-006",
+          "workorder_id": "WO-DEVTOOLS-OWNER-MODEL-001",
+          "description": "Remove GMCreationModal render from JSX",
+          "feature": "F1",
+          "files": ["src/components/franchise/game-setup-dashboard.tsx"],
+          "estimated_loc": 10
+        },
+        {
+          "id": "OWNER-007",
+          "workorder_id": "WO-DEVTOOLS-OWNER-MODEL-001",
+          "description": "Delete gm-creation-modal.tsx file (no longer needed)",
+          "feature": "F1",
+          "files": ["src/components/franchise/gm-creation-modal.tsx"],
+          "estimated_loc": 0
+        },
+        {
+          "id": "OWNER-008",
+          "workorder_id": "WO-DEVTOOLS-OWNER-MODEL-001",
+          "description": "Update franchise index.ts to remove GMCreationModal export",
+          "feature": "F1",
+          "files": ["src/components/franchise/index.ts"],
+          "estimated_loc": 2
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Remove GM Creation UI",
+          "description": "Remove all GM creation modal code and related state/handlers",
+          "tasks": ["OWNER-001", "OWNER-002", "OWNER-006", "OWNER-007", "OWNER-008"],
+          "deliverables": ["GMCreationModal removed from codebase", "No GM persona selection in UI"]
+        },
+        {
+          "phase": 2,
+          "name": "Implement Owner Team Selection",
+          "description": "Update team selection to set ownership and update GM generation",
+          "tasks": ["OWNER-003", "OWNER-004", "OWNER-005"],
+          "deliverables": ["Team selection sets ownership in career-store", "GM module generates 32 CPU GMs", "Updated module description"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Generate All creates 32 GMs without prompting for archetype/background",
+        "Team selection modal allows picking team without GM creation step",
+        "Selected team is saved to career-store as playerTeamId",
+        "Start Season works correctly with owner model"
+      ],
+      "unit_tests": [],
+      "integration_tests": []
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        "No GMCreationModal appears when clicking GM module or team selection",
+        "GM module shows '32 GMs' description instead of 'Your GM + 31 CPU GMs'",
+        "Team selection sets playerTeamId in career-store",
+        "Full game flow works: Generate All → Select Team → Start Season"
+      ],
+      "performance_requirements": [],
+      "quality_gates": ["Build passes", "No console errors"]
+    },
+    "9_implementation_checklist": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Remove GM Creation UI",
+          "tasks": [
+            { "id": "OWNER-001", "description": "Remove GMCreationModal import and state", "status": "pending" },
+            { "id": "OWNER-002", "description": "Remove handleGMComplete handler", "status": "pending" },
+            { "id": "OWNER-006", "description": "Remove GMCreationModal render from JSX", "status": "pending" },
+            { "id": "OWNER-007", "description": "Delete gm-creation-modal.tsx file", "status": "pending" },
+            { "id": "OWNER-008", "description": "Update franchise index.ts exports", "status": "pending" }
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Implement Owner Team Selection",
+          "tasks": [
+            { "id": "OWNER-003", "description": "Update handleTeamSelect for ownership", "status": "pending" },
+            { "id": "OWNER-004", "description": "Update GM generation for 32 CPU GMs", "status": "pending" },
+            { "id": "OWNER-005", "description": "Update GM module description", "status": "pending" }
+          ]
+        }
+      ]
+    }
+  }
+}

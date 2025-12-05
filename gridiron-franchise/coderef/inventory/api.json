@@ -1,0 +1,17 @@
+{
+  "project_name": "gridiron-franchise",
+  "project_path": "C:\\Users\\willh\\Desktop\\latest-sim\\gridiron-franchise",
+  "generated_at": "2025-12-04T19:37:12.894713",
+  "frameworks": [],
+  "endpoints": [],
+  "metrics": {
+    "total_endpoints": 0,
+    "documented_endpoints": 0,
+    "documentation_coverage": 0,
+    "frameworks_detected": [],
+    "framework_breakdown": {},
+    "method_breakdown": {},
+    "rest_endpoints": 0,
+    "graphql_endpoints": 0
+  }
+}

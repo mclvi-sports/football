@@ -274,6 +274,26 @@
       <span class="tab-icon">📊</span>
       <span>Schemes</span>
     </button>
+    <button class="tab" data-tab="teams">
+      <span class="tab-icon">🏆</span>
+      <span>Teams</span>
+    </button>
+    <button class="tab" data-tab="draft">
+      <span class="tab-icon">📝</span>
+      <span>Draft</span>
+    </button>
+    <button class="tab" data-tab="training">
+      <span class="tab-icon">💪</span>
+      <span>Training</span>
+    </button>
+    <button class="tab" data-tab="schedule">
+      <span class="tab-icon">📅</span>
+      <span>Schedule</span>
+    </button>
+    <button class="tab" data-tab="generators">
+      <span class="tab-icon">⚙️</span>
+      <span>Generators</span>
+    </button>
   </div>
 
   <div class="content">
@@ -294,6 +314,21 @@
     </div>
     <div id="schemes" class="tab-content">
       <div class="loading">Loading schemes data</div>
+    </div>
+    <div id="teams" class="tab-content">
+      <div class="loading">Loading teams data</div>
+    </div>
+    <div id="draft" class="tab-content">
+      <div class="loading">Loading draft data</div>
+    </div>
+    <div id="training" class="tab-content">
+      <div class="loading">Loading training data</div>
+    </div>
+    <div id="schedule" class="tab-content">
+      <div class="loading">Loading schedule data</div>
+    </div>
+    <div id="generators" class="tab-content">
+      <div class="loading">Loading generators data</div>
     </div>
   </div>
 
@@ -2133,6 +2168,681 @@ type STPhilosophy =
 | ST Philosophies | 3 |
 | Scheme Fit Levels | 5 |
 | Scheme Families | 6 |
+`,
+
+      teams: `# Teams Data Reference
+
+Complete inventory of all 32 teams with conferences, divisions, and colors.
+
+---
+
+## League Structure
+
+| Level | Count |
+|-------|-------|
+| Conferences | 2 |
+| Divisions | 8 (4 per conference) |
+| Teams | 32 (4 per division) |
+
+---
+
+## Atlantic Conference (16 Teams)
+
+### Atlantic North
+
+| ID | City | Name | Primary | Secondary |
+|----|------|------|---------|-----------|
+| BOS | Boston | Rebels | #0A2240 | #A8A9AD |
+| PHI | Philadelphia | Ironworks | #5A5A5A | #B7410E |
+| PIT | Pittsburgh | Riverhawks | #101820 | #FFB612 |
+| BAL | Baltimore | Knights | #4B0082 | #CFB53B |
+
+### Atlantic South
+
+| ID | City | Name | Primary | Secondary |
+|----|------|------|---------|-----------|
+| MIA | Miami | Sharks | #008E97 | #FF6F61 |
+| ORL | Orlando | Thunder | #0057B8 | #FFFFFF |
+| ATL | Atlanta | Firebirds | #CE1141 | #FDBB30 |
+| CLT | Charlotte | Crowns | #5C2D91 | #C0C0C0 |
+
+### Atlantic East
+
+| ID | City | Name | Primary | Secondary |
+|----|------|------|---------|-----------|
+| NYE | New York | Empire | #0C2340 | #FF5F00 |
+| BKN | Brooklyn | Bolts | #FFD100 | #1A1A1A |
+| NWK | Newark | Sentinels | #154734 | #A8A9AD |
+| WAS | Washington | Monuments | #F5F5F5 | #002244 |
+
+### Atlantic West
+
+| ID | City | Name | Primary | Secondary |
+|----|------|------|---------|-----------|
+| CHI | Chicago | Blaze | #FF6720 | #1A1A1A |
+| DET | Detroit | Engines | #0076B6 | #B0B7BC |
+| CLE | Cleveland | Forge | #EB3300 | #4C2600 |
+| IND | Indianapolis | Stampede | #003DA5 | #FFFFFF |
+
+---
+
+## Pacific Conference (16 Teams)
+
+### Pacific North
+
+| ID | City | Name | Primary | Secondary |
+|----|------|------|---------|-----------|
+| SEA | Seattle | Storm | #006B77 | #69FF47 |
+| POR | Portland | Timbers | #00482B | #EBE5D5 |
+| VAN | Vancouver | Grizzlies | #3D291A | #A5D8E6 |
+| DEN | Denver | Summit | #5DADE2 | #FFFFFF |
+
+### Pacific South
+
+| ID | City | Name | Primary | Secondary |
+|----|------|------|---------|-----------|
+| LAL | Los Angeles | Legends | #FFC72C | #1A1A1A |
+| SDS | San Diego | Surf | #0077BE | #C9B037 |
+| LVA | Las Vegas | Aces | #1A1A1A | #C5B358 |
+| PHX | Phoenix | Scorpions | #C41E3A | #C2B280 |
+
+### Pacific East
+
+| ID | City | Name | Primary | Secondary |
+|----|------|------|---------|-----------|
+| AUS | Austin | Outlaws | #1A1A1A | #BF5700 |
+| HOU | Houston | Marshals | #002D62 | #CC0000 |
+| DAL | Dallas | Lone Stars | #8A8D8F | #002B5C |
+| SAN | San Antonio | Bandits | #1A1A1A | #E31C79 |
+
+### Pacific West
+
+| ID | City | Name | Primary | Secondary |
+|----|------|------|---------|-----------|
+| SFO | San Francisco | Gold Rush | #FFB81C | #B3002D |
+| OAK | Oakland | Raiders | #A5ACAF | #1A1A1A |
+| SAC | Sacramento | Kings | #5A2D82 | #8E9093 |
+| HON | Honolulu | Volcanoes | #CF1020 | #1A1A1A |
+
+---
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Conferences | 2 |
+| Divisions | 8 |
+| Teams | 32 |
+`,
+
+      draft: `# Draft Data Reference
+
+Complete inventory of draft class generation, rounds, OVR ranges, and prospect evaluation.
+
+---
+
+## Draft Class Size
+
+| Category | Count |
+|----------|-------|
+| Rounds | 7 |
+| Picks per Round | 32 |
+| Total Drafted | 224 |
+| UDFAs | 40-60 (random) |
+| Total Class | ~275 |
+
+---
+
+## OVR Ranges by Round
+
+| Round | Min OVR | Max OVR | Average |
+|-------|---------|---------|---------|
+| 1 | 72 | 86 | 78 |
+| 2 | 68 | 80 | 74 |
+| 3 | 65 | 76 | 70 |
+| 4 | 62 | 73 | 67 |
+| 5 | 58 | 70 | 64 |
+| 6 | 55 | 67 | 61 |
+| 7 | 52 | 64 | 58 |
+| UDFA | 50 | 62 | 55 |
+
+---
+
+## Potential Gap Ranges
+
+| Round | Min Gap | Max Gap |
+|-------|---------|---------|
+| 1 | 8 | 18 |
+| 2 | 6 | 15 |
+| 3 | 5 | 12 |
+| 4 | 4 | 10 |
+| 5 | 3 | 8 |
+| 6 | 2 | 7 |
+| 7 | 1 | 6 |
+| UDFA | 0 | 5 |
+
+---
+
+## Potential Label Distribution
+
+| Round | Star | Starter | Limited |
+|-------|------|---------|---------|
+| 1 | 40% | 40% | 20% |
+| 2 | 25% | 50% | 25% |
+| 3 | 15% | 50% | 35% |
+| 4 | 10% | 45% | 45% |
+| 5 | 5% | 40% | 55% |
+| 6 | 5% | 30% | 65% |
+| 7 | 2% | 25% | 73% |
+| UDFA | 1% | 20% | 79% |
+
+---
+
+## Prospect Age Distribution
+
+| Age | Percentage |
+|-----|------------|
+| 21 | 30% |
+| 22 | 45% |
+| 23 | 20% |
+| 24 | 5% |
+
+---
+
+## Draft Grades
+
+| Grade | Description |
+|-------|-------------|
+| A+ | Elite prospect |
+| A | Top tier |
+| A- | High first round |
+| B+ | First round |
+| B | Second round |
+| B- | Third round |
+| C+ | Day 2 |
+| C | Mid-late |
+| C- | Late rounds |
+| D | Fringe |
+| F | UDFA |
+
+---
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Rounds | 7 |
+| Picks per Round | 32 |
+| Total Drafted | 224 |
+| UDFAs | 40-60 |
+| Potential Labels | 3 |
+| Draft Grades | 11 |
+`,
+
+      training: `# Training Data Reference
+
+Complete inventory of XP earning, attribute progression, age curves, and development system.
+
+---
+
+## XP Earning
+
+### Game XP
+
+| Source | XP |
+|--------|-----|
+| Base game played | 50 |
+| Win bonus | 25 |
+| Bye week multiplier | 1.5x |
+
+### Performance Grade Bonuses
+
+| Grade | XP Bonus |
+|-------|----------|
+| 90-100 (Elite) | 100 |
+| 85-89 (Excellent) | 75 |
+| 80-84 (Very Good) | 50 |
+| 75-79 (Good) | 35 |
+| 70-74 (Average) | 20 |
+| 65-69 (Below Average) | 10 |
+| Below 65 (Poor) | 0 |
+
+### Practice XP by Focus Type
+
+| Focus Type | Base XP |
+|------------|---------|
+| passing | 50 |
+| running | 50 |
+| pass_rush | 50 |
+| coverage | 50 |
+| red_zone_offense | 45 |
+| red_zone_defense | 45 |
+| special_teams | 50 |
+| conditioning | 30 |
+| film_study | 40 |
+| recovery | 20 |
+
+---
+
+## Age Curves (7 Phases)
+
+| Age | Phase | Physical | Technical | Mental | XP Cost |
+|-----|-------|----------|-----------|--------|---------|
+| 21-22 | Growth | +3 | +2 | +1 | 0.8x |
+| 23-24 | Developing | +2 | +2 | +2 | 0.8x |
+| 25-27 | Prime | +1 | +1 | +2 | 1.0x |
+| 28-29 | Maintenance | 0 | +1 | +1 | 1.2x |
+| 30-32 | Early Decline | -1 | 0 | +1 | 1.5x |
+| 33-35 | Declining | -2 | -1 | 0 | 2.0x |
+| 36+ | Steep Decline | -3 | -2 | -1 | 2.0x |
+
+---
+
+## Potential Tiers
+
+| Tier | Min OVR | Max OVR | Rarity |
+|------|---------|---------|--------|
+| Superstar | 95 | 99 | 5% |
+| Star | 88 | 94 | 15% |
+| Starter | 80 | 87 | 35% |
+| Backup | 72 | 79 | 30% |
+| Bust | 65 | 71 | 15% |
+
+---
+
+## Badge Tier Costs
+
+| Tier | Cost | Cumulative |
+|------|------|------------|
+| Bronze | 500 | 500 |
+| Silver | 1,500 | 2,000 |
+| Gold | 3,500 | 5,500 |
+| HOF | 8,000 | 13,500 |
+
+---
+
+## Facility XP Bonuses
+
+| Rating | Training Room | Weight Room |
+|--------|---------------|-------------|
+| 10 | +30% | +40% |
+| 9 | +25% | +35% |
+| 8 | +20% | +30% |
+| 7 | +16% | +25% |
+| 6 | +12% | +20% |
+| 5 | +8% | +15% |
+
+---
+
+## Development Traits
+
+### Positive
+
+| Trait | Effect |
+|-------|--------|
+| Gym Rat | +20% physical XP |
+| Quick Learner | +15% all XP |
+| Film Junkie | +25% mental XP |
+
+### Negative
+
+| Trait | Effect |
+|-------|--------|
+| Lazy | -20% practice XP |
+| Slow Learner | -15% all XP |
+
+---
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Age Phases | 7 |
+| Potential Tiers | 5 |
+| Badge Tiers | 4 |
+`,
+
+      schedule: `# Schedule Data Reference
+
+Complete inventory of season structure, matchup rules, and prime time scheduling.
+
+---
+
+## Season Structure
+
+| Property | Value |
+|----------|-------|
+| Total Weeks | 18 |
+| Games per Team | 17 |
+| Bye Week Range | Weeks 5-14 |
+
+---
+
+## Game Type Breakdown (17 Games)
+
+| Game Type | Count | Description |
+|-----------|-------|-------------|
+| Division | 6 | 2 games vs each division rival (H/A) |
+| Conference | 4 | 1 game vs each team in rotating division |
+| Inter-Conference | 4 | 1 game vs each team in opposite conf division |
+| Rotating | 3 | Same-place finishers from other divisions |
+| **Total** | **17** | |
+
+---
+
+## Conference Matchups
+
+| Your Division | Rotating Division |
+|---------------|-------------------|
+| Atlantic North | Atlantic South |
+| Atlantic South | Atlantic East |
+| Atlantic East | Atlantic West |
+| Atlantic West | Atlantic North |
+| Pacific North | Pacific South |
+| Pacific South | Pacific East |
+| Pacific East | Pacific West |
+| Pacific West | Pacific North |
+
+---
+
+## Inter-Conference Matchups
+
+| Your Division | Opponent Division |
+|---------------|-------------------|
+| Atlantic North | Pacific North |
+| Atlantic South | Pacific South |
+| Atlantic East | Pacific East |
+| Atlantic West | Pacific West |
+
+---
+
+## Time Slots (5)
+
+| Slot | Day | Description |
+|------|-----|-------------|
+| early | Sunday | 1:00 PM games |
+| late | Sunday | 4:25 PM games |
+| sunday_night | Sunday | Prime time |
+| monday_night | Monday | Prime time |
+| thursday_night | Thursday | Prime time |
+
+---
+
+## Market Size Rankings (Top 10)
+
+| Rank | Team | Market |
+|------|------|--------|
+| 1 | NYE | 100 |
+| 2 | LAL | 98 |
+| 3 | CHI | 95 |
+| 4 | DAL | 95 |
+| 5 | HOU | 90 |
+| 6 | PHI | 88 |
+| 7 | SFO | 87 |
+| 8 | MIA | 85 |
+| 9 | ATL | 85 |
+| 10 | BOS | 85 |
+
+---
+
+## Bye Week Rules
+
+| Rule | Details |
+|------|---------|
+| Range | Weeks 5-14 only |
+| Teams per week | ~2-4 teams |
+| No byes | Weeks 1-4, 15-18 |
+
+---
+
+## Home/Away Balance
+
+| Property | Target |
+|----------|--------|
+| Home Games | 8 or 9 |
+| Away Games | 8 or 9 |
+| Division Balance | 3 home, 3 away |
+
+---
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Weeks | 18 |
+| Games per Team | 17 |
+| Time Slots | 5 |
+| Game Types | 4 |
+| Market Rankings | 32 |
+`,
+
+      generators: `# Generators Reference
+
+Natural language overview of how each generator works in the system.
+
+---
+
+## Overview
+
+The game uses 11 generators to create league data. They fall into three categories:
+
+| Category | Generators |
+|----------|------------|
+| Player Data | Player, Roster, Free Agent, Draft |
+| Staff & Facilities | GM, Coaching, Scouting, Facilities |
+| League Structure | Schedule |
+| Orchestration | League Generator, Full Game Generator |
+
+---
+
+## Player Generator
+
+**Purpose:** Creates individual players with realistic attributes, traits, and badges.
+
+**How It Works:**
+
+1. **Archetype Selection** - Every player gets an archetype (70 total across 18 positions). The archetype determines which attributes are primary, secondary, and tertiary.
+
+2. **Attribute Distribution** - Points allocated based on target OVR:
+   - Primary attributes: 50% of "good" points
+   - Secondary attributes: 35%
+   - Tertiary attributes: 15%
+
+3. **Trait Generation** - Based on OVR:
+   - Elite (90+): 3-5 traits, 20% negative chance
+   - Good (80-89): 2-4 traits, 30% negative
+   - Average (70-79): 2-3 traits, 40% negative
+
+4. **Badge Generation** - Based on OVR + experience
+
+5. **Potential Calculation** - Younger = higher potential gap:
+   - Age 21-22: 8-15 point gap
+   - Age 23-24: 5-12 point gap
+   - Age 28+: 0-5 point gap
+
+---
+
+## Roster Generator
+
+**Purpose:** Creates 53-man rosters with realistic depth charts and contracts.
+
+**How It Works:**
+
+1. **Slot-Based OVR Targets** - Each position spot has an expected OVR based on team tier
+
+2. **Position Requirements:**
+   - 3 QBs, 4 RBs, 6 WRs, 3 TEs
+   - 9 offensive linemen
+   - 8 defensive linemen
+   - 7 linebackers
+   - 10 defensive backs
+   - 3 specialists
+
+3. **Contract Generation** by OVR:
+   - 95+ OVR: $30-55M annually
+   - 90-94 OVR: $20-35M
+   - 85-89 OVR: $12-22M
+
+---
+
+## Free Agent Generator
+
+**Purpose:** Creates pool of 150-200 unsigned players.
+
+**OVR Distribution:**
+- 3% at 80+ (solid starters)
+- 10% at 75-79
+- 25% at 70-74
+- 35% at 65-69 (majority)
+- 27% below 65
+
+**Availability Reasons:**
+- Age Decline: 30%
+- Injury History: 20%
+- Cap Casualty: 15%
+- Character Concerns: 10%
+- Young & Unproven: 15%
+- Market Timing: 10%
+
+---
+
+## Draft Generator
+
+**Purpose:** Creates ~275 rookie prospects (224 drafted + 40-60 UDFAs).
+
+**Round-Based OVR:**
+- Round 1: 72-86 OVR
+- Round 7: 52-64 OVR
+- UDFA: 50-62 OVR
+
+**Scouting Noise:** Scouts see OVR +/-3 from true value, creating draft uncertainty.
+
+**Potential Labels:** Star, Starter, Limited - distribution varies by round.
+
+---
+
+## GM Generator
+
+**Purpose:** Creates General Manager for each team.
+
+**Backgrounds (6):** Scout, Cap Analyst, Coach, Agent, Analytics, Legacy
+
+**Archetypes (6):** Builder, Closer, Economist, Talent Scout, Culture Builder, Innovator
+
+**Synergy System:** When background matches archetype (e.g., Scout + Talent Scout), bonus unlocks.
+
+---
+
+## Coaching Generator
+
+**Purpose:** Creates 4-coach staffs: HC, OC, DC, STC.
+
+**Tier-Based OVR:**
+- Elite HC: 88-95 OVR
+- Rebuilding HC: 65-75 OVR
+
+**Key Features:**
+- 10 attributes per coach
+- Scheme assignment (West Coast, 4-3, etc.)
+- Perks based on OVR
+- Staff chemistry calculation
+
+---
+
+## Scouting Generator
+
+**Purpose:** Creates scouting departments (1-4 scouts per team).
+
+**Department Size by Tier:**
+- Elite: Director + 2 Area + Pro (4 scouts)
+- Good: Director + Area + Pro (3 scouts)
+- Average: Director + Area (2 scouts)
+- Rebuilding: Director only (1 scout)
+
+**Scout Attributes:** Talent Evaluation, Potential Assessment, Trait Recognition, Bust Detection, Sleeper Discovery, Work Ethic
+
+---
+
+## Facilities Generator
+
+**Purpose:** Creates stadium and training facilities.
+
+**Four Types:**
+- Stadium: Home field advantage, revenue
+- Practice Facility: All training XP
+- Training Room: Injury prevention, recovery
+- Weight Room: Physical attribute development
+
+**Owner Tiers:** Wealthy to Cheap, affecting upgrade budget
+
+**Rating Effects:** 10-star facilities provide +30-40% XP bonuses
+
+---
+
+## Schedule Generator
+
+**Purpose:** Creates 18-week regular season schedule.
+
+**Game Types (17 per team):**
+- 6 Division games
+- 4 Conference games
+- 4 Inter-Conference games
+- 3 Rotating games
+
+**Prime Time Selection:** Based on market size and rivalry factor
+
+**Bye Weeks:** Assigned during weeks 5-14
+
+---
+
+## League Generator (Orchestrator)
+
+**Purpose:** Coordinates all generators in correct order.
+
+**Generation Order:**
+1. Rosters (creates team tiers)
+2. Free Agents
+3. Draft Class
+4. GMs, Coaching, Facilities, Scouting (parallel)
+5. Schedule
+
+**Used by:** New game flow and dev tools dashboard
+
+---
+
+## Full Game Generator
+
+**Purpose:** Simpler alternative generating players only without API calls.
+
+**Output:**
+- All 32 team rosters
+- 175 free agents
+- ~275 draft prospects
+
+**Tier Distribution:**
+- 3 Elite teams
+- 8 Good teams
+- 12 Average teams
+- 6 Below Average teams
+- 3 Rebuilding teams
+
+---
+
+## Summary
+
+| Generator | Input | Output |
+|-----------|-------|--------|
+| Player | Position, OVR, Age | Single Player |
+| Roster | Team ID, Tier | 53-man roster |
+| Free Agent | Pool size | 150-200 players |
+| Draft | None | ~275 prospects |
+| GM | Team tiers | 32 GMs |
+| Coaching | Team tiers | 128 coaches |
+| Scouting | Team tiers | 32 departments |
+| Facilities | Team tiers | 128 facilities |
+| Schedule | Season year | 272 games |
+| League | None | Everything |
+| Full Game | None | Players only |
 `
     };
 

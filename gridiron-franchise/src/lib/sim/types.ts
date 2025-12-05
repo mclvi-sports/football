@@ -280,3 +280,43 @@ export const DEFENSIVE_WEIGHTS: Record<string, number> = {
   S1: 0.10,
   S2: 0.08,
 };
+
+// ============================================================================
+// GAME RESULT (Output from simulateGameWithRosters)
+// ============================================================================
+
+export interface GameResult {
+  /** Game completed successfully */
+  success: boolean;
+  /** Final score for away team */
+  awayScore: number;
+  /** Final score for home team */
+  homeScore: number;
+  /** Away team info */
+  awayTeam: {
+    id: string;
+    name: string;
+    abbrev: string;
+  };
+  /** Home team info */
+  homeTeam: {
+    id: string;
+    name: string;
+    abbrev: string;
+  };
+  /** Team-level statistics */
+  teamStats: {
+    away: SimStats;
+    home: SimStats;
+  };
+  /** Individual player statistics - Map keyed by player ID */
+  playerStats: PlayerGameStats[];
+  /** Play-by-play results */
+  plays: PlayResult[];
+  /** Game settings used */
+  settings: GameSettings;
+  /** Total plays simulated */
+  totalPlays: number;
+  /** Debug log (optional) */
+  debugLog?: string[];
+}

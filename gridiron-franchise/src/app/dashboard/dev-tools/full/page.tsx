@@ -17,9 +17,10 @@ import { generateSchedule } from "@/lib/schedule/schedule-generator";
 import { WeekSchedule } from "@/lib/schedule/types";
 import { GameSetupDashboard } from "@/components/franchise/game-setup-dashboard";
 import { GameplayLoop } from "@/components/franchise/gameplay-loop";
+import { GameSimulatorTab } from "@/components/sim/game-simulator-tab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, Gamepad2 } from "lucide-react";
 
 // Division assignments for teams
 const DIVISION_MAP: Record<number, { division: string; conference: 'Atlantic' | 'Pacific' }> = {
@@ -79,7 +80,7 @@ function toSeasonTeam(team: SimTeam, division: string, conference: 'Atlantic' | 
   };
 }
 
-type ViewTab = "setup" | "gameplay" | "dashboard";
+type ViewTab = "setup" | "gameplay" | "simulator" | "dashboard";
 
 export default function FullGameGeneratorPage() {
   const simulatorRef = useRef<SeasonSimulator | null>(null);
@@ -228,8 +229,12 @@ export default function FullGameGeneratorPage() {
       <main className="px-5 space-y-6">
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="setup">Setup</TabsTrigger>
+            <TabsTrigger value="simulator">
+              <Gamepad2 className="mr-1 h-4 w-4" />
+              Simulator
+            </TabsTrigger>
             <TabsTrigger value="gameplay" disabled={!seasonState}>
               Gameplay
             </TabsTrigger>
@@ -241,6 +246,11 @@ export default function FullGameGeneratorPage() {
           {/* Setup Tab - Game Setup Dashboard */}
           <TabsContent value="setup" className="mt-6">
             <GameSetupDashboard onStartSeason={handleStartSeason} />
+          </TabsContent>
+
+          {/* Simulator Tab - Single game simulator */}
+          <TabsContent value="simulator" className="mt-6">
+            <GameSimulatorTab />
           </TabsContent>
 
           {/* Gameplay Tab - Weekly gameplay loop with season info */}

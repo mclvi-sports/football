@@ -3,7 +3,19 @@
     "allow": [
       "Bash(npx tsc:*)",
       "Bash(git push:*)",
-      "Bash(node scripts/generate-icons.js:*)"
+      "Bash(node scripts/generate-icons.js:*)",
+      "Bash(ls:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\ndocs(codebase-cleanup): Add implementation plan and deliverables\n\n- Plan to consolidate src/data into src/lib/data\n- Merge teams.ts files (add colors to active file)\n- Move GM data files and update imports\n- Updated context/INDEX.md with cleanup notes\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git mv:*)",
+      "Bash(npx next build)",
+      "mcp__docs-mcp__update_all_documentation",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfix(about): Improve mobile responsiveness\n\n- Add px-5 horizontal padding to main container\n- Make stats grid responsive: 2 cols on mobile, 4 on desktop\n- Make StatBox values responsive text sizing\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit:*)",
+      "mcp__docs-mcp__dependency_inventory",
+      "mcp__docs-mcp__api_inventory",
+      "Bash(npx tsx:*)",
+      "WebFetch(domain:operations.nfl.com)"
     ],
     "deny": [],
     "ask": []

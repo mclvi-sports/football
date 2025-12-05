@@ -26,6 +26,12 @@ import {
   formatRecord,
 } from './standings';
 import {
+  aggregateSeasonStats,
+  getSeasonLeaders,
+  PlayerSeasonStats,
+  SeasonLeaders,
+} from './season-stats';
+import {
   generatePlayoffBracket,
   recordPlayoffResult,
   getCurrentRound,
@@ -104,6 +110,21 @@ export class SeasonSimulator {
    */
   getTeams(): SeasonTeam[] {
     return Array.from(this.teams.values());
+  }
+
+  /**
+   * Get aggregated season stats for all players
+   */
+  getSeasonStats(): Map<string, PlayerSeasonStats> {
+    return aggregateSeasonStats(this.state.completedGames);
+  }
+
+  /**
+   * Get season leaderboards
+   */
+  getLeaderboards(topN: number = 10): SeasonLeaders {
+    const statsMap = this.getSeasonStats();
+    return getSeasonLeaders(statsMap, topN);
   }
 
   /**

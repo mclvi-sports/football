@@ -3,9 +3,15 @@ import { generateFAPool, getFAPoolStats } from "@/lib/generators/fa-generator";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    // Size defaults to random 150-200 per FINALS if not specified
-    const size = body.size ? Number(body.size) : undefined;
+    // Handle missing/empty body gracefully
+    let size: number | undefined;
+    try {
+      const body = await request.json();
+      size = body.size ? Number(body.size) : undefined;
+    } catch {
+      // No body sent - use defaults
+      size = undefined;
+    }
 
     const players = generateFAPool({ size });
     const stats = getFAPoolStats(players);

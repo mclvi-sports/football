@@ -1,0 +1,370 @@
+{
+  "project_name": "gridiron-franchise",
+  "project_path": "C:\\Users\\willh\\Desktop\\latest-sim\\gridiron-franchise",
+  "generated_at": "2025-12-04T19:36:10.654981",
+  "package_managers": [
+    "npm"
+  ],
+  "dependencies": {
+    "npm": {
+      "direct": [
+        {
+          "name": "@hookform/resolvers",
+          "version": "5.2.2",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "5.2.2",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "@radix-ui/react-dialog",
+          "version": "1.1.15",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "1.1.15",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "@radix-ui/react-dropdown-menu",
+          "version": "2.1.16",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "2.1.16",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "@radix-ui/react-label",
+          "version": "2.1.8",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "2.1.8",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "@radix-ui/react-progress",
+          "version": "1.1.8",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "1.1.8",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "@radix-ui/react-scroll-area",
+          "version": "1.2.10",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "1.2.10",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "@radix-ui/react-select",
+          "version": "2.2.6",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "2.2.6",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "@radix-ui/react-separator",
+          "version": "1.1.8",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "1.1.8",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "@radix-ui/react-slot",
+          "version": "1.2.4",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "1.2.4",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "@radix-ui/react-tabs",
+          "version": "1.1.13",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "1.1.13",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "@supabase/ssr",
+          "version": "0.8.0",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "0.8.0",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "@supabase/supabase-js",
+          "version": "2.86.0",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "2.86.2",
+          "outdated": true,
+          "fix_command": "npm install @supabase/supabase-js@2.86.2"
+        },
+        {
+          "name": "class-variance-authority",
+          "version": "0.7.1",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "0.7.1",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "clsx",
+          "version": "2.1.1",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "2.1.1",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "lucide-react",
+          "version": "0.555.0",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "0.555.0",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "next",
+          "version": "16.0.6",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "16.0.7",
+          "outdated": true,
+          "fix_command": "npm install next@16.0.7"
+        },
+        {
+          "name": "next-pwa",
+          "version": "5.6.0",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "5.6.0",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "next-themes",
+          "version": "0.4.6",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "0.4.6",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "react",
+          "version": "19.2.0",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "19.2.1",
+          "outdated": true,
+          "fix_command": "npm install react@19.2.1"
+        },
+        {
+          "name": "react-dom",
+          "version": "19.2.0",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "19.2.1",
+          "outdated": true,
+          "fix_command": "npm install react-dom@19.2.1"
+        },
+        {
+          "name": "react-hook-form",
+          "version": "7.67.0",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "7.68.0",
+          "outdated": true,
+          "fix_command": "npm install react-hook-form@7.68.0"
+        },
+        {
+          "name": "sonner",
+          "version": "2.0.7",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "2.0.7",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "tailwind-merge",
+          "version": "3.4.0",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "3.4.0",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "zod",
+          "version": "4.1.13",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "4.1.13",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "zustand",
+          "version": "5.0.9",
+          "type": "direct",
+          "ecosystem": "npm",
+          "latest_version": "5.0.9",
+          "outdated": false,
+          "fix_command": null
+        }
+      ],
+      "dev": [
+        {
+          "name": "@tailwindcss/postcss",
+          "version": "4",
+          "type": "dev",
+          "ecosystem": "npm",
+          "latest_version": "4.1.17",
+          "outdated": true,
+          "fix_command": "npm install @tailwindcss/postcss@4.1.17"
+        },
+        {
+          "name": "@types/node",
+          "version": "20",
+          "type": "dev",
+          "ecosystem": "npm",
+          "latest_version": "24.10.1",
+          "outdated": true,
+          "fix_command": "npm install @types/node@24.10.1"
+        },
+        {
+          "name": "@types/react",
+          "version": "19",
+          "type": "dev",
+          "ecosystem": "npm",
+          "latest_version": "19.2.7",
+          "outdated": true,
+          "fix_command": "npm install @types/react@19.2.7"
+        },
+        {
+          "name": "@types/react-dom",
+          "version": "19",
+          "type": "dev",
+          "ecosystem": "npm",
+          "latest_version": "19.2.3",
+          "outdated": true,
+          "fix_command": "npm install @types/react-dom@19.2.3"
+        },
+        {
+          "name": "babel-plugin-react-compiler",
+          "version": "1.0.0",
+          "type": "dev",
+          "ecosystem": "npm",
+          "latest_version": "1.0.0",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "eslint",
+          "version": "9",
+          "type": "dev",
+          "ecosystem": "npm",
+          "latest_version": "9.39.1",
+          "outdated": true,
+          "fix_command": "npm install eslint@9.39.1"
+        },
+        {
+          "name": "eslint-config-next",
+          "version": "16.0.6",
+          "type": "dev",
+          "ecosystem": "npm",
+          "latest_version": "16.0.7",
+          "outdated": true,
+          "fix_command": "npm install eslint-config-next@16.0.7"
+        },
+        {
+          "name": "tailwindcss",
+          "version": "4",
+          "type": "dev",
+          "ecosystem": "npm",
+          "latest_version": "4.1.17",
+          "outdated": true,
+          "fix_command": "npm install tailwindcss@4.1.17"
+        },
+        {
+          "name": "tw-animate-css",
+          "version": "1.4.0",
+          "type": "dev",
+          "ecosystem": "npm",
+          "latest_version": "1.4.0",
+          "outdated": false,
+          "fix_command": null
+        },
+        {
+          "name": "typescript",
+          "version": "5",
+          "type": "dev",
+          "ecosystem": "npm",
+          "latest_version": "5.9.3",
+          "outdated": true,
+          "fix_command": "npm install typescript@5.9.3"
+        }
+      ],
+      "peer": [],
+      "transitive": []
+    }
+  },
+  "vulnerabilities": [
+    {
+      "id": "GHSA-9qr9-h5gf-34mp",
+      "package_name": "next",
+      "ecosystem": "npm",
+      "severity": "medium",
+      "summary": "Next.js is vulnerable to RCE in React flight protocol",
+      "details": "A vulnerability affects certain React packages<sup>1</sup> for versions 19.0.0, 19.1.0, 19.1.1, and 19.2.0 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55182](https://www.cve.org/CVERecord?id=CVE-2025-55182). \n\nFixed in:\nReact: 19.0.1, 19.1.2, 19.2.1\nNext.js: 15.0.5, 15.1.9, 15.2.6, 15.3.6, 15.4.8, 15.5.7, 16.0.7\n\nThe vulnerability also affects experimental canary releases starting with 14.3.0-canary.77. Users on any of the 14.3 canary builds should either downgrade to a 14.x stable release or 14.3.0-canary.76.\n\nAll users of stable 15.x or 16.x Next.js versions should upgrade to a patched, stable version immediately.\n\n<sup>1</sup> The affected React packages are:\n- react-server-dom-parcel\n- react-server-dom-turbopack\n- react-server-dom-webpack",
+      "affected_versions": "[{'introduced': '14.3.0-canary.77'}, {'fixed': '15.0.5'}]",
+      "fixed_version": "15.0.5",
+      "published": "2025-12-03T19:07:11Z",
+      "modified": "2025-12-03T19:27:43.339613Z",
+      "references": [
+        "https://github.com/vercel/next.js/security/advisories/GHSA-9qr9-h5gf-34mp",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-66478",
+        "https://github.com/vercel/next.js"
+      ],
+      "cvss_score": 3.1
+    }
+  ],
+  "metrics": {
+    "total_dependencies": 35,
+    "direct_count": 25,
+    "dev_count": 10,
+    "peer_count": 0,
+    "transitive_count": 0,
+    "outdated_count": 13,
+    "vulnerable_count": 1,
+    "critical_vulnerabilities": 0,
+    "high_vulnerabilities": 0,
+    "medium_vulnerabilities": 1,
+    "low_vulnerabilities": 0,
+    "license_breakdown": {},
+    "ecosystem_breakdown": {
+      "npm": 35
+    }
+  }
+}

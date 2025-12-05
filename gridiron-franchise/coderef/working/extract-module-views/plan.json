@@ -1,0 +1,288 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "extract-module-views",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": false,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "architecture": "Next.js app with modular component architecture",
+        "patterns": "Module components with mode prop (standalone/embedded)"
+      },
+      "coding_standards": {
+        "typescript": "Strict mode, explicit types",
+        "react": "Functional components with hooks",
+        "styling": "Tailwind CSS with shadcn/ui"
+      },
+      "reference_components": [
+        "src/components/modules/views/roster-view.tsx - Example of mode pattern",
+        "src/components/modules/views/schedule-view.tsx - Example of mode pattern",
+        "src/components/modules/index.ts - Module exports"
+      ]
+    },
+    "1_executive_summary": {
+      "description": "Extract inline UI from dev-tools page files into reusable module components following the existing mode pattern (standalone/embedded). This enables these views to be used in both Dev Tools pages and the Full Game gameplay loop.",
+      "goal": "Create 8 reusable view components from inline page code, enabling consistent UI across Dev Tools and Full Game modes",
+      "scope": "Extract CoachingView, FacilitiesView, ScoutingDeptView, FAView, DraftView, SchemesView, GMSkillsView, and ScheduleGenView into @/components/modules/views",
+      "estimated_complexity": "medium"
+    },
+    "2_risk_assessment": {
+      "risks": [
+        {
+          "risk": "Breaking existing page functionality during extraction",
+          "severity": "low",
+          "mitigation": "Extract component, update page to use it, test immediately"
+        },
+        {
+          "risk": "Inconsistent mode implementations",
+          "severity": "low",
+          "mitigation": "Follow existing RosterView/ScheduleView patterns exactly"
+        }
+      ],
+      "breaking_changes": false,
+      "rollback_strategy": "Revert file changes via git"
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        { "path": "src/app/dashboard/dev-tools/coaching/page.tsx", "changes": "Replace inline UI with CoachingView component" },
+        { "path": "src/app/dashboard/dev-tools/facilities/page.tsx", "changes": "Replace inline UI with FacilitiesView component" },
+        { "path": "src/app/dashboard/dev-tools/scouting/page.tsx", "changes": "Replace inline UI with ScoutingDeptView component" },
+        { "path": "src/app/dashboard/dev-tools/fa/page.tsx", "changes": "Replace inline UI with FAView component" },
+        { "path": "src/app/dashboard/dev-tools/draft/page.tsx", "changes": "Replace inline UI with DraftView component" },
+        { "path": "src/app/dashboard/dev-tools/schemes/page.tsx", "changes": "Replace inline UI with SchemesView component" },
+        { "path": "src/app/dashboard/dev-tools/gm-skills/page.tsx", "changes": "Replace inline UI with GMSkillsView component" },
+        { "path": "src/components/modules/views/index.ts", "changes": "Add exports for new view components" },
+        { "path": "src/components/modules/index.ts", "changes": "Re-export new views" }
+      ],
+      "files_to_create": [
+        { "path": "src/components/modules/views/coaching-view.tsx", "purpose": "Reusable coaching staff view component" },
+        { "path": "src/components/modules/views/facilities-view.tsx", "purpose": "Reusable facilities view component" },
+        { "path": "src/components/modules/views/scouting-dept-view.tsx", "purpose": "Reusable scouting department view component" },
+        { "path": "src/components/modules/views/fa-view.tsx", "purpose": "Reusable free agents view component" },
+        { "path": "src/components/modules/views/draft-view.tsx", "purpose": "Reusable draft class view component" },
+        { "path": "src/components/modules/views/schemes-view.tsx", "purpose": "Reusable schemes view component" },
+        { "path": "src/components/modules/views/gm-skills-view.tsx", "purpose": "Reusable GM skills view component" }
+      ],
+      "files_to_delete": [],
+      "dependencies": {
+        "internal": ["lib/coaching", "lib/facilities", "lib/scouting", "lib/gm", "lib/schemes"],
+        "external": []
+      }
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "CoachingView Component",
+          "description": "Extract coaching page UI into reusable component with mode support",
+          "requirements": ["Support standalone/embedded modes", "Show coach ratings, schemes, perks", "Team selector in standalone mode"]
+        },
+        {
+          "id": "F2",
+          "name": "FacilitiesView Component",
+          "description": "Extract facilities page UI into reusable component",
+          "requirements": ["Support standalone/embedded modes", "Show stadium, training, medical facilities", "Team selector in standalone mode"]
+        },
+        {
+          "id": "F3",
+          "name": "ScoutingDeptView Component",
+          "description": "Extract scouting department page UI into reusable component",
+          "requirements": ["Support standalone/embedded modes", "Show scouts, points, assignments", "Team selector in standalone mode"]
+        },
+        {
+          "id": "F4",
+          "name": "FAView Component",
+          "description": "Extract free agents page UI into reusable component",
+          "requirements": ["Support standalone/embedded modes", "Show FA list with filters", "Position/rating filters"]
+        },
+        {
+          "id": "F5",
+          "name": "DraftView Component",
+          "description": "Extract draft class page UI into reusable component",
+          "requirements": ["Support standalone/embedded modes", "Show prospects with grades", "Position/round filters"]
+        },
+        {
+          "id": "F6",
+          "name": "SchemesView Component",
+          "description": "Extract schemes page UI into reusable component",
+          "requirements": ["Support standalone/embedded modes", "Show offensive/defensive schemes", "Scheme details and fits"]
+        },
+        {
+          "id": "F7",
+          "name": "GMSkillsView Component",
+          "description": "Extract GM skills page UI into reusable component",
+          "requirements": ["Support standalone/embedded modes", "Show skill trees", "Team selector in standalone mode"]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-EXTRACT-MODULE-VIEWS-001",
+        "name": "Extract Module Views",
+        "feature_dir": "coderef/working/extract-module-views"
+      },
+      "tasks": [
+        {
+          "id": "EXTRACT-001",
+          "workorder_id": "WO-EXTRACT-MODULE-VIEWS-001",
+          "description": "Create CoachingView component from coaching/page.tsx",
+          "feature": "F1",
+          "files": ["src/components/modules/views/coaching-view.tsx", "src/app/dashboard/dev-tools/coaching/page.tsx"],
+          "estimated_loc": 400
+        },
+        {
+          "id": "EXTRACT-002",
+          "workorder_id": "WO-EXTRACT-MODULE-VIEWS-001",
+          "description": "Create FacilitiesView component from facilities/page.tsx",
+          "feature": "F2",
+          "files": ["src/components/modules/views/facilities-view.tsx", "src/app/dashboard/dev-tools/facilities/page.tsx"],
+          "estimated_loc": 350
+        },
+        {
+          "id": "EXTRACT-003",
+          "workorder_id": "WO-EXTRACT-MODULE-VIEWS-001",
+          "description": "Create ScoutingDeptView component from scouting/page.tsx",
+          "feature": "F3",
+          "files": ["src/components/modules/views/scouting-dept-view.tsx", "src/app/dashboard/dev-tools/scouting/page.tsx"],
+          "estimated_loc": 350
+        },
+        {
+          "id": "EXTRACT-004",
+          "workorder_id": "WO-EXTRACT-MODULE-VIEWS-001",
+          "description": "Create FAView component from fa/page.tsx",
+          "feature": "F4",
+          "files": ["src/components/modules/views/fa-view.tsx", "src/app/dashboard/dev-tools/fa/page.tsx"],
+          "estimated_loc": 300
+        },
+        {
+          "id": "EXTRACT-005",
+          "workorder_id": "WO-EXTRACT-MODULE-VIEWS-001",
+          "description": "Create DraftView component from draft/page.tsx",
+          "feature": "F5",
+          "files": ["src/components/modules/views/draft-view.tsx", "src/app/dashboard/dev-tools/draft/page.tsx"],
+          "estimated_loc": 300
+        },
+        {
+          "id": "EXTRACT-006",
+          "workorder_id": "WO-EXTRACT-MODULE-VIEWS-001",
+          "description": "Create SchemesView component from schemes/page.tsx",
+          "feature": "F6",
+          "files": ["src/components/modules/views/schemes-view.tsx", "src/app/dashboard/dev-tools/schemes/page.tsx"],
+          "estimated_loc": 250
+        },
+        {
+          "id": "EXTRACT-007",
+          "workorder_id": "WO-EXTRACT-MODULE-VIEWS-001",
+          "description": "Create GMSkillsView component from gm-skills/page.tsx",
+          "feature": "F7",
+          "files": ["src/components/modules/views/gm-skills-view.tsx", "src/app/dashboard/dev-tools/gm-skills/page.tsx"],
+          "estimated_loc": 300
+        },
+        {
+          "id": "EXTRACT-008",
+          "workorder_id": "WO-EXTRACT-MODULE-VIEWS-001",
+          "description": "Update module index exports for all new views",
+          "feature": "F1",
+          "files": ["src/components/modules/views/index.ts", "src/components/modules/index.ts"],
+          "estimated_loc": 20
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Core Team Views",
+          "description": "Extract team-specific views (coaching, facilities, scouting dept)",
+          "tasks": ["EXTRACT-001", "EXTRACT-002", "EXTRACT-003"],
+          "deliverables": ["CoachingView", "FacilitiesView", "ScoutingDeptView"]
+        },
+        {
+          "phase": 2,
+          "name": "Player Pool Views",
+          "description": "Extract player pool views (free agents, draft class)",
+          "tasks": ["EXTRACT-004", "EXTRACT-005"],
+          "deliverables": ["FAView", "DraftView"]
+        },
+        {
+          "phase": 3,
+          "name": "Strategy Views",
+          "description": "Extract strategy views (schemes, GM skills)",
+          "tasks": ["EXTRACT-006", "EXTRACT-007"],
+          "deliverables": ["SchemesView", "GMSkillsView"]
+        },
+        {
+          "phase": 4,
+          "name": "Integration",
+          "description": "Update exports and verify all components work",
+          "tasks": ["EXTRACT-008"],
+          "deliverables": ["Updated module index", "All views importable from @/components/modules"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Each extracted view renders correctly in Dev Tools page (standalone mode)",
+        "Each extracted view can be imported and used in embedded mode",
+        "Team selectors work in standalone mode",
+        "Data loads correctly from stores",
+        "Build passes with no TypeScript errors"
+      ],
+      "unit_tests": [],
+      "integration_tests": []
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        "All 7 new view components created in src/components/modules/views/",
+        "All Dev Tools pages updated to use extracted components",
+        "Components support mode='standalone' and mode='embedded'",
+        "All views exportable from @/components/modules",
+        "Build passes",
+        "No regression in existing Dev Tools functionality"
+      ],
+      "performance_requirements": [],
+      "quality_gates": ["TypeScript passes", "Build succeeds", "All pages render"]
+    },
+    "9_implementation_checklist": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Core Team Views",
+          "tasks": [
+            { "id": "EXTRACT-001", "description": "Create CoachingView component", "status": "pending" },
+            { "id": "EXTRACT-002", "description": "Create FacilitiesView component", "status": "pending" },
+            { "id": "EXTRACT-003", "description": "Create ScoutingDeptView component", "status": "pending" }
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Player Pool Views",
+          "tasks": [
+            { "id": "EXTRACT-004", "description": "Create FAView component", "status": "pending" },
+            { "id": "EXTRACT-005", "description": "Create DraftView component", "status": "pending" }
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Strategy Views",
+          "tasks": [
+            { "id": "EXTRACT-006", "description": "Create SchemesView component", "status": "pending" },
+            { "id": "EXTRACT-007", "description": "Create GMSkillsView component", "status": "pending" }
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Integration",
+          "tasks": [
+            { "id": "EXTRACT-008", "description": "Update module index exports", "status": "pending" }
+          ]
+        }
+      ]
+    }
+  }
+}

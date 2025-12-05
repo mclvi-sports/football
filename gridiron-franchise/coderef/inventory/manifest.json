@@ -1,0 +1,5087 @@
+{
+  "project_name": "gridiron-franchise",
+  "project_path": "C:\\Users\\willh\\Desktop\\latest-sim\\gridiron-franchise",
+  "generated_at": "2025-12-04T19:35:40.219253",
+  "analysis_depth": "standard",
+  "metrics": {
+    "total_files": 407,
+    "total_size": 4492330,
+    "total_lines": 125005,
+    "file_categories": {
+      "core": 0,
+      "source": 251,
+      "template": 11,
+      "config": 9,
+      "test": 0,
+      "docs": 74,
+      "unknown": 62
+    },
+    "risk_distribution": {
+      "low": 307,
+      "medium": 80,
+      "high": 18,
+      "critical": 2
+    },
+    "language_breakdown": {
+      "JSON": 52,
+      "Markdown": 74,
+      "TypeScript": 247,
+      "HTML": 11,
+      "SQL": 1,
+      "JavaScript": 3,
+      "CSS": 1
+    }
+  },
+  "files": [
+    {
+      "path": ".env.example",
+      "name": ".env.example",
+      "extension": ".example",
+      "size": 135,
+      "lines": 3,
+      "last_modified": "2025-11-30T15:01:02.685156",
+      "category": "config",
+      "risk_level": "critical",
+      "dependencies": []
+    },
+    {
+      "path": ".env.local",
+      "name": ".env.local",
+      "extension": ".local",
+      "size": 552,
+      "lines": 3,
+      "last_modified": "2025-11-30T15:00:45.532439",
+      "category": "config",
+      "risk_level": "critical",
+      "dependencies": []
+    },
+    {
+      "path": ".gitignore",
+      "name": ".gitignore",
+      "extension": "",
+      "size": 480,
+      "lines": 41,
+      "last_modified": "2025-11-30T14:55:46.104168",
+      "category": "config",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "components.json",
+      "name": "components.json",
+      "extension": ".json",
+      "size": 451,
+      "lines": 22,
+      "last_modified": "2025-11-30T14:56:56.990835",
+      "category": "config",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "eslint.config.mjs",
+      "name": "eslint.config.mjs",
+      "extension": ".mjs",
+      "size": 465,
+      "lines": 18,
+      "last_modified": "2025-11-30T14:55:46.251865",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "game-index.md",
+      "name": "game-index.md",
+      "extension": ".md",
+      "size": 3420,
+      "lines": 80,
+      "last_modified": "2025-12-03T19:36:42.869521",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "next-env.d.ts",
+      "name": "next-env.d.ts",
+      "extension": ".ts",
+      "size": 247,
+      "lines": 6,
+      "last_modified": "2025-12-04T14:55:58.321013",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "next.config.ts",
+      "name": "next.config.ts",
+      "extension": ".ts",
+      "size": 315,
+      "lines": 14,
+      "last_modified": "2025-11-30T15:01:29.182737",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next",
+        "next-pwa"
+      ]
+    },
+    {
+      "path": "notes.md",
+      "name": "notes.md",
+      "extension": ".md",
+      "size": 19796,
+      "lines": 601,
+      "last_modified": "2025-12-04T00:27:50.403978",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "package-lock.json",
+      "name": "package-lock.json",
+      "extension": ".json",
+      "size": 414547,
+      "lines": 11280,
+      "last_modified": "2025-11-30T19:30:33.690437",
+      "category": "config",
+      "risk_level": "high",
+      "dependencies": []
+    },
+    {
+      "path": "package.json",
+      "name": "package.json",
+      "extension": ".json",
+      "size": 1407,
+      "lines": 50,
+      "last_modified": "2025-11-30T15:04:09.895270",
+      "category": "config",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "postcss.config.mjs",
+      "name": "postcss.config.mjs",
+      "extension": ".mjs",
+      "size": 94,
+      "lines": 7,
+      "last_modified": "2025-11-30T14:55:46.268936",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "README.md",
+      "name": "README.md",
+      "extension": ".md",
+      "size": 3824,
+      "lines": 155,
+      "last_modified": "2025-12-03T23:20:23.885452",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "tsconfig.json",
+      "name": "tsconfig.json",
+      "extension": ".json",
+      "size": 670,
+      "lines": 34,
+      "last_modified": "2025-11-30T14:55:48.866662",
+      "category": "config",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "tsconfig.tsbuildinfo",
+      "name": "tsconfig.tsbuildinfo",
+      "extension": ".tsbuildinfo",
+      "size": 214224,
+      "lines": 1,
+      "last_modified": "2025-12-04T17:20:11.647769",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": ".claude/settings.local.json",
+      "name": "settings.local.json",
+      "extension": ".json",
+      "size": 1165,
+      "lines": 19,
+      "last_modified": "2025-12-04T11:34:02.373269",
+      "category": "config",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/auth-ui/analysis.json",
+      "name": "analysis.json",
+      "extension": ".json",
+      "size": 1525,
+      "lines": 60,
+      "last_modified": "2025-11-30T16:01:51.085230",
+      "category": "unknown",
+      "risk_level": "high",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/auth-ui/context.json",
+      "name": "context.json",
+      "extension": ".json",
+      "size": 1280,
+      "lines": 30,
+      "last_modified": "2025-11-30T16:01:08.138974",
+      "category": "unknown",
+      "risk_level": "high",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/auth-ui/deliverables.json",
+      "name": "deliverables.json",
+      "extension": ".json",
+      "size": 2022,
+      "lines": 47,
+      "last_modified": "2025-11-30T16:24:39.020019",
+      "category": "unknown",
+      "risk_level": "high",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/auth-ui/IMPLEMENTATION.md",
+      "name": "IMPLEMENTATION.md",
+      "extension": ".md",
+      "size": 4078,
+      "lines": 136,
+      "last_modified": "2025-11-30T16:24:40.306219",
+      "category": "docs",
+      "risk_level": "high",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/auth-ui/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 11596,
+      "lines": 323,
+      "last_modified": "2025-11-30T16:02:49.447228",
+      "category": "unknown",
+      "risk_level": "high",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/codebase-cleanup/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 1493,
+      "lines": 55,
+      "last_modified": "2025-12-03T22:07:07.774143",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/codebase-cleanup/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 10338,
+      "lines": 329,
+      "last_modified": "2025-12-03T20:54:38.906023",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/dashboard/analysis.json",
+      "name": "analysis.json",
+      "extension": ".json",
+      "size": 1650,
+      "lines": 62,
+      "last_modified": "2025-11-30T21:34:40.235599",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/dashboard/context.json",
+      "name": "context.json",
+      "extension": ".json",
+      "size": 1597,
+      "lines": 28,
+      "last_modified": "2025-11-30T21:34:22.422356",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/dashboard/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 1750,
+      "lines": 67,
+      "last_modified": "2025-11-30T21:37:52.661006",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/dashboard/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 11863,
+      "lines": 326,
+      "last_modified": "2025-11-30T21:36:07.404104",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/dev-tools-finals-alignment/analysis.json",
+      "name": "analysis.json",
+      "extension": ".json",
+      "size": 1691,
+      "lines": 64,
+      "last_modified": "2025-12-01T19:10:36.499173",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/dev-tools-finals-alignment/context.json",
+      "name": "context.json",
+      "extension": ".json",
+      "size": 1603,
+      "lines": 33,
+      "last_modified": "2025-12-01T19:09:51.232332",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/dev-tools-finals-alignment/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 17130,
+      "lines": 433,
+      "last_modified": "2025-12-01T19:13:25.867357",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/game-menu/analysis.json",
+      "name": "analysis.json",
+      "extension": ".json",
+      "size": 1588,
+      "lines": 62,
+      "last_modified": "2025-11-30T16:26:45.055403",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/game-menu/context.json",
+      "name": "context.json",
+      "extension": ".json",
+      "size": 1371,
+      "lines": 34,
+      "last_modified": "2025-11-30T16:26:33.076548",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/game-menu/deliverables.json",
+      "name": "deliverables.json",
+      "extension": ".json",
+      "size": 1830,
+      "lines": 45,
+      "last_modified": "2025-11-30T16:33:52.303022",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/game-menu/IMPLEMENTATION.md",
+      "name": "IMPLEMENTATION.md",
+      "extension": ".md",
+      "size": 4205,
+      "lines": 152,
+      "last_modified": "2025-11-30T16:31:55.547166",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/game-menu/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 7303,
+      "lines": 224,
+      "last_modified": "2025-11-30T16:27:25.623175",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/gm-persona-creation/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 3859,
+      "lines": 129,
+      "last_modified": "2025-11-30T19:26:41.893696",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/gm-persona-creation/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 21195,
+      "lines": 545,
+      "last_modified": "2025-11-30T19:26:08.480435",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/module-architecture/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 2323,
+      "lines": 79,
+      "last_modified": "2025-12-03T13:01:33.894020",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/module-architecture/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 25531,
+      "lines": 561,
+      "last_modified": "2025-12-03T13:00:50.573505",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/module-connections/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 17768,
+      "lines": 440,
+      "last_modified": "2025-12-02T17:32:14.350384",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/module-storage-integration/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 7235,
+      "lines": 185,
+      "last_modified": "2025-12-03T00:11:37.358613",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/new-career/analysis.json",
+      "name": "analysis.json",
+      "extension": ".json",
+      "size": 1626,
+      "lines": 62,
+      "last_modified": "2025-11-30T17:10:23.890676",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/new-career/context.json",
+      "name": "context.json",
+      "extension": ".json",
+      "size": 1324,
+      "lines": 33,
+      "last_modified": "2025-11-30T17:08:10.559134",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/new-career/deliverables.json",
+      "name": "deliverables.json",
+      "extension": ".json",
+      "size": 1181,
+      "lines": 34,
+      "last_modified": "2025-11-30T17:11:11.139880",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/new-career/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 4063,
+      "lines": 127,
+      "last_modified": "2025-11-30T17:10:55.875370",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/owner-model/context.json",
+      "name": "context.json",
+      "extension": ".json",
+      "size": 1259,
+      "lines": 26,
+      "last_modified": "2025-12-03T15:36:13.225321",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/owner-model/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 1173,
+      "lines": 48,
+      "last_modified": "2025-12-03T16:07:06.211413",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/owner-model/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 6750,
+      "lines": 196,
+      "last_modified": "2025-12-03T15:41:36.275269",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/roster-module-update/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 6991,
+      "lines": 188,
+      "last_modified": "2025-12-02T23:50:14.549011",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/scheme-separation/analysis.json",
+      "name": "analysis.json",
+      "extension": ".json",
+      "size": 1770,
+      "lines": 64,
+      "last_modified": "2025-12-02T13:29:52.798834",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/scheme-separation/context.json",
+      "name": "context.json",
+      "extension": ".json",
+      "size": 1978,
+      "lines": 34,
+      "last_modified": "2025-12-02T13:29:13.154507",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/scheme-separation/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 4400,
+      "lines": 120,
+      "last_modified": "2025-12-02T13:38:15.635993",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/scheme-separation/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 27781,
+      "lines": 718,
+      "last_modified": "2025-12-02T13:36:00.265154",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/season-sim/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 3291,
+      "lines": 127,
+      "last_modified": "2025-12-02T14:47:27.844797",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/season-sim/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 19232,
+      "lines": 525,
+      "last_modified": "2025-12-02T14:45:42.965259",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/sim-engine-integration/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 14588,
+      "lines": 362,
+      "last_modified": "2025-12-01T21:07:53.515116",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/sim-update/context.json",
+      "name": "context.json",
+      "extension": ".json",
+      "size": 1187,
+      "lines": 25,
+      "last_modified": "2025-12-01T22:02:05.757724",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/sim-update/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 7089,
+      "lines": 197,
+      "last_modified": "2025-12-01T22:03:26.417168",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/theme-toggle/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 2711,
+      "lines": 91,
+      "last_modified": "2025-11-30T16:53:43.664397",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/training-system/analysis.json",
+      "name": "analysis.json",
+      "extension": ".json",
+      "size": 1933,
+      "lines": 67,
+      "last_modified": "2025-12-03T10:45:10.693979",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/training-system/context.json",
+      "name": "context.json",
+      "extension": ".json",
+      "size": 1558,
+      "lines": 35,
+      "last_modified": "2025-12-03T10:43:33.610097",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/training-system/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 2278,
+      "lines": 81,
+      "last_modified": "2025-12-03T10:49:08.379635",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/training-system/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 23682,
+      "lines": 624,
+      "last_modified": "2025-12-03T10:48:57.360180",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/unified-game-generator/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 6906,
+      "lines": 231,
+      "last_modified": "2025-12-02T19:33:19.198926",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/archived/unified-game-generator/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 27590,
+      "lines": 690,
+      "last_modified": "2025-12-02T19:02:51.069751",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/changelog/CHANGELOG.json",
+      "name": "CHANGELOG.json",
+      "extension": ".json",
+      "size": 2950,
+      "lines": 66,
+      "last_modified": "2025-12-03T23:20:23.907754",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/foundation-docs/API.md",
+      "name": "API.md",
+      "extension": ".md",
+      "size": 6300,
+      "lines": 301,
+      "last_modified": "2025-12-01T19:26:39.389599",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/foundation-docs/ARCHITECTURE.md",
+      "name": "ARCHITECTURE.md",
+      "extension": ".md",
+      "size": 13744,
+      "lines": 307,
+      "last_modified": "2025-12-01T19:25:27.906250",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/foundation-docs/COMPONENTS.md",
+      "name": "COMPONENTS.md",
+      "extension": ".md",
+      "size": 9861,
+      "lines": 493,
+      "last_modified": "2025-12-01T19:27:57.539407",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/foundation-docs/SCHEMA.md",
+      "name": "SCHEMA.md",
+      "extension": ".md",
+      "size": 11984,
+      "lines": 540,
+      "last_modified": "2025-12-01T19:29:24.409393",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/working/devtools-owner-model/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 2783,
+      "lines": 95,
+      "last_modified": "2025-12-04T14:48:15.303828",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/working/devtools-owner-model/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 9661,
+      "lines": 226,
+      "last_modified": "2025-12-04T14:46:55.876672",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/working/extract-module-views/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 4237,
+      "lines": 130,
+      "last_modified": "2025-12-04T15:08:13.467523",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/working/extract-module-views/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 13456,
+      "lines": 288,
+      "last_modified": "2025-12-04T15:07:38.249576",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/working/gamestats-generator/analysis.json",
+      "name": "analysis.json",
+      "extension": ".json",
+      "size": 1966,
+      "lines": 68,
+      "last_modified": "2025-12-04T11:16:41.637122",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/working/gamestats-generator/context.json",
+      "name": "context.json",
+      "extension": ".json",
+      "size": 1134,
+      "lines": 27,
+      "last_modified": "2025-12-04T11:16:30.783740",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/working/gamestats-generator/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 3170,
+      "lines": 124,
+      "last_modified": "2025-12-04T11:31:49.759109",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/working/gamestats-generator/execution-log.json",
+      "name": "execution-log.json",
+      "extension": ".json",
+      "size": 4796,
+      "lines": 120,
+      "last_modified": "2025-12-04T11:37:59.404168",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/working/gamestats-generator/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 13418,
+      "lines": 366,
+      "last_modified": "2025-12-04T11:27:43.857507",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/working/unified-league-generator/DELIVERABLES.md",
+      "name": "DELIVERABLES.md",
+      "extension": ".md",
+      "size": 2470,
+      "lines": 104,
+      "last_modified": "2025-12-04T17:17:31.322217",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "coderef/working/unified-league-generator/plan.json",
+      "name": "plan.json",
+      "extension": ".json",
+      "size": 8026,
+      "lines": 213,
+      "last_modified": "2025-12-04T17:17:11.773172",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/1212.png",
+      "name": "1212.png",
+      "extension": ".png",
+      "size": 105803,
+      "lines": 690,
+      "last_modified": "2025-12-04T19:22:59.575560",
+      "category": "unknown",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/architecture-plan.md",
+      "name": "architecture-plan.md",
+      "extension": ".md",
+      "size": 3584,
+      "lines": 83,
+      "last_modified": "2025-11-27T16:18:18.056129",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/game-elements-specification.md",
+      "name": "game-elements-specification.md",
+      "extension": ".md",
+      "size": 20392,
+      "lines": 545,
+      "last_modified": "2025-11-26T16:39:28.258262",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/implementation-plan.md",
+      "name": "implementation-plan.md",
+      "extension": ".md",
+      "size": 1377,
+      "lines": 30,
+      "last_modified": "2025-11-27T16:10:09.345003",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/INDEX.md",
+      "name": "INDEX.md",
+      "extension": ".md",
+      "size": 4336,
+      "lines": 118,
+      "last_modified": "2025-12-03T20:22:44.279702",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/player-generation-system-guide.md",
+      "name": "player-generation-system-guide.md",
+      "extension": ".md",
+      "size": 19668,
+      "lines": 616,
+      "last_modified": "2025-12-01T10:39:33.223358",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/SIMULATOR-IMPROVEMENTS.md",
+      "name": "SIMULATOR-IMPROVEMENTS.md",
+      "extension": ".md",
+      "size": 3095,
+      "lines": 43,
+      "last_modified": "2025-12-01T22:46:46.838472",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/coaching-staff/coaching-staff-system.md",
+      "name": "coaching-staff-system.md",
+      "extension": ".md",
+      "size": 21317,
+      "lines": 679,
+      "last_modified": "2025-11-26T16:39:28.185973",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/facilities/facilities-system.md",
+      "name": "facilities-system.md",
+      "extension": ".md",
+      "size": 25962,
+      "lines": 849,
+      "last_modified": "2025-11-26T16:39:28.175400",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-badge-system.md",
+      "name": "FINAL-badge-system.md",
+      "extension": ".md",
+      "size": 25491,
+      "lines": 926,
+      "last_modified": "2025-12-01T18:37:51.161846",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-coaching-staff-system (1).md",
+      "name": "FINAL-coaching-staff-system (1).md",
+      "extension": ".md",
+      "size": 27970,
+      "lines": 981,
+      "last_modified": "2025-12-02T13:17:50.406020",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-coaching-staff-system.md",
+      "name": "FINAL-coaching-staff-system.md",
+      "extension": ".md",
+      "size": 24781,
+      "lines": 790,
+      "last_modified": "2025-12-01T18:37:51.173165",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-draft-class-system.md",
+      "name": "FINAL-draft-class-system.md",
+      "extension": ".md",
+      "size": 16396,
+      "lines": 558,
+      "last_modified": "2025-12-01T18:37:51.146892",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-facilities-system.md",
+      "name": "FINAL-facilities-system.md",
+      "extension": ".md",
+      "size": 24548,
+      "lines": 788,
+      "last_modified": "2025-12-01T18:37:51.170651",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-free-agent-pool-system.md",
+      "name": "FINAL-free-agent-pool-system.md",
+      "extension": ".md",
+      "size": 14807,
+      "lines": 540,
+      "last_modified": "2025-12-01T18:37:51.151755",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-gm-skills-perks-system.md",
+      "name": "FINAL-gm-skills-perks-system.md",
+      "extension": ".md",
+      "size": 20615,
+      "lines": 748,
+      "last_modified": "2025-12-01T18:37:51.184884",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-offseason-system.md",
+      "name": "FINAL-offseason-system.md",
+      "extension": ".md",
+      "size": 52816,
+      "lines": 1763,
+      "last_modified": "2025-12-03T23:04:01.743172",
+      "category": "docs",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-player-generation-system.md",
+      "name": "FINAL-player-generation-system.md",
+      "extension": ".md",
+      "size": 63019,
+      "lines": 2162,
+      "last_modified": "2025-12-01T18:37:51.126752",
+      "category": "docs",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-roster-generation-system.md",
+      "name": "FINAL-roster-generation-system.md",
+      "extension": ".md",
+      "size": 21409,
+      "lines": 815,
+      "last_modified": "2025-12-01T18:37:51.141686",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-salarycap.md",
+      "name": "FINAL-salarycap.md",
+      "extension": ".md",
+      "size": 18801,
+      "lines": 689,
+      "last_modified": "2025-12-01T18:37:51.165945",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-schemes-system.md",
+      "name": "FINAL-schemes-system.md",
+      "extension": ".md",
+      "size": 31341,
+      "lines": 1182,
+      "last_modified": "2025-12-02T13:17:51.368358",
+      "category": "docs",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-scout-system.md",
+      "name": "FINAL-scout-system.md",
+      "extension": ".md",
+      "size": 26598,
+      "lines": 874,
+      "last_modified": "2025-12-01T18:37:51.181800",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-season-calendar-system.md",
+      "name": "FINAL-season-calendar-system.md",
+      "extension": ".md",
+      "size": 30091,
+      "lines": 1129,
+      "last_modified": "2025-12-03T05:44:42.837638",
+      "category": "docs",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-training-system.md",
+      "name": "FINAL-training-system.md",
+      "extension": ".md",
+      "size": 24565,
+      "lines": 795,
+      "last_modified": "2025-12-03T11:01:38.826258",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-traits-system.md",
+      "name": "FINAL-traits-system.md",
+      "extension": ".md",
+      "size": 25606,
+      "lines": 732,
+      "last_modified": "2025-12-01T18:37:51.156134",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/FINAL-weekly-flow-system.md",
+      "name": "FINAL-weekly-flow-system.md",
+      "extension": ".md",
+      "size": 42669,
+      "lines": 1301,
+      "last_modified": "2025-12-03T23:17:03.464109",
+      "category": "docs",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/INDEX.md",
+      "name": "INDEX.md",
+      "extension": ".md",
+      "size": 8698,
+      "lines": 224,
+      "last_modified": "2025-12-01T18:54:30.742788",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/FINALS/sim-engine-v2.html",
+      "name": "sim-engine-v2.html",
+      "extension": ".html",
+      "size": 76451,
+      "lines": 1704,
+      "last_modified": "2025-12-01T18:37:51.194706",
+      "category": "template",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/gm/gm-persona-creation-system.md",
+      "name": "gm-persona-creation-system.md",
+      "extension": ".md",
+      "size": 25001,
+      "lines": 684,
+      "last_modified": "2025-11-30T18:18:25.864131",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/gm/gm-skills-perks-system.md",
+      "name": "gm-skills-perks-system.md",
+      "extension": ".md",
+      "size": 13386,
+      "lines": 362,
+      "last_modified": "2025-11-26T16:39:29.863022",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/coach-data.md",
+      "name": "coach-data.md",
+      "extension": ".md",
+      "size": 6082,
+      "lines": 217,
+      "last_modified": "2025-12-04T17:32:47.825843",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/draft-data.md",
+      "name": "draft-data.md",
+      "extension": ".md",
+      "size": 4065,
+      "lines": 209,
+      "last_modified": "2025-12-04T18:03:20.167078",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/facilities-data.md",
+      "name": "facilities-data.md",
+      "extension": ".md",
+      "size": 6042,
+      "lines": 258,
+      "last_modified": "2025-12-04T17:35:01.261326",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/generators-data.md",
+      "name": "generators-data.md",
+      "extension": ".md",
+      "size": 18206,
+      "lines": 458,
+      "last_modified": "2025-12-04T18:21:49.380780",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/gm-data.md",
+      "name": "gm-data.md",
+      "extension": ".md",
+      "size": 4843,
+      "lines": 171,
+      "last_modified": "2025-12-04T17:33:25.138194",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/index.html",
+      "name": "index.html",
+      "extension": ".html",
+      "size": 73001,
+      "lines": 2877,
+      "last_modified": "2025-12-04T18:34:29.723136",
+      "category": "template",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/player-data.md",
+      "name": "player-data.md",
+      "extension": ".md",
+      "size": 13735,
+      "lines": 535,
+      "last_modified": "2025-12-04T17:27:41.196196",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/schedule-data.md",
+      "name": "schedule-data.md",
+      "extension": ".md",
+      "size": 5506,
+      "lines": 263,
+      "last_modified": "2025-12-04T18:05:28.552916",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/schemes-data.md",
+      "name": "schemes-data.md",
+      "extension": ".md",
+      "size": 14061,
+      "lines": 460,
+      "last_modified": "2025-12-04T17:55:36.417217",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/scout-data.md",
+      "name": "scout-data.md",
+      "extension": ".md",
+      "size": 7434,
+      "lines": 292,
+      "last_modified": "2025-12-04T17:34:22.250349",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/teams-data.md",
+      "name": "teams-data.md",
+      "extension": ".md",
+      "size": 3820,
+      "lines": 146,
+      "last_modified": "2025-12-04T18:02:31.155524",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/list/training-data.md",
+      "name": "training-data.md",
+      "extension": ".md",
+      "size": 5910,
+      "lines": 319,
+      "last_modified": "2025-12-04T18:04:24.291171",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/mocks/auth-screen-mockup.html",
+      "name": "auth-screen-mockup.html",
+      "extension": ".html",
+      "size": 17133,
+      "lines": 699,
+      "last_modified": "2025-11-30T15:39:50.583676",
+      "category": "template",
+      "risk_level": "high",
+      "dependencies": []
+    },
+    {
+      "path": "context/mocks/coach-profile-mockup.html",
+      "name": "coach-profile-mockup.html",
+      "extension": ".html",
+      "size": 43521,
+      "lines": 1142,
+      "last_modified": "2025-11-26T16:39:28.147560",
+      "category": "template",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/mocks/football-simulator.html",
+      "name": "football-simulator.html",
+      "extension": ".html",
+      "size": 73505,
+      "lines": 1788,
+      "last_modified": "2025-11-28T18:02:34.846910",
+      "category": "template",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/mocks/game-menu-mockup.html",
+      "name": "game-menu-mockup.html",
+      "extension": ".html",
+      "size": 7615,
+      "lines": 279,
+      "last_modified": "2025-11-30T16:17:28.725744",
+      "category": "template",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/mocks/gm-persona-mockup.html",
+      "name": "gm-persona-mockup.html",
+      "extension": ".html",
+      "size": 32404,
+      "lines": 929,
+      "last_modified": "2025-11-30T19:16:43.601697",
+      "category": "template",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/mocks/new-career-mockup.html",
+      "name": "new-career-mockup.html",
+      "extension": ".html",
+      "size": 21579,
+      "lines": 532,
+      "last_modified": "2025-11-30T16:48:45.081025",
+      "category": "template",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/mocks/player-profile-mockup.html",
+      "name": "player-profile-mockup.html",
+      "extension": ".html",
+      "size": 43311,
+      "lines": 1157,
+      "last_modified": "2025-11-26T16:39:28.164592",
+      "category": "template",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/mocks/roster-page-mockup.html",
+      "name": "roster-page-mockup.html",
+      "extension": ".html",
+      "size": 24682,
+      "lines": 798,
+      "last_modified": "2025-11-26T16:39:28.170105",
+      "category": "template",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/players-and-roster/badges-system.md",
+      "name": "badges-system.md",
+      "extension": ".md",
+      "size": 25128,
+      "lines": 963,
+      "last_modified": "2025-11-26T16:39:28.192999",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/players-and-roster/FINAL-draft-class-system.md",
+      "name": "FINAL-draft-class-system.md",
+      "extension": ".md",
+      "size": 16396,
+      "lines": 558,
+      "last_modified": "2025-12-01T09:48:55.483233",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/players-and-roster/FINAL-free-agent-pool-system.md",
+      "name": "FINAL-free-agent-pool-system.md",
+      "extension": ".md",
+      "size": 14807,
+      "lines": 540,
+      "last_modified": "2025-12-01T09:48:59.211053",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/players-and-roster/FINAL-player-generation-system.md",
+      "name": "FINAL-player-generation-system.md",
+      "extension": ".md",
+      "size": 63019,
+      "lines": 2162,
+      "last_modified": "2025-12-01T09:48:59.215845",
+      "category": "docs",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/players-and-roster/FINAL-roster-generation-system.md",
+      "name": "FINAL-roster-generation-system.md",
+      "extension": ".md",
+      "size": 21409,
+      "lines": 815,
+      "last_modified": "2025-12-01T09:48:55.005339",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/players-and-roster/name-pools.csv",
+      "name": "name-pools.csv",
+      "extension": ".csv",
+      "size": 26020,
+      "lines": 1288,
+      "last_modified": "2025-12-01T08:39:49.721471",
+      "category": "unknown",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/players-and-roster/positions-attributes-system.md",
+      "name": "positions-attributes-system.md",
+      "extension": ".md",
+      "size": 8836,
+      "lines": 327,
+      "last_modified": "2025-11-26T16:39:29.852952",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/players-and-roster/traits-system.md",
+      "name": "traits-system.md",
+      "extension": ".md",
+      "size": 18772,
+      "lines": 605,
+      "last_modified": "2025-11-26T16:39:28.198516",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/sim-logic/engine-upgrade-plan.md",
+      "name": "engine-upgrade-plan.md",
+      "extension": ".md",
+      "size": 3412,
+      "lines": 78,
+      "last_modified": "2025-11-27T16:47:06.700525",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/sim-logic/sim-engine.html",
+      "name": "sim-engine.html",
+      "extension": ".html",
+      "size": 74374,
+      "lines": 1811,
+      "last_modified": "2025-11-27T16:03:19.363162",
+      "category": "template",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "context/sql/setup_teams.sql",
+      "name": "setup_teams.sql",
+      "extension": ".sql",
+      "size": 5083,
+      "lines": 57,
+      "last_modified": "2025-11-30T16:12:58.851629",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/support-staff/scout-system.md",
+      "name": "scout-system.md",
+      "extension": ".md",
+      "size": 21209,
+      "lines": 662,
+      "last_modified": "2025-11-26T16:39:28.180264",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/teams/football-teams.csv",
+      "name": "football-teams.csv",
+      "extension": ".csv",
+      "size": 3030,
+      "lines": 33,
+      "last_modified": "2025-11-30T15:58:55.812085",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/teams/team-identities-outline.md",
+      "name": "team-identities-outline.md",
+      "extension": ".md",
+      "size": 2112,
+      "lines": 127,
+      "last_modified": "2025-11-26T16:39:29.858480",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/ui/football-game-theme-spec.md",
+      "name": "football-game-theme-spec.md",
+      "extension": ".md",
+      "size": 11149,
+      "lines": 585,
+      "last_modified": "2025-11-26T16:39:28.262908",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "context/ui/ui-ux-design-specification.md",
+      "name": "ui-ux-design-specification.md",
+      "extension": ".md",
+      "size": 21832,
+      "lines": 499,
+      "last_modified": "2025-11-26T16:39:28.252747",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "public/file.svg",
+      "name": "file.svg",
+      "extension": ".svg",
+      "size": 391,
+      "lines": 1,
+      "last_modified": "2025-11-30T14:55:46.273874",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "public/globe.svg",
+      "name": "globe.svg",
+      "extension": ".svg",
+      "size": 1035,
+      "lines": 1,
+      "last_modified": "2025-11-30T14:55:46.281174",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "public/manifest.json",
+      "name": "manifest.json",
+      "extension": ".json",
+      "size": 1249,
+      "lines": 45,
+      "last_modified": "2025-12-03T04:51:03.193460",
+      "category": "config",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "public/next.svg",
+      "name": "next.svg",
+      "extension": ".svg",
+      "size": 1375,
+      "lines": 1,
+      "last_modified": "2025-11-30T14:55:46.291047",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "public/sw.js",
+      "name": "sw.js",
+      "extension": ".js",
+      "size": 14638,
+      "lines": 1,
+      "last_modified": "2025-12-04T14:55:57.587241",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "public/vercel.svg",
+      "name": "vercel.svg",
+      "extension": ".svg",
+      "size": 128,
+      "lines": 1,
+      "last_modified": "2025-11-30T14:55:46.297884",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "public/window.svg",
+      "name": "window.svg",
+      "extension": ".svg",
+      "size": 385,
+      "lines": 1,
+      "last_modified": "2025-11-30T14:55:46.303618",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "public/workbox-4754cb34.js",
+      "name": "workbox-4754cb34.js",
+      "extension": ".js",
+      "size": 23578,
+      "lines": 1,
+      "last_modified": "2025-12-04T14:55:57.587241",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "public/icons/apple-touch-icon.png",
+      "name": "apple-touch-icon.png",
+      "extension": ".png",
+      "size": 841,
+      "lines": 22,
+      "last_modified": "2025-12-03T04:50:43.726298",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "public/icons/icon-192x192.png",
+      "name": "icon-192x192.png",
+      "extension": ".png",
+      "size": 939,
+      "lines": 9,
+      "last_modified": "2025-12-03T04:50:43.689976",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "public/icons/icon-512x512.png",
+      "name": "icon-512x512.png",
+      "extension": ".png",
+      "size": 3210,
+      "lines": 5,
+      "last_modified": "2025-12-03T04:50:43.721705",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "scripts/generate-icons.js",
+      "name": "generate-icons.js",
+      "extension": ".js",
+      "size": 3993,
+      "lines": 133,
+      "last_modified": "2025-12-03T04:50:18.673309",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "fs",
+        "path",
+        "zlib"
+      ]
+    },
+    {
+      "path": "scripts/generate-mock-roster.ts",
+      "name": "generate-mock-roster.ts",
+      "extension": ".ts",
+      "size": 5158,
+      "lines": 125,
+      "last_modified": "2025-12-01T10:32:16.944500",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "scripts/test-game-runner.ts",
+      "name": "test-game-runner.ts",
+      "extension": ".ts",
+      "size": 4508,
+      "lines": 125,
+      "last_modified": "2025-12-04T11:50:33.639720",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/middleware.ts",
+      "name": "middleware.ts",
+      "extension": ".ts",
+      "size": 619,
+      "lines": 19,
+      "last_modified": "2025-11-30T15:02:29.383590",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/apple-icon.tsx",
+      "name": "apple-icon.tsx",
+      "extension": ".tsx",
+      "size": 649,
+      "lines": 33,
+      "last_modified": "2025-12-03T04:41:26.366232",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/favicon.ico",
+      "name": "favicon.ico",
+      "extension": ".ico",
+      "size": 25931,
+      "lines": 77,
+      "last_modified": "2025-11-30T14:55:46.151006",
+      "category": "unknown",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/app/globals.css",
+      "name": "globals.css",
+      "extension": ".css",
+      "size": 4496,
+      "lines": 136,
+      "last_modified": "2025-11-30T17:26:54.425107",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/app/icon.tsx",
+      "name": "icon.tsx",
+      "extension": ".tsx",
+      "size": 644,
+      "lines": 33,
+      "last_modified": "2025-12-03T04:41:13.785264",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "name": "layout.tsx",
+      "extension": ".tsx",
+      "size": 1777,
+      "lines": 72,
+      "last_modified": "2025-12-03T04:40:22.211515",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/(main)/layout.tsx",
+      "name": "layout.tsx",
+      "extension": ".tsx",
+      "size": 952,
+      "lines": 29,
+      "last_modified": "2025-11-30T16:29:50.592896",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/app/(main)/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 1201,
+      "lines": 43,
+      "last_modified": "2025-11-30T16:30:14.296563",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components"
+      ]
+    },
+    {
+      "path": "src/app/(main)/credits/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 1633,
+      "lines": 47,
+      "last_modified": "2025-11-30T17:04:24.910007",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/(main)/settings/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 1358,
+      "lines": 42,
+      "last_modified": "2025-11-30T17:03:50.212643",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/api/dev/generate-coaching/route.ts",
+      "name": "route.ts",
+      "extension": ".ts",
+      "size": 2365,
+      "lines": 79,
+      "last_modified": "2025-12-02T01:08:19.093862",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/api/dev/generate-draft/route.ts",
+      "name": "route.ts",
+      "extension": ".ts",
+      "size": 897,
+      "lines": 31,
+      "last_modified": "2025-12-04T12:52:15.072714",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/api/dev/generate-fa/route.ts",
+      "name": "route.ts",
+      "extension": ".ts",
+      "size": 879,
+      "lines": 31,
+      "last_modified": "2025-12-04T12:52:13.439615",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/api/dev/generate-facilities/route.ts",
+      "name": "route.ts",
+      "extension": ".ts",
+      "size": 2381,
+      "lines": 79,
+      "last_modified": "2025-12-02T00:53:24.089108",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/api/dev/generate-full/route.ts",
+      "name": "route.ts",
+      "extension": ".ts",
+      "size": 624,
+      "lines": 21,
+      "last_modified": "2025-12-01T11:33:39.273797",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/api/dev/generate-gm/route.ts",
+      "name": "route.ts",
+      "extension": ".ts",
+      "size": 2674,
+      "lines": 92,
+      "last_modified": "2025-12-03T15:53:51.879238",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/api/dev/generate-player/route.ts",
+      "name": "route.ts",
+      "extension": ".ts",
+      "size": 1140,
+      "lines": 37,
+      "last_modified": "2025-12-03T19:36:12.656395",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/api/dev/generate-roster/route.ts",
+      "name": "route.ts",
+      "extension": ".ts",
+      "size": 796,
+      "lines": 26,
+      "last_modified": "2025-12-01T11:01:57.801513",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/api/dev/generate-rosters/route.ts",
+      "name": "route.ts",
+      "extension": ".ts",
+      "size": 1298,
+      "lines": 45,
+      "last_modified": "2025-12-03T15:17:33.315526",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/api/dev/generate-schedule/route.ts",
+      "name": "route.ts",
+      "extension": ".ts",
+      "size": 994,
+      "lines": 35,
+      "last_modified": "2025-12-01T22:49:47.205456",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/api/dev/generate-scouting/route.ts",
+      "name": "route.ts",
+      "extension": ".ts",
+      "size": 2287,
+      "lines": 77,
+      "last_modified": "2025-12-02T01:18:48.890970",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/auth/layout.tsx",
+      "name": "layout.tsx",
+      "extension": ".tsx",
+      "size": 905,
+      "lines": 27,
+      "last_modified": "2025-11-30T16:21:45.353735",
+      "category": "source",
+      "risk_level": "high",
+      "dependencies": []
+    },
+    {
+      "path": "src/app/auth/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 1415,
+      "lines": 47,
+      "last_modified": "2025-11-30T16:14:41.308179",
+      "category": "source",
+      "risk_level": "high",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/auth/check-email/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 2094,
+      "lines": 70,
+      "last_modified": "2025-11-30T16:19:09.495720",
+      "category": "source",
+      "risk_level": "high",
+      "dependencies": [
+        "@/components",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/auth/forgot-password/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 3160,
+      "lines": 104,
+      "last_modified": "2025-11-30T16:15:19.055243",
+      "category": "source",
+      "risk_level": "high",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@hookform/resolvers",
+        "next",
+        "react",
+        "react-hook-form"
+      ]
+    },
+    {
+      "path": "src/app/auth/reset-password/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 4727,
+      "lines": 151,
+      "last_modified": "2025-11-30T16:16:15.571618",
+      "category": "source",
+      "risk_level": "high",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@hookform/resolvers",
+        "next",
+        "react",
+        "react-hook-form"
+      ]
+    },
+    {
+      "path": "src/app/career/layout.tsx",
+      "name": "layout.tsx",
+      "extension": ".tsx",
+      "size": 353,
+      "lines": 15,
+      "last_modified": "2025-11-30T17:32:30.472121",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/app/career/new/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 629,
+      "lines": 23,
+      "last_modified": "2025-12-03T15:57:52.384422",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/stores",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/career/new/confirm/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 5512,
+      "lines": 167,
+      "last_modified": "2025-12-03T22:05:31.935556",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@/stores",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/career/new/generate/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 5852,
+      "lines": 178,
+      "last_modified": "2025-12-04T17:22:57.492328",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "lucide-react",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/career/new/team/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 6593,
+      "lines": 193,
+      "last_modified": "2025-12-03T22:02:55.945424",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@/stores",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/layout.tsx",
+      "name": "layout.tsx",
+      "extension": ".tsx",
+      "size": 188,
+      "lines": 11,
+      "last_modified": "2025-11-30T19:53:57.607332",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/app/dashboard/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 1728,
+      "lines": 62,
+      "last_modified": "2025-12-04T14:29:50.748331",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/stores",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/about/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 17844,
+      "lines": 468,
+      "last_modified": "2025-12-03T23:42:49.424744",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 4428,
+      "lines": 144,
+      "last_modified": "2025-12-03T19:53:30.576451",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/coaching/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 836,
+      "lines": 27,
+      "last_modified": "2025-12-04T15:12:57.730525",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/depth-chart/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 1034,
+      "lines": 32,
+      "last_modified": "2025-12-03T05:40:52.595408",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/draft/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 803,
+      "lines": 27,
+      "last_modified": "2025-12-04T15:24:50.591449",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/fa/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 789,
+      "lines": 27,
+      "last_modified": "2025-12-04T15:24:45.363116",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/facilities/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 859,
+      "lines": 27,
+      "last_modified": "2025-12-04T15:16:04.566123",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/full/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 10899,
+      "lines": 287,
+      "last_modified": "2025-12-04T13:23:43.140725",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/gm-skills/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 1100,
+      "lines": 37,
+      "last_modified": "2025-12-04T15:27:54.164824",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/player/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 12954,
+      "lines": 319,
+      "last_modified": "2025-12-03T19:44:15.372693",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/player/[id]/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 26895,
+      "lines": 754,
+      "last_modified": "2025-12-01T11:13:46.054382",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/lib",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/roster-view/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 802,
+      "lines": 28,
+      "last_modified": "2025-12-03T13:28:06.675285",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/schedule/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 32279,
+      "lines": 678,
+      "last_modified": "2025-12-02T21:21:35.353426",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/lib",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/schemes/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 794,
+      "lines": 27,
+      "last_modified": "2025-12-04T15:27:47.744596",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/scouting/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 857,
+      "lines": 27,
+      "last_modified": "2025-12-04T15:21:33.176464",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/scouting-gameplay/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 801,
+      "lines": 27,
+      "last_modified": "2025-12-03T13:30:03.327775",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/sim/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 15256,
+      "lines": 421,
+      "last_modified": "2025-12-02T18:13:31.706230",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/staff/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 37108,
+      "lines": 857,
+      "last_modified": "2025-12-03T04:38:27.824206",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/lib",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/team-roster/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 13786,
+      "lines": 401,
+      "last_modified": "2025-12-01T20:47:10.079034",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/dev-tools/training/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 9971,
+      "lines": 268,
+      "last_modified": "2025-12-03T13:29:17.767126",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/draft/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 825,
+      "lines": 28,
+      "last_modified": "2025-11-30T21:43:00.181192",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/facilities/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 872,
+      "lines": 28,
+      "last_modified": "2025-12-01T09:28:57.785114",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/my-gm/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 6018,
+      "lines": 164,
+      "last_modified": "2025-12-03T16:04:53.060506",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@/stores",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/news/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 824,
+      "lines": 28,
+      "last_modified": "2025-11-30T21:43:03.245746",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/next-task/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 856,
+      "lines": 28,
+      "last_modified": "2025-11-30T21:42:57.171971",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/roster/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 834,
+      "lines": 28,
+      "last_modified": "2025-11-30T21:42:51.446279",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/schedule/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 836,
+      "lines": 28,
+      "last_modified": "2025-11-30T21:42:54.376536",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/settings/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 817,
+      "lines": 30,
+      "last_modified": "2025-11-30T21:53:40.406857",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/staff/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 860,
+      "lines": 28,
+      "last_modified": "2025-12-01T09:36:03.718409",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/stats/page.tsx",
+      "name": "page.tsx",
+      "extension": ".tsx",
+      "size": 831,
+      "lines": 28,
+      "last_modified": "2025-11-30T21:42:52.940528",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/components/COMPONENTS.md",
+      "name": "COMPONENTS.md",
+      "extension": ".md",
+      "size": 10847,
+      "lines": 285,
+      "last_modified": "2025-12-04T15:35:51.926712",
+      "category": "docs",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 1196,
+      "lines": 61,
+      "last_modified": "2025-12-04T14:12:44.244883",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components"
+      ]
+    },
+    {
+      "path": "src/components/theme-provider.tsx",
+      "name": "theme-provider.tsx",
+      "extension": ".tsx",
+      "size": 299,
+      "lines": 11,
+      "last_modified": "2025-11-30T16:56:53.514908",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next-themes",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/theme-toggle.tsx",
+      "name": "theme-toggle.tsx",
+      "extension": ".tsx",
+      "size": 1393,
+      "lines": 52,
+      "last_modified": "2025-11-30T21:53:24.757031",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next-themes",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/auth/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 214,
+      "lines": 8,
+      "last_modified": "2025-12-04T14:11:32.696121",
+      "category": "source",
+      "risk_level": "high",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/auth/password-strength.tsx",
+      "name": "password-strength.tsx",
+      "extension": ".tsx",
+      "size": 1425,
+      "lines": 57,
+      "last_modified": "2025-11-30T16:13:53.162230",
+      "category": "source",
+      "risk_level": "high",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/auth/sign-in-form.tsx",
+      "name": "sign-in-form.tsx",
+      "extension": ".tsx",
+      "size": 3188,
+      "lines": 115,
+      "last_modified": "2025-11-30T16:13:29.464828",
+      "category": "source",
+      "risk_level": "high",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@hookform/resolvers",
+        "next",
+        "react",
+        "react-hook-form"
+      ]
+    },
+    {
+      "path": "src/components/auth/sign-up-form.tsx",
+      "name": "sign-up-form.tsx",
+      "extension": ".tsx",
+      "size": 3982,
+      "lines": 133,
+      "last_modified": "2025-11-30T16:14:20.369883",
+      "category": "source",
+      "risk_level": "high",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@hookform/resolvers",
+        "next",
+        "react",
+        "react-hook-form"
+      ]
+    },
+    {
+      "path": "src/components/career/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 207,
+      "lines": 11,
+      "last_modified": "2025-12-04T14:11:58.568886",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/career/team-card.tsx",
+      "name": "team-card.tsx",
+      "extension": ".tsx",
+      "size": 1441,
+      "lines": 49,
+      "last_modified": "2025-12-03T22:04:45.422504",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/career/team-list.tsx",
+      "name": "team-list.tsx",
+      "extension": ".tsx",
+      "size": 665,
+      "lines": 27,
+      "last_modified": "2025-12-03T22:04:47.072637",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/career/persona/archetype-card.tsx",
+      "name": "archetype-card.tsx",
+      "extension": ".tsx",
+      "size": 1981,
+      "lines": 69,
+      "last_modified": "2025-12-03T01:01:52.553579",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/components/career/persona/archetype-list.tsx",
+      "name": "archetype-list.tsx",
+      "extension": ".tsx",
+      "size": 743,
+      "lines": 29,
+      "last_modified": "2025-11-30T19:34:52.840068",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/components/career/persona/background-card.tsx",
+      "name": "background-card.tsx",
+      "extension": ".tsx",
+      "size": 2593,
+      "lines": 85,
+      "last_modified": "2025-12-03T01:01:50.843268",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/components/career/persona/background-list.tsx",
+      "name": "background-list.tsx",
+      "extension": ".tsx",
+      "size": 1043,
+      "lines": 36,
+      "last_modified": "2025-11-30T19:35:54.096040",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/components/career/persona/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 383,
+      "lines": 11,
+      "last_modified": "2025-12-04T14:11:57.608918",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/career/persona/persona-summary.tsx",
+      "name": "persona-summary.tsx",
+      "extension": ".tsx",
+      "size": 4086,
+      "lines": 108,
+      "last_modified": "2025-12-03T01:02:52.784840",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/components/career/persona/synergy-badge.tsx",
+      "name": "synergy-badge.tsx",
+      "extension": ".tsx",
+      "size": 526,
+      "lines": 24,
+      "last_modified": "2025-11-30T19:35:19.142853",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/dashboard/bottom-tab-bar.tsx",
+      "name": "bottom-tab-bar.tsx",
+      "extension": ".tsx",
+      "size": 2373,
+      "lines": 82,
+      "last_modified": "2025-11-30T21:50:28.564822",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/components/dashboard/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 200,
+      "lines": 8,
+      "last_modified": "2025-12-04T14:11:33.681776",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/dashboard/nav-card.tsx",
+      "name": "nav-card.tsx",
+      "extension": ".tsx",
+      "size": 1236,
+      "lines": 49,
+      "last_modified": "2025-11-30T21:42:08.773720",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "next"
+      ]
+    },
+    {
+      "path": "src/components/dashboard/team-card.tsx",
+      "name": "team-card.tsx",
+      "extension": ".tsx",
+      "size": 955,
+      "lines": 33,
+      "last_modified": "2025-12-03T22:04:52.687110",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/dev-tools/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 182,
+      "lines": 7,
+      "last_modified": "2025-12-04T14:11:34.708647",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/dev-tools/player-card.tsx",
+      "name": "player-card.tsx",
+      "extension": ".tsx",
+      "size": 5515,
+      "lines": 169,
+      "last_modified": "2025-12-01T11:01:13.252321",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/dev-tools/roster-player-card.tsx",
+      "name": "roster-player-card.tsx",
+      "extension": ".tsx",
+      "size": 4093,
+      "lines": 128,
+      "last_modified": "2025-12-01T11:56:36.935336",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/franchise/box-score-modal.tsx",
+      "name": "box-score-modal.tsx",
+      "extension": ".tsx",
+      "size": 1474,
+      "lines": 52,
+      "last_modified": "2025-12-04T14:03:58.351371",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/franchise/bracket-matchup.tsx",
+      "name": "bracket-matchup.tsx",
+      "extension": ".tsx",
+      "size": 4266,
+      "lines": 144,
+      "last_modified": "2025-12-02T19:27:44.591417",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "lucide-react"
+      ]
+    },
+    {
+      "path": "src/components/franchise/champion-banner.tsx",
+      "name": "champion-banner.tsx",
+      "extension": ".tsx",
+      "size": 5911,
+      "lines": 155,
+      "last_modified": "2025-12-02T19:29:27.251896",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/franchise/game-card.tsx",
+      "name": "game-card.tsx",
+      "extension": ".tsx",
+      "size": 2592,
+      "lines": 75,
+      "last_modified": "2025-12-02T19:11:11.910452",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "lucide-react"
+      ]
+    },
+    {
+      "path": "src/components/franchise/game-setup-dashboard.tsx",
+      "name": "game-setup-dashboard.tsx",
+      "extension": ".tsx",
+      "size": 27075,
+      "lines": 786,
+      "last_modified": "2025-12-04T17:23:07.647298",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@/stores",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/franchise/gameplay-loop.tsx",
+      "name": "gameplay-loop.tsx",
+      "extension": ".tsx",
+      "size": 16938,
+      "lines": 499,
+      "last_modified": "2025-12-04T13:52:35.634500",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/franchise/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 702,
+      "lines": 17,
+      "last_modified": "2025-12-04T14:53:10.491587",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/franchise/module-card.tsx",
+      "name": "module-card.tsx",
+      "extension": ".tsx",
+      "size": 4000,
+      "lines": 121,
+      "last_modified": "2025-12-02T20:48:57.591871",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react"
+      ]
+    },
+    {
+      "path": "src/components/franchise/playoff-bracket.tsx",
+      "name": "playoff-bracket.tsx",
+      "extension": ".tsx",
+      "size": 9031,
+      "lines": 250,
+      "last_modified": "2025-12-02T19:28:45.474359",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/franchise/ready-indicator.tsx",
+      "name": "ready-indicator.tsx",
+      "extension": ".tsx",
+      "size": 3402,
+      "lines": 105,
+      "last_modified": "2025-12-02T19:11:10.245622",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react"
+      ]
+    },
+    {
+      "path": "src/components/franchise/schedule-preview-modal.tsx",
+      "name": "schedule-preview-modal.tsx",
+      "extension": ".tsx",
+      "size": 7760,
+      "lines": 208,
+      "last_modified": "2025-12-02T20:47:40.400046",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/franchise/season-hub.tsx",
+      "name": "season-hub.tsx",
+      "extension": ".tsx",
+      "size": 8936,
+      "lines": 258,
+      "last_modified": "2025-12-03T13:32:10.521525",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/franchise/team-selection-modal.tsx",
+      "name": "team-selection-modal.tsx",
+      "extension": ".tsx",
+      "size": 11367,
+      "lines": 343,
+      "last_modified": "2025-12-03T04:29:31.946680",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/gm/achievement-list.tsx",
+      "name": "achievement-list.tsx",
+      "extension": ".tsx",
+      "size": 6468,
+      "lines": 212,
+      "last_modified": "2025-12-03T21:48:35.887492",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@/stores",
+        "@/types",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/gm/equipment-slots.tsx",
+      "name": "equipment-slots.tsx",
+      "extension": ".tsx",
+      "size": 8046,
+      "lines": 259,
+      "last_modified": "2025-12-03T21:48:35.912375",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@/stores",
+        "@/types",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/gm/gm-points-display.tsx",
+      "name": "gm-points-display.tsx",
+      "extension": ".tsx",
+      "size": 1785,
+      "lines": 60,
+      "last_modified": "2025-12-03T01:36:37.351739",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@/stores"
+      ]
+    },
+    {
+      "path": "src/components/gm/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 626,
+      "lines": 18,
+      "last_modified": "2025-12-03T01:39:34.744321",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/gm/prestige-display.tsx",
+      "name": "prestige-display.tsx",
+      "extension": ".tsx",
+      "size": 7434,
+      "lines": 231,
+      "last_modified": "2025-12-03T21:48:35.934552",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@/stores",
+        "@/types",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/gm/skill-card.tsx",
+      "name": "skill-card.tsx",
+      "extension": ".tsx",
+      "size": 6201,
+      "lines": 194,
+      "last_modified": "2025-12-03T21:48:35.955822",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@/types",
+        "lucide-react"
+      ]
+    },
+    {
+      "path": "src/components/gm/skill-tier-badge.tsx",
+      "name": "skill-tier-badge.tsx",
+      "extension": ".tsx",
+      "size": 1866,
+      "lines": 78,
+      "last_modified": "2025-12-03T01:36:38.998020",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/components/gm/skills-menu.tsx",
+      "name": "skills-menu.tsx",
+      "extension": ".tsx",
+      "size": 7661,
+      "lines": 227,
+      "last_modified": "2025-12-03T21:48:35.977456",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@/stores",
+        "@/types",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/menu/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 229,
+      "lines": 8,
+      "last_modified": "2025-12-04T14:11:35.703604",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/menu/menu-button-primary.tsx",
+      "name": "menu-button-primary.tsx",
+      "extension": ".tsx",
+      "size": 745,
+      "lines": 30,
+      "last_modified": "2025-11-30T16:29:51.479234",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/components/menu/menu-button-secondary.tsx",
+      "name": "menu-button-secondary.tsx",
+      "extension": ".tsx",
+      "size": 684,
+      "lines": 25,
+      "last_modified": "2025-11-30T17:04:08.262165",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/components/menu/menu-footer.tsx",
+      "name": "menu-footer.tsx",
+      "extension": ".tsx",
+      "size": 922,
+      "lines": 35,
+      "last_modified": "2025-11-30T17:04:10.776151",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "path": "src/components/modules/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 663,
+      "lines": 28,
+      "last_modified": "2025-12-04T15:28:18.185325",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/modules/loops/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 249,
+      "lines": 9,
+      "last_modified": "2025-12-03T13:06:51.294078",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/modules/loops/scouting-loop.tsx",
+      "name": "scouting-loop.tsx",
+      "extension": ".tsx",
+      "size": 32504,
+      "lines": 837,
+      "last_modified": "2025-12-03T13:16:03.175281",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@/stores",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/loops/training-loop.tsx",
+      "name": "training-loop.tsx",
+      "extension": ".tsx",
+      "size": 12119,
+      "lines": 347,
+      "last_modified": "2025-12-03T13:23:42.739433",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/views/coaching-view.tsx",
+      "name": "coaching-view.tsx",
+      "extension": ".tsx",
+      "size": 28587,
+      "lines": 696,
+      "last_modified": "2025-12-04T15:12:44.596123",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/views/draft-view.tsx",
+      "name": "draft-view.tsx",
+      "extension": ".tsx",
+      "size": 15145,
+      "lines": 370,
+      "last_modified": "2025-12-04T15:24:43.743525",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/views/fa-view.tsx",
+      "name": "fa-view.tsx",
+      "extension": ".tsx",
+      "size": 13366,
+      "lines": 340,
+      "last_modified": "2025-12-04T15:23:29.643351",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/views/facilities-view.tsx",
+      "name": "facilities-view.tsx",
+      "extension": ".tsx",
+      "size": 27172,
+      "lines": 608,
+      "last_modified": "2025-12-04T15:15:51.011221",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/views/gm-skills-view.tsx",
+      "name": "gm-skills-view.tsx",
+      "extension": ".tsx",
+      "size": 11250,
+      "lines": 308,
+      "last_modified": "2025-12-04T15:27:46.052938",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "@/stores",
+        "@/types",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/views/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 667,
+      "lines": 18,
+      "last_modified": "2025-12-04T15:28:16.526604",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/modules/views/roster-view.tsx",
+      "name": "roster-view.tsx",
+      "extension": ".tsx",
+      "size": 11425,
+      "lines": 335,
+      "last_modified": "2025-12-03T13:08:15.691692",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/views/schedule-view.tsx",
+      "name": "schedule-view.tsx",
+      "extension": ".tsx",
+      "size": 11159,
+      "lines": 295,
+      "last_modified": "2025-12-03T13:20:11.318187",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/views/schemes-view.tsx",
+      "name": "schemes-view.tsx",
+      "extension": ".tsx",
+      "size": 21570,
+      "lines": 529,
+      "last_modified": "2025-12-04T15:26:41.723821",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/lib",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/views/scouting-dept-view.tsx",
+      "name": "scouting-dept-view.tsx",
+      "extension": ".tsx",
+      "size": 23060,
+      "lines": 544,
+      "last_modified": "2025-12-04T15:19:35.034604",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/views/standings-view.tsx",
+      "name": "standings-view.tsx",
+      "extension": ".tsx",
+      "size": 16708,
+      "lines": 393,
+      "last_modified": "2025-12-03T13:21:41.145366",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/modules/views/stats-view.tsx",
+      "name": "stats-view.tsx",
+      "extension": ".tsx",
+      "size": 20026,
+      "lines": 530,
+      "last_modified": "2025-12-03T13:23:10.841793",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/scouting/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 367,
+      "lines": 7,
+      "last_modified": "2025-12-03T02:26:00.782111",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/scouting/scout-card.tsx",
+      "name": "scout-card.tsx",
+      "extension": ".tsx",
+      "size": 8016,
+      "lines": 214,
+      "last_modified": "2025-12-03T02:30:13.734751",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react"
+      ]
+    },
+    {
+      "path": "src/components/scouting/scout-pool-list.tsx",
+      "name": "scout-pool-list.tsx",
+      "extension": ".tsx",
+      "size": 9463,
+      "lines": 271,
+      "last_modified": "2025-12-03T02:30:26.527753",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/scouting/scouting-points-display.tsx",
+      "name": "scouting-points-display.tsx",
+      "extension": ".tsx",
+      "size": 7501,
+      "lines": 218,
+      "last_modified": "2025-12-03T02:30:15.788000",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react"
+      ]
+    },
+    {
+      "path": "src/components/scouting/scouting-report-card.tsx",
+      "name": "scouting-report-card.tsx",
+      "extension": ".tsx",
+      "size": 11101,
+      "lines": 321,
+      "last_modified": "2025-12-03T02:30:17.682385",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/sim/box-score.tsx",
+      "name": "box-score.tsx",
+      "extension": ".tsx",
+      "size": 25518,
+      "lines": 624,
+      "last_modified": "2025-12-04T14:07:26.922084",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/lib",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/sim/field-view.tsx",
+      "name": "field-view.tsx",
+      "extension": ".tsx",
+      "size": 2301,
+      "lines": 72,
+      "last_modified": "2025-12-01T21:22:48.271220",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/sim/game-simulator-tab.tsx",
+      "name": "game-simulator-tab.tsx",
+      "extension": ".tsx",
+      "size": 14484,
+      "lines": 403,
+      "last_modified": "2025-12-04T13:22:57.987026",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/sim/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 407,
+      "lines": 12,
+      "last_modified": "2025-12-04T14:11:15.136791",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/sim/play-log.tsx",
+      "name": "play-log.tsx",
+      "extension": ".tsx",
+      "size": 2160,
+      "lines": 61,
+      "last_modified": "2025-12-01T21:23:10.823520",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/sim/scoreboard.tsx",
+      "name": "scoreboard.tsx",
+      "extension": ".tsx",
+      "size": 3518,
+      "lines": 100,
+      "last_modified": "2025-12-01T21:22:24.423645",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/sim/stats-panel.tsx",
+      "name": "stats-panel.tsx",
+      "extension": ".tsx",
+      "size": 12294,
+      "lines": 266,
+      "last_modified": "2025-12-01T22:19:19.506409",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/components",
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/sim/team-select.tsx",
+      "name": "team-select.tsx",
+      "extension": ".tsx",
+      "size": 3755,
+      "lines": 101,
+      "last_modified": "2025-12-01T22:27:09.077507",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/training/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 283,
+      "lines": 8,
+      "last_modified": "2025-12-03T11:35:23.429600",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/components/training/player-development-card.tsx",
+      "name": "player-development-card.tsx",
+      "extension": ".tsx",
+      "size": 6882,
+      "lines": 192,
+      "last_modified": "2025-12-03T11:38:26.440450",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/training/practice-focus-selector.tsx",
+      "name": "practice-focus-selector.tsx",
+      "extension": ".tsx",
+      "size": 6557,
+      "lines": 202,
+      "last_modified": "2025-12-03T11:38:39.510395",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/components/training/training-dashboard.tsx",
+      "name": "training-dashboard.tsx",
+      "extension": ".tsx",
+      "size": 8464,
+      "lines": 233,
+      "last_modified": "2025-12-03T11:35:15.032877",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/components",
+        "@/lib",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/badge.tsx",
+      "name": "badge.tsx",
+      "extension": ".tsx",
+      "size": 1633,
+      "lines": 46,
+      "last_modified": "2025-11-30T14:57:50.565763",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@radix-ui/react-slot",
+        "class-variance-authority",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/button.tsx",
+      "name": "button.tsx",
+      "extension": ".tsx",
+      "size": 2142,
+      "lines": 60,
+      "last_modified": "2025-11-30T14:57:49.325051",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@radix-ui/react-slot",
+        "class-variance-authority",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/card.tsx",
+      "name": "card.tsx",
+      "extension": ".tsx",
+      "size": 1987,
+      "lines": 92,
+      "last_modified": "2025-11-30T14:57:49.448992",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/dialog.tsx",
+      "name": "dialog.tsx",
+      "extension": ".tsx",
+      "size": 3982,
+      "lines": 143,
+      "last_modified": "2025-11-30T14:57:49.570429",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@radix-ui/react-dialog",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/dropdown-menu.tsx",
+      "name": "dropdown-menu.tsx",
+      "extension": ".tsx",
+      "size": 8424,
+      "lines": 257,
+      "last_modified": "2025-11-30T14:57:49.688348",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@radix-ui/react-dropdown-menu",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/input.tsx",
+      "name": "input.tsx",
+      "extension": ".tsx",
+      "size": 962,
+      "lines": 21,
+      "last_modified": "2025-11-30T14:57:49.799558",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/label.tsx",
+      "name": "label.tsx",
+      "extension": ".tsx",
+      "size": 611,
+      "lines": 24,
+      "last_modified": "2025-11-30T14:57:49.914263",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@radix-ui/react-label",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/progress.tsx",
+      "name": "progress.tsx",
+      "extension": ".tsx",
+      "size": 740,
+      "lines": 31,
+      "last_modified": "2025-11-30T14:57:50.673627",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@radix-ui/react-progress",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/scroll-area.tsx",
+      "name": "scroll-area.tsx",
+      "extension": ".tsx",
+      "size": 1645,
+      "lines": 58,
+      "last_modified": "2025-11-30T14:57:50.355935",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@radix-ui/react-scroll-area",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/select.tsx",
+      "name": "select.tsx",
+      "extension": ".tsx",
+      "size": 6295,
+      "lines": 187,
+      "last_modified": "2025-11-30T14:57:50.026541",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@radix-ui/react-select",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/separator.tsx",
+      "name": "separator.tsx",
+      "extension": ".tsx",
+      "size": 699,
+      "lines": 28,
+      "last_modified": "2025-11-30T14:57:50.460187",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@radix-ui/react-separator",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/sheet.tsx",
+      "name": "sheet.tsx",
+      "extension": ".tsx",
+      "size": 4090,
+      "lines": 139,
+      "last_modified": "2025-11-30T14:57:50.781085",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@radix-ui/react-dialog",
+        "lucide-react",
+        "react"
+      ]
+    },
+    {
+      "path": "src/components/ui/sonner.tsx",
+      "name": "sonner.tsx",
+      "extension": ".tsx",
+      "size": 1034,
+      "lines": 40,
+      "last_modified": "2025-11-30T14:57:50.248228",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "next-themes",
+        "sonner"
+      ]
+    },
+    {
+      "path": "src/components/ui/tabs.tsx",
+      "name": "tabs.tsx",
+      "extension": ".tsx",
+      "size": 1969,
+      "lines": 66,
+      "last_modified": "2025-11-30T14:57:50.143783",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@radix-ui/react-tabs",
+        "react"
+      ]
+    },
+    {
+      "path": "src/lib/constants.ts",
+      "name": "constants.ts",
+      "extension": ".ts",
+      "size": 7670,
+      "lines": 183,
+      "last_modified": "2025-12-04T16:03:04.340550",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/dev-player-store.ts",
+      "name": "dev-player-store.ts",
+      "extension": ".ts",
+      "size": 5037,
+      "lines": 173,
+      "last_modified": "2025-12-04T15:59:31.282287",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/gm-equipment-utils.ts",
+      "name": "gm-equipment-utils.ts",
+      "extension": ".ts",
+      "size": 10386,
+      "lines": 387,
+      "last_modified": "2025-12-03T21:48:36.001127",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/lib",
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/lib/gm-persona-utils.ts",
+      "name": "gm-persona-utils.ts",
+      "extension": ".ts",
+      "size": 5344,
+      "lines": 203,
+      "last_modified": "2025-12-03T21:48:36.022717",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/lib/gm-points-utils.ts",
+      "name": "gm-points-utils.ts",
+      "extension": ".ts",
+      "size": 8494,
+      "lines": 316,
+      "last_modified": "2025-12-03T21:48:36.044720",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/lib/gm-skills-utils.ts",
+      "name": "gm-skills-utils.ts",
+      "extension": ".ts",
+      "size": 12238,
+      "lines": 442,
+      "last_modified": "2025-12-03T21:48:36.067612",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/lib/types.ts",
+      "name": "types.ts",
+      "extension": ".ts",
+      "size": 6715,
+      "lines": 273,
+      "last_modified": "2025-12-03T11:14:13.538982",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/utils.ts",
+      "name": "utils.ts",
+      "extension": ".ts",
+      "size": 166,
+      "lines": 6,
+      "last_modified": "2025-11-30T14:57:07.355870",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ]
+    },
+    {
+      "path": "src/lib/coaching/coaching-generator.ts",
+      "name": "coaching-generator.ts",
+      "extension": ".ts",
+      "size": 25509,
+      "lines": 774,
+      "last_modified": "2025-12-02T14:02:30.148899",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/coaching/coaching-store.ts",
+      "name": "coaching-store.ts",
+      "extension": ".ts",
+      "size": 1678,
+      "lines": 56,
+      "last_modified": "2025-12-02T01:07:55.993059",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/coaching/types.ts",
+      "name": "types.ts",
+      "extension": ".ts",
+      "size": 11988,
+      "lines": 420,
+      "last_modified": "2025-12-02T13:59:27.233467",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/data/archetype-templates.ts",
+      "name": "archetype-templates.ts",
+      "extension": ".ts",
+      "size": 20312,
+      "lines": 741,
+      "last_modified": "2025-12-01T10:13:28.303343",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/data/badges.ts",
+      "name": "badges.ts",
+      "extension": ".ts",
+      "size": 25237,
+      "lines": 745,
+      "last_modified": "2025-12-01T20:12:40.906432",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/data/gm-achievements.ts",
+      "name": "gm-achievements.ts",
+      "extension": ".ts",
+      "size": 7149,
+      "lines": 235,
+      "last_modified": "2025-12-03T01:08:16.332788",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/lib/data/gm-personas.ts",
+      "name": "gm-personas.ts",
+      "extension": ".ts",
+      "size": 7999,
+      "lines": 256,
+      "last_modified": "2025-12-03T00:59:47.576380",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/data/gm-prestige.ts",
+      "name": "gm-prestige.ts",
+      "extension": ".ts",
+      "size": 7518,
+      "lines": 303,
+      "last_modified": "2025-12-03T01:16:52.076501",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/lib/data/gm-skills.ts",
+      "name": "gm-skills.ts",
+      "extension": ".ts",
+      "size": 23376,
+      "lines": 712,
+      "last_modified": "2025-12-03T01:06:42.875166",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/data/gm-team-tiers.ts",
+      "name": "gm-team-tiers.ts",
+      "extension": ".ts",
+      "size": 6017,
+      "lines": 248,
+      "last_modified": "2025-12-03T01:15:18.441273",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/types"
+      ]
+    },
+    {
+      "path": "src/lib/data/physical-ranges.ts",
+      "name": "physical-ranges.ts",
+      "extension": ".ts",
+      "size": 18134,
+      "lines": 509,
+      "last_modified": "2025-12-01T10:33:14.289237",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/data/slot-ovr-tables.ts",
+      "name": "slot-ovr-tables.ts",
+      "extension": ".ts",
+      "size": 7139,
+      "lines": 235,
+      "last_modified": "2025-12-04T16:10:33.946045",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/data/teams.ts",
+      "name": "teams.ts",
+      "extension": ".ts",
+      "size": 6056,
+      "lines": 74,
+      "last_modified": "2025-12-03T21:43:16.049443",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/data/traits.ts",
+      "name": "traits.ts",
+      "extension": ".ts",
+      "size": 25807,
+      "lines": 800,
+      "last_modified": "2025-12-01T10:16:32.480117",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/facilities/facilities-generator.ts",
+      "name": "facilities-generator.ts",
+      "extension": ".ts",
+      "size": 15510,
+      "lines": 439,
+      "last_modified": "2025-12-02T00:51:18.710432",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/facilities/facilities-store.ts",
+      "name": "facilities-store.ts",
+      "extension": ".ts",
+      "size": 1985,
+      "lines": 62,
+      "last_modified": "2025-12-02T00:52:52.847106",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/facilities/types.ts",
+      "name": "types.ts",
+      "extension": ".ts",
+      "size": 5894,
+      "lines": 180,
+      "last_modified": "2025-12-02T00:49:30.139566",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/franchise/game-utils.ts",
+      "name": "game-utils.ts",
+      "extension": ".ts",
+      "size": 9822,
+      "lines": 276,
+      "last_modified": "2025-12-02T19:18:15.649996",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/generators/draft-generator.ts",
+      "name": "draft-generator.ts",
+      "extension": ".ts",
+      "size": 12277,
+      "lines": 371,
+      "last_modified": "2025-12-01T19:59:23.460231",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/generators/fa-generator.ts",
+      "name": "fa-generator.ts",
+      "extension": ".ts",
+      "size": 10374,
+      "lines": 307,
+      "last_modified": "2025-12-01T19:52:35.836578",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/generators/full-game-generator.ts",
+      "name": "full-game-generator.ts",
+      "extension": ".ts",
+      "size": 4904,
+      "lines": 169,
+      "last_modified": "2025-12-03T15:16:59.553398",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/generators/league-generator.ts",
+      "name": "league-generator.ts",
+      "extension": ".ts",
+      "size": 9179,
+      "lines": 292,
+      "last_modified": "2025-12-04T17:18:36.128647",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/lib/generators/player-generator.ts",
+      "name": "player-generator.ts",
+      "extension": ".ts",
+      "size": 17345,
+      "lines": 541,
+      "last_modified": "2025-12-01T20:11:24.585361",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "fs",
+        "path"
+      ]
+    },
+    {
+      "path": "src/lib/generators/roster-generator.ts",
+      "name": "roster-generator.ts",
+      "extension": ".ts",
+      "size": 6144,
+      "lines": 198,
+      "last_modified": "2025-12-01T20:02:30.318377",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/gm/gm-data.ts",
+      "name": "gm-data.ts",
+      "extension": ".ts",
+      "size": 7711,
+      "lines": 301,
+      "last_modified": "2025-12-03T04:16:34.354073",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/gm/gm-generator.ts",
+      "name": "gm-generator.ts",
+      "extension": ".ts",
+      "size": 6871,
+      "lines": 221,
+      "last_modified": "2025-12-03T15:53:10.565280",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/gm/gm-store.ts",
+      "name": "gm-store.ts",
+      "extension": ".ts",
+      "size": 4450,
+      "lines": 167,
+      "last_modified": "2025-12-03T15:55:53.061567",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/gm/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 845,
+      "lines": 52,
+      "last_modified": "2025-12-03T15:56:13.156995",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/gm/types.ts",
+      "name": "types.ts",
+      "extension": ".ts",
+      "size": 3530,
+      "lines": 123,
+      "last_modified": "2025-12-03T15:55:13.157007",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/schedule/schedule-generator.ts",
+      "name": "schedule-generator.ts",
+      "extension": ".ts",
+      "size": 23481,
+      "lines": 753,
+      "last_modified": "2025-12-04T12:49:08.455105",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/schedule/schedule-store.ts",
+      "name": "schedule-store.ts",
+      "extension": ".ts",
+      "size": 1168,
+      "lines": 39,
+      "last_modified": "2025-12-01T22:49:46.288521",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/schedule/types.ts",
+      "name": "types.ts",
+      "extension": ".ts",
+      "size": 4419,
+      "lines": 148,
+      "last_modified": "2025-12-01T22:47:17.175786",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/schemes/scheme-data.ts",
+      "name": "scheme-data.ts",
+      "extension": ".ts",
+      "size": 28915,
+      "lines": 601,
+      "last_modified": "2025-12-02T13:54:20.238996",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/schemes/scheme-fit.ts",
+      "name": "scheme-fit.ts",
+      "extension": ".ts",
+      "size": 11297,
+      "lines": 482,
+      "last_modified": "2025-12-02T13:57:38.279432",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/schemes/types.ts",
+      "name": "types.ts",
+      "extension": ".ts",
+      "size": 6573,
+      "lines": 218,
+      "last_modified": "2025-12-02T13:49:37.618775",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/scouting/scouting-generator.ts",
+      "name": "scouting-generator.ts",
+      "extension": ".ts",
+      "size": 20276,
+      "lines": 591,
+      "last_modified": "2025-12-03T02:22:47.644631",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/scouting/scouting-store.ts",
+      "name": "scouting-store.ts",
+      "extension": ".ts",
+      "size": 1698,
+      "lines": 56,
+      "last_modified": "2025-12-02T01:18:22.518640",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/scouting/scouting-utils.ts",
+      "name": "scouting-utils.ts",
+      "extension": ".ts",
+      "size": 15892,
+      "lines": 491,
+      "last_modified": "2025-12-03T02:24:49.921846",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/scouting/types.ts",
+      "name": "types.ts",
+      "extension": ".ts",
+      "size": 18126,
+      "lines": 574,
+      "last_modified": "2025-12-03T02:19:10.243909",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/season/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 1097,
+      "lines": 54,
+      "last_modified": "2025-12-04T13:10:32.681454",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/season/playoffs.ts",
+      "name": "playoffs.ts",
+      "extension": ".ts",
+      "size": 12851,
+      "lines": 413,
+      "last_modified": "2025-12-02T15:42:58.623523",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/season/season-simulator.ts",
+      "name": "season-simulator.ts",
+      "extension": ".ts",
+      "size": 17744,
+      "lines": 579,
+      "last_modified": "2025-12-04T13:10:49.152823",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/season/season-stats.ts",
+      "name": "season-stats.ts",
+      "extension": ".ts",
+      "size": 13201,
+      "lines": 410,
+      "last_modified": "2025-12-04T13:10:12.371720",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/season/standings.ts",
+      "name": "standings.ts",
+      "extension": ".ts",
+      "size": 12897,
+      "lines": 432,
+      "last_modified": "2025-12-02T15:36:46.428707",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/season/types.ts",
+      "name": "types.ts",
+      "extension": ".ts",
+      "size": 5828,
+      "lines": 199,
+      "last_modified": "2025-12-02T15:37:02.490806",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/sim/badge-effects.ts",
+      "name": "badge-effects.ts",
+      "extension": ".ts",
+      "size": 9990,
+      "lines": 359,
+      "last_modified": "2025-12-01T21:15:51.105333",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/sim/coaching-modifiers.ts",
+      "name": "coaching-modifiers.ts",
+      "extension": ".ts",
+      "size": 13709,
+      "lines": 453,
+      "last_modified": "2025-12-02T14:56:54.703583",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/sim/facility-modifiers.ts",
+      "name": "facility-modifiers.ts",
+      "extension": ".ts",
+      "size": 9934,
+      "lines": 317,
+      "last_modified": "2025-12-02T14:58:13.500448",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/sim/game-runner.ts",
+      "name": "game-runner.ts",
+      "extension": ".ts",
+      "size": 7134,
+      "lines": 251,
+      "last_modified": "2025-12-04T11:47:53.135743",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib"
+      ]
+    },
+    {
+      "path": "src/lib/sim/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 865,
+      "lines": 42,
+      "last_modified": "2025-12-04T11:48:16.109428",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/sim/scheme-modifiers.ts",
+      "name": "scheme-modifiers.ts",
+      "extension": ".ts",
+      "size": 9622,
+      "lines": 329,
+      "last_modified": "2025-12-02T14:54:59.648810",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/sim/simulator.ts",
+      "name": "simulator.ts",
+      "extension": ".ts",
+      "size": 50622,
+      "lines": 1355,
+      "last_modified": "2025-12-04T13:33:08.736702",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/sim/team-adapter.ts",
+      "name": "team-adapter.ts",
+      "extension": ".ts",
+      "size": 11380,
+      "lines": 389,
+      "last_modified": "2025-12-01T21:13:35.293811",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/sim/trait-effects.ts",
+      "name": "trait-effects.ts",
+      "extension": ".ts",
+      "size": 9376,
+      "lines": 353,
+      "last_modified": "2025-12-01T21:14:41.456385",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/sim/types.ts",
+      "name": "types.ts",
+      "extension": ".ts",
+      "size": 8102,
+      "lines": 322,
+      "last_modified": "2025-12-04T11:46:58.954416",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/supabase/auth.ts",
+      "name": "auth.ts",
+      "extension": ".ts",
+      "size": 2970,
+      "lines": 165,
+      "last_modified": "2025-11-30T16:13:01.139989",
+      "category": "source",
+      "risk_level": "high",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/supabase/client.ts",
+      "name": "client.ts",
+      "extension": ".ts",
+      "size": 446,
+      "lines": 14,
+      "last_modified": "2025-11-30T15:17:08.419509",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@supabase/ssr"
+      ]
+    },
+    {
+      "path": "src/lib/supabase/middleware.ts",
+      "name": "middleware.ts",
+      "extension": ".ts",
+      "size": 1651,
+      "lines": 48,
+      "last_modified": "2025-11-30T15:17:25.350293",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@supabase/ssr",
+        "next"
+      ]
+    },
+    {
+      "path": "src/lib/supabase/server.ts",
+      "name": "server.ts",
+      "extension": ".ts",
+      "size": 1244,
+      "lines": 35,
+      "last_modified": "2025-11-30T15:17:16.764992",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@supabase/ssr",
+        "next"
+      ]
+    },
+    {
+      "path": "src/lib/training/index.ts",
+      "name": "index.ts",
+      "extension": ".ts",
+      "size": 4150,
+      "lines": 195,
+      "last_modified": "2025-12-03T11:30:52.267376",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/training/progression-engine.ts",
+      "name": "progression-engine.ts",
+      "extension": ".ts",
+      "size": 20047,
+      "lines": 651,
+      "last_modified": "2025-12-03T11:28:34.435563",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/training/training-constants.ts",
+      "name": "training-constants.ts",
+      "extension": ".ts",
+      "size": 16806,
+      "lines": 529,
+      "last_modified": "2025-12-03T11:19:35.247253",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/training/training-integration.ts",
+      "name": "training-integration.ts",
+      "extension": ".ts",
+      "size": 16919,
+      "lines": 621,
+      "last_modified": "2025-12-03T11:32:45.324839",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/training/training-store.ts",
+      "name": "training-store.ts",
+      "extension": ".ts",
+      "size": 12777,
+      "lines": 514,
+      "last_modified": "2025-12-03T11:25:24.790478",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/training/types.ts",
+      "name": "types.ts",
+      "extension": ".ts",
+      "size": 7380,
+      "lines": 278,
+      "last_modified": "2025-12-03T11:10:24.025811",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/training/xp-calculator.ts",
+      "name": "xp-calculator.ts",
+      "extension": ".ts",
+      "size": 13593,
+      "lines": 443,
+      "last_modified": "2025-12-03T11:22:14.286917",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "path": "src/lib/validations/auth.ts",
+      "name": "auth.ts",
+      "extension": ".ts",
+      "size": 2686,
+      "lines": 98,
+      "last_modified": "2025-11-30T16:17:56.007197",
+      "category": "source",
+      "risk_level": "high",
+      "dependencies": [
+        "zod"
+      ]
+    },
+    {
+      "path": "src/stores/career-store.ts",
+      "name": "career-store.ts",
+      "extension": ".ts",
+      "size": 1057,
+      "lines": 45,
+      "last_modified": "2025-12-03T22:05:02.981452",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/lib",
+        "zustand"
+      ]
+    },
+    {
+      "path": "src/stores/gm-equipment-store.ts",
+      "name": "gm-equipment-store.ts",
+      "extension": ".ts",
+      "size": 5974,
+      "lines": 203,
+      "last_modified": "2025-12-03T01:12:27.505063",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/types",
+        "zustand"
+      ]
+    },
+    {
+      "path": "src/stores/gm-points-store.ts",
+      "name": "gm-points-store.ts",
+      "extension": ".ts",
+      "size": 4251,
+      "lines": 154,
+      "last_modified": "2025-12-03T01:10:10.226910",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/types",
+        "zustand"
+      ]
+    },
+    {
+      "path": "src/stores/gm-prestige-store.ts",
+      "name": "gm-prestige-store.ts",
+      "extension": ".ts",
+      "size": 5285,
+      "lines": 183,
+      "last_modified": "2025-12-03T21:48:36.092988",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": [
+        "@/types",
+        "zustand"
+      ]
+    },
+    {
+      "path": "src/stores/scouting-store.ts",
+      "name": "scouting-store.ts",
+      "extension": ".ts",
+      "size": 21679,
+      "lines": 699,
+      "last_modified": "2025-12-03T02:21:28.334633",
+      "category": "source",
+      "risk_level": "medium",
+      "dependencies": [
+        "zustand"
+      ]
+    },
+    {
+      "path": "src/types/gm-equipment.ts",
+      "name": "gm-equipment.ts",
+      "extension": ".ts",
+      "size": 3225,
+      "lines": 118,
+      "last_modified": "2025-12-03T01:12:24.010307",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/types/gm-persona.ts",
+      "name": "gm-persona.ts",
+      "extension": ".ts",
+      "size": 2829,
+      "lines": 112,
+      "last_modified": "2025-12-03T00:59:23.240849",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/types/gm-points.ts",
+      "name": "gm-points.ts",
+      "extension": ".ts",
+      "size": 2224,
+      "lines": 74,
+      "last_modified": "2025-12-03T01:08:14.610108",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/types/gm-prestige.ts",
+      "name": "gm-prestige.ts",
+      "extension": ".ts",
+      "size": 1188,
+      "lines": 46,
+      "last_modified": "2025-12-03T01:16:50.407241",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/types/gm-skills.ts",
+      "name": "gm-skills.ts",
+      "extension": ".ts",
+      "size": 2819,
+      "lines": 128,
+      "last_modified": "2025-12-03T01:04:01.782528",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "path": "src/types/gm-team-tier.ts",
+      "name": "gm-team-tier.ts",
+      "extension": ".ts",
+      "size": 886,
+      "lines": 32,
+      "last_modified": "2025-12-03T01:15:16.807115",
+      "category": "source",
+      "risk_level": "low",
+      "dependencies": []
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+[
+  {
+    "timestamp": "2025-12-04T11:37:59.403586",
+    "workorder_id": "WO-GAMESTATS-GENERATOR-001",
+    "feature_name": "gamestats-generator",
+    "task_count": 22,
+    "tasks": [
+      {
+        "content": "PHASE-1--001: [ ] Review simulator.ts for data requirements",
+        "activeForm": "PHASE-1--001: [ing ] Review simulator.ts for data requirements",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--002: [ ] Document SimPlayer interface needs",
+        "activeForm": "PHASE-1--002: [ing ] Document SimPlayer interface needs",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--003: [ ] Create src/types/game-stats.ts",
+        "activeForm": "PHASE-1--003: [ing ] Create src/types/game-stats.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--004: [ ] Define PlayerGameStats interface",
+        "activeForm": "PHASE-1--004: [ing ] Define PlayerGameStats interface",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--005: [ ] Define GameResult interface",
+        "activeForm": "PHASE-1--005: [ing ] Define GameResult interface",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--001: [ ] Create src/lib/sim/roster-adapter.ts",
+        "activeForm": "PHASE-2--001: [ing ] Create src/lib/sim/roster-adapter.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--002: [ ] Implement playerToSimPlayer() function",
+        "activeForm": "PHASE-2--002: [ing ] Implement playerToSimPlayer() function",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--003: [ ] Implement buildDepthChart() function",
+        "activeForm": "PHASE-2--003: [ing ] Implement buildDepthChart() function",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--004: [ ] Implement calculateTeamOVR() function",
+        "activeForm": "PHASE-2--004: [ing ] Implement calculateTeamOVR() function",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--005: [ ] Implement rosterToSimTeam() main function",
+        "activeForm": "PHASE-2--005: [ing ] Implement rosterToSimTeam() main function",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--001: [ ] Create src/lib/sim/game-stats-output.ts",
+        "activeForm": "PHASE-3--001: [ing ] Create src/lib/sim/game-stats-output.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--002: [ ] Implement extractPlayerStats() function",
+        "activeForm": "PHASE-3--002: [ing ] Implement extractPlayerStats() function",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--003: [ ] Implement formatPassingStats() function",
+        "activeForm": "PHASE-3--003: [ing ] Implement formatPassingStats() function",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--004: [ ] Implement formatRushingStats() function",
+        "activeForm": "PHASE-3--004: [ing ] Implement formatRushingStats() function",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--005: [ ] Implement formatReceivingStats() function",
+        "activeForm": "PHASE-3--005: [ing ] Implement formatReceivingStats() function",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--006: [ ] Implement formatDefensiveStats() function",
+        "activeForm": "PHASE-3--006: [ing ] Implement formatDefensiveStats() function",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--001: [ ] Create simulateGameWithRosters() wrapper",
+        "activeForm": "PHASE-4--001: [ing ] Create simulateGameWithRosters() wrapper",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--002: [ ] Add input validation",
+        "activeForm": "PHASE-4--002: [ing ] Add input validation",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--003: [ ] Add error handling with meaningful messages",
+        "activeForm": "PHASE-4--003: [ing ] Add error handling with meaningful messages",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--004: [ ] Create src/lib/sim/index.ts barrel export",
+        "activeForm": "PHASE-4--004: [ing ] Create src/lib/sim/index.ts barrel export",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--005: [ ] Test with mock data",
+        "activeForm": "PHASE-4--005: [ing ] Test with mock data",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--006: [ ] Test with generated roster",
+        "activeForm": "PHASE-4--006: [ing ] Test with generated roster",
+        "status": "pending"
+      }
+    ]
+  }
+]

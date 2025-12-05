@@ -13,10 +13,12 @@ import { getSchedule, getWeekScheduleByNumber } from '@/lib/schedule/schedule-st
 import { LeagueSchedule, ScheduledGame } from '@/lib/schedule/types';
 import { GameResult, SeasonState } from '@/lib/season/types';
 import { getTeamById } from '@/lib/data/teams';
+import { useCareerStore } from '@/stores/career-store';
 
 const SEASON_STATE_KEY = 'seasonState';
 
 export default function SchedulePage() {
+  const { selectedTeam } = useCareerStore();
   const [schedule, setSchedule] = useState<LeagueSchedule | null>(null);
   const [seasonState, setSeasonState] = useState<SeasonState | null>(null);
   const [currentWeek, setCurrentWeek] = useState(1);
@@ -84,8 +86,7 @@ export default function SchedulePage() {
   };
 
   // Get user's team ID (for highlighting)
-  // TODO: Get from franchise store when available
-  const userTeamId: string | undefined = undefined;
+  const userTeamId = selectedTeam?.id;
 
   if (isLoading) {
     return (

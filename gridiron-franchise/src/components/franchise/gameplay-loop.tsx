@@ -2,7 +2,8 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { SeasonState } from '@/lib/season/types';
+import { SeasonState, GameResult } from '@/lib/season/types';
+import { BoxScoreModal } from './box-score-modal';
 import { LEAGUE_TEAMS, TeamInfo } from '@/lib/data/teams';
 import { PlayoffBracket } from './playoff-bracket';
 import {
@@ -90,6 +91,10 @@ export function GameplayLoop({
 }: GameplayLoopProps) {
   const [activeSection, setActiveSection] = useState<GameplaySection>('schedule');
 
+  // Box score modal state
+  const [selectedGame, setSelectedGame] = useState<GameResult | null>(null);
+  const [boxScoreOpen, setBoxScoreOpen] = useState(false);
+
   // Player team state
   const [playerTeamId, setPlayerTeamId] = useState<string | null>(null);
   const [playerTeamName, setPlayerTeamName] = useState<string>('');
@@ -133,6 +138,15 @@ export function GameplayLoop({
     });
     return map;
   }, []);
+
+  // Handle game click to open box score
+  const handleGameClick = (gameId: string) => {
+    const game = seasonState?.completedGames.find(g => g.gameId === gameId);
+    if (game) {
+      setSelectedGame(game);
+      setBoxScoreOpen(true);
+    }
+  };
 
   // Season phase checks
   const isRegularSeason = seasonState?.phase === 'regular';
@@ -395,6 +409,7 @@ export function GameplayLoop({
             mode="embedded"
             seasonState={seasonState || undefined}
             teamsMap={teamsMap}
+            onGameClick={handleGameClick}
           />
         )}
 
@@ -470,6 +485,15 @@ export function GameplayLoop({
           </div>
         )}
       </div>
+
+      {/* Box Score Modal */}
+      <BoxScoreModal
+        game={selectedGame}
+        awayTeam={selectedGame ? teamsMap.get(selectedGame.awayTeamId) || null : null}
+        homeTeam={selectedGame ? teamsMap.get(selectedGame.homeTeamId) || null : null}
+        open={boxScoreOpen}
+        onOpenChange={setBoxScoreOpen}
+      />
     </div>
   );
 }

@@ -37,3 +37,18 @@ export {
 
 // Season Simulator
 export { SeasonSimulator, createSeasonSimulator } from './season-simulator';
+
+// Season Stats Aggregation
+export {
+  aggregateSeasonStats,
+  getSeasonLeaders,
+  getPlayerSeasonStats,
+  getTeamSeasonStats,
+  getPositionSeasonStats,
+  formatPassingLine,
+  formatRushingLine,
+  formatReceivingLine,
+  formatDefenseLine,
+  type PlayerSeasonStats,
+  type SeasonLeaders,
+} from './season-stats';

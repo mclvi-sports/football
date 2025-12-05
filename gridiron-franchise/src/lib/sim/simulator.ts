@@ -138,6 +138,63 @@ export class Simulator {
     return this.playerStats.get(player.id)!;
   }
 
+  /**
+   * Select a defender to credit with a tackle based on play type
+   */
+  private selectTackler(defTeam: SimTeam, playType: 'run' | 'pass'): Player | null {
+    const depthChart = defTeam.depthChart as Record<Position, string[]>;
+
+    // For run plays: LB most likely, then DL, then DB
+    // For pass plays: DB most likely, then LB
+    const weights = playType === 'run'
+      ? [
+          { position: Position.MLB, weight: 0.35 },
+          { position: Position.OLB, weight: 0.15 },
+          { position: Position.DT, weight: 0.20 },
+          { position: Position.DE, weight: 0.15 },
+          { position: Position.CB, weight: 0.08 },
+          { position: Position.SS, weight: 0.05 },
+          { position: Position.FS, weight: 0.02 },
+        ]
+      : [
+          { position: Position.CB, weight: 0.35 },
+          { position: Position.SS, weight: 0.20 },
+          { position: Position.FS, weight: 0.15 },
+          { position: Position.MLB, weight: 0.15 },
+          { position: Position.OLB, weight: 0.10 },
+          { position: Position.DE, weight: 0.05 },
+        ];
+
+    const roll = Math.random();
+    let cumulative = 0;
+
+    for (const { position, weight } of weights) {
+      cumulative += weight;
+      if (roll < cumulative) {
+        const starter = getStarter(defTeam.roster, depthChart, position);
+        if (starter) return starter;
+      }
+    }
+
+    // Fallback to MLB
+    return getStarter(defTeam.roster, depthChart, Position.MLB) || null;
+  }
+
+  /**
+   * Credit a defender with a tackle
+   */
+  private creditTackle(def: 'away' | 'home', playType: 'run' | 'pass'): Player | null {
+    const defTeam = this.settings[def]!;
+    const tackler = this.selectTackler(defTeam, playType);
+
+    if (tackler) {
+      const tacklerStats = this.getPlayerStats(tackler, def);
+      tacklerStats.defense.tackles++;
+    }
+
+    return tackler;
+  }
+
   reset(): void {
     this.state = this.createInitialState();
     this.stats = { away: this.createEmptyStats(), home: this.createEmptyStats() };
@@ -655,6 +712,12 @@ export class Simulator {
     rusherStats.rushing.yards += Math.max(0, yards);
     if (yards > rusherStats.rushing.long) rusherStats.rushing.long = yards;
 
+    // Credit tackle to a defender
+    const tackler = this.creditTackle(def, 'run');
+    if (tackler) {
+      this.addDebug(`  Tackled by ${formatPlayerName(tackler)}`);
+    }
+
     return this.processYards(off, yards, 'run', rusher);
   }
 
@@ -719,11 +782,12 @@ export class Simulator {
       qbStats.passing.sacked++;
       this.stats[def].sacks++;
 
-      // Credit defensive player
+      // Credit defensive player with sack and tackle
       const de = getStarter(defTeam.roster, defDepthChart, Position.DE);
       if (de) {
         const deStats = this.getPlayerStats(de, def);
         deStats.defense.sacks++;
+        deStats.defense.tackles++;
         this.addDebug(`  Sack by ${formatPlayerName(de)} for ${Math.abs(loss)} yard loss`);
       }
 
@@ -887,6 +951,12 @@ export class Simulator {
       receiverStats.receiving.catches++;
       receiverStats.receiving.yards += yards;
       if (yards > receiverStats.receiving.long) receiverStats.receiving.long = yards;
+    }
+
+    // Credit tackle to a defender on completed passes
+    const tackler = this.creditTackle(def, 'pass');
+    if (tackler) {
+      this.addDebug(`  Tackled by ${formatPlayerName(tackler)}`);
     }
 
     return this.processYards(off, yards, 'pass', receiver || qb);
