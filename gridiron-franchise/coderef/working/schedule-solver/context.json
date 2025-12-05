@@ -1,0 +1,32 @@
+{
+  "feature_name": "schedule-solver",
+  "description": "Replace greedy schedule algorithm with a proper constraint satisfaction solver (backtracking CSP) to guarantee 100% valid NFL schedules with all 272 games placed",
+  "goal": "Guarantee all 272 games are placed every time with fast performance (under 5 seconds)",
+  "requirements": [
+    "All 272 games placed - every team gets exactly 17 games",
+    "Proper bye week distribution - each team has 1 bye in weeks 5-14",
+    "Division games correct - 6 division games per team (2 vs each rival)",
+    "No duplicate matchups - teams play each other max 2 times",
+    "Pure TypeScript implementation - no external solver dependencies",
+    "Fast execution - schedule generation under 5 seconds"
+  ],
+  "out_of_scope": [
+    "TV slot optimization and primetime game assignment",
+    "Travel distance minimization",
+    "Competitive balance and strength of schedule optimization",
+    "Stadium conflicts and shared venue scheduling"
+  ],
+  "constraints": [
+    "Must be browser-compatible (client-side execution)",
+    "Pure TypeScript - no WASM or external binaries",
+    "Fallback to current greedy algorithm if solver times out",
+    "Must integrate with existing schedule-generator.ts structure"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-SCHEDULE-SOLVER-001",
+    "workorder_assigned_at": "2025-12-05T16:55:43.557573+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

@@ -1,0 +1,341 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "schedule-solver",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": ["README.md", "ARCHITECTURE.md", "API.md", "COMPONENTS.md", "SCHEMA.md"],
+        "missing": ["USER-GUIDE.md"]
+      },
+      "key_files": {
+        "schedule_generator": "src/lib/schedule/schedule-generator.ts",
+        "schedule_types": "src/lib/schedule/types.ts",
+        "schedule_store": "src/lib/schedule/schedule-store.ts",
+        "teams_data": "src/lib/data/teams.ts"
+      },
+      "technology_stack": {
+        "language": "TypeScript",
+        "framework": "Next.js 16",
+        "runtime": "Browser (client-side)"
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Schedule Solver",
+      "description": "Replace greedy schedule algorithm with a proper constraint satisfaction solver (backtracking CSP) to guarantee 100% valid NFL schedules with all 272 games placed",
+      "goal": "Guarantee all 272 games are placed every time with fast performance (under 5 seconds)",
+      "estimated_complexity": "medium",
+      "key_deliverables": [
+        "CSP solver module with backtracking algorithm",
+        "Constraint definitions for NFL schedule rules",
+        "Integration with existing schedule-generator.ts",
+        "Performance optimization for browser execution"
+      ]
+    },
+    "2_risk_assessment": {
+      "technical_risks": [
+        {
+          "risk": "Solver performance in browser",
+          "likelihood": "medium",
+          "impact": "high",
+          "mitigation": "Implement iterative deepening and constraint propagation to prune search space early"
+        },
+        {
+          "risk": "Backtracking takes too long for hard instances",
+          "likelihood": "low",
+          "impact": "medium",
+          "mitigation": "Add timeout with fallback to current greedy algorithm"
+        },
+        {
+          "risk": "Edge cases in constraint satisfaction",
+          "likelihood": "medium",
+          "impact": "medium",
+          "mitigation": "Comprehensive test suite with known valid/invalid schedules"
+        }
+      ],
+      "dependencies": [
+        "Existing schedule-generator.ts for matchup generation",
+        "Team data from src/lib/data/teams.ts",
+        "Schedule types from src/lib/schedule/types.ts"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/lib/schedule/schedule-generator.ts",
+          "changes": "Replace distributeGamesToWeeks function with CSP solver call"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "src/lib/schedule/csp-solver.ts",
+          "purpose": "Core CSP solver with backtracking algorithm"
+        },
+        {
+          "path": "src/lib/schedule/constraints.ts",
+          "purpose": "NFL schedule constraint definitions"
+        }
+      ],
+      "files_to_delete": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "CSP Solver Core",
+          "description": "Backtracking constraint satisfaction solver for game-to-week assignment",
+          "requirements": ["All 272 games placed", "Fast execution under 5 seconds"]
+        },
+        {
+          "id": "F2",
+          "name": "Constraint Definitions",
+          "description": "NFL schedule rules as solver constraints",
+          "requirements": ["Proper bye week distribution", "Division games correct", "No duplicate matchups"]
+        },
+        {
+          "id": "F3",
+          "name": "Integration & Fallback",
+          "description": "Integrate solver with existing generator, add timeout fallback",
+          "requirements": ["Pure TypeScript", "Browser-compatible", "Fallback to greedy"]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SCHEDULE-SOLVER-001",
+        "name": "Schedule Solver",
+        "feature_dir": "coderef/working/schedule-solver"
+      },
+      "tasks": [
+        {
+          "id": "CSP-001",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F1",
+          "description": "Create CSP solver module structure with types",
+          "file": "src/lib/schedule/csp-solver.ts",
+          "estimated_loc": 50,
+          "dependencies": []
+        },
+        {
+          "id": "CSP-002",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F1",
+          "description": "Implement domain representation (games × weeks matrix)",
+          "file": "src/lib/schedule/csp-solver.ts",
+          "estimated_loc": 80,
+          "dependencies": ["CSP-001"]
+        },
+        {
+          "id": "CSP-003",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F1",
+          "description": "Implement backtracking search with MRV heuristic",
+          "file": "src/lib/schedule/csp-solver.ts",
+          "estimated_loc": 120,
+          "dependencies": ["CSP-002"]
+        },
+        {
+          "id": "CSP-004",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F1",
+          "description": "Add constraint propagation (arc consistency)",
+          "file": "src/lib/schedule/csp-solver.ts",
+          "estimated_loc": 100,
+          "dependencies": ["CSP-003"]
+        },
+        {
+          "id": "CON-001",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F2",
+          "description": "Create constraints module with interface",
+          "file": "src/lib/schedule/constraints.ts",
+          "estimated_loc": 30,
+          "dependencies": []
+        },
+        {
+          "id": "CON-002",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F2",
+          "description": "Implement team-plays-once-per-week constraint",
+          "file": "src/lib/schedule/constraints.ts",
+          "estimated_loc": 25,
+          "dependencies": ["CON-001"]
+        },
+        {
+          "id": "CON-003",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F2",
+          "description": "Implement bye-week constraint (no game during bye)",
+          "file": "src/lib/schedule/constraints.ts",
+          "estimated_loc": 25,
+          "dependencies": ["CON-001"]
+        },
+        {
+          "id": "CON-004",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F2",
+          "description": "Implement week-capacity constraint (max games per week)",
+          "file": "src/lib/schedule/constraints.ts",
+          "estimated_loc": 25,
+          "dependencies": ["CON-001"]
+        },
+        {
+          "id": "CON-005",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F2",
+          "description": "Implement team-games-count constraint (exactly 17 games)",
+          "file": "src/lib/schedule/constraints.ts",
+          "estimated_loc": 25,
+          "dependencies": ["CON-001"]
+        },
+        {
+          "id": "INT-001",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F3",
+          "description": "Refactor distributeGamesToWeeks to use CSP solver",
+          "file": "src/lib/schedule/schedule-generator.ts",
+          "estimated_loc": 50,
+          "dependencies": ["CSP-004", "CON-005"]
+        },
+        {
+          "id": "INT-002",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F3",
+          "description": "Add timeout mechanism with greedy fallback",
+          "file": "src/lib/schedule/schedule-generator.ts",
+          "estimated_loc": 40,
+          "dependencies": ["INT-001"]
+        },
+        {
+          "id": "INT-003",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F3",
+          "description": "Update barrel export and clean up unused code",
+          "file": "src/lib/schedule/index.ts",
+          "estimated_loc": 10,
+          "dependencies": ["INT-002"]
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F3",
+          "description": "Create test script for schedule validation",
+          "file": "scripts/test-schedule.ts",
+          "estimated_loc": 60,
+          "dependencies": ["INT-002"]
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-SCHEDULE-SOLVER-001",
+          "feature_id": "F3",
+          "description": "Performance benchmarking (must be under 5 seconds)",
+          "file": "scripts/test-schedule.ts",
+          "estimated_loc": 20,
+          "dependencies": ["TEST-001"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "CSP Solver Core",
+          "description": "Build the core constraint satisfaction solver with backtracking",
+          "tasks": ["CSP-001", "CSP-002", "CSP-003", "CSP-004"],
+          "deliverables": ["src/lib/schedule/csp-solver.ts with working backtracking search"]
+        },
+        {
+          "phase": 2,
+          "name": "Constraint Definitions",
+          "description": "Define all NFL schedule constraints",
+          "tasks": ["CON-001", "CON-002", "CON-003", "CON-004", "CON-005"],
+          "deliverables": ["src/lib/schedule/constraints.ts with all constraint functions"]
+        },
+        {
+          "phase": 3,
+          "name": "Integration & Testing",
+          "description": "Integrate solver with generator and validate",
+          "tasks": ["INT-001", "INT-002", "INT-003", "TEST-001", "TEST-002"],
+          "deliverables": ["Updated schedule-generator.ts", "Passing test script", "Performance benchmarks"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "CSP solver finds solution for simple 4-team schedule",
+        "Each constraint correctly accepts/rejects assignments",
+        "Backtracking correctly undoes invalid assignments"
+      ],
+      "integration_tests": [
+        "Full 32-team schedule generates 272 games",
+        "All teams have exactly 17 games",
+        "All teams have exactly 1 bye week in range 5-14",
+        "No duplicate matchups (max 2 games between any pair)",
+        "Division games total 96 (correct)"
+      ],
+      "performance_tests": [
+        "Schedule generation completes in under 5 seconds",
+        "Memory usage stays under 100MB"
+      ],
+      "edge_cases": [
+        "Edge case: All division rivals have same bye week - solver must still find valid placement",
+        "Edge case: Multiple teams from same division clustered in early bye weeks",
+        "Edge case: Bye week assignments that create week capacity overflow",
+        "Edge case: First/last weeks of season have higher demand",
+        "Edge case: Teams with most constrained matchups (playing multiple division rivals)",
+        "Edge case: Timeout triggered mid-solve - verify greedy fallback activates",
+        "Edge case: Empty input (0 games) - should return empty schedule",
+        "Edge case: Single game input - should place in any valid week",
+        "Edge case: Impossible constraints (more games than weeks × capacity) - should fail gracefully",
+        "Edge case: Re-running solver multiple times produces consistent results"
+      ],
+      "validation_script": "scripts/test-schedule.ts"
+    },
+    "8_success_criteria": {
+      "must_have": [
+        "272/272 games placed (100% success rate)",
+        "All 32 teams have exactly 17 games",
+        "All bye weeks in range 5-14",
+        "96 division games total",
+        "No duplicate matchups",
+        "Execution under 5 seconds"
+      ],
+      "should_have": [
+        "Clean integration with existing code",
+        "Fallback mechanism works if solver times out"
+      ],
+      "nice_to_have": [
+        "Execution under 1 second",
+        "Configurable constraint weights for future optimization"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] CSP-001: Create solver module structure",
+        "[ ] CSP-002: Implement domain representation",
+        "[ ] CSP-003: Implement backtracking with MRV",
+        "[ ] CSP-004: Add constraint propagation"
+      ],
+      "phase_2_checklist": [
+        "[ ] CON-001: Create constraints module",
+        "[ ] CON-002: Team-plays-once-per-week constraint",
+        "[ ] CON-003: Bye-week constraint",
+        "[ ] CON-004: Week-capacity constraint",
+        "[ ] CON-005: Team-games-count constraint"
+      ],
+      "phase_3_checklist": [
+        "[ ] INT-001: Integrate solver with generator",
+        "[ ] INT-002: Add timeout fallback",
+        "[ ] INT-003: Update exports",
+        "[ ] TEST-001: Create validation test",
+        "[ ] TEST-002: Performance benchmark"
+      ]
+    }
+  }
+}
