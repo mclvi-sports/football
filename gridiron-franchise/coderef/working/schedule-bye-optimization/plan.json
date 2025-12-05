@@ -1,0 +1,241 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "schedule-bye-optimization",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": false,
+    "has_analysis": false,
+    "created_at": "2024-12-05"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "schedule_guide": "src/lib/schedule/SCHEDULE-GUIDE.md"
+      },
+      "key_files": {
+        "schedule_generator": "src/lib/schedule/schedule-generator.ts",
+        "types": "src/lib/schedule/types.ts",
+        "test_script": "scripts/test-schedule.ts"
+      },
+      "reference_components": {
+        "assignByeWeeks": "schedule-generator.ts - Current bye week assignment function",
+        "hybridPlacement": "schedule-generator.ts - MRV placement algorithm",
+        "distributeGamesToWeeks": "schedule-generator.ts - Main distribution with retry"
+      }
+    },
+    "1_executive_summary": {
+      "feature_description": "Optimize bye week assignment algorithm to reduce schedule generation retry rate from ~15% to near 0%",
+      "goal": "Eliminate failed first attempts by making bye week assignment aware of conference opponent relationships, not just division rivals",
+      "problem_statement": "Current algorithm randomly assigns bye weeks ensuring only division rivals don't share weeks. This ignores conference/rotating opponents, causing ~15% of generations to fail and need retry.",
+      "proposed_solution": "Implement constraint-aware bye week assignment that separates not just division rivals but also key conference opponents to maximize scheduling flexibility",
+      "expected_outcome": "Near 100% first-attempt success rate, faster average generation time, more predictable performance"
+    },
+    "2_risk_assessment": {
+      "complexity": "low",
+      "estimated_tasks": 5,
+      "risk_factors": [
+        {
+          "risk": "Over-constraining bye weeks could make assignment impossible",
+          "mitigation": "Use soft constraints with fallback to current random assignment",
+          "severity": "medium"
+        },
+        {
+          "risk": "Performance impact from additional constraint checking",
+          "mitigation": "Pre-compute opponent relationships once, reuse across attempts",
+          "severity": "low"
+        }
+      ],
+      "dependencies": [],
+      "breaking_changes": false
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/lib/schedule/schedule-generator.ts",
+          "purpose": "Modify assignByeWeeks function to be opponent-aware"
+        },
+        {
+          "path": "src/lib/schedule/SCHEDULE-GUIDE.md",
+          "purpose": "Document updated bye week assignment algorithm"
+        }
+      ],
+      "files_to_create": [],
+      "current_behavior": "assignByeWeeks() shuffles bye slots randomly and assigns division teams to different weeks. Does not consider conference opponents.",
+      "target_behavior": "assignByeWeeks() considers both division rivals AND conference opponents when assigning bye weeks to maximize scheduling flexibility"
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Opponent Relationship Mapping",
+          "description": "Pre-compute which teams play each other (division, conference, inter-conference)",
+          "priority": "high"
+        },
+        {
+          "id": "F2",
+          "name": "Constraint-Aware Bye Assignment",
+          "description": "Assign bye weeks to maximize separation between opponents",
+          "priority": "high"
+        },
+        {
+          "id": "F3",
+          "name": "Fallback Mechanism",
+          "description": "If optimal assignment fails, fall back to current random with retry",
+          "priority": "medium"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SCHEDULE-BYE-OPTIMIZATION-001",
+        "name": "Schedule Bye Optimization",
+        "feature_dir": "coderef/working/schedule-bye-optimization"
+      },
+      "tasks": [
+        {
+          "id": "BYE-001",
+          "workorder_id": "WO-SCHEDULE-BYE-OPTIMIZATION-001",
+          "description": "Create opponent relationship mapping function",
+          "feature_id": "F1",
+          "estimated_loc": 40,
+          "complexity": "low",
+          "dependencies": []
+        },
+        {
+          "id": "BYE-002",
+          "workorder_id": "WO-SCHEDULE-BYE-OPTIMIZATION-001",
+          "description": "Implement graph-based bye week assignment using opponent constraints",
+          "feature_id": "F2",
+          "estimated_loc": 80,
+          "complexity": "medium",
+          "dependencies": ["BYE-001"]
+        },
+        {
+          "id": "BYE-003",
+          "workorder_id": "WO-SCHEDULE-BYE-OPTIMIZATION-001",
+          "description": "Add fallback to random assignment if constraints unsatisfiable",
+          "feature_id": "F3",
+          "estimated_loc": 20,
+          "complexity": "low",
+          "dependencies": ["BYE-002"]
+        },
+        {
+          "id": "BYE-004",
+          "workorder_id": "WO-SCHEDULE-BYE-OPTIMIZATION-001",
+          "description": "Create stress test to measure retry rate improvement",
+          "feature_id": null,
+          "estimated_loc": 50,
+          "complexity": "low",
+          "dependencies": ["BYE-002"]
+        },
+        {
+          "id": "BYE-005",
+          "workorder_id": "WO-SCHEDULE-BYE-OPTIMIZATION-001",
+          "description": "Update SCHEDULE-GUIDE.md documentation",
+          "feature_id": null,
+          "estimated_loc": 30,
+          "complexity": "low",
+          "dependencies": ["BYE-003"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Analysis & Mapping",
+          "description": "Build opponent relationship mapping to understand constraints",
+          "tasks": ["BYE-001"],
+          "deliverables": ["buildOpponentMap() function that returns Map<teamId, Set<opponentIds>>"]
+        },
+        {
+          "phase": 2,
+          "name": "Core Algorithm",
+          "description": "Implement constraint-aware bye week assignment",
+          "tasks": ["BYE-002", "BYE-003"],
+          "deliverables": ["Updated assignByeWeeks() with opponent separation", "Fallback mechanism"]
+        },
+        {
+          "phase": 3,
+          "name": "Testing & Documentation",
+          "description": "Validate improvement and update docs",
+          "tasks": ["BYE-004", "BYE-005"],
+          "deliverables": ["Stress test showing <5% retry rate", "Updated SCHEDULE-GUIDE.md"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "name": "buildOpponentMap returns correct relationships",
+          "coverage": "BYE-001"
+        },
+        {
+          "name": "assignByeWeeks separates division rivals",
+          "coverage": "BYE-002"
+        },
+        {
+          "name": "assignByeWeeks separates conference opponents when possible",
+          "coverage": "BYE-002"
+        }
+      ],
+      "integration_tests": [
+        {
+          "name": "20-iteration stress test with <5% retry rate",
+          "coverage": "All"
+        },
+        {
+          "name": "100% success rate on 272/272 games",
+          "coverage": "All"
+        }
+      ],
+      "test_command": "npx tsx scripts/test-schedule.ts"
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "description": "Retry rate drops from ~15% to <5%",
+          "measurable": true
+        },
+        {
+          "id": "AC2",
+          "description": "All 20 stress test iterations produce 272/272 games",
+          "measurable": true
+        },
+        {
+          "id": "AC3",
+          "description": "Average generation time remains under 3 seconds",
+          "measurable": true
+        },
+        {
+          "id": "AC4",
+          "description": "No regression in schedule validity (teams don't play twice per week)",
+          "measurable": true
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Create buildOpponentMap() function",
+        "[ ] Map division opponents (6 games each)",
+        "[ ] Map conference opponents (6 games each)",
+        "[ ] Map inter-conference opponents (5 games each)"
+      ],
+      "phase_2_checklist": [
+        "[ ] Modify assignByeWeeks() to accept opponent map",
+        "[ ] Implement greedy bye assignment with opponent separation",
+        "[ ] Add fallback to random if constraints fail",
+        "[ ] Test with existing schedule generator"
+      ],
+      "phase_3_checklist": [
+        "[ ] Run 20-iteration stress test",
+        "[ ] Verify retry rate <5%",
+        "[ ] Update SCHEDULE-GUIDE.md with algorithm changes",
+        "[ ] Commit and push changes"
+      ]
+    }
+  }
+}
