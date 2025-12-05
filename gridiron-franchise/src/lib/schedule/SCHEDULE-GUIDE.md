@@ -320,11 +320,11 @@ clearSchedule(): void
 
 | Metric | Value |
 |--------|-------|
-| Generation time | 100ms - 5s (typically under 3s) |
-| Success rate | 100% (with retry mechanism) |
+| Generation time | 76ms - 5s (typically 500ms-3s) |
+| Success rate | **100%** (with retry mechanism) |
 | Memory usage | ~2MB for full schedule |
-| Typical attempts per try | 1-130 |
-| Retries needed | Usually 0-1, rarely 2+ |
+| Typical attempts per try | 3-170 |
+| First-attempt success | ~85% (15% need 1+ retries) |
 
 ### Retry Mechanism
 

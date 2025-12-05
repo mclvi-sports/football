@@ -348,19 +348,9 @@ function assignByeWeeks(teamIds: string[]): Map<string, number> {
   // Available bye weeks with target counts
   // Pattern: 13 weeks (5-17), with 2,2,2,2,2,2,2,4,4,4,2,2,2 = 32
   const byeSlots = [
-    5, 5,     // 2 teams
-    6, 6,     // 2 teams
-    7, 7,     // 2 teams
-    8, 8,     // 2 teams
-    9, 9,     // 2 teams
-    10, 10,   // 2 teams
-    11, 11,   // 2 teams
-    12, 12, 12, 12, // 4 teams
-    13, 13, 13, 13, // 4 teams
-    14, 14, 14, 14, // 4 teams
-    15, 15,   // 2 teams
-    16, 16,   // 2 teams
-    17, 17,   // 2 teams
+    5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
+    12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14,
+    15, 15, 16, 16, 17, 17,
   ];
 
   // Shuffle bye slots
@@ -427,7 +417,7 @@ function distributeGamesToWeeks(
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     if (Date.now() - startTime > TIME_LIMIT_MS) break;
 
-    // Fresh bye weeks
+    // Fresh bye weeks each attempt
     const attemptByeWeeks = assignByeWeeks(LEAGUE_TEAMS.map((t) => t.id));
 
     // Greedy placement with targeted ordering
@@ -1565,7 +1555,7 @@ export function generateSchedule(config: ScheduleGeneratorConfig): LeagueSchedul
   const allGames = createGamesFromMatchups(allMatchups);
   console.log(`Generated ${allGames.length} unique games from matchups`);
 
-  // 5-6. Distribute games to weeks with retry until we get all 272
+  // 5. Distribute games to weeks with retry until we get all 272
   const MAX_RETRIES = 10;
   let weekSchedules: WeekSchedule[] = [];
   let byeWeeks: Map<string, number> = new Map();
@@ -1587,10 +1577,10 @@ export function generateSchedule(config: ScheduleGeneratorConfig): LeagueSchedul
     console.log(`Retry ${retry + 1}: Only placed ${totalPlaced}/${TOTAL_GAMES} games, trying again...`);
   }
 
-  // 7. Assign prime time slots
+  // 6. Assign prime time slots
   const finalWeeks = assignPrimeTimeSlots(weekSchedules);
 
-  // 8. Build team schedules
+  // 7. Build team schedules
   const teamSchedules = buildTeamSchedules(finalWeeks, byeWeeks);
 
   return {

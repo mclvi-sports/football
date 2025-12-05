@@ -15,7 +15,8 @@
       "mcp__docs-mcp__dependency_inventory",
       "mcp__docs-mcp__api_inventory",
       "Bash(npx tsx:*)",
-      "WebFetch(domain:operations.nfl.com)"
+      "WebFetch(domain:operations.nfl.com)",
+      "mcp__docs-mcp__create_plan"
     ],
     "deny": [],
     "ask": []
