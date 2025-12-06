@@ -15,6 +15,7 @@ export const ROUTE_TITLES: Record<string, string> = {
   '/dashboard/stats': 'Stats',
   '/dashboard/news': 'News',
   '/dashboard/settings': 'Settings',
+  '/dashboard/saves': 'Cloud Saves',
   '/dashboard/my-gm': 'My GM',
   '/dashboard/about': 'About',
   '/dashboard/next-task': 'Next Task',
@@ -28,6 +29,11 @@ export function getRouteTitle(pathname: string): string {
   // Exact match first
   if (ROUTE_TITLES[pathname]) {
     return ROUTE_TITLES[pathname];
+  }
+
+  // Dynamic route patterns
+  if (pathname.startsWith('/dashboard/player/')) {
+    return 'Player Details';
   }
 
   // Default fallback

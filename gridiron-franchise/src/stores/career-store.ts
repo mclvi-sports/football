@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { TeamInfo } from "@/lib/data/teams";
 
 /**
@@ -21,7 +22,9 @@ interface CareerCreationState {
   isComplete: () => boolean;
 }
 
-export const useCareerStore = create<CareerCreationState>((set, get) => ({
+export const useCareerStore = create<CareerCreationState>()(
+  persist(
+    (set, get) => ({
   // Initial state
   selectedTeam: null,
   playerTeamId: null,
@@ -42,4 +45,9 @@ export const useCareerStore = create<CareerCreationState>((set, get) => ({
   // Computed helpers
   hasTeam: () => get().selectedTeam !== null,
   isComplete: () => get().selectedTeam !== null,
-}));
+    }),
+    {
+      name: "career-storage",
+    }
+  )
+);

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar } from "lucide-react";
+import { Calendar, Users, Settings } from "lucide-react";
 import { TeamCard } from "@/components/dashboard/team-card";
 import { NavCard } from "@/components/dashboard/nav-card";
 import { BottomTabBar } from "@/components/dashboard/bottom-tab-bar";
@@ -35,20 +35,27 @@ export default function DashboardPage() {
         {/* Team Card */}
         <TeamCard team={selectedTeam} />
 
-        {/* Schedule Card */}
-        <NavCard
-          title="Schedule"
-          icon={<Calendar className="w-6 h-6" />}
-          href="/dashboard/schedule"
-          description="Week 1"
-        />
-
         {/* Navigation Grid */}
         <div className="grid grid-cols-2 gap-3">
+          <NavCard
+            title="Schedule"
+            icon={<Calendar className="w-6 h-6" />}
+            href="/dashboard/schedule"
+          />
+          <NavCard
+            title="Roster"
+            icon={<Users className="w-6 h-6" />}
+            href="/dashboard/roster"
+          />
           <NavCard
             title="Dev Tools"
             icon="DEV"
             href="/dashboard/dev-tools"
+          />
+          <NavCard
+            title="Settings"
+            icon={<Settings className="w-6 h-6" />}
+            href="/dashboard/settings"
           />
           <NavCard
             title="About"
