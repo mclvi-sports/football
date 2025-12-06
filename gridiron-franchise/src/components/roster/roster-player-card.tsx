@@ -2,6 +2,14 @@
 
 import { Player } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useCareerStore } from "@/stores/career-store";
+
+function getOvrColor(ovr: number): string {
+  if (ovr >= 90) return "text-yellow-400";
+  if (ovr >= 80) return "text-green-400";
+  if (ovr >= 70) return "text-blue-400";
+  return "text-muted-foreground";
+}
 
 interface RosterPlayerCardProps {
   player: Player;
@@ -9,7 +17,11 @@ interface RosterPlayerCardProps {
 }
 
 export function RosterPlayerCard({ player, onClick }: RosterPlayerCardProps) {
-  const isLowOvr = player.overall < 80;
+  const { selectedTeam } = useCareerStore();
+
+  // Team colors for jersey number gradient (matches hero section)
+  const primaryColor = selectedTeam?.colors.primary || "#2563eb";
+  const secondaryColor = selectedTeam?.colors.secondary || "#16a34a";
 
   return (
     <button
@@ -21,15 +33,14 @@ export function RosterPlayerCard({ player, onClick }: RosterPlayerCardProps) {
         "hover:bg-secondary/80 active:scale-[0.99]"
       )}
     >
-      {/* Jersey Number Circle */}
+      {/* Jersey Number - Team gradient, rounded square */}
       <div
-        className={cn(
-          "flex-shrink-0 w-12 h-12",
-          "flex items-center justify-center",
-          "rounded-full",
-          "bg-primary/10 text-primary",
-          "text-lg font-bold"
-        )}
+        className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-xl text-lg font-bold shadow-md"
+        style={{
+          background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+          color: "#fff",
+          textShadow: "0 1px 2px rgba(0,0,0,0.3)",
+        }}
       >
         {player.jerseyNumber}
       </div>
@@ -39,20 +50,22 @@ export function RosterPlayerCard({ player, onClick }: RosterPlayerCardProps) {
         <div className="text-base font-medium text-foreground truncate">
           {player.firstName} {player.lastName}
         </div>
-        <div className="text-sm text-muted-foreground">{player.position}</div>
+        <div className="text-sm text-muted-foreground">
+          {player.position} · {player.archetype}
+        </div>
       </div>
 
       {/* OVR */}
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-muted-foreground">OVR</span>
+      <div className="flex flex-col items-end">
         <span
           className={cn(
-            "text-lg font-semibold",
-            isLowOvr ? "text-red-500" : "text-foreground"
+            "text-lg font-bold",
+            getOvrColor(player.overall)
           )}
         >
           {player.overall}
         </span>
+        <span className="text-xs text-muted-foreground">OVR</span>
       </div>
     </button>
   );
