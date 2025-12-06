@@ -51,7 +51,7 @@ export function RosterPlayerCard({ player, onClick }: RosterPlayerCardProps) {
           {player.firstName} {player.lastName}
         </div>
         <div className="text-sm text-muted-foreground">
-          {player.position} · {player.archetype}
+          {player.position} · {player.archetype} · {player.age}yo · {player.experience}yr
         </div>
       </div>
 

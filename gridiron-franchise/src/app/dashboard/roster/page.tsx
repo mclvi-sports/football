@@ -131,6 +131,8 @@ export default function RosterPage() {
           return a.position.localeCompare(b.position);
         case "age":
           return a.age - b.age;
+        case "age-desc":
+          return b.age - a.age;
         default:
           return 0;
       }

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-export type SortOption = "ovr-desc" | "ovr-asc" | "name" | "position" | "age";
+export type SortOption = "ovr-desc" | "ovr-asc" | "name" | "position" | "age" | "age-desc";
 
 const SORT_OPTIONS: { id: SortOption; label: string }[] = [
   { id: "ovr-desc", label: "Overall (High to Low)" },
@@ -17,6 +17,7 @@ const SORT_OPTIONS: { id: SortOption; label: string }[] = [
   { id: "name", label: "Name (A-Z)" },
   { id: "position", label: "Position" },
   { id: "age", label: "Age (Youngest First)" },
+  { id: "age-desc", label: "Age (Oldest First)" },
 ];
 
 interface RosterSortSheetProps {
