@@ -116,12 +116,14 @@
   html {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
   }
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground min-h-screen antialiased selection:bg-primary/20 selection:text-primary;
+    overflow-x: hidden;
   }
 }
 
