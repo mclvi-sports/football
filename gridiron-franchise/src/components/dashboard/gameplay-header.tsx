@@ -80,9 +80,8 @@ export function GameplayHeader() {
       >
         {/* Drawer Header */}
         <div className="h-14 px-4 flex items-center justify-between border-b border-border">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Home className="w-5 h-5" />
-            <span className="text-border">|</span>
             <span className="font-semibold">Dashboard</span>
           </div>
           <button
