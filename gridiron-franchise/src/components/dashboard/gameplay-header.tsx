@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, Home, Calendar, Info } from "lucide-react";
+import { Menu, X, Home, Calendar, Info, Users } from "lucide-react";
 import { useUIStore } from "@/stores/ui-store";
 import { getRouteTitle } from "@/lib/constants/route-titles";
 
@@ -25,6 +25,7 @@ export function GameplayHeader() {
 
   const navItems = [
     { label: "Dashboard", href: "/dashboard", icon: Home },
+    { label: "Roster", href: "/dashboard/roster", icon: Users },
     { label: "Schedule", href: "/dashboard/schedule", icon: Calendar },
   ];
 
@@ -39,7 +40,7 @@ export function GameplayHeader() {
         className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border"
         style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
-        <div className="max-w-[500px] mx-auto px-5 h-14 flex items-center justify-between">
+        <div className="px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between max-w-7xl mx-auto">
           {/* Hamburger Menu */}
           <button
             className="w-10 h-10 flex items-center justify-center -ml-2 active:opacity-70 transition-opacity"

@@ -1577,6 +1577,12 @@ export function generateSchedule(config: ScheduleGeneratorConfig): LeagueSchedul
     console.log(`Retry ${retry + 1}: Only placed ${totalPlaced}/${TOTAL_GAMES} games, trying again...`);
   }
 
+  // Verify all games were placed
+  const finalGameCount = weekSchedules.reduce((sum, w) => sum + w.games.length, 0);
+  if (finalGameCount !== TOTAL_GAMES) {
+    throw new Error(`Schedule generation failed: Only placed ${finalGameCount}/${TOTAL_GAMES} games after ${MAX_RETRIES} retries`);
+  }
+
   // 6. Assign prime time slots
   const finalWeeks = assignPrimeTimeSlots(weekSchedules);
 

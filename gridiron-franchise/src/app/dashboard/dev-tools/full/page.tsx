@@ -13,7 +13,7 @@ import { adaptTeamRoster } from "@/lib/sim/team-adapter";
 import { SimTeam } from "@/lib/sim/types";
 import { SeasonSimulator, SeasonTeam } from "@/lib/season";
 import { SeasonState } from "@/lib/season/types";
-import { generateSchedule } from "@/lib/schedule/schedule-generator";
+import { generateSchedule, validateSchedule } from "@/lib/schedule/schedule-generator";
 import { WeekSchedule } from "@/lib/schedule/types";
 import { GameSetupDashboard } from "@/components/franchise/game-setup-dashboard";
 import { GameplayLoop } from "@/components/franchise/gameplay-loop";
@@ -132,6 +132,12 @@ export default function FullGameGeneratorPage() {
         season: 2025,
         randomizeStandings: true,
       });
+      // Validate schedule before using
+      const validation = validateSchedule(schedule);
+      if (!validation.valid) {
+        console.error('Schedule validation failed:', validation.errors);
+        throw new Error(`Schedule validation failed: ${validation.errors.join(', ')}`);
+      }
       scheduleWeeks = schedule.weeks;
     }
 

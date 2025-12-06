@@ -26,7 +26,7 @@ interface BottomTabBarProps {
 export function BottomTabBar({ activeTab, onTabChange }: BottomTabBarProps) {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border safe-area-pb">
-      <div className="flex items-center justify-around h-16 max-w-[500px] mx-auto">
+      <div className="flex items-center justify-around h-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
 

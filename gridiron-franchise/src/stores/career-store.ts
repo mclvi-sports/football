@@ -9,6 +9,10 @@ import type { TeamInfo } from "@/lib/data/teams";
  * and inherit the pre-assigned GM.
  */
 interface CareerCreationState {
+  // Hydration state
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
+
   // Team selection (Owner picks team, inherits GM)
   selectedTeam: TeamInfo | null;
   playerTeamId: string | null;
@@ -25,29 +29,36 @@ interface CareerCreationState {
 export const useCareerStore = create<CareerCreationState>()(
   persist(
     (set, get) => ({
-  // Initial state
-  selectedTeam: null,
-  playerTeamId: null,
+      // Hydration state
+      _hasHydrated: false,
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
 
-  // Set team (Owner model - user picks team, inherits GM)
-  setTeam: (team) => {
-    set({ selectedTeam: team, playerTeamId: team.id });
-  },
-
-  // Reset all state
-  reset: () => {
-    set({
+      // Initial state
       selectedTeam: null,
       playerTeamId: null,
-    });
-  },
 
-  // Computed helpers
-  hasTeam: () => get().selectedTeam !== null,
-  isComplete: () => get().selectedTeam !== null,
+      // Set team (Owner model - user picks team, inherits GM)
+      setTeam: (team) => {
+        set({ selectedTeam: team, playerTeamId: team.id });
+      },
+
+      // Reset all state
+      reset: () => {
+        set({
+          selectedTeam: null,
+          playerTeamId: null,
+        });
+      },
+
+      // Computed helpers
+      hasTeam: () => get().selectedTeam !== null,
+      isComplete: () => get().selectedTeam !== null,
     }),
     {
       name: "career-storage",
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );

@@ -276,7 +276,12 @@ export async function generateLeagueData(
     const scheduleData = await scheduleRes.json();
 
     if (!scheduleData.success) {
-      throw new Error('Failed to generate schedule');
+      throw new Error(scheduleData.error || 'Failed to generate schedule');
+    }
+
+    // Double-check validation passed
+    if (scheduleData.validation && !scheduleData.validation.valid) {
+      throw new Error(`Schedule validation failed: ${scheduleData.validation.errors?.join(', ')}`);
     }
 
     storeSchedule(scheduleData.schedule);

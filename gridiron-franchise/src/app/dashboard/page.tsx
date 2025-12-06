@@ -1,26 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar, Users, Settings } from "lucide-react";
 import { TeamCard } from "@/components/dashboard/team-card";
 import { NavCard } from "@/components/dashboard/nav-card";
-import { BottomTabBar } from "@/components/dashboard/bottom-tab-bar";
 import { useCareerStore } from "@/stores/career-store";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("home");
-  const { selectedTeam } = useCareerStore();
+  const { selectedTeam, _hasHydrated } = useCareerStore();
 
-  // Redirect if no team selected (Owner model)
+  // Redirect if no team selected (Owner model) - only after hydration
   useEffect(() => {
-    if (!selectedTeam) {
+    if (_hasHydrated && !selectedTeam) {
       router.replace("/");
     }
-  }, [selectedTeam, router]);
+  }, [selectedTeam, _hasHydrated, router]);
 
-  if (!selectedTeam) {
+  // Wait for hydration before rendering
+  if (!_hasHydrated || !selectedTeam) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p className="text-muted-foreground">Loading...</p>
@@ -64,9 +63,6 @@ export default function DashboardPage() {
           />
         </div>
       </main>
-
-      {/* Bottom Tab Bar */}
-      <BottomTabBar activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 }

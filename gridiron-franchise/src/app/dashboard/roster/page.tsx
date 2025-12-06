@@ -66,7 +66,7 @@ const POSITION_FILTER_MAP: Record<PositionFilter, Position[]> = {
 
 export default function RosterPage() {
   const router = useRouter();
-  const { playerTeamId } = useCareerStore();
+  const { playerTeamId, _hasHydrated } = useCareerStore();
 
   // Data state
   const [teamData, setTeamData] = useState<TeamRosterData | null>(null);
@@ -79,14 +79,16 @@ export default function RosterPage() {
   const [sortSheetOpen, setSortSheetOpen] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
 
-  // Load team data
+  // Load team data - wait for hydration
   useEffect(() => {
+    if (!_hasHydrated) return;
+
     if (playerTeamId) {
       const data = getTeamById(playerTeamId);
       setTeamData(data);
     }
     setLoading(false);
-  }, [playerTeamId]);
+  }, [playerTeamId, _hasHydrated]);
 
   // Reset position filter when tab changes
   useEffect(() => {
@@ -141,7 +143,7 @@ export default function RosterPage() {
     setSelectedPlayerId(playerId);
   };
 
-  if (loading) {
+  if (!_hasHydrated || loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <p className="text-muted-foreground">Loading roster...</p>

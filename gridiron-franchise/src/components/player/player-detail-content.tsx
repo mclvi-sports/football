@@ -22,6 +22,7 @@ import { TRAITS_BY_ID } from "@/lib/data/traits";
 import { BADGES_BY_ID } from "@/lib/data/badges";
 import { cn } from "@/lib/utils";
 import { CareerStatsTab } from "@/components/player/career-stats-tab";
+import { useCareerStore } from "@/stores/career-store";
 
 type TabId =
   | "attributes"
@@ -355,7 +356,12 @@ interface PlayerDetailContentProps {
 
 export function PlayerDetailContent({ player }: PlayerDetailContentProps) {
   const [activeTab, setActiveTab] = useState<TabId>("attributes");
+  const { selectedTeam } = useCareerStore();
   const positionAttrs = getPositionAttributes(player.position);
+
+  // Team colors for jersey number gradient
+  const primaryColor = selectedTeam?.colors.primary || "#2563eb";
+  const secondaryColor = selectedTeam?.colors.secondary || "#16a34a";
 
   const tabs: { id: TabId; label: string }[] = [
     { id: "attributes", label: "Attributes" },
@@ -374,11 +380,12 @@ export function PlayerDetailContent({ player }: PlayerDetailContentProps) {
         <div className="flex items-center gap-4">
           {/* Jersey Number - Left */}
           <div
-            className={cn(
-              "w-16 h-16 flex-shrink-0 rounded-xl flex items-center justify-center",
-              "bg-gradient-to-br from-blue-600 to-green-600",
-              "text-2xl font-black shadow-lg shadow-blue-500/30"
-            )}
+            className="w-16 h-16 flex-shrink-0 rounded-xl flex items-center justify-center text-2xl font-black shadow-lg"
+            style={{
+              background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+              color: "#fff",
+              textShadow: "0 1px 2px rgba(0,0,0,0.3)",
+            }}
           >
             {player.jerseyNumber}
           </div>

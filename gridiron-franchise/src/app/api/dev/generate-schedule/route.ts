@@ -19,6 +19,19 @@ export async function POST(request: NextRequest) {
     const stats = getScheduleStats(schedule);
     const validation = validateSchedule(schedule);
 
+    // Fail if validation has errors
+    if (!validation.valid) {
+      console.error('Schedule validation failed:', validation.errors);
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Schedule validation failed: ${validation.errors.join(', ')}`,
+          validation,
+        },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       schedule,
