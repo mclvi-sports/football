@@ -1,0 +1,30 @@
+{
+  "feature_name": "about-update",
+  "description": "Redesign About page as a unified reference hub with hero section and tabbed content sections covering app overview and game data (Players, Coaches, Teams, etc.) in natural language",
+  "goal": "Create a single, easy-to-navigate page that combines app introduction with game data reference in readable, user-friendly format",
+  "requirements": [
+    "Hero section with app branding/intro",
+    "Tabbed interface for content sections",
+    "About/Overview tab",
+    "Players tab (positions, attributes, traits, badges)",
+    "Coaches tab",
+    "Teams tab",
+    "Other data tabs as needed",
+    "Natural language descriptions (not technical)",
+    "Mobile-first responsive tabs"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Mobile-first design",
+    "Match existing Tailwind/component patterns",
+    "Use existing Tab components if available",
+    "Content must be scannable and readable"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-ABOUT-UPDATE-001",
+    "workorder_assigned_at": "2025-12-06T18:05:03.728607+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

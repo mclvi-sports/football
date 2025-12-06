@@ -1,0 +1,229 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "about-update",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd (AI Project Coordinator)",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": [
+        "src/app/dashboard/about/page.tsx",
+        "src/components/ui/tabs.tsx",
+        "context/list/index.html"
+      ],
+      "coding_standards": {
+        "framework": "Next.js 15 App Router",
+        "styling": "Tailwind CSS 4",
+        "components": "Shadcn/UI patterns",
+        "typescript": true
+      },
+      "reference_components": [
+        "player-detail-content.tsx - Tab pattern example",
+        "roster-player-card.tsx - Card styling patterns",
+        "gameplay-header.tsx - Layout patterns"
+      ]
+    },
+    "1_executive_summary": {
+      "description": "Redesign the About page as a unified reference hub combining app overview with game data reference. Features a hero section and tabbed content sections covering Players, Coaches, Teams, and more in natural, user-friendly language.",
+      "goal": "Create a single, easy-to-navigate page that serves as both app introduction and game data reference",
+      "scope": "Complete rewrite of about/page.tsx with new component structure and content data",
+      "estimated_complexity": "medium"
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "risks": [
+        {
+          "risk": "Content volume - lots of data to display",
+          "severity": "low",
+          "mitigation": "Use tabs to organize content, lazy load if needed"
+        },
+        {
+          "risk": "Mobile scrolling with tabs",
+          "severity": "low",
+          "mitigation": "Use horizontal scrollable tabs like player-detail-content.tsx"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/app/dashboard/about/page.tsx",
+          "purpose": "Complete rewrite with hero + tabbed content"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "src/components/about/about-hero.tsx",
+          "purpose": "Hero section with app branding"
+        },
+        {
+          "path": "src/components/about/about-tabs.tsx",
+          "purpose": "Tabbed content container"
+        },
+        {
+          "path": "src/lib/data/about-content.ts",
+          "purpose": "Content data for all tabs in natural language"
+        }
+      ],
+      "current_behavior": "Simple About page with minimal content",
+      "desired_behavior": "Rich reference hub with hero and 6+ tabbed sections"
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Hero Section",
+          "description": "App branding, tagline, version info at top of page"
+        },
+        {
+          "id": "F2",
+          "name": "Tabbed Interface",
+          "description": "Horizontal scrollable tabs for content sections"
+        },
+        {
+          "id": "F3",
+          "name": "Overview Tab",
+          "description": "App introduction, key features, how to play"
+        },
+        {
+          "id": "F4",
+          "name": "Players Tab",
+          "description": "Positions, attributes, traits, badges explained"
+        },
+        {
+          "id": "F5",
+          "name": "Staff Tab",
+          "description": "Coaches, GMs, Scouts information"
+        },
+        {
+          "id": "F6",
+          "name": "Teams Tab",
+          "description": "Team info, divisions, conferences"
+        },
+        {
+          "id": "F7",
+          "name": "Game Systems Tab",
+          "description": "Draft, Training, Facilities, Schedule info"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-ABOUT-UPDATE-001",
+        "name": "About Update",
+        "feature_dir": "coderef/working/about-update"
+      },
+      "tasks": [
+        {
+          "id": "ABOUT-001",
+          "workorder_id": "WO-ABOUT-UPDATE-001",
+          "description": "Create about-hero.tsx component",
+          "file": "src/components/about/about-hero.tsx",
+          "changes": ["App logo/icon", "Title and tagline", "Version badge", "Team gradient styling"],
+          "estimated_loc": 40
+        },
+        {
+          "id": "ABOUT-002",
+          "workorder_id": "WO-ABOUT-UPDATE-001",
+          "description": "Create about-tabs.tsx component",
+          "file": "src/components/about/about-tabs.tsx",
+          "changes": ["Horizontal scrollable tabs", "Tab content rendering", "Active state styling"],
+          "estimated_loc": 60
+        },
+        {
+          "id": "ABOUT-003",
+          "workorder_id": "WO-ABOUT-UPDATE-001",
+          "description": "Create about-content.ts data file",
+          "file": "src/lib/data/about-content.ts",
+          "changes": ["Overview content", "Players content", "Staff content", "Teams content", "Systems content"],
+          "estimated_loc": 200
+        },
+        {
+          "id": "ABOUT-004",
+          "workorder_id": "WO-ABOUT-UPDATE-001",
+          "description": "Rewrite about/page.tsx",
+          "file": "src/app/dashboard/about/page.tsx",
+          "changes": ["Import new components", "Compose hero + tabs layout", "Remove old content"],
+          "estimated_loc": 30
+        },
+        {
+          "id": "ABOUT-005",
+          "workorder_id": "WO-ABOUT-UPDATE-001",
+          "description": "Add barrel export for about components",
+          "file": "src/components/about/index.ts",
+          "changes": ["Export AboutHero", "Export AboutTabs"],
+          "estimated_loc": 5
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Content & Data",
+          "description": "Create content data file with all tab content in natural language",
+          "tasks": ["ABOUT-003"],
+          "deliverables": ["about-content.ts with all section content"]
+        },
+        {
+          "phase": 2,
+          "name": "Components",
+          "description": "Build hero and tabs components",
+          "tasks": ["ABOUT-001", "ABOUT-002", "ABOUT-005"],
+          "deliverables": ["about-hero.tsx", "about-tabs.tsx", "index.ts barrel"]
+        },
+        {
+          "phase": 3,
+          "name": "Page Integration",
+          "description": "Rewrite the About page with new components",
+          "tasks": ["ABOUT-004"],
+          "deliverables": ["Updated about/page.tsx"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Hero displays correctly with app branding",
+        "All tabs render and switch correctly",
+        "Tab content is readable and well-formatted",
+        "Mobile horizontal scroll works on tabs",
+        "Content matches existing data reference",
+        "Page works in PWA mode on iPhone"
+      ],
+      "automated_tests": []
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "Hero section visible at top with app branding",
+        "5+ tabs with content sections",
+        "All content in natural, readable language",
+        "Mobile-first responsive design",
+        "Matches existing app styling patterns",
+        "No horizontal overflow issues"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "Create about-content.ts with Overview section",
+        "Add Players section content",
+        "Add Staff section content",
+        "Add Teams section content",
+        "Add Systems section content"
+      ],
+      "phase_2": [
+        "Create about-hero.tsx with branding",
+        "Create about-tabs.tsx with tab logic",
+        "Create barrel export index.ts"
+      ],
+      "phase_3": [
+        "Rewrite about/page.tsx",
+        "Test on mobile",
+        "Verify all tabs work"
+      ]
+    }
+  }
+}
