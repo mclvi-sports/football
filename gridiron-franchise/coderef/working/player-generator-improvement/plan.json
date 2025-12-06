@@ -1,0 +1,272 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "player-generator-improvement",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd (AI Project Coordinator)",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": [
+        "src/lib/generators/player-generator.ts",
+        "src/lib/data/archetype-templates.ts",
+        "src/lib/data/traits.ts",
+        "src/lib/data/badges.ts",
+        "context/players-and-roster/name-pools.csv"
+      ],
+      "coding_standards": {
+        "framework": "Next.js 15 App Router",
+        "styling": "N/A (generator module)",
+        "components": "TypeScript utility functions",
+        "typescript": true
+      },
+      "reference_components": [
+        "ARCHETYPE_TEMPLATES - defines primary/secondary/tertiary attribute tiers",
+        "TRAITS - trait definitions with rarityWeight and conflicts",
+        "BADGES - badge definitions with position tags"
+      ]
+    },
+    "1_executive_summary": {
+      "description": "Fix critical issues in player-generator.ts identified by multi-AI review (ChatGPT, Gemini, DeepSeek, Le Chat, Grok). Primary fix: attribute tier system calculates points but never uses them, making archetypes feel same-y. Secondary fixes: empty array guards, position-aware traits, badge split implementation.",
+      "goal": "Make archetypes meaningfully affect player attributes so a 'Power Rusher DE' and 'Speed Rusher DE' have distinct stat profiles",
+      "scope": "Refactor generateAttributes(), add safety guards, align trait/badge logic with comments",
+      "estimated_complexity": "medium"
+    },
+    "2_risk_assessment": {
+      "overall_risk": "medium",
+      "risks": [
+        {
+          "risk": "Changing attribute generation affects all existing players",
+          "severity": "medium",
+          "mitigation": "Changes only affect newly generated players, not stored data"
+        },
+        {
+          "risk": "Tier boost math could produce out-of-range values",
+          "severity": "low",
+          "mitigation": "Use clamp() on all calculations, add unit tests"
+        },
+        {
+          "risk": "Position-aware traits may reduce available trait pool",
+          "severity": "low",
+          "mitigation": "Fall back to universal traits if position pool exhausted"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/lib/generators/player-generator.ts",
+          "purpose": "Fix attribute generation, add guards, align trait/badge logic"
+        }
+      ],
+      "files_to_create": [],
+      "current_behavior": "Attributes calculated as targetOvr ± random offset regardless of archetype tier. Points budget (primaryPoints, secondaryPoints, tertiaryPoints) calculated but unused.",
+      "desired_behavior": "Primary attributes boosted +18-30 over base, secondary +10-20, tertiary +2-12. Archetypes produce meaningfully different stat profiles."
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Fix Attribute Tier System",
+          "description": "Remove unused points budget code. Apply tier-based boosts so primary attributes are significantly higher than secondary/tertiary."
+        },
+        {
+          "id": "F2",
+          "name": "Add Safety Guards",
+          "description": "Add empty array guards to getRandomItem/weightedRandom. Add OVR range validation."
+        },
+        {
+          "id": "F3",
+          "name": "Position-Aware Traits",
+          "description": "Filter trait pool by position so QBs don't get CB-specific traits."
+        },
+        {
+          "id": "F4",
+          "name": "Badge Split Implementation",
+          "description": "Implement 70/30 position-specific vs universal badge split per comments."
+        },
+        {
+          "id": "F5",
+          "name": "Code Cleanup",
+          "description": "Remove unused imports, fix Record type, use name rarity for selection."
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+        "name": "Player Generator Improvement",
+        "feature_dir": "coderef/working/player-generator-improvement"
+      },
+      "tasks": [
+        {
+          "id": "PGEN-001",
+          "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+          "description": "Add empty array guard to getRandomItem",
+          "file": "src/lib/generators/player-generator.ts",
+          "changes": ["Throw error if items.length === 0"],
+          "estimated_loc": 3
+        },
+        {
+          "id": "PGEN-002",
+          "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+          "description": "Add empty array guard to weightedRandom",
+          "file": "src/lib/generators/player-generator.ts",
+          "changes": ["Throw error if items.length === 0"],
+          "estimated_loc": 3
+        },
+        {
+          "id": "PGEN-003",
+          "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+          "description": "Add OVR range validation in generatePlayer",
+          "file": "src/lib/generators/player-generator.ts",
+          "changes": ["Validate targetOvr between 40-99, throw if out of range"],
+          "estimated_loc": 5
+        },
+        {
+          "id": "PGEN-004",
+          "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+          "description": "Remove unused imports",
+          "file": "src/lib/generators/player-generator.ts",
+          "changes": ["Remove TRAITS_BY_RARITY if unused", "Remove BADGES if unused", "Remove BADGE_TIER_WEIGHTS if unused"],
+          "estimated_loc": -3
+        },
+        {
+          "id": "PGEN-005",
+          "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+          "description": "Rewrite generateAttributes with tier-based boosts",
+          "file": "src/lib/generators/player-generator.ts",
+          "changes": [
+            "Remove unused getBasePoints function",
+            "Remove unused primaryPoints/secondaryPoints/tertiaryPoints calculations",
+            "Calculate base rating that scales with OVR",
+            "Apply tier boosts: primary +18-30, secondary +10-20, tertiary +2-12",
+            "Ensure primary > secondary > tertiary > base on average"
+          ],
+          "estimated_loc": 40
+        },
+        {
+          "id": "PGEN-006",
+          "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+          "description": "Scale base rating floor with OVR",
+          "file": "src/lib/generators/player-generator.ts",
+          "changes": ["Base rating = targetOvr - 25 ± variance instead of fixed 55"],
+          "estimated_loc": 5
+        },
+        {
+          "id": "PGEN-007",
+          "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+          "description": "Add position filtering to generateTraits",
+          "file": "src/lib/generators/player-generator.ts",
+          "changes": ["Filter availablePositive by position if traits have positions array", "Fall back to all traits if pool empty"],
+          "estimated_loc": 15
+        },
+        {
+          "id": "PGEN-008",
+          "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+          "description": "Implement 70/30 badge split",
+          "file": "src/lib/generators/player-generator.ts",
+          "changes": ["70% chance to pick position-specific badge", "30% chance to pick universal badge", "Align with comment in generateBadges"],
+          "estimated_loc": 20
+        },
+        {
+          "id": "PGEN-009",
+          "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+          "description": "Use name rarity for weighted selection",
+          "file": "src/lib/generators/player-generator.ts",
+          "changes": ["Add pickNameByRarity helper", "Weight common names 10, uncommon names 2", "Use in generateIdentity"],
+          "estimated_loc": 15
+        },
+        {
+          "id": "PGEN-010",
+          "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+          "description": "Allow potential decline for older players",
+          "file": "src/lib/generators/player-generator.ts",
+          "changes": ["Change clamp(ovr + gap, ovr, 99) to clamp(ovr + gap, 40, 99)", "Potential can now be below OVR for 35+ year olds"],
+          "estimated_loc": 2
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Safety Guards",
+          "description": "Add defensive programming guards and remove dead code",
+          "tasks": ["PGEN-001", "PGEN-002", "PGEN-003", "PGEN-004"],
+          "deliverables": ["Empty array guards", "OVR validation", "Clean imports"]
+        },
+        {
+          "phase": 2,
+          "name": "Core Attribute Fix",
+          "description": "Fix the main issue: make archetypes affect attributes meaningfully",
+          "tasks": ["PGEN-005", "PGEN-006"],
+          "deliverables": ["Tier-based attribute boosts", "Scaled base ratings"]
+        },
+        {
+          "phase": 3,
+          "name": "Trait & Badge Alignment",
+          "description": "Align trait and badge logic with documented behavior",
+          "tasks": ["PGEN-007", "PGEN-008"],
+          "deliverables": ["Position-aware traits", "70/30 badge split"]
+        },
+        {
+          "phase": 4,
+          "name": "Polish",
+          "description": "Minor enhancements for realism",
+          "tasks": ["PGEN-009", "PGEN-010"],
+          "deliverables": ["Name rarity weighting", "Potential decline for veterans"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Generate 100 players at each OVR tier (60, 70, 80, 90) and verify attribute distributions",
+        "Compare Power Rusher DE vs Speed Rusher DE - should have distinct stat profiles",
+        "Verify no traits conflict on any generated player",
+        "Verify badge count matches OVR/experience expectations"
+      ],
+      "automated_tests": [
+        "Unit test: getRandomItem throws on empty array",
+        "Unit test: weightedRandom throws on empty array",
+        "Unit test: generatePlayer throws on OVR < 40 or > 99",
+        "Unit test: generateAttributes produces primary > secondary > tertiary averages",
+        "Unit test: 38yo player can have potential < OVR"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "Power Rusher DE primary attributes (PMV, STR) are 15+ points higher than Speed Rusher DE",
+        "Speed Rusher DE primary attributes (SPD, ACC) are 15+ points higher than Power Rusher DE",
+        "All utility functions throw on invalid input",
+        "No console errors when generating 1000 players",
+        "Badge distribution shows ~70% position-specific, ~30% universal"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "Add guard to getRandomItem",
+        "Add guard to weightedRandom",
+        "Add OVR validation to generatePlayer",
+        "Remove unused imports"
+      ],
+      "phase_2": [
+        "Remove getBasePoints function",
+        "Remove primaryPoints/secondaryPoints/tertiaryPoints calculations",
+        "Implement tier boost system",
+        "Scale base rating with OVR"
+      ],
+      "phase_3": [
+        "Add position filtering to trait selection",
+        "Implement 70/30 badge split"
+      ],
+      "phase_4": [
+        "Add pickNameByRarity helper",
+        "Update calculatePotential to allow decline"
+      ]
+    }
+  }
+}

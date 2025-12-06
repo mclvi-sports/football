@@ -1,0 +1,172 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "player-modal-header-fix",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": false,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": [
+        "src/components/player/player-detail-modal.tsx",
+        "src/components/dashboard/gameplay-header.tsx",
+        "src/app/dashboard/layout.tsx"
+      ],
+      "coding_standards": {
+        "framework": "Next.js 15 App Router",
+        "styling": "Tailwind CSS 4",
+        "typescript": true
+      },
+      "reference_components": [
+        "GameplayHeader - Fixed header with safe area handling",
+        "Dashboard layout - Content offset pattern"
+      ]
+    },
+    "1_executive_summary": {
+      "description": "Modify PlayerDetailModal to render below the fixed GameplayHeader instead of covering the entire viewport. The modal currently uses 'fixed inset-0' which overlays everything including the header. Users should see the header remain visible when viewing player details.",
+      "goal": "Keep GameplayHeader visible when PlayerDetailModal is open by positioning modal below header",
+      "scope": "Single component modification with CSS positioning changes",
+      "estimated_complexity": "low"
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "risks": [
+        {
+          "risk": "Modal content height calculation",
+          "severity": "low",
+          "mitigation": "Use CSS calc() with viewport height minus header"
+        },
+        {
+          "risk": "Safe area inset handling on iPhone",
+          "severity": "low",
+          "mitigation": "Reuse same pattern from dashboard layout (env(safe-area-inset-top))"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/components/player/player-detail-modal.tsx",
+          "purpose": "Change modal positioning from inset-0 to below header"
+        }
+      ],
+      "files_to_create": [],
+      "current_behavior": "Modal uses 'fixed inset-0 z-50' covering entire viewport including header",
+      "desired_behavior": "Modal positioned below header with top offset of 3.5rem + safe-area-inset-top"
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Modal positioning below header",
+          "description": "Change from inset-0 to explicit top/left/right/bottom positioning with top offset for header"
+        },
+        {
+          "id": "F2",
+          "name": "Close button repositioning",
+          "description": "Adjust close button position relative to new modal top (not viewport top)"
+        },
+        {
+          "id": "F3",
+          "name": "Z-index adjustment",
+          "description": "Ensure modal sits at appropriate z-index (below or same as header)"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-PLAYER-MODAL-HEADER-FIX-001",
+        "name": "Player Modal Header Fix",
+        "feature_dir": "coderef/working/player-modal-header-fix"
+      },
+      "tasks": [
+        {
+          "id": "MODAL-001",
+          "workorder_id": "WO-PLAYER-MODAL-HEADER-FIX-001",
+          "description": "Update modal container positioning",
+          "file": "src/components/player/player-detail-modal.tsx",
+          "changes": [
+            "Change 'fixed inset-0' to 'fixed left-0 right-0 bottom-0'",
+            "Add style prop with top: calc(3.5rem + env(safe-area-inset-top))",
+            "Reduce z-index from z-50 to z-40 to sit below header"
+          ],
+          "estimated_loc": 5
+        },
+        {
+          "id": "MODAL-002",
+          "workorder_id": "WO-PLAYER-MODAL-HEADER-FIX-001",
+          "description": "Adjust close button position",
+          "file": "src/components/player/player-detail-modal.tsx",
+          "changes": [
+            "Keep top-4 right-4 positioning (now relative to modal, not viewport)"
+          ],
+          "estimated_loc": 0
+        },
+        {
+          "id": "MODAL-003",
+          "workorder_id": "WO-PLAYER-MODAL-HEADER-FIX-001",
+          "description": "Test modal behavior",
+          "file": null,
+          "changes": [
+            "Verify header visible when modal open",
+            "Verify modal scrolling works correctly",
+            "Test on iPhone safe area"
+          ],
+          "estimated_loc": 0
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Modal Positioning",
+          "description": "Update modal CSS positioning to render below header",
+          "tasks": ["MODAL-001", "MODAL-002"],
+          "deliverables": ["Updated player-detail-modal.tsx with new positioning"]
+        },
+        {
+          "phase": 2,
+          "name": "Testing & Verification",
+          "description": "Manual testing on browser and PWA",
+          "tasks": ["MODAL-003"],
+          "deliverables": ["Verified modal behavior with header visible"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Open player modal from roster page - header should remain visible",
+        "Scroll within modal - content should scroll, header stays fixed",
+        "Test on iPhone PWA - safe area should be handled correctly",
+        "Press Escape - modal should close",
+        "Click close button - modal should close"
+      ],
+      "automated_tests": []
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "GameplayHeader visible when PlayerDetailModal is open",
+        "Modal content fills space below header to bottom of viewport",
+        "Modal scrolling works correctly",
+        "Close button functional and properly positioned",
+        "Safe area handling correct on iPhone"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "Update modal container from inset-0 to explicit positioning",
+        "Add top offset with calc() for header + safe area",
+        "Adjust z-index to z-40"
+      ],
+      "phase_2": [
+        "Test in browser",
+        "Test in iPhone PWA",
+        "Verify all close mechanisms work"
+      ]
+    }
+  }
+}

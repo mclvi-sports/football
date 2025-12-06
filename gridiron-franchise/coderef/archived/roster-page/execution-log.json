@@ -1,0 +1,85 @@
+[
+  {
+    "timestamp": "2025-12-05T21:51:21.127642",
+    "workorder_id": "WO-ROSTER-PAGE-001",
+    "feature_name": "roster-page",
+    "task_count": 15,
+    "tasks": [
+      {
+        "content": "PHASE-1--001: [ ] Create src/components/roster/ directory",
+        "activeForm": "PHASE-1--001: [ing ] Create src/components/roster/ directory",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--002: [ ] Create roster-tabs.tsx",
+        "activeForm": "PHASE-1--002: [ing ] Create roster-tabs.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--003: [ ] Create roster-filters.tsx",
+        "activeForm": "PHASE-1--003: [ing ] Create roster-filters.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--004: [ ] Create roster-sort-sheet.tsx",
+        "activeForm": "PHASE-1--004: [ing ] Create roster-sort-sheet.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--005: [ ] Create roster-player-card.tsx",
+        "activeForm": "PHASE-1--005: [ing ] Create roster-player-card.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--006: [ ] Implement OVR color coding",
+        "activeForm": "PHASE-1--006: [ing ] Implement OVR color coding",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--001: [ ] Update roster/page.tsx with imports",
+        "activeForm": "PHASE-2--001: [ing ] Update roster/page.tsx with imports",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--002: [ ] Add data loading from stores",
+        "activeForm": "PHASE-2--002: [ing ] Add data loading from stores",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--003: [ ] Implement tab filtering",
+        "activeForm": "PHASE-2--003: [ing ] Implement tab filtering",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--004: [ ] Implement position filtering",
+        "activeForm": "PHASE-2--004: [ing ] Implement position filtering",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--005: [ ] Implement sorting",
+        "activeForm": "PHASE-2--005: [ing ] Implement sorting",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--001: [ ] Add player card tap navigation",
+        "activeForm": "PHASE-3--001: [ing ] Add player card tap navigation",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--002: [ ] Add empty state",
+        "activeForm": "PHASE-3--002: [ing ] Add empty state",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--003: [ ] Final styling polish",
+        "activeForm": "PHASE-3--003: [ing ] Final styling polish",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--004: [ ] Test against design",
+        "activeForm": "PHASE-3--004: [ing ] Test against design",
+        "status": "pending"
+      }
+    ]
+  }
+]

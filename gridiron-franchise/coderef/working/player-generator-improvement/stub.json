@@ -1,0 +1,23 @@
+{
+  "feature_name": "player-generator-improvement",
+  "description": "Fix critical issues in player-generator.ts identified by multi-AI review: attribute tier system not applied, unused point budget code, badge tier logic inverted, trait filtering issues",
+  "category": "fix",
+  "priority": "high",
+  "created": "2025-12-06T22:40:00Z",
+  "status": "stub",
+  "notes": "Comprehensive review from ChatGPT, Gemini, DeepSeek, Le Chat, and Grok - see feedback.md",
+  "key_issues": [
+    "Attribute generation ignores calculated point budgets - archetypes feel same-y",
+    "Primary/Secondary/Tertiary tiers barely affect output",
+    "Badge tier bonus logic is inverted (higher OVR makes bronze more likely)",
+    "Trait filtering may fail if TRAITS structure doesn't match expected format",
+    "Missing TypeScript generics on getRandomItem/weightedRandom",
+    "Unused imports: TRAITS_BY_RARITY, BADGES, BADGE_TIER_WEIGHTS"
+  ],
+  "recommended_phases": [
+    "Phase 1: Type & Safety Fixes (generics, empty array guards, validation)",
+    "Phase 2: Domain Logic (fix attribute tier system, badge logic, trait generation)",
+    "Phase 3: I/O & Environment (abstract name loading, handle CSV edge cases)",
+    "Phase 4: Testing (unit tests for archetypes, traits, badges)"
+  ]
+}

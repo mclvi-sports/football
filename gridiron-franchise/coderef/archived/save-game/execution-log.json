@@ -1,0 +1,140 @@
+[
+  {
+    "timestamp": "2025-12-06T00:57:08.812108",
+    "workorder_id": "WO-SAVE-GAME-001",
+    "feature_name": "save-game",
+    "task_count": 26,
+    "tasks": [
+      {
+        "content": "PHASE-1-001: [ ] Locate existing auth UI components",
+        "activeForm": "PHASE-1-001: [ing ] Locate existing auth UI components",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-002: [ ] Wire login form to signIn",
+        "activeForm": "PHASE-1-002: [ing ] Wire login form to signIn",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-003: [ ] Wire signup form to signUp",
+        "activeForm": "PHASE-1-003: [ing ] Wire signup form to signUp",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-004: [ ] Wire logout to signOut",
+        "activeForm": "PHASE-1-004: [ing ] Wire logout to signOut",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-005: [ ] Create auth context/provider",
+        "activeForm": "PHASE-1-005: [ing ] Create auth context/provider",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-006: [ ] Test complete auth flow",
+        "activeForm": "PHASE-1-006: [ing ] Test complete auth flow",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-001: [ ] Write save_games table migration",
+        "activeForm": "PHASE-2-001: [ing ] Write save_games table migration",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-002: [ ] Apply migration to Supabase",
+        "activeForm": "PHASE-2-002: [ing ] Apply migration to Supabase",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-003: [ ] Create RLS policies",
+        "activeForm": "PHASE-2-003: [ing ] Create RLS policies",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-004: [ ] Create TypeScript types",
+        "activeForm": "PHASE-2-004: [ing ] Create TypeScript types",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-005: [ ] Verify table in Supabase dashboard",
+        "activeForm": "PHASE-2-005: [ing ] Verify table in Supabase dashboard",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-001: [ ] Implement collectGameState",
+        "activeForm": "PHASE-3-001: [ing ] Implement collectGameState",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-002: [ ] Implement saveGame",
+        "activeForm": "PHASE-3-002: [ing ] Implement saveGame",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-003: [ ] Implement listSaves",
+        "activeForm": "PHASE-3-003: [ing ] Implement listSaves",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-004: [ ] Implement loadGame",
+        "activeForm": "PHASE-3-004: [ing ] Implement loadGame",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-005: [ ] Implement hydrateStores",
+        "activeForm": "PHASE-3-005: [ing ] Implement hydrateStores",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-006: [ ] Implement deleteSave",
+        "activeForm": "PHASE-3-006: [ing ] Implement deleteSave",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-007: [ ] Add persist to career-store",
+        "activeForm": "PHASE-3-007: [ing ] Add persist to career-store",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-008: [ ] Test save/load round-trip",
+        "activeForm": "PHASE-3-008: [ing ] Test save/load round-trip",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-001: [ ] Create SaveSlotCard component",
+        "activeForm": "PHASE-4-001: [ing ] Create SaveSlotCard component",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-002: [ ] Create SaveSlots container",
+        "activeForm": "PHASE-4-002: [ing ] Create SaveSlots container",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-003: [ ] Create SaveDialog",
+        "activeForm": "PHASE-4-003: [ing ] Create SaveDialog",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-004: [ ] Create LoadDialog",
+        "activeForm": "PHASE-4-004: [ing ] Create LoadDialog",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-005: [ ] Create saves page",
+        "activeForm": "PHASE-4-005: [ing ] Create saves page",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-006: [ ] Add to navigation",
+        "activeForm": "PHASE-4-006: [ing ] Add to navigation",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-007: [ ] Test full UI flow",
+        "activeForm": "PHASE-4-007: [ing ] Test full UI flow",
+        "status": "pending"
+      }
+    ]
+  }
+]
