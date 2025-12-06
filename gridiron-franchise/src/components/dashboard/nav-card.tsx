@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { ReactNode } from "react";
 
 interface NavCardProps {
   title: string;
-  icon: string;
+  icon: string | ReactNode;
   href: string;
   description?: string;
   variant?: "default" | "highlight";

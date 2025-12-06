@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Calendar } from "lucide-react";
 import { TeamCard } from "@/components/dashboard/team-card";
 import { NavCard } from "@/components/dashboard/nav-card";
 import { BottomTabBar } from "@/components/dashboard/bottom-tab-bar";
@@ -37,7 +38,7 @@ export default function DashboardPage() {
         {/* Schedule Card */}
         <NavCard
           title="Schedule"
-          icon="S"
+          icon={<Calendar className="w-6 h-6" />}
           href="/dashboard/schedule"
           description="Week 1"
         />
