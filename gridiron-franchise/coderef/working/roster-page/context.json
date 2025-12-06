@@ -1,0 +1,35 @@
+{
+  "feature_name": "roster-page",
+  "description": "Build a roster page for the franchise simulation game that displays all players on the user's team with filtering and sorting capabilities. The page uses the existing GameplayHeader from the dashboard layout and features tabs (ALL/Offense/Defense/ST), position dropdown filter, and sort options via bottom sheet.",
+  "goal": "Allow users to view and manage their team roster with an intuitive mobile-first interface that matches the design in roster.png",
+  "requirements": [
+    "Display player list with simplified cards (jersey number, name, position, OVR)",
+    "Tab navigation for ALL/Offense/Defense/ST position groups",
+    "Position dropdown filter within selected tab",
+    "Sort functionality via bottom sheet (OVR, Name, Position, Age)",
+    "OVR color coding (red for <80, white for normal)",
+    "Navigate to player detail on card tap",
+    "Use GameplayHeader from dashboard layout",
+    "Load roster data from useCareerStore via getTeamById()"
+  ],
+  "out_of_scope": [
+    "Player editing/trading functionality",
+    "Depth chart management",
+    "Contract/salary display on cards",
+    "Badge display on cards",
+    "Search functionality (for now)"
+  ],
+  "constraints": [
+    "Must match design in roster.png",
+    "Mobile-first responsive design",
+    "Use existing shadcn components (Sheet, Tabs)",
+    "Data comes from dev-player-store sessionStorage"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-ROSTER-PAGE-001",
+    "workorder_assigned_at": "2025-12-06T02:39:56.698440+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

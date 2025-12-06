@@ -1,0 +1,323 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "roster-page",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": [
+        "ARCHITECTURE.md - Layer structure and component organization",
+        "COMPONENTS.md - Shadcn/UI patterns and cn() utility usage",
+        "SCHEMA.md - Player interface and Position enum"
+      ],
+      "reference_implementations": [
+        "src/components/modules/views/roster-view.tsx - Existing roster view with filtering",
+        "src/components/dev-tools/roster-player-card.tsx - Current player card design",
+        "src/components/dashboard/gameplay-header.tsx - Header component to use",
+        "src/app/dashboard/dev-tools/team-roster/page.tsx - Reference for data loading"
+      ],
+      "key_patterns": [
+        "Use cn() for conditional classNames",
+        "Use shadcn Sheet component for bottom sheets",
+        "Load data via getTeamById() from dev-player-store",
+        "Position groups: OFFENSE_POSITIONS, DEFENSE_POSITIONS, SPECIAL_POSITIONS"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_overview": "Build a mobile-first roster page that displays team players with filtering by position group (tabs) and specific positions (dropdown), with sorting via bottom sheet. Design matches roster.png with simplified player cards showing jersey number, name, position, and color-coded OVR.",
+      "business_value": "Core franchise management feature allowing users to view and navigate their team roster efficiently",
+      "scope": {
+        "in_scope": [
+          "Simplified player cards with jersey number circle, name, position, OVR",
+          "Tab navigation (ALL/Offense/Defense/ST)",
+          "Position dropdown filter",
+          "Sort bottom sheet (OVR, Name, Position, Age)",
+          "OVR color coding (red <80, white normal)",
+          "Navigation to player detail on tap"
+        ],
+        "out_of_scope": [
+          "Player editing/trading",
+          "Depth chart management",
+          "Contract/salary on cards",
+          "Badge display on cards",
+          "Search functionality"
+        ]
+      }
+    },
+    "2_risk_assessment": {
+      "complexity": "medium",
+      "estimated_tasks": 12,
+      "risks": [
+        {
+          "risk": "Data availability - roster may be empty if user has not generated game data",
+          "mitigation": "Show empty state with link to generate data",
+          "severity": "low"
+        },
+        {
+          "risk": "Position mapping complexity for filter dropdown",
+          "mitigation": "Reuse existing POSITION_FILTER_MAP from team-roster page",
+          "severity": "low"
+        }
+      ],
+      "dependencies": [
+        "useCareerStore for playerTeamId",
+        "dev-player-store for getTeamById()",
+        "Player type from lib/types",
+        "shadcn Sheet component"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        {"path": "src/components/roster/roster-tabs.tsx", "purpose": "Tab navigation component for position groups"},
+        {"path": "src/components/roster/roster-filters.tsx", "purpose": "Position dropdown and filter/sort icon buttons"},
+        {"path": "src/components/roster/roster-player-card.tsx", "purpose": "Simplified player card matching design"},
+        {"path": "src/components/roster/roster-sort-sheet.tsx", "purpose": "Bottom sheet for sort options"}
+      ],
+      "files_to_modify": [
+        {"path": "src/app/dashboard/roster/page.tsx", "purpose": "Update stub with full implementation"}
+      ],
+      "files_to_reference": [
+        {"path": "src/app/dashboard/dev-tools/team-roster/page.tsx", "purpose": "Data loading and filtering patterns"},
+        {"path": "src/components/dev-tools/roster-player-card.tsx", "purpose": "OVR color coding logic"},
+        {"path": "src/lib/dev-player-store.ts", "purpose": "getTeamById() function"},
+        {"path": "src/lib/types.ts", "purpose": "Player and Position types"}
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Roster Tabs",
+          "description": "Tab navigation for ALL/Offense/Defense/ST position groups",
+          "requirements": ["Tab navigation for ALL/Offense/Defense/ST position groups"]
+        },
+        {
+          "id": "F2",
+          "name": "Position Filter",
+          "description": "Dropdown to filter by specific position within selected tab",
+          "requirements": ["Position dropdown filter within selected tab"]
+        },
+        {
+          "id": "F3",
+          "name": "Sort Functionality",
+          "description": "Bottom sheet with sort options (OVR, Name, Position, Age)",
+          "requirements": ["Sort functionality via bottom sheet (OVR, Name, Position, Age)"]
+        },
+        {
+          "id": "F4",
+          "name": "Player Cards",
+          "description": "Simplified cards with jersey circle, name, position, color-coded OVR",
+          "requirements": ["Display player list with simplified cards (jersey number, name, position, OVR)", "OVR color coding (red for <80, white for normal)"]
+        },
+        {
+          "id": "F5",
+          "name": "Navigation",
+          "description": "Tap card to navigate to player detail page",
+          "requirements": ["Navigate to player detail on card tap"]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-ROSTER-PAGE-001",
+        "name": "Roster Page",
+        "feature_dir": "coderef/working/roster-page"
+      },
+      "tasks": [
+        {
+          "id": "ROSTER-001",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Create roster-tabs.tsx component with ALL/Offense/Defense/ST tabs",
+          "feature": "F1",
+          "file": "src/components/roster/roster-tabs.tsx",
+          "acceptance": "Tabs render, active state shows blue text and underline, onTabChange callback works"
+        },
+        {
+          "id": "ROSTER-002",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Create roster-filters.tsx component with position dropdown and icon buttons",
+          "feature": "F2",
+          "file": "src/components/roster/roster-filters.tsx",
+          "acceptance": "Dropdown shows positions based on active tab, filter/sort icons render"
+        },
+        {
+          "id": "ROSTER-003",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Create roster-sort-sheet.tsx bottom sheet with sort options",
+          "feature": "F3",
+          "file": "src/components/roster/roster-sort-sheet.tsx",
+          "acceptance": "Sheet opens on sort icon tap, shows OVR/Name/Position/Age options, calls onSortChange"
+        },
+        {
+          "id": "ROSTER-004",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Create simplified roster-player-card.tsx matching design",
+          "feature": "F4",
+          "file": "src/components/roster/roster-player-card.tsx",
+          "acceptance": "Card shows jersey circle, name, position, OVR with color coding"
+        },
+        {
+          "id": "ROSTER-005",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Implement OVR color coding logic (red <80, white normal)",
+          "feature": "F4",
+          "file": "src/components/roster/roster-player-card.tsx",
+          "acceptance": "OVR text is red when <80, white when >=80"
+        },
+        {
+          "id": "ROSTER-006",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Update roster page with data loading from useCareerStore + getTeamById",
+          "feature": "F5",
+          "file": "src/app/dashboard/roster/page.tsx",
+          "acceptance": "Page loads roster data for selected team, shows loading/empty states"
+        },
+        {
+          "id": "ROSTER-007",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Implement tab filtering logic (offense/defense/special positions)",
+          "feature": "F1",
+          "file": "src/app/dashboard/roster/page.tsx",
+          "acceptance": "Selecting tab filters players to correct position group"
+        },
+        {
+          "id": "ROSTER-008",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Implement position dropdown filtering",
+          "feature": "F2",
+          "file": "src/app/dashboard/roster/page.tsx",
+          "acceptance": "Selecting position filters to that specific position"
+        },
+        {
+          "id": "ROSTER-009",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Implement sort logic for all sort options",
+          "feature": "F3",
+          "file": "src/app/dashboard/roster/page.tsx",
+          "acceptance": "Sorting by OVR/Name/Position/Age works correctly"
+        },
+        {
+          "id": "ROSTER-010",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Add navigation to player detail on card tap",
+          "feature": "F5",
+          "file": "src/app/dashboard/roster/page.tsx",
+          "acceptance": "Tapping card navigates to /dashboard/player/[id]"
+        },
+        {
+          "id": "ROSTER-011",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Add empty state when no roster data",
+          "feature": "F5",
+          "file": "src/app/dashboard/roster/page.tsx",
+          "acceptance": "Shows friendly message when roster is empty"
+        },
+        {
+          "id": "ROSTER-012",
+          "workorder_id": "WO-ROSTER-PAGE-001",
+          "description": "Style page to match roster.png design",
+          "feature": "F4",
+          "file": "src/app/dashboard/roster/page.tsx",
+          "acceptance": "Visual appearance matches the design reference"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Components",
+          "description": "Create all roster components",
+          "tasks": ["ROSTER-001", "ROSTER-002", "ROSTER-003", "ROSTER-004", "ROSTER-005"],
+          "deliverables": [
+            "roster-tabs.tsx",
+            "roster-filters.tsx",
+            "roster-sort-sheet.tsx",
+            "roster-player-card.tsx"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Page Integration",
+          "description": "Integrate components into roster page with data loading",
+          "tasks": ["ROSTER-006", "ROSTER-007", "ROSTER-008", "ROSTER-009"],
+          "deliverables": [
+            "Updated roster/page.tsx with full implementation"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Polish",
+          "description": "Navigation, empty states, and final styling",
+          "tasks": ["ROSTER-010", "ROSTER-011", "ROSTER-012"],
+          "deliverables": [
+            "Complete roster page matching design"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_testing": [
+        "Verify tabs filter players correctly",
+        "Verify position dropdown updates based on selected tab",
+        "Verify sort changes player order",
+        "Verify OVR color coding (find player <80 and >=80)",
+        "Verify card tap navigates to player detail",
+        "Verify empty state shows when no data"
+      ],
+      "visual_testing": [
+        "Compare page against roster.png design",
+        "Test on mobile viewport sizes",
+        "Verify dark mode styling"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "All 4 tabs filter players correctly",
+        "Position dropdown shows relevant positions per tab",
+        "All 4 sort options work correctly",
+        "OVR shows red text for ratings below 80",
+        "Tapping player card navigates to detail page",
+        "Empty state displays when no roster data"
+      ],
+      "visual": [
+        "Layout matches roster.png design",
+        "Cards show jersey circle, name, position, OVR",
+        "Mobile-first responsive design works"
+      ],
+      "technical": [
+        "Page uses GameplayHeader from layout (no custom header)",
+        "Data loads from useCareerStore + getTeamById()",
+        "Uses shadcn Sheet for sort bottom sheet"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Create src/components/roster/ directory",
+        "[ ] Create roster-tabs.tsx",
+        "[ ] Create roster-filters.tsx",
+        "[ ] Create roster-sort-sheet.tsx",
+        "[ ] Create roster-player-card.tsx",
+        "[ ] Implement OVR color coding"
+      ],
+      "phase_2_checklist": [
+        "[ ] Update roster/page.tsx with imports",
+        "[ ] Add data loading from stores",
+        "[ ] Implement tab filtering",
+        "[ ] Implement position filtering",
+        "[ ] Implement sorting"
+      ],
+      "phase_3_checklist": [
+        "[ ] Add player card tap navigation",
+        "[ ] Add empty state",
+        "[ ] Final styling polish",
+        "[ ] Test against design"
+      ]
+    }
+  }
+}
