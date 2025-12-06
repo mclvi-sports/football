@@ -54,7 +54,10 @@ export function PlayerDetailModal({ playerId, onClose }: PlayerDetailModalProps)
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 bg-background">
+    <div
+      className="fixed left-0 right-0 bottom-0 z-40 bg-background"
+      style={{ top: 'calc(3.5rem + env(safe-area-inset-top))' }}
+    >
       {/* Close Button */}
       <button
         onClick={onClose}
