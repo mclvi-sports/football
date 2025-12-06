@@ -1,0 +1,16 @@
+{
+  "archived_features": [
+    {
+      "feature_name": "Roster Page",
+      "folder_name": "roster-page",
+      "archived_at": "2025-12-06T03:08:56.423874+00:00"
+    },
+    {
+      "feature_name": "About Update",
+      "folder_name": "about-update",
+      "archived_at": "2025-12-06T22:38:08.023714+00:00"
+    }
+  ],
+  "total_archived": 2,
+  "last_updated": "2025-12-06T22:38:08.023714+00:00"
+}

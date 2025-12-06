@@ -22,6 +22,23 @@
           "reason": "Feature completion: offseason-weekly-flow-specs",
           "impact": "Documentation now reflects 0.2.0 changes",
           "breaking": false
+        },
+        {
+          "id": "change-003",
+          "type": "feature",
+          "severity": "minor",
+          "title": "Redesigned About page with tabbed interface combining app overview and game data reference. Added 6 content tabs (Overview, Players, Staff, Teams, Systems, Season) with natural language content for easy user navigation.",
+          "description": "Workorder WO-ABOUT-UPDATE-001: Redesigned About page with tabbed interface combining app overview and game data reference. Added 6 content tabs (Overview, Players, Staff, Teams, Systems, Season) with natural language content for easy user navigation.",
+          "files": [
+            "src/lib/data/about-content.ts",
+            "src/components/about/about-hero.tsx",
+            "src/components/about/about-tabs.tsx",
+            "src/components/about/index.ts",
+            "src/app/dashboard/about/page.tsx"
+          ],
+          "reason": "Feature completion: about-update",
+          "impact": "Documentation now reflects 0.2.0 changes",
+          "breaking": false
         }
       ],
       "contributors": []
