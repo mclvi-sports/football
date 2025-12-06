@@ -83,7 +83,7 @@ export function GameplayHeader() {
           <div className="flex items-center gap-3">
             <Home className="w-5 h-5" />
             <span className="text-border">|</span>
-            <span className="font-semibold">Menu</span>
+            <span className="font-semibold">Dashboard</span>
           </div>
           <button
             className="w-10 h-10 flex items-center justify-center -mr-2 active:opacity-70 transition-opacity"
