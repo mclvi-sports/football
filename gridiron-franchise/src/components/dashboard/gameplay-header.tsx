@@ -81,8 +81,8 @@ export function GameplayHeader() {
         {/* Drawer Header */}
         <div className="h-14 px-6 flex items-center justify-between border-b border-border">
           <div className="flex items-center gap-3">
-            <Home className="w-5 h-5" />
-            <span className="font-semibold">Dashboard</span>
+            <Menu className="w-5 h-5" />
+            <span className="font-semibold">Menu</span>
           </div>
           <button
             className="w-10 h-10 flex items-center justify-center -mr-2 active:opacity-70 transition-opacity"
