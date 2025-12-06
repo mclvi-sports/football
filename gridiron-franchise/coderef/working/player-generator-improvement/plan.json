@@ -70,8 +70,8 @@
       "features": [
         {
           "id": "F1",
-          "name": "Fix Attribute Tier System",
-          "description": "Remove unused points budget code. Apply tier-based boosts so primary attributes are significantly higher than secondary/tertiary."
+          "name": "Wire Attribute Tier System",
+          "description": "Connect existing getBasePoints() and tier point calculations to actually drive attribute ratings. Primary attributes significantly higher than secondary/tertiary."
         },
         {
           "id": "F2",
@@ -90,8 +90,8 @@
         },
         {
           "id": "F5",
-          "name": "Code Cleanup",
-          "description": "Remove unused imports, fix Record type, use name rarity for selection."
+          "name": "Wire Remaining Systems",
+          "description": "Wire TRAITS_BY_RARITY for trait selection, use name rarity weighting for name selection."
         }
       ]
     },
@@ -129,20 +129,20 @@
         {
           "id": "PGEN-004",
           "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
-          "description": "Remove unused imports",
+          "description": "Verify all imports will be wired (no removal needed)",
           "file": "src/lib/generators/player-generator.ts",
-          "changes": ["Remove TRAITS_BY_RARITY if unused", "Remove BADGES if unused", "Remove BADGE_TIER_WEIGHTS if unused"],
-          "estimated_loc": -3
+          "changes": ["TRAITS_BY_RARITY - will be wired in PGEN-007", "BADGES - already used via getBadgesForPosition", "BADGE_TIER_WEIGHTS - will be wired in PGEN-008"],
+          "estimated_loc": 0
         },
         {
           "id": "PGEN-005",
           "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
-          "description": "Rewrite generateAttributes with tier-based boosts",
+          "description": "Wire generateAttributes to use existing point budget system",
           "file": "src/lib/generators/player-generator.ts",
           "changes": [
-            "Remove unused getBasePoints function",
-            "Remove unused primaryPoints/secondaryPoints/tertiaryPoints calculations",
-            "Calculate base rating that scales with OVR",
+            "Keep getBasePoints() - use its output to drive ratings",
+            "Keep primaryPoints/secondaryPoints/tertiaryPoints - use them to calculate tier ratings",
+            "Derive primaryRating/secondaryRating/tertiaryRating from point budgets instead of targetOvr ± random",
             "Apply tier boosts: primary +18-30, secondary +10-20, tertiary +2-12",
             "Ensure primary > secondary > tertiary > base on average"
           ],
@@ -159,17 +159,17 @@
         {
           "id": "PGEN-007",
           "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
-          "description": "Add position filtering to generateTraits",
+          "description": "Wire TRAITS_BY_RARITY and add position filtering to generateTraits",
           "file": "src/lib/generators/player-generator.ts",
-          "changes": ["Filter availablePositive by position if traits have positions array", "Fall back to all traits if pool empty"],
+          "changes": ["Use TRAITS_BY_RARITY for rarity-weighted trait pool building", "Filter availablePositive by position if traits have positions array", "Fall back to all traits if pool empty"],
           "estimated_loc": 15
         },
         {
           "id": "PGEN-008",
           "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
-          "description": "Implement 70/30 badge split",
+          "description": "Wire BADGE_TIER_WEIGHTS and implement 70/30 badge split",
           "file": "src/lib/generators/player-generator.ts",
-          "changes": ["70% chance to pick position-specific badge", "30% chance to pick universal badge", "Align with comment in generateBadges"],
+          "changes": ["Use BADGE_TIER_WEIGHTS via weightedRandom for tier assignment", "70% chance to pick position-specific badge", "30% chance to pick universal badge", "Use UNIVERSAL_BADGES for the 30% pool"],
           "estimated_loc": 20
         },
         {
@@ -195,23 +195,23 @@
         {
           "phase": 1,
           "name": "Safety Guards",
-          "description": "Add defensive programming guards and remove dead code",
+          "description": "Add defensive programming guards",
           "tasks": ["PGEN-001", "PGEN-002", "PGEN-003", "PGEN-004"],
-          "deliverables": ["Empty array guards", "OVR validation", "Clean imports"]
+          "deliverables": ["Empty array guards", "OVR validation", "Verify imports ready for wiring"]
         },
         {
           "phase": 2,
-          "name": "Core Attribute Fix",
-          "description": "Fix the main issue: make archetypes affect attributes meaningfully",
+          "name": "Wire Attribute System",
+          "description": "Wire existing point budget system to drive attribute ratings meaningfully",
           "tasks": ["PGEN-005", "PGEN-006"],
-          "deliverables": ["Tier-based attribute boosts", "Scaled base ratings"]
+          "deliverables": ["Point budgets driving ratings", "Tier-based attribute boosts", "Scaled base ratings"]
         },
         {
           "phase": 3,
-          "name": "Trait & Badge Alignment",
-          "description": "Align trait and badge logic with documented behavior",
+          "name": "Wire Trait & Badge Systems",
+          "description": "Wire TRAITS_BY_RARITY and BADGE_TIER_WEIGHTS to their respective generators",
           "tasks": ["PGEN-007", "PGEN-008"],
-          "deliverables": ["Position-aware traits", "70/30 badge split"]
+          "deliverables": ["TRAITS_BY_RARITY wired", "BADGE_TIER_WEIGHTS wired", "70/30 badge split", "Position-aware traits"]
         },
         {
           "phase": 4,
@@ -251,21 +251,22 @@
         "Add guard to getRandomItem",
         "Add guard to weightedRandom",
         "Add OVR validation to generatePlayer",
-        "Remove unused imports"
+        "Verify imports ready for wiring"
       ],
       "phase_2": [
-        "Remove getBasePoints function",
-        "Remove primaryPoints/secondaryPoints/tertiaryPoints calculations",
-        "Implement tier boost system",
+        "Wire getBasePoints() output to drive ratings",
+        "Wire primaryPoints/secondaryPoints/tertiaryPoints to tier calculations",
+        "Implement tier boost system using point budgets",
         "Scale base rating with OVR"
       ],
       "phase_3": [
-        "Add position filtering to trait selection",
-        "Implement 70/30 badge split"
+        "Wire TRAITS_BY_RARITY for trait pool building",
+        "Wire BADGE_TIER_WEIGHTS via weightedRandom",
+        "Implement 70/30 badge split using UNIVERSAL_BADGES"
       ],
       "phase_4": [
-        "Add pickNameByRarity helper",
-        "Update calculatePotential to allow decline"
+        "Add pickNameByRarity helper using name rarity field",
+        "Update calculatePotential to allow decline for veterans"
       ]
     }
   }

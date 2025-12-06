@@ -1,0 +1,70 @@
+[
+  {
+    "timestamp": "2025-12-06T18:33:26.731143",
+    "workorder_id": "WO-PLAYER-GENERATOR-IMPROVEMENT-001",
+    "feature_name": "player-generator-improvement",
+    "task_count": 12,
+    "tasks": [
+      {
+        "content": "PHASE-1-001: Add guard to getRandomItem",
+        "activeForm": "PHASE-1-001: Adding guard to getRandomItem",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-002: Add guard to weightedRandom",
+        "activeForm": "PHASE-1-002: Adding guard to weightedRandom",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-003: Add OVR validation to generatePlayer",
+        "activeForm": "PHASE-1-003: Adding OVR validation to generatePlayer",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-004: Remove unused imports",
+        "activeForm": "PHASE-1-004: Removeing unused imports",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-001: Remove getBasePoints function",
+        "activeForm": "PHASE-2-001: Removeing getBasePoints function",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-002: Remove primaryPoints/secondaryPoints/tertiaryPoints calculations",
+        "activeForm": "PHASE-2-002: Removeing primaryPoints/secondaryPoints/tertiaryPoints calculations",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-003: Implement tier boost system",
+        "activeForm": "PHASE-2-003: Implementing tier boost system",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-004: Scale base rating with OVR",
+        "activeForm": "PHASE-2-004: Scaleing base rating with OVR",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-001: Add position filtering to trait selection",
+        "activeForm": "PHASE-3-001: Adding position filtering to trait selection",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-002: Implement 70/30 badge split",
+        "activeForm": "PHASE-3-002: Implementing 70/30 badge split",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-001: Add pickNameByRarity helper",
+        "activeForm": "PHASE-4-001: Adding pickNameByRarity helper",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-002: Update calculatePotential to allow decline",
+        "activeForm": "PHASE-4-002: Updating calculatePotential to allow decline",
+        "status": "pending"
+      }
+    ]
+  }
+]

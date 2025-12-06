@@ -63,10 +63,16 @@ export function loadNameDatabase() {
 // --- Utility Functions ---
 
 function getRandomItem<T>(items: T[]): T {
+  if (items.length === 0) {
+    throw new Error('getRandomItem: Cannot select from empty array');
+  }
   return items[Math.floor(Math.random() * items.length)];
 }
 
 function weightedRandom<T>(items: { item: T; weight: number }[]): T {
+  if (items.length === 0) {
+    throw new Error('weightedRandom: Cannot select from empty array');
+  }
   const totalWeight = items.reduce((sum, i) => sum + i.weight, 0);
   let random = Math.random() * totalWeight;
 
