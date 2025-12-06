@@ -1,0 +1,460 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "save-game",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": [
+        "README.md",
+        "ARCHITECTURE.md",
+        "API.md",
+        "COMPONENTS.md",
+        "SCHEMA.md"
+      ],
+      "reference_files": [
+        "src/lib/supabase/client.ts",
+        "src/lib/supabase/server.ts",
+        "src/lib/supabase/auth.ts",
+        "src/stores/gm-points-store.ts",
+        "src/stores/gm-equipment-store.ts",
+        "src/stores/gm-prestige-store.ts",
+        "src/stores/scouting-store.ts",
+        "src/stores/career-store.ts",
+        "src/lib/career-stats/career-stats-store.ts"
+      ],
+      "technology_stack": {
+        "frontend": "Next.js 16, React 19, TypeScript",
+        "state": "Zustand with persist middleware",
+        "backend": "Supabase (PostgreSQL, Auth, RLS)",
+        "ui": "Shadcn/UI, Tailwind CSS"
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Cloud Save Game System",
+      "description": "Implement cloud save/load functionality with 5 slots per user via Supabase. Users can manually save and load their complete game state including GM progression, scouting data, and career stats.",
+      "goal": "Persist game state to Supabase so progress persists across devices and sessions",
+      "scope": {
+        "in_scope": [
+          "Supabase database schema for save games",
+          "Row-level security policies",
+          "Wire existing auth UI to Supabase auth functions",
+          "Save game service to collect/restore all store state",
+          "5 save slots with metadata display",
+          "Manual save and load UI"
+        ],
+        "out_of_scope": [
+          "Auto-save functionality",
+          "Cross-user save sharing",
+          "Offline support",
+          "Save file export/import"
+        ]
+      },
+      "estimated_complexity": "Medium",
+      "key_deliverables": [
+        "Supabase save_games table with RLS",
+        "Auth UI wired to Supabase",
+        "Save/load service functions",
+        "Save slots UI component",
+        "Integration with all Zustand stores"
+      ]
+    },
+    "2_risk_assessment": {
+      "risks": [
+        {
+          "risk": "Auth UI not properly wired",
+          "severity": "high",
+          "mitigation": "Test auth flow end-to-end before implementing saves"
+        },
+        {
+          "risk": "Large save data exceeds Supabase limits",
+          "severity": "medium",
+          "mitigation": "Compress JSONB data, exclude regenerable data"
+        },
+        {
+          "risk": "Store hydration order causes issues",
+          "severity": "medium",
+          "mitigation": "Load all stores atomically, validate state before hydrating"
+        },
+        {
+          "risk": "RLS policies block legitimate access",
+          "severity": "low",
+          "mitigation": "Test policies with multiple user accounts"
+        }
+      ],
+      "dependencies": [
+        "Supabase project configured (confirmed)",
+        "Auth functions exist in src/lib/supabase/auth.ts (confirmed)",
+        "Zustand stores use persist middleware (confirmed)"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        { "path": "src/lib/supabase/save-game.ts", "purpose": "Save/load service functions" },
+        { "path": "src/lib/supabase/types.ts", "purpose": "Supabase table type definitions" },
+        { "path": "src/components/save/save-slots.tsx", "purpose": "Save slots UI with 5 slots" },
+        { "path": "src/components/save/save-slot-card.tsx", "purpose": "Individual save slot card" },
+        { "path": "src/components/save/save-dialog.tsx", "purpose": "Save confirmation dialog" },
+        { "path": "src/components/save/load-dialog.tsx", "purpose": "Load confirmation dialog" },
+        { "path": "src/app/dashboard/saves/page.tsx", "purpose": "Save management page" },
+        { "path": "supabase/migrations/001_save_games.sql", "purpose": "Database schema migration" }
+      ],
+      "files_to_modify": [
+        { "path": "src/lib/supabase/auth.ts", "purpose": "Wire auth UI components" },
+        { "path": "src/stores/career-store.ts", "purpose": "Add persist middleware" },
+        { "path": "src/lib/constants/route-titles.ts", "purpose": "Add Saves route title" }
+      ],
+      "existing_patterns": {
+        "store_persistence": "Zustand persist middleware to localStorage",
+        "supabase_client": "SSR-compatible client in src/lib/supabase/client.ts",
+        "component_style": "Shadcn/UI with Tailwind, cn() utility"
+      }
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Auth Wiring",
+          "description": "Connect existing auth UI components to Supabase auth functions"
+        },
+        {
+          "id": "F2",
+          "name": "Database Schema",
+          "description": "Create save_games table with RLS policies in Supabase"
+        },
+        {
+          "id": "F3",
+          "name": "Save Service",
+          "description": "Functions to collect all store state and save to Supabase"
+        },
+        {
+          "id": "F4",
+          "name": "Load Service",
+          "description": "Functions to load save data and hydrate all stores"
+        },
+        {
+          "id": "F5",
+          "name": "Save Slots UI",
+          "description": "5-slot interface with metadata display and save/load actions"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SAVE-GAME-001",
+        "name": "Save Game",
+        "feature_dir": "coderef/working/save-game"
+      },
+      "tasks": [
+        {
+          "id": "AUTH-001",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F1",
+          "description": "Identify existing auth UI components and their locations",
+          "type": "research",
+          "estimated_loc": 0
+        },
+        {
+          "id": "AUTH-002",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F1",
+          "description": "Wire login form to signIn function from auth.ts",
+          "type": "implementation",
+          "estimated_loc": 30
+        },
+        {
+          "id": "AUTH-003",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F1",
+          "description": "Wire signup form to signUp function from auth.ts",
+          "type": "implementation",
+          "estimated_loc": 30
+        },
+        {
+          "id": "AUTH-004",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F1",
+          "description": "Wire logout button to signOut function",
+          "type": "implementation",
+          "estimated_loc": 15
+        },
+        {
+          "id": "AUTH-005",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F1",
+          "description": "Add auth state provider/context for session management",
+          "type": "implementation",
+          "estimated_loc": 50
+        },
+        {
+          "id": "DB-001",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F2",
+          "description": "Create save_games table migration SQL",
+          "type": "implementation",
+          "estimated_loc": 40
+        },
+        {
+          "id": "DB-002",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F2",
+          "description": "Create RLS policies for user data isolation",
+          "type": "implementation",
+          "estimated_loc": 20
+        },
+        {
+          "id": "DB-003",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F2",
+          "description": "Create Supabase type definitions for save_games table",
+          "type": "implementation",
+          "estimated_loc": 30
+        },
+        {
+          "id": "SVC-001",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F3",
+          "description": "Create collectGameState function to gather all store data",
+          "type": "implementation",
+          "estimated_loc": 60
+        },
+        {
+          "id": "SVC-002",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F3",
+          "description": "Create saveGame function to upsert to Supabase",
+          "type": "implementation",
+          "estimated_loc": 40
+        },
+        {
+          "id": "SVC-003",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F3",
+          "description": "Create listSaves function to fetch user's 5 slots",
+          "type": "implementation",
+          "estimated_loc": 25
+        },
+        {
+          "id": "SVC-004",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F4",
+          "description": "Create loadGame function to fetch save by ID",
+          "type": "implementation",
+          "estimated_loc": 30
+        },
+        {
+          "id": "SVC-005",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F4",
+          "description": "Create hydrateStores function to restore all store state",
+          "type": "implementation",
+          "estimated_loc": 80
+        },
+        {
+          "id": "SVC-006",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F4",
+          "description": "Create deleteSave function to remove a save slot",
+          "type": "implementation",
+          "estimated_loc": 20
+        },
+        {
+          "id": "UI-001",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F5",
+          "description": "Create SaveSlotCard component with metadata display",
+          "type": "implementation",
+          "estimated_loc": 80
+        },
+        {
+          "id": "UI-002",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F5",
+          "description": "Create SaveSlots container with 5 slots grid",
+          "type": "implementation",
+          "estimated_loc": 60
+        },
+        {
+          "id": "UI-003",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F5",
+          "description": "Create SaveDialog for save confirmation with name input",
+          "type": "implementation",
+          "estimated_loc": 70
+        },
+        {
+          "id": "UI-004",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F5",
+          "description": "Create LoadDialog for load confirmation",
+          "type": "implementation",
+          "estimated_loc": 50
+        },
+        {
+          "id": "UI-005",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F5",
+          "description": "Create saves page at /dashboard/saves",
+          "type": "implementation",
+          "estimated_loc": 40
+        },
+        {
+          "id": "UI-006",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F5",
+          "description": "Add Saves route to route-titles.ts and navigation",
+          "type": "implementation",
+          "estimated_loc": 10
+        },
+        {
+          "id": "INT-001",
+          "workorder_id": "WO-SAVE-GAME-001",
+          "feature": "F3",
+          "description": "Add persist middleware to career-store if missing",
+          "type": "implementation",
+          "estimated_loc": 20
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Auth Wiring",
+          "description": "Connect existing auth UI to Supabase auth functions",
+          "tasks": ["AUTH-001", "AUTH-002", "AUTH-003", "AUTH-004", "AUTH-005"],
+          "deliverables": [
+            "Login form connected to Supabase signIn",
+            "Signup form connected to Supabase signUp",
+            "Logout functionality working",
+            "Auth state accessible throughout app"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Database Setup",
+          "description": "Create Supabase schema and type definitions",
+          "tasks": ["DB-001", "DB-002", "DB-003"],
+          "deliverables": [
+            "save_games table created in Supabase",
+            "RLS policies ensuring user isolation",
+            "TypeScript types for database tables"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Save/Load Service",
+          "description": "Implement core save and load functionality",
+          "tasks": ["SVC-001", "SVC-002", "SVC-003", "SVC-004", "SVC-005", "SVC-006", "INT-001"],
+          "deliverables": [
+            "collectGameState gathers all store data",
+            "saveGame persists to Supabase",
+            "loadGame retrieves and hydrates stores",
+            "listSaves returns user's save slots",
+            "deleteSave removes a slot"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "UI Components",
+          "description": "Build save slots interface and dialogs",
+          "tasks": ["UI-001", "UI-002", "UI-003", "UI-004", "UI-005", "UI-006"],
+          "deliverables": [
+            "SaveSlotCard showing metadata",
+            "SaveSlots grid with 5 slots",
+            "Save and Load confirmation dialogs",
+            "Saves page accessible from navigation"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Sign up new user and verify account created",
+        "Sign in existing user and verify session",
+        "Sign out and verify session cleared",
+        "Save game to empty slot and verify in Supabase",
+        "Load saved game and verify all stores hydrated",
+        "Overwrite existing save and verify updated",
+        "Delete save and verify removed",
+        "Verify user A cannot see user B saves (RLS)"
+      ],
+      "edge_cases": [
+        "Save with no game data (new career)",
+        "Load when stores have existing data",
+        "Network failure during save/load",
+        "Attempt to save 6th slot (should be blocked)"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        {
+          "id": "SC-1",
+          "description": "User can sign up, sign in, and sign out",
+          "measurable": "Auth flow completes without errors"
+        },
+        {
+          "id": "SC-2",
+          "description": "User can save game state to any of 5 slots",
+          "measurable": "Save persists to Supabase save_games table"
+        },
+        {
+          "id": "SC-3",
+          "description": "User can load game state from any slot",
+          "measurable": "All Zustand stores hydrated with saved data"
+        },
+        {
+          "id": "SC-4",
+          "description": "Save metadata displays correctly",
+          "measurable": "Team, season, week, last saved date shown"
+        },
+        {
+          "id": "SC-5",
+          "description": "User data is isolated",
+          "measurable": "RLS prevents cross-user access"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Locate existing auth UI components",
+        "[ ] Wire login form to signIn",
+        "[ ] Wire signup form to signUp",
+        "[ ] Wire logout to signOut",
+        "[ ] Create auth context/provider",
+        "[ ] Test complete auth flow"
+      ],
+      "phase_2": [
+        "[ ] Write save_games table migration",
+        "[ ] Apply migration to Supabase",
+        "[ ] Create RLS policies",
+        "[ ] Create TypeScript types",
+        "[ ] Verify table in Supabase dashboard"
+      ],
+      "phase_3": [
+        "[ ] Implement collectGameState",
+        "[ ] Implement saveGame",
+        "[ ] Implement listSaves",
+        "[ ] Implement loadGame",
+        "[ ] Implement hydrateStores",
+        "[ ] Implement deleteSave",
+        "[ ] Add persist to career-store",
+        "[ ] Test save/load round-trip"
+      ],
+      "phase_4": [
+        "[ ] Create SaveSlotCard component",
+        "[ ] Create SaveSlots container",
+        "[ ] Create SaveDialog",
+        "[ ] Create LoadDialog",
+        "[ ] Create saves page",
+        "[ ] Add to navigation",
+        "[ ] Test full UI flow"
+      ]
+    }
+  }
+}

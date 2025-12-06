@@ -1,0 +1,30 @@
+{
+  "feature_name": "save-game",
+  "description": "Cloud save/load system with 5 slots per user via Supabase. Users can manually save and load game state, with metadata showing team, season, week, and last saved date.",
+  "goal": "Persist game state to Supabase so progress persists across devices and sessions",
+  "requirements": [
+    "5 save slots per user",
+    "Manual save and load buttons in UI",
+    "Save metadata display (team, season, week, last saved)",
+    "Wire existing auth UI to Supabase",
+    "Collect state from all Zustand stores (GM Points, Equipment, Prestige, Scouting, Career Stats)"
+  ],
+  "out_of_scope": [
+    "Auto-save functionality",
+    "Cross-user save sharing",
+    "Offline support"
+  ],
+  "constraints": [
+    "Must wire existing auth UI components to Supabase auth functions",
+    "Use existing Zustand stores as data source",
+    "Implement Supabase RLS for user data isolation",
+    "Save file export/import not required"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-SAVE-GAME-001",
+    "workorder_assigned_at": "2025-12-06T05:33:08.743427+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}
