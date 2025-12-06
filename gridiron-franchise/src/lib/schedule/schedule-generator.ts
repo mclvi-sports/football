@@ -401,10 +401,16 @@ function countNearbyGames(teamGames: Set<number>, week: number): number {
 // Uses a constraint satisfaction solver (backtracking with MRV/LCV heuristics)
 // to guarantee 100% valid schedules. Falls back to greedy if CSP times out.
 
+interface DistributionResult {
+  weeks: WeekSchedule[];
+  byeWeeks: Map<string, number>;
+  placed: number;
+}
+
 function distributeGamesToWeeks(
   allGames: ScheduledGame[],
-  byeWeeks: Map<string, number>
-): WeekSchedule[] {
+  initialByeWeeks: Map<string, number>
+): DistributionResult {
   console.log(`Attempting hybrid greedy + targeted repair for ${allGames.length} games...`);
 
   // Try many attempts with different orderings
@@ -412,6 +418,7 @@ function distributeGamesToWeeks(
   const TIME_LIMIT_MS = 4500;
   const startTime = Date.now();
   let bestWeeks: WeekSchedule[] = [];
+  let bestByeWeeks: Map<string, number> = initialByeWeeks;
   let bestPlaced = 0;
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
@@ -426,15 +433,16 @@ function distributeGamesToWeeks(
     if (result.placed > bestPlaced) {
       bestPlaced = result.placed;
       bestWeeks = result.weeks;
+      bestByeWeeks = attemptByeWeeks;
       if (result.placed === allGames.length) {
         console.log(`Hybrid succeeded: ${result.placed}/${allGames.length} in ${attempt + 1} attempts (${Date.now() - startTime}ms)`);
-        return result.weeks;
+        return { weeks: result.weeks, byeWeeks: attemptByeWeeks, placed: result.placed };
       }
     }
   }
 
   console.warn(`Hybrid: Best ${bestPlaced}/${allGames.length} (${Date.now() - startTime}ms)`);
-  return bestWeeks;
+  return { weeks: bestWeeks, byeWeeks: bestByeWeeks, placed: bestPlaced };
 }
 
 // ============================================================================
@@ -1551,6 +1559,14 @@ export function generateSchedule(config: ScheduleGeneratorConfig): LeagueSchedul
   }
   console.log(`Total matchups generated: ${totalMatchups} (expected: 544 = 32 teams × 17 games)`);
 
+  // Verify each team has exactly 17 matchups
+  for (const [teamId, matchups] of allMatchups) {
+    if (matchups.length !== 17) {
+      console.error(`ERROR: ${teamId} has ${matchups.length} matchups, expected 17`);
+      throw new Error(`Matchup generation failed: ${teamId} has ${matchups.length} matchups, expected 17`);
+    }
+  }
+
   // 4. Create games from matchups (deduplicate home/away)
   const allGames = createGamesFromMatchups(allMatchups);
   console.log(`Generated ${allGames.length} unique games from matchups`);
@@ -1561,20 +1577,20 @@ export function generateSchedule(config: ScheduleGeneratorConfig): LeagueSchedul
   let byeWeeks: Map<string, number> = new Map();
 
   for (let retry = 0; retry < MAX_RETRIES; retry++) {
-    // Assign fresh bye weeks each retry
-    byeWeeks = assignByeWeeks(LEAGUE_TEAMS.map((t) => t.id));
+    // Assign initial bye weeks for this retry
+    const initialByeWeeks = assignByeWeeks(LEAGUE_TEAMS.map((t) => t.id));
 
-    // Distribute games to weeks
-    weekSchedules = distributeGamesToWeeks(allGames, byeWeeks);
+    // Distribute games to weeks (returns the bye weeks actually used)
+    const result = distributeGamesToWeeks(allGames, initialByeWeeks);
+    weekSchedules = result.weeks;
+    byeWeeks = result.byeWeeks;
 
-    // Count total games placed
-    const totalPlaced = weekSchedules.reduce((sum, w) => sum + w.games.length, 0);
-
-    if (totalPlaced === TOTAL_GAMES) {
+    if (result.placed === TOTAL_GAMES) {
+      console.log(`Schedule generation succeeded on retry ${retry + 1}`);
       break; // Success!
     }
 
-    console.log(`Retry ${retry + 1}: Only placed ${totalPlaced}/${TOTAL_GAMES} games, trying again...`);
+    console.log(`Retry ${retry + 1}: Only placed ${result.placed}/${TOTAL_GAMES} games, trying again...`);
   }
 
   // Verify all games were placed
@@ -1588,6 +1604,15 @@ export function generateSchedule(config: ScheduleGeneratorConfig): LeagueSchedul
 
   // 7. Build team schedules
   const teamSchedules = buildTeamSchedules(finalWeeks, byeWeeks);
+
+  // Final validation: every team must have exactly 17 games
+  for (const [teamId, teamSchedule] of Object.entries(teamSchedules)) {
+    if (teamSchedule.games.length !== GAMES_PER_TEAM) {
+      console.error(`FINAL CHECK FAILED: ${teamId} has ${teamSchedule.games.length} games, expected ${GAMES_PER_TEAM}`);
+      throw new Error(`Schedule build failed: ${teamId} has ${teamSchedule.games.length} games, expected ${GAMES_PER_TEAM}`);
+    }
+  }
+  console.log(`Schedule validation passed: all 32 teams have ${GAMES_PER_TEAM} games`);
 
   return {
     season: config.season,

@@ -152,7 +152,14 @@ export default function SchedulePage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Teams</SelectItem>
-              {LEAGUE_TEAMS.map((team) => (
+              {/* User's team first for easy access */}
+              {selectedTeam && (
+                <SelectItem value={selectedTeam.id}>
+                  {selectedTeam.city} {selectedTeam.name}
+                </SelectItem>
+              )}
+              {/* Other teams */}
+              {LEAGUE_TEAMS.filter((team) => team.id !== selectedTeam?.id).map((team) => (
                 <SelectItem key={team.id} value={team.id}>
                   {team.city} {team.name}
                 </SelectItem>
