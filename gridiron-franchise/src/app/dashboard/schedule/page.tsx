@@ -146,8 +146,8 @@ export default function SchedulePage() {
   return (
     <div>
       <main className="px-4 sm:px-6 lg:px-8 pt-4 pb-24">
-        {/* Header with dropdowns */}
-        <div className="flex items-center justify-between gap-4 mb-6">
+        {/* Header with dropdowns and legend */}
+        <div className="flex flex-wrap items-center gap-4 mb-6">
           {/* Team Dropdown */}
           <Select value={selectedTeamId} onValueChange={setSelectedTeamId}>
             <SelectTrigger className="w-[180px]">
@@ -186,6 +186,26 @@ export default function SchedulePage() {
               ))}
             </SelectContent>
           </Select>
+
+          {/* Game Indicator Key */}
+          <div className="flex items-center gap-3 text-xs text-muted-foreground ml-auto sm:ml-0">
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded border-2 border-primary" />
+              <span>Your Game</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded border-2 border-amber-600" />
+              <span>TNF</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded border-2 border-blue-600" />
+              <span>SNF</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded border-2 border-green-600" />
+              <span>MNF</span>
+            </div>
+          </div>
         </div>
 
         {/* Schedule Content */}
