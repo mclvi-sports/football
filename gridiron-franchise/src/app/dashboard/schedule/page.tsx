@@ -190,90 +190,103 @@ export default function SchedulePage() {
           /* All Teams - Week View (Grid on desktop) */
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {weekSchedule?.games.map((game) => {
-                const result = getGameResult(game);
-                const away = getTeamById(game.awayTeamId);
-                const home = getTeamById(game.homeTeamId);
+              {weekSchedule?.games
+                .slice()
+                .sort((a, b) => {
+                  const isUserGameA = selectedTeam?.id && (a.awayTeamId === selectedTeam.id || a.homeTeamId === selectedTeam.id);
+                  const isUserGameB = selectedTeam?.id && (b.awayTeamId === selectedTeam.id || b.homeTeamId === selectedTeam.id);
+                  if (isUserGameA && !isUserGameB) return -1;
+                  if (!isUserGameA && isUserGameB) return 1;
+                  return 0;
+                })
+                .map((game) => {
+                  const result = getGameResult(game);
+                  const away = getTeamById(game.awayTeamId);
+                  const home = getTeamById(game.homeTeamId);
+                  const isUserGame = selectedTeam?.id && (game.awayTeamId === selectedTeam.id || game.homeTeamId === selectedTeam.id);
 
-                return (
-                  <div
-                    key={game.id}
-                    onClick={() => result && setBoxScoreGame(result)}
-                    className={cn(
-                      'p-4 rounded-lg border bg-secondary/30 border-border transition-colors',
-                      result && 'cursor-pointer hover:bg-secondary/50'
-                    )}
-                  >
-                    {/* Away Team */}
-                    <div className="flex items-center gap-3 mb-3">
-                      {away && (
-                        <>
-                          <div
-                            className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold"
-                            style={{
-                              backgroundColor: away.colors.primary,
-                              color: away.colors.secondary,
-                            }}
-                          >
-                            {away.id}
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium">{away.name}</div>
-                            <div className="text-xs text-muted-foreground">{away.city}</div>
-                          </div>
-                          {result && (
-                            <div className={cn(
-                              'text-xl font-bold',
-                              result.awayScore > result.homeScore ? 'text-green-500' : 'text-muted-foreground'
-                            )}>
-                              {result.awayScore}
-                            </div>
-                          )}
-                        </>
+                  return (
+                    <div
+                      key={game.id}
+                      onClick={() => result && setBoxScoreGame(result)}
+                      className={cn(
+                        'p-4 rounded-lg border transition-colors',
+                        isUserGame
+                          ? 'bg-primary/10 border-primary'
+                          : 'bg-secondary/30 border-border',
+                        result && 'cursor-pointer hover:bg-secondary/50'
                       )}
-                    </div>
-
-                    {/* Divider */}
-                    <div className="border-t border-border my-2" />
-
-                    {/* Home Team */}
-                    <div className="flex items-center gap-3">
-                      {home && (
-                        <>
-                          <div
-                            className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold"
-                            style={{
-                              backgroundColor: home.colors.primary,
-                              color: home.colors.secondary,
-                            }}
-                          >
-                            {home.id}
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium">{home.name}</div>
-                            <div className="text-xs text-muted-foreground">{home.city}</div>
-                          </div>
-                          {result && (
-                            <div className={cn(
-                              'text-xl font-bold',
-                              result.homeScore > result.awayScore ? 'text-green-500' : 'text-muted-foreground'
-                            )}>
-                              {result.homeScore}
+                    >
+                      {/* Away Team */}
+                      <div className="flex items-center gap-3 mb-3">
+                        {away && (
+                          <>
+                            <div
+                              className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold"
+                              style={{
+                                backgroundColor: away.colors.primary,
+                                color: away.colors.secondary,
+                              }}
+                            >
+                              {away.id}
                             </div>
-                          )}
-                        </>
-                      )}
-                    </div>
-
-                    {/* Status */}
-                    {!result && (
-                      <div className="mt-3 text-center text-xs text-muted-foreground uppercase">
-                        Upcoming
+                            <div className="flex-1">
+                              <div className="font-medium">{away.name}</div>
+                              <div className="text-xs text-muted-foreground">{away.city}</div>
+                            </div>
+                            {result && (
+                              <div className={cn(
+                                'text-xl font-bold',
+                                result.awayScore > result.homeScore ? 'text-green-500' : 'text-muted-foreground'
+                              )}>
+                                {result.awayScore}
+                              </div>
+                            )}
+                          </>
+                        )}
                       </div>
-                    )}
-                  </div>
-                );
-              })}
+
+                      {/* Divider */}
+                      <div className="border-t border-border my-2" />
+
+                      {/* Home Team */}
+                      <div className="flex items-center gap-3">
+                        {home && (
+                          <>
+                            <div
+                              className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold"
+                              style={{
+                                backgroundColor: home.colors.primary,
+                                color: home.colors.secondary,
+                              }}
+                            >
+                              {home.id}
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-medium">{home.name}</div>
+                              <div className="text-xs text-muted-foreground">{home.city}</div>
+                            </div>
+                            {result && (
+                              <div className={cn(
+                                'text-xl font-bold',
+                                result.homeScore > result.awayScore ? 'text-green-500' : 'text-muted-foreground'
+                              )}>
+                                {result.homeScore}
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+
+                      {/* Status */}
+                      {!result && (
+                        <div className="mt-3 text-center text-xs text-muted-foreground uppercase">
+                          Upcoming
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
             </div>
 
             {/* Bye Teams */}
