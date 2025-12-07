@@ -281,15 +281,16 @@ export default function SchedulePage() {
                     }
                   }}
                   className={cn(
-                    'flex items-center gap-4 p-3 rounded-lg border transition-colors',
+                    'flex items-center gap-4 p-3 rounded-lg transition-colors',
                     isSelected
-                      ? 'bg-primary/10 border-primary'
-                      : 'bg-secondary/30 border-border',
+                      ? 'border-2 bg-primary/10 border-primary'
+                      : game?.isPrimeTime
+                        ? 'border-2 bg-secondary/30'
+                        : 'border bg-secondary/30 border-border',
                     (result || game) && 'cursor-pointer hover:bg-secondary/50',
-                    game?.isPrimeTime && 'border-l-4',
-                    game?.timeSlot === 'thursday_night' && 'border-l-amber-600',
-                    game?.timeSlot === 'sunday_night' && 'border-l-blue-600',
-                    game?.timeSlot === 'monday_night' && 'border-l-green-600'
+                    !isSelected && game?.timeSlot === 'thursday_night' && 'border-amber-600',
+                    !isSelected && game?.timeSlot === 'sunday_night' && 'border-blue-600',
+                    !isSelected && game?.timeSlot === 'monday_night' && 'border-green-600'
                   )}
                 >
                   {/* Week Number */}
@@ -322,21 +323,6 @@ export default function SchedulePage() {
                         <span className="font-medium">
                           {opponent.city} {opponent.name}
                         </span>
-                        {/* Primetime badge */}
-                        {game.isPrimeTime && (
-                          <span
-                            className={cn(
-                              'px-1.5 py-0.5 rounded text-[10px] font-bold text-white ml-2',
-                              game.timeSlot === 'thursday_night' && 'bg-amber-600',
-                              game.timeSlot === 'sunday_night' && 'bg-blue-600',
-                              game.timeSlot === 'monday_night' && 'bg-green-600'
-                            )}
-                          >
-                            {game.timeSlot === 'thursday_night' && 'TNF'}
-                            {game.timeSlot === 'sunday_night' && 'SNF'}
-                            {game.timeSlot === 'monday_night' && 'MNF'}
-                          </span>
-                        )}
                       </div>
                     ) : (
                       <div className="text-muted-foreground">—</div>
