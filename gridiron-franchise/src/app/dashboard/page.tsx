@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Users } from "lucide-react";
+import { Calendar, Users, GraduationCap, Briefcase, Building2, Newspaper, Play } from "lucide-react";
 import { TeamCard } from "@/components/dashboard/team-card";
 import { NavCard } from "@/components/dashboard/nav-card";
 import { useCareerStore } from "@/stores/career-store";
@@ -42,9 +42,38 @@ export default function DashboardPage() {
             href="/dashboard/schedule"
           />
           <NavCard
-            title="Roster Management"
+            title="Roster"
             icon={<Users className="w-6 h-6" />}
-            href="/dashboard/roster"
+            href="/dashboard/roster-management"
+          />
+          <NavCard
+            title="Draft"
+            icon={<GraduationCap className="w-6 h-6" />}
+            href="/dashboard/draft"
+          />
+          <NavCard
+            title="Staff"
+            icon={<Briefcase className="w-6 h-6" />}
+            href="/dashboard/staff"
+          />
+          <NavCard
+            title="Facilities"
+            icon={<Building2 className="w-6 h-6" />}
+            href="/dashboard/facilities"
+          />
+          <NavCard
+            title="News"
+            icon={<Newspaper className="w-6 h-6" />}
+            href="/dashboard/news"
+          />
+        </div>
+
+        {/* Next Task - Game Loop Initiator */}
+        <div className="grid grid-cols-1 gap-3">
+          <NavCard
+            title="Next"
+            icon={<Play className="w-6 h-6" />}
+            href="/dashboard/next-task"
           />
         </div>
       </main>

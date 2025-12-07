@@ -11,10 +11,10 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
-  { id: "home", label: "Home", icon: "H" },
-  { id: "roster", label: "Roster", icon: "R" },
-  { id: "schedule", label: "Schedule", icon: "S" },
-  { id: "draft", label: "Draft", icon: "D" },
+  { id: "home", label: "Home", icon: "H", href: "/dashboard" },
+  { id: "roster", label: "Roster", icon: "R", href: "/dashboard/roster-management" },
+  { id: "schedule", label: "Schedule", icon: "S", href: "/dashboard/schedule" },
+  { id: "draft", label: "Draft", icon: "D", href: "/dashboard/draft" },
   { id: "settings", label: "Settings", icon: "G", href: "/dashboard/settings" },
 ];
 

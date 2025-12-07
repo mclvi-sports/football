@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Play } from "lucide-react";
 
 interface MenuButtonPrimaryProps {
   title: string;
@@ -15,7 +16,7 @@ export function MenuButtonPrimary({
   href,
   onClick,
   disabled,
-  icon = "▶",
+  icon = <Play className="w-6 h-6" />,
 }: MenuButtonPrimaryProps) {
   const className = `w-full p-5 bg-blue-500 hover:bg-blue-600 rounded-2xl flex items-center justify-between text-left transition-colors ${
     disabled ? "opacity-50 pointer-events-none" : ""

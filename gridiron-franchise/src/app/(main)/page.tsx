@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { PlusCircle, FolderOpen } from "lucide-react";
 import { MenuButtonPrimary } from "@/components/menu/menu-button-primary";
 import { MenuButtonSecondary } from "@/components/menu/menu-button-secondary";
-import { MenuFooter } from "@/components/menu/menu-footer";
 import { listSaves, loadGame } from "@/lib/supabase/save-game";
 import type { SaveSlotMetadata } from "@/lib/supabase/types";
 
@@ -43,36 +43,48 @@ export default function MainMenuPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-[500px]">
-      {/* Menu Buttons */}
-      <div className="flex flex-col gap-4">
-        {/* Continue Career (Primary) - only show if save exists */}
-        {!isLoading && lastSave && (
-          <MenuButtonPrimary
-            title="Continue Career"
-            subtitle={`${lastSave.teamName || "Team"} - Season ${lastSave.season}, Week ${lastSave.week}`}
-            onClick={handleContinue}
-            disabled={isContinuing}
+    <div className="min-h-screen bg-background grid place-items-center px-6 py-12">
+      <div className="w-full max-w-[400px]">
+        {/* Logo and Branding */}
+        <div className="text-center mb-12">
+          <div className="w-[72px] h-[72px] mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+            <span className="text-4xl">🏈</span>
+          </div>
+          <h1 className="text-[28px] font-bold tracking-tight">
+            Gridiron Franchise
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Manage your team. Build a dynasty.
+          </p>
+        </div>
+
+        {/* Menu Buttons */}
+        <div className="flex flex-col gap-4">
+          {/* Continue Career (Primary) - only show if save exists */}
+          {!isLoading && lastSave && (
+            <MenuButtonPrimary
+              title="Continue Career"
+              subtitle={`${lastSave.teamName || "Team"} - Season ${lastSave.season}, Week ${lastSave.week}`}
+              onClick={handleContinue}
+              disabled={isContinuing}
+            />
+          )}
+
+          {/* New Career */}
+          <MenuButtonSecondary
+            label="New Career"
+            icon={<PlusCircle className="w-5 h-5" />}
+            href="/career/new"
           />
-        )}
 
-        {/* New Career */}
-        <MenuButtonSecondary
-          label="New Career"
-          icon="⊕"
-          href="/career/new"
-        />
-
-        {/* Load Career */}
-        <MenuButtonSecondary
-          label="Load Career"
-          icon="📂"
-          href="/career/load"
-        />
+          {/* Load Career */}
+          <MenuButtonSecondary
+            label="Load Career"
+            icon={<FolderOpen className="w-5 h-5" />}
+            href="/career/load"
+          />
+        </div>
       </div>
-
-      {/* Footer */}
-      <MenuFooter />
     </div>
   );
 }

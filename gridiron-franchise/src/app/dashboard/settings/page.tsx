@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, User, Save, Cloud, Home, Wrench } from "lucide-react";
+import { LogOut, User, Save, Cloud, Wrench, Home } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useAuth } from "@/components/auth/auth-provider";
 import { signOut } from "@/lib/supabase/auth";

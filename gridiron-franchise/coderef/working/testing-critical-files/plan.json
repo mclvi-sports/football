@@ -1,0 +1,288 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "testing-critical-files",
+    "schema_version": "1.0.0",
+    "version": "1.1.0",
+    "status": "updated",
+    "generated_by": "AI Assistant",
+    "has_context": false,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": ["README.md", "package.json"],
+      "coding_standards_reviewed": false,
+      "reference_components_identified": ["src/lib/", "src/stores/"],
+      "existing_test_coverage": {
+        "use-simulator.test.ts": {
+          "path": "src/hooks/use-simulator.test.ts",
+          "lines": 475,
+          "framework": "vitest",
+          "covers": ["simulation engine", "play generation", "game state management"],
+          "status": "current"
+        },
+        "test-schedule.ts": {
+          "path": "scripts/test-schedule.ts",
+          "covers": ["schedule generation", "bye weeks", "division matchups"],
+          "status": "current"
+        },
+        "test-schedule-20.ts": {
+          "path": "scripts/test-schedule-20.ts",
+          "covers": ["schedule stress testing", "20-iteration validation"],
+          "status": "current"
+        },
+        "test-game-runner.ts": {
+          "path": "scripts/test-game-runner.ts",
+          "covers": ["game runner", "real roster integration"],
+          "status": "current"
+        }
+      },
+      "notes": "Project has 510 files, 302 source files. Existing tests cover simulation engine, schedule generation, and game runner. Remaining gaps: stores, utilities, player/league generators, team data."
+    },
+    "1_executive_summary": {
+      "description": "Establish comprehensive test coverage for the most critical files in the gridiron-franchise project, focusing on stores, core utilities, and simulation logic.",
+      "goal": "Achieve 80%+ test coverage on critical files to ensure stability and prevent regressions",
+      "requirements": [
+        "Test all Zustand stores (career-store, etc.)",
+        "Test core utility functions (lib/utils)",
+        "Test simulation engine core logic",
+        "Test player/team data generators",
+        "Test schedule generation logic"
+      ],
+      "constraints": [
+        "Use existing Vitest configuration",
+        "Tests must run in under 60 seconds",
+        "No external API mocking required (offline-first app)"
+      ],
+      "out_of_scope": [
+        "E2E/integration tests",
+        "UI component visual testing",
+        "Performance benchmarking"
+      ]
+    },
+    "2_risk_assessment": {
+      "overall_complexity": "medium",
+      "risks": [
+        {
+          "risk": "Large codebase with minimal existing tests",
+          "severity": "medium",
+          "mitigation": "Focus on highest-impact files first"
+        },
+        {
+          "risk": "Complex simulation logic may be hard to test",
+          "severity": "high",
+          "mitigation": "Break down into small, isolated unit tests"
+        },
+        {
+          "risk": "Zustand stores have side effects",
+          "severity": "medium",
+          "mitigation": "Reset store state between tests"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        { "path": "vitest.config.ts", "purpose": "Update test configuration if needed" }
+      ],
+      "files_to_create": [
+        { "path": "src/stores/__tests__/career-store.test.ts", "purpose": "Test career store state management" },
+        { "path": "src/lib/__tests__/utils.test.ts", "purpose": "Test utility functions" },
+        { "path": "src/lib/sim/__tests__/engine.test.ts", "purpose": "Test simulation engine core" },
+        { "path": "src/lib/sim/__tests__/play-generator.test.ts", "purpose": "Test play generation logic" },
+        { "path": "src/lib/generators/__tests__/player-generator.test.ts", "purpose": "Test player generation" },
+        { "path": "src/lib/generators/__tests__/league-generator.test.ts", "purpose": "Test league generation" },
+        { "path": "src/lib/schedule/__tests__/schedule-generator.test.ts", "purpose": "Test schedule generation" },
+        { "path": "src/lib/data/__tests__/teams.test.ts", "purpose": "Test team data integrity" }
+      ],
+      "dependencies": ["vitest", "@testing-library/react"]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "name": "Store Testing",
+          "description": "Unit tests for Zustand stores",
+          "priority": "high"
+        },
+        {
+          "name": "Utility Testing",
+          "description": "Unit tests for core utility functions",
+          "priority": "high"
+        },
+        {
+          "name": "Simulation Testing",
+          "description": "Unit tests for game simulation engine",
+          "priority": "high"
+        },
+        {
+          "name": "Generator Testing",
+          "description": "Unit tests for player/league generators",
+          "priority": "medium"
+        },
+        {
+          "name": "Schedule Testing",
+          "description": "Unit tests for schedule generation",
+          "priority": "medium"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-TESTING-CRITICAL-FILES-001",
+        "name": "Testing Critical Files",
+        "feature_dir": "coderef/working/testing-critical-files"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-TESTING-CRITICAL-FILES-001",
+          "description": "Verify Vitest configuration and add test scripts",
+          "estimated_effort": "small",
+          "priority": "high"
+        },
+        {
+          "id": "STORE-001",
+          "workorder_id": "WO-TESTING-CRITICAL-FILES-001",
+          "description": "Create career-store.test.ts with state management tests",
+          "estimated_effort": "medium",
+          "priority": "high"
+        },
+        {
+          "id": "UTIL-001",
+          "workorder_id": "WO-TESTING-CRITICAL-FILES-001",
+          "description": "Create utils.test.ts for cn() and other utilities",
+          "estimated_effort": "small",
+          "priority": "high"
+        },
+        {
+          "id": "SIM-001",
+          "workorder_id": "WO-TESTING-CRITICAL-FILES-001",
+          "description": "Create engine.test.ts for core simulation logic",
+          "estimated_effort": "large",
+          "priority": "high"
+        },
+        {
+          "id": "SIM-002",
+          "workorder_id": "WO-TESTING-CRITICAL-FILES-001",
+          "description": "Create play-generator.test.ts for play selection",
+          "estimated_effort": "medium",
+          "priority": "high"
+        },
+        {
+          "id": "GEN-001",
+          "workorder_id": "WO-TESTING-CRITICAL-FILES-001",
+          "description": "Create player-generator.test.ts",
+          "estimated_effort": "medium",
+          "priority": "medium"
+        },
+        {
+          "id": "GEN-002",
+          "workorder_id": "WO-TESTING-CRITICAL-FILES-001",
+          "description": "Create league-generator.test.ts",
+          "estimated_effort": "medium",
+          "priority": "medium"
+        },
+        {
+          "id": "SCHED-001",
+          "workorder_id": "WO-TESTING-CRITICAL-FILES-001",
+          "description": "Create schedule-generator.test.ts",
+          "estimated_effort": "medium",
+          "priority": "medium"
+        },
+        {
+          "id": "DATA-001",
+          "workorder_id": "WO-TESTING-CRITICAL-FILES-001",
+          "description": "Create teams.test.ts for data integrity",
+          "estimated_effort": "small",
+          "priority": "medium"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Setup & Foundation",
+          "description": "Verify test setup and create foundational tests",
+          "tasks": ["SETUP-001", "UTIL-001", "DATA-001"],
+          "deliverables": ["Working test runner", "utils.test.ts", "teams.test.ts"]
+        },
+        {
+          "phase": 2,
+          "name": "Store Testing",
+          "description": "Test Zustand store state management",
+          "tasks": ["STORE-001"],
+          "deliverables": ["career-store.test.ts with full coverage"]
+        },
+        {
+          "phase": 3,
+          "name": "Simulation Testing",
+          "description": "Test core simulation engine and play generation",
+          "tasks": ["SIM-001", "SIM-002"],
+          "deliverables": ["engine.test.ts", "play-generator.test.ts"]
+        },
+        {
+          "phase": 4,
+          "name": "Generator Testing",
+          "description": "Test player, league, and schedule generators",
+          "tasks": ["GEN-001", "GEN-002", "SCHED-001"],
+          "deliverables": ["player-generator.test.ts", "league-generator.test.ts", "schedule-generator.test.ts"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Store state transitions",
+        "Utility function outputs",
+        "Simulation calculation accuracy",
+        "Generator output validation",
+        "Schedule constraint verification"
+      ],
+      "integration_tests": [],
+      "test_data_requirements": [
+        "Mock player data",
+        "Mock team configurations",
+        "Sample game scenarios"
+      ]
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        "All critical files have at least one test file",
+        "Tests pass consistently (no flaky tests)",
+        "Test coverage reaches 80% on targeted files",
+        "Tests run in under 60 seconds total"
+      ],
+      "metrics": {
+        "test_coverage_target": "80%",
+        "max_test_runtime": "60s",
+        "min_test_files": 8
+      }
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Verify vitest.config.ts",
+        "[ ] Create __tests__ directories",
+        "[ ] Write utils.test.ts",
+        "[ ] Write teams.test.ts",
+        "[ ] Run tests to verify setup"
+      ],
+      "phase_2_checklist": [
+        "[ ] Write career-store.test.ts",
+        "[ ] Test store initialization",
+        "[ ] Test store actions",
+        "[ ] Test store selectors"
+      ],
+      "phase_3_checklist": [
+        "[ ] Write engine.test.ts",
+        "[ ] Write play-generator.test.ts",
+        "[ ] Test simulation accuracy",
+        "[ ] Test edge cases"
+      ],
+      "phase_4_checklist": [
+        "[ ] Write player-generator.test.ts",
+        "[ ] Write league-generator.test.ts",
+        "[ ] Write schedule-generator.test.ts",
+        "[ ] Verify all tests pass"
+      ]
+    }
+  }
+}
