@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { BoxScoreModal } from '@/components/franchise/box-score-modal';
+import { GameCard } from '@/components/schedule/game-card';
+import { GamePreviewModal } from '@/components/schedule/game-preview-modal';
 import { getSchedule, getTeamScheduleById, getWeekScheduleByNumber } from '@/lib/schedule/schedule-store';
 import { LeagueSchedule, TeamSchedule, ScheduledGame, WeekSchedule } from '@/lib/schedule/types';
 import { GameResult, SeasonState } from '@/lib/season/types';
@@ -28,6 +30,7 @@ export default function SchedulePage() {
   const weekRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
   // Modal state
+  const [previewGame, setPreviewGame] = useState<ScheduledGame | null>(null);
   const [boxScoreGame, setBoxScoreGame] = useState<GameResult | null>(null);
 
   // Load schedule and season state
@@ -201,90 +204,14 @@ export default function SchedulePage() {
                 })
                 .map((game) => {
                   const result = getGameResult(game);
-                  const away = getTeamById(game.awayTeamId);
-                  const home = getTeamById(game.homeTeamId);
-                  const isUserGame = selectedTeam?.id && (game.awayTeamId === selectedTeam.id || game.homeTeamId === selectedTeam.id);
-
                   return (
-                    <div
+                    <GameCard
                       key={game.id}
-                      onClick={() => result && setBoxScoreGame(result)}
-                      className={cn(
-                        'p-4 rounded-lg border transition-colors',
-                        isUserGame
-                          ? 'bg-primary/10 border-primary'
-                          : 'bg-secondary/30 border-border',
-                        result && 'cursor-pointer hover:bg-secondary/50'
-                      )}
-                    >
-                      {/* Away Team */}
-                      <div className="flex items-center gap-3 mb-3">
-                        {away && (
-                          <>
-                            <div
-                              className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold"
-                              style={{
-                                backgroundColor: away.colors.primary,
-                                color: away.colors.secondary,
-                              }}
-                            >
-                              {away.id}
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium">{away.name}</div>
-                              <div className="text-xs text-muted-foreground">{away.city}</div>
-                            </div>
-                            {result && (
-                              <div className={cn(
-                                'text-xl font-bold',
-                                result.awayScore > result.homeScore ? 'text-green-500' : 'text-muted-foreground'
-                              )}>
-                                {result.awayScore}
-                              </div>
-                            )}
-                          </>
-                        )}
-                      </div>
-
-                      {/* Divider */}
-                      <div className="border-t border-border my-2" />
-
-                      {/* Home Team */}
-                      <div className="flex items-center gap-3">
-                        {home && (
-                          <>
-                            <div
-                              className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold"
-                              style={{
-                                backgroundColor: home.colors.primary,
-                                color: home.colors.secondary,
-                              }}
-                            >
-                              {home.id}
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium">{home.name}</div>
-                              <div className="text-xs text-muted-foreground">{home.city}</div>
-                            </div>
-                            {result && (
-                              <div className={cn(
-                                'text-xl font-bold',
-                                result.homeScore > result.awayScore ? 'text-green-500' : 'text-muted-foreground'
-                              )}>
-                                {result.homeScore}
-                              </div>
-                            )}
-                          </>
-                        )}
-                      </div>
-
-                      {/* Status */}
-                      {!result && (
-                        <div className="mt-3 text-center text-xs text-muted-foreground uppercase">
-                          Upcoming
-                        </div>
-                      )}
-                    </div>
+                      game={game}
+                      result={result}
+                      userTeamId={selectedTeam?.id}
+                      onGameClick={(g, r) => r ? setBoxScoreGame(r) : setPreviewGame(g)}
+                    />
                   );
                 })}
             </div>
@@ -349,6 +276,8 @@ export default function SchedulePage() {
                   onClick={() => {
                     if (result) {
                       setBoxScoreGame(result);
+                    } else if (game) {
+                      setPreviewGame(game);
                     }
                   }}
                   className={cn(
@@ -356,7 +285,11 @@ export default function SchedulePage() {
                     isSelected
                       ? 'bg-primary/10 border-primary'
                       : 'bg-secondary/30 border-border',
-                    result && 'cursor-pointer hover:bg-secondary/50'
+                    (result || game) && 'cursor-pointer hover:bg-secondary/50',
+                    game?.isPrimeTime && 'border-l-4',
+                    game?.timeSlot === 'thursday_night' && 'border-l-amber-600',
+                    game?.timeSlot === 'sunday_night' && 'border-l-blue-600',
+                    game?.timeSlot === 'monday_night' && 'border-l-green-600'
                   )}
                 >
                   {/* Week Number */}
@@ -389,18 +322,41 @@ export default function SchedulePage() {
                         <span className="font-medium">
                           {opponent.city} {opponent.name}
                         </span>
+                        {/* Primetime badge */}
+                        {game.isPrimeTime && (
+                          <span
+                            className={cn(
+                              'px-1.5 py-0.5 rounded text-[10px] font-bold text-white ml-2',
+                              game.timeSlot === 'thursday_night' && 'bg-amber-600',
+                              game.timeSlot === 'sunday_night' && 'bg-blue-600',
+                              game.timeSlot === 'monday_night' && 'bg-green-600'
+                            )}
+                          >
+                            {game.timeSlot === 'thursday_night' && 'TNF'}
+                            {game.timeSlot === 'sunday_night' && 'SNF'}
+                            {game.timeSlot === 'monday_night' && 'MNF'}
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <div className="text-muted-foreground">—</div>
                     )}
                   </div>
 
-                  {/* Result */}
-                  <div className="text-right min-w-[70px]">
+                  {/* Result / Time */}
+                  <div className="text-right min-w-[80px]">
                     {result ? (
                       <span className={cn('font-bold', resultColor)}>{resultText}</span>
-                    ) : !isBye ? (
-                      <span className="text-xs text-muted-foreground">Upcoming</span>
+                    ) : game ? (
+                      <span className="text-xs text-muted-foreground">
+                        {game.dayOfWeek === 'thursday' ? 'Thu' : game.dayOfWeek === 'monday' ? 'Mon' : 'Sun'}
+                        {', '}
+                        {game.timeSlot === 'early' ? '1:00 PM' :
+                         game.timeSlot === 'late' ? '4:25 PM' :
+                         game.timeSlot === 'sunday_night' ? '8:20 PM' :
+                         game.timeSlot === 'monday_night' ? '8:15 PM' :
+                         game.timeSlot === 'thursday_night' ? '8:15 PM' : game.timeSlot}
+                      </span>
                     ) : null}
                   </div>
                 </div>
@@ -410,7 +366,14 @@ export default function SchedulePage() {
         )}
       </main>
 
-      {/* Box Score Modal */}
+      {/* Game Preview Modal (upcoming games) */}
+      <GamePreviewModal
+        game={previewGame}
+        open={!!previewGame}
+        onOpenChange={(open) => !open && setPreviewGame(null)}
+      />
+
+      {/* Box Score Modal (completed games) */}
       <BoxScoreModal
         game={boxScoreGame}
         awayTeam={
