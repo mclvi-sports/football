@@ -15,6 +15,7 @@ import { TRAITS, TRAITS_BY_RARITY, POSITIVE_TRAITS, NEGATIVE_TRAITS, traitsConfl
 import { BADGES, getBadgesForPosition, getBadgeCount, BADGE_TIER_WEIGHTS, UNIVERSAL_BADGES } from '../data/badges';
 import * as fs from 'fs';
 import * as path from 'path';
+import { randomUUID } from 'crypto';
 
 // --- Types ---
 
@@ -37,9 +38,18 @@ export function loadNameDatabase() {
     const fileContent = fs.readFileSync(csvPath, 'utf-8');
     const lines = fileContent.split('\n').slice(1); // Skip header
 
+    const validTypes = ['first', 'last'];
+    const validRarities = ['common', 'uncommon'];
+
     for (const line of lines) {
       const [type, name, rarity] = line.trim().split(',');
       if (!name) continue;
+
+      // Validate type and rarity before casting
+      if (!validTypes.includes(type) || !validRarities.includes(rarity)) {
+        console.warn(`Skipping invalid name entry: ${line.trim()}`);
+        continue;
+      }
 
       const entry: NameEntry = {
         type: type as 'first' | 'last',
@@ -601,7 +611,7 @@ export function generatePlayer(
   const badges = generateBadges(position, targetOvr, experience);
 
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     ...identity,
     position,
     archetype,
