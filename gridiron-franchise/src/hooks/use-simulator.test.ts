@@ -2,24 +2,38 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSimulator } from './use-simulator';
 import { SimTeam } from '@/lib/sim/types';
+import { generateTeamRoster } from '@/lib/generators/roster-generator';
+import { adaptTeamRoster } from '@/lib/sim/team-adapter';
+import { Tier, Position } from '@/lib/types';
+import { TeamRosterData } from '@/lib/dev-player-store';
 
-// Mock team data
-const createMockTeam = (id: string, name: string): SimTeam => ({
-  id,
-  name,
-  abbrev: name.substring(0, 3).toUpperCase(),
-  city: 'Test City',
-  mascot: 'Mascots',
-  ovr: 80,
-  off: 80,
-  def: 80,
-  players: [],
-  coachingStaff: undefined,
-  facilities: undefined,
-});
+// Create test teams with real rosters and depth charts
+const createTestTeam = (id: string, name: string): SimTeam => {
+  const roster = generateTeamRoster(id, Tier.Average);
+  const teamRosterData: TeamRosterData = {
+    team: {
+      id,
+      city: 'Test City',
+      name,
+      conference: 'AFC',
+      division: 'North',
+    },
+    tier: Tier.Average,
+    roster: {
+      players: roster.players,
+      depthChart: roster.depthChart as Record<Position, string[]>,
+    },
+    stats: {
+      totalPlayers: roster.players.length,
+      avgOvr: Math.round(roster.players.reduce((sum, p) => sum + p.overall, 0) / roster.players.length),
+      avgAge: Math.round(roster.players.reduce((sum, p) => sum + p.age, 0) / roster.players.length),
+    },
+  };
+  return adaptTeamRoster(teamRosterData);
+};
 
-const awayTeam = createMockTeam('team-1', 'Away Team');
-const homeTeam = createMockTeam('team-2', 'Home Team');
+const awayTeam = createTestTeam('team-1', 'Away Team');
+const homeTeam = createTestTeam('team-2', 'Home Team');
 
 describe('useSimulator', () => {
   describe('initialization', () => {
@@ -200,18 +214,70 @@ describe('useSimulator', () => {
       expect(result.current.plays.length).toBeGreaterThan(initialPlayCount);
     });
 
-    // Note: simDrive, simQuarter, simGame require complete roster data with depth charts
-    // These are integration tests that need real team data - skipped for unit tests
-    it.skip('should simulate a drive (requires full roster)', () => {
-      // Requires teams with depthChart and players array
+    it('should simulate a drive', () => {
+      const { result } = renderHook(() =>
+        useSimulator({
+          awayTeam,
+          homeTeam,
+        })
+      );
+
+      act(() => {
+        result.current.actions.startGame();
+      });
+
+      const initialPlayCount = result.current.plays.length;
+
+      act(() => {
+        result.current.actions.simDrive();
+      });
+
+      // A drive should add at least one play
+      expect(result.current.plays.length).toBeGreaterThan(initialPlayCount);
     });
 
-    it.skip('should simulate a quarter (requires full roster)', () => {
-      // Requires teams with depthChart and players array
+    it('should simulate a quarter', () => {
+      const { result } = renderHook(() =>
+        useSimulator({
+          awayTeam,
+          homeTeam,
+        })
+      );
+
+      act(() => {
+        result.current.actions.startGame();
+      });
+
+      const initialQuarter = result.current.state.quarter;
+
+      act(() => {
+        result.current.actions.simQuarter();
+      });
+
+      // Quarter should advance or game should end
+      expect(
+        result.current.state.quarter > initialQuarter || result.current.isGameOver
+      ).toBe(true);
     });
 
-    it.skip('should simulate entire game (requires full roster)', () => {
-      // Requires teams with depthChart and players array
+    it('should simulate entire game', () => {
+      const { result } = renderHook(() =>
+        useSimulator({
+          awayTeam,
+          homeTeam,
+        })
+      );
+
+      act(() => {
+        result.current.actions.startGame();
+      });
+
+      act(() => {
+        result.current.actions.simGame();
+      });
+
+      expect(result.current.isGameOver).toBe(true);
+      expect(result.current.plays.length).toBeGreaterThan(10);
     });
 
     it('should reset game', () => {
@@ -266,8 +332,33 @@ describe('useSimulator', () => {
       expect(onPlayComplete).toHaveBeenCalled();
     });
 
-    it.skip('should call onGameEnd when game finishes (requires full roster)', () => {
-      // Requires teams with depthChart and players array for simGame
+    it('should call onGameEnd when game finishes', () => {
+      const onGameEnd = vi.fn();
+
+      const { result } = renderHook(() =>
+        useSimulator({
+          awayTeam,
+          homeTeam,
+          onGameEnd,
+        })
+      );
+
+      act(() => {
+        result.current.actions.startGame();
+      });
+
+      act(() => {
+        result.current.actions.simGame();
+      });
+
+      expect(onGameEnd).toHaveBeenCalled();
+      expect(onGameEnd).toHaveBeenCalledWith(
+        expect.objectContaining({
+          winner: expect.any(String),
+          awayScore: expect.any(Number),
+          homeScore: expect.any(Number),
+        })
+      );
     });
   });
 
@@ -357,8 +448,28 @@ describe('useSimulator', () => {
       });
     });
 
-    it.skip('should track quarter scores during game (requires full roster)', () => {
-      // Requires teams with depthChart and players array for simGame
+    it('should track quarter scores during game', () => {
+      const { result } = renderHook(() =>
+        useSimulator({
+          awayTeam,
+          homeTeam,
+        })
+      );
+
+      act(() => {
+        result.current.actions.startGame();
+      });
+
+      act(() => {
+        result.current.actions.simGame();
+      });
+
+      // Quarter scores should sum to total scores after a full game
+      const totalAway = result.current.quarterScores.away.reduce((a, b) => a + b, 0);
+      const totalHome = result.current.quarterScores.home.reduce((a, b) => a + b, 0);
+
+      expect(totalAway).toBe(result.current.state.awayScore);
+      expect(totalHome).toBe(result.current.state.homeScore);
     });
   });
 });
