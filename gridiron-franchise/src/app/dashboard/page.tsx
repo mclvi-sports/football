@@ -51,11 +51,6 @@ export default function DashboardPage() {
             icon={<Settings className="w-6 h-6" />}
             href="/dashboard/settings"
           />
-          <NavCard
-            title="About"
-            icon="?"
-            href="/dashboard/about"
-          />
         </div>
       </main>
     </div>

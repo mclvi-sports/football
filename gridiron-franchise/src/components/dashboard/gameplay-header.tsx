@@ -53,11 +53,11 @@ export function GameplayHeader() {
           {/* Page Title */}
           <h1 className="text-lg font-semibold truncate">{title}</h1>
 
-          {/* Info Button */}
+          {/* About Button */}
           <button
             className="w-10 h-10 flex items-center justify-center -mr-2 active:opacity-70 transition-opacity"
-            onClick={() => console.log("Info tapped")}
-            aria-label="Page info"
+            onClick={() => router.push("/dashboard/about")}
+            aria-label="About"
           >
             <Info className="w-5 h-5" />
           </button>
