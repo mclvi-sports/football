@@ -3,22 +3,31 @@
 import { SimState, SimTeam } from '@/lib/sim/types';
 import { cn } from '@/lib/utils';
 
+interface QuarterScores {
+  away: number[];
+  home: number[];
+}
+
 interface ScoreboardProps {
   state: SimState;
   awayTeam: SimTeam | null;
   homeTeam: SimTeam | null;
   isStarted: boolean;
+  quarterScores?: QuarterScores;
 }
 
-export function Scoreboard({ state, awayTeam, homeTeam, isStarted }: ScoreboardProps) {
+export function Scoreboard({ state, awayTeam, homeTeam, isStarted, quarterScores }: ScoreboardProps) {
   const formatTime = (seconds: number): string => {
     return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`;
   };
 
   const ordinal = (n: number): string => {
-    const suffixes = ['th', 'st', 'nd', 'rd'];
-    const v = n % 100;
-    return suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0];
+    if (n >= 11 && n <= 13) return 'th';
+    const lastDigit = n % 10;
+    if (lastDigit === 1) return 'st';
+    if (lastDigit === 2) return 'nd';
+    if (lastDigit === 3) return 'rd';
+    return 'th';
   };
 
   const quarterDisplay = ['1ST', '2ND', '3RD', '4TH', 'OT'][Math.min(state.quarter - 1, 4)];
@@ -67,6 +76,54 @@ export function Scoreboard({ state, awayTeam, homeTeam, isStarted }: ScoreboardP
         </div>
       </div>
 
+      {/* Quarter Scores */}
+      {quarterScores && isStarted && (
+        <div className="mb-3 border-t border-zinc-800 pt-3">
+          <table className="w-full text-center text-xs">
+            <thead>
+              <tr className="text-zinc-500">
+                <th className="w-16 text-left font-normal">TEAM</th>
+                {[1, 2, 3, 4].map((q) => (
+                  <th key={q} className="w-8 font-normal">{q}</th>
+                ))}
+                {state.isOvertime && <th className="w-8 font-normal">OT</th>}
+                <th className="w-10 font-semibold text-yellow-400">T</th>
+              </tr>
+            </thead>
+            <tbody className="font-mono">
+              <tr className="text-red-400">
+                <td className="text-left">{awayTeam?.abbrev || 'AWAY'}</td>
+                {[0, 1, 2, 3].map((i) => (
+                  <td key={i} className={cn(
+                    state.quarter - 1 === i && !state.isOver ? 'text-white' : 'text-zinc-400'
+                  )}>
+                    {quarterScores.away[i] ?? '-'}
+                  </td>
+                ))}
+                {state.isOvertime && (
+                  <td className="text-white">{quarterScores.away[4] ?? '-'}</td>
+                )}
+                <td className="font-bold text-white">{state.awayScore}</td>
+              </tr>
+              <tr className="text-blue-400">
+                <td className="text-left">{homeTeam?.abbrev || 'HOME'}</td>
+                {[0, 1, 2, 3].map((i) => (
+                  <td key={i} className={cn(
+                    state.quarter - 1 === i && !state.isOver ? 'text-white' : 'text-zinc-400'
+                  )}>
+                    {quarterScores.home[i] ?? '-'}
+                  </td>
+                ))}
+                {state.isOvertime && (
+                  <td className="text-white">{quarterScores.home[4] ?? '-'}</td>
+                )}
+                <td className="font-bold text-white">{state.homeScore}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+
       {/* Game Info */}
       <div className="grid grid-cols-4 gap-2 border-t border-zinc-800 pt-3 text-center">
         <div>
@@ -80,8 +137,7 @@ export function Scoreboard({ state, awayTeam, homeTeam, isStarted }: ScoreboardP
         <div>
           <div className="text-[10px] tracking-wider text-zinc-500">DOWN</div>
           <div className="font-mono text-lg">
-            {state.down}
-            {ordinal(state.down)} & {state.yardsToGo}
+            {state.down}{ordinal(state.down)} & {state.yardsToGo}
           </div>
         </div>
         <div>

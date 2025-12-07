@@ -4,9 +4,11 @@ import { SimState } from '@/lib/sim/types';
 
 interface FieldViewProps {
   state: SimState;
+  awayAbbrev?: string;
+  homeAbbrev?: string;
 }
 
-export function FieldView({ state }: FieldViewProps) {
+export function FieldView({ state, awayAbbrev = 'AWAY', homeAbbrev = 'HOME' }: FieldViewProps) {
   // Convert ball position (0-100) to percentage on the field display
   // Field display: 10% for each endzone, 80% for the field
   const ballPercent = 10 + state.ball * 0.8;
@@ -21,14 +23,18 @@ export function FieldView({ state }: FieldViewProps) {
   return (
     <div className="mb-4">
       {/* Field */}
-      <div className="relative h-12 overflow-hidden rounded">
+      <div className="relative h-16 overflow-hidden rounded-lg border border-zinc-700">
         {/* Endzones and field */}
         <div className="absolute inset-0 flex">
           {/* Away endzone */}
-          <div className="w-[10%] bg-red-700" />
+          <div className="flex w-[10%] items-center justify-center bg-red-700">
+            <span className="text-[10px] font-bold tracking-wider text-white/80 [writing-mode:vertical-rl] rotate-180">
+              {awayAbbrev}
+            </span>
+          </div>
           {/* Field */}
           <div className="relative w-[80%] bg-green-700">
-            {/* Yard lines */}
+            {/* Field stripes */}
             <div
               className="absolute inset-0"
               style={{
@@ -39,9 +45,15 @@ export function FieldView({ state }: FieldViewProps) {
                   rgba(255,255,255,0.3) 10%)`,
               }}
             />
+            {/* 50-yard line accent */}
+            <div className="absolute left-1/2 top-0 h-full w-0.5 -translate-x-1/2 bg-white/50" />
           </div>
           {/* Home endzone */}
-          <div className="w-[10%] bg-blue-700" />
+          <div className="flex w-[10%] items-center justify-center bg-blue-700">
+            <span className="text-[10px] font-bold tracking-wider text-white/80 [writing-mode:vertical-rl] rotate-180">
+              {homeAbbrev}
+            </span>
+          </div>
         </div>
 
         {/* First down marker */}
@@ -52,20 +64,18 @@ export function FieldView({ state }: FieldViewProps) {
 
         {/* Ball marker */}
         <div
-          className="absolute top-1/2 h-3 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-yellow-400 shadow-lg shadow-yellow-400/50 transition-all duration-300"
+          className="absolute top-1/2 h-4 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500 shadow-lg shadow-orange-500/50 transition-all duration-300"
           style={{ left: `${ballPercent}%` }}
         />
       </div>
 
       {/* Yard labels */}
-      <div className="mt-1 flex justify-between text-[10px] text-zinc-500">
-        <span>AWAY</span>
+      <div className="mt-1 flex justify-between px-[10%] text-[10px] text-zinc-500">
         <span>20</span>
         <span>40</span>
-        <span>50</span>
+        <span className="font-semibold text-zinc-400">50</span>
         <span>40</span>
         <span>20</span>
-        <span>HOME</span>
       </div>
     </div>
   );

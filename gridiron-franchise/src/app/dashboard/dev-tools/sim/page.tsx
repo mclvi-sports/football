@@ -23,6 +23,10 @@ import { getTeamCoachingById } from '@/lib/coaching/coaching-store';
 import { getTeamFacilitiesById } from '@/lib/facilities/facilities-store';
 import { SimTeam, PlayResult, GameType, Weather, HomeAdvantage } from '@/lib/sim/types';
 import { ArrowLeft, Play, FastForward, SkipForward, RotateCcw, Bug, Users, Building2 } from 'lucide-react';
+import { DriveSummary } from '@/components/sim/drive-summary';
+import { SimSpeedControl } from '@/components/sim/sim-speed-control';
+import { ActiveEffects } from '@/components/sim/active-effects';
+import { TriggeredEffect } from '@/lib/sim/types';
 
 export default function SimulatorPage() {
   const router = useRouter();
@@ -43,6 +47,44 @@ export default function SimulatorPage() {
   const [isStarted, setIsStarted] = useState(false);
   const [plays, setPlays] = useState<PlayResult[]>([]);
   const [showDebug, setShowDebug] = useState(false);
+  const [quarterScores, setQuarterScores] = useState<{ away: number[]; home: number[] }>({
+    away: [0, 0, 0, 0],
+    home: [0, 0, 0, 0],
+  });
+  const prevScoresRef = useRef<{ away: number; home: number }>({ away: 0, home: 0 });
+
+  // Drive tracking
+  const [driveStats, setDriveStats] = useState<{
+    plays: number;
+    yards: number;
+    timeElapsed: number;
+    startPosition: number;
+    possession: 'away' | 'home' | null;
+  }>({
+    plays: 0,
+    yards: 0,
+    timeElapsed: 0,
+    startPosition: 0,
+    possession: null,
+  });
+  const driveRef = useRef<{
+    startClock: number;
+    startPosition: number;
+    startPossession: 'away' | 'home' | null;
+    yards: number;
+    plays: number;
+  }>({ startClock: 900, startPosition: 0, startPossession: null, yards: 0, plays: 0 });
+
+  // Simulation speed control
+  const [simSpeed, setSimSpeed] = useState(1);
+  const [isAutoPlay, setIsAutoPlay] = useState(false);
+  const autoPlayIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Active effects from last play
+  const [activeEffects, setActiveEffects] = useState<TriggeredEffect[]>([]);
+
+  // Visual feedback for big plays
+  const [flashType, setFlashType] = useState<'touchdown' | 'turnover' | 'big_play' | null>(null);
 
   // Force re-render for simulator state
   const [, forceUpdate] = useState({});
@@ -89,6 +131,82 @@ export default function SimulatorPage() {
   const awayTeam = teams.find((t) => t.id === awayTeamId) || null;
   const homeTeam = teams.find((t) => t.id === homeTeamId) || null;
 
+  // Check for big plays and trigger visual feedback
+  const checkForBigPlay = useCallback((result: PlayResult) => {
+    if (result.result === 'touchdown') {
+      setFlashType('touchdown');
+      setTimeout(() => setFlashType(null), 1500);
+    } else if (result.result === 'interception' || result.result === 'fumble') {
+      setFlashType('turnover');
+      setTimeout(() => setFlashType(null), 1500);
+    } else if (result.yards >= 20 && (result.type === 'pass' || result.type === 'run')) {
+      setFlashType('big_play');
+      setTimeout(() => setFlashType(null), 1000);
+    }
+  }, []);
+
+  // Update quarter scores based on score changes
+  const updateQuarterScores = useCallback(() => {
+    const sim = getSimulator();
+    const currentQuarter = Math.min(sim.state.quarter - 1, 4); // 0-indexed, cap at OT (4)
+
+    const awayDiff = sim.state.awayScore - prevScoresRef.current.away;
+    const homeDiff = sim.state.homeScore - prevScoresRef.current.home;
+
+    if (awayDiff > 0 || homeDiff > 0) {
+      setQuarterScores((prev) => {
+        const newScores = {
+          away: [...prev.away],
+          home: [...prev.home],
+        };
+        // Ensure we have space for OT
+        while (newScores.away.length <= currentQuarter) {
+          newScores.away.push(0);
+          newScores.home.push(0);
+        }
+        newScores.away[currentQuarter] += awayDiff;
+        newScores.home[currentQuarter] += homeDiff;
+        return newScores;
+      });
+    }
+
+    prevScoresRef.current = { away: sim.state.awayScore, home: sim.state.homeScore };
+  }, []);
+
+  // Update drive stats after each play
+  const updateDriveStats = useCallback((playResult?: PlayResult) => {
+    const sim = getSimulator();
+
+    // Check if possession changed (new drive)
+    if (sim.state.possession !== driveRef.current.startPossession) {
+      // Reset drive tracking
+      driveRef.current = {
+        startClock: sim.state.clock,
+        startPosition: sim.state.ball,
+        startPossession: sim.state.possession,
+        yards: 0,
+        plays: 0,
+      };
+    }
+
+    // Update current drive stats
+    if (playResult && playResult.type !== 'kickoff') {
+      driveRef.current.plays += 1;
+      driveRef.current.yards += playResult.yards;
+    }
+
+    // Calculate time elapsed in drive
+    const timeElapsed = driveRef.current.startClock - sim.state.clock;
+
+    setDriveStats({
+      plays: driveRef.current.plays,
+      yards: driveRef.current.yards,
+      timeElapsed: timeElapsed > 0 ? timeElapsed : 0,
+      startPosition: driveRef.current.startPosition,
+      possession: sim.state.possession,
+    });
+  }, []);
+
   const startGame = useCallback(() => {
     if (!awayTeam || !homeTeam) return;
 
@@ -105,6 +223,16 @@ export default function SimulatorPage() {
 
     // Coin toss
     sim.state.possession = Math.random() < 0.5 ? 'away' : 'home';
+
+    // Initialize drive tracking
+    driveRef.current = {
+      startClock: sim.state.clock,
+      startPosition: sim.state.ball,
+      startPossession: sim.state.possession,
+      yards: 0,
+      plays: 0,
+    };
+
     setIsStarted(true);
     setPlays([
       {
@@ -115,8 +243,9 @@ export default function SimulatorPage() {
         time: 0,
       },
     ]);
+    updateDriveStats();
     forceUpdate({});
-  }, [awayTeam, homeTeam, gameType, weather, homeAdvantage]);
+  }, [awayTeam, homeTeam, gameType, weather, homeAdvantage, updateDriveStats]);
 
   const simPlay = useCallback(() => {
     const sim = getSimulator();
@@ -125,9 +254,16 @@ export default function SimulatorPage() {
     const result = sim.play();
     if (result) {
       setPlays((prev) => [result, ...prev]);
+      updateDriveStats(result);
+      checkForBigPlay(result);
+      // Update active effects from play result
+      if (result.triggeredEffects && result.triggeredEffects.length > 0) {
+        setActiveEffects(result.triggeredEffects);
+      }
     }
+    updateQuarterScores();
     forceUpdate({});
-  }, []);
+  }, [updateQuarterScores, updateDriveStats, checkForBigPlay]);
 
   const simDrive = useCallback(() => {
     const sim = getSimulator();
@@ -135,8 +271,10 @@ export default function SimulatorPage() {
 
     const results = sim.simulateDrive();
     setPlays((prev) => [...results.reverse(), ...prev]);
+    updateQuarterScores();
+    updateDriveStats();
     forceUpdate({});
-  }, []);
+  }, [updateQuarterScores, updateDriveStats]);
 
   const simQuarter = useCallback(() => {
     const sim = getSimulator();
@@ -144,8 +282,10 @@ export default function SimulatorPage() {
 
     const results = sim.simulateQuarter();
     setPlays((prev) => [...results.reverse(), ...prev]);
+    updateQuarterScores();
+    updateDriveStats();
     forceUpdate({});
-  }, []);
+  }, [updateQuarterScores, updateDriveStats]);
 
   const simGame = useCallback(() => {
     const sim = getSimulator();
@@ -153,16 +293,70 @@ export default function SimulatorPage() {
 
     const results = sim.simulateGame();
     setPlays((prev) => [...results.reverse(), ...prev]);
+    updateQuarterScores();
+    updateDriveStats();
     forceUpdate({});
-  }, []);
+  }, [updateQuarterScores, updateDriveStats]);
 
   const resetGame = useCallback(() => {
     const sim = getSimulator();
     sim.reset();
     setIsStarted(false);
+    setIsAutoPlay(false);
     setPlays([]);
+    setQuarterScores({ away: [0, 0, 0, 0], home: [0, 0, 0, 0] });
+    prevScoresRef.current = { away: 0, home: 0 };
+    setDriveStats({ plays: 0, yards: 0, timeElapsed: 0, startPosition: 0, possession: null });
+    driveRef.current = { startClock: 900, startPosition: 0, startPossession: null, yards: 0, plays: 0 };
+    setActiveEffects([]);
     forceUpdate({});
   }, []);
+
+  // Auto-play effect
+  useEffect(() => {
+    if (isAutoPlay && isStarted) {
+      const sim = getSimulator();
+      if (sim.state.isOver) {
+        setIsAutoPlay(false);
+        return;
+      }
+
+      // Calculate interval based on speed (base is 1000ms at 1x)
+      const interval = Math.max(100, 1000 / simSpeed);
+
+      autoPlayIntervalRef.current = setInterval(() => {
+        const s = getSimulator();
+        if (s.state.isOver) {
+          setIsAutoPlay(false);
+          if (autoPlayIntervalRef.current) {
+            clearInterval(autoPlayIntervalRef.current);
+            autoPlayIntervalRef.current = null;
+          }
+          return;
+        }
+
+        const result = s.play();
+        if (result) {
+          setPlays((prev) => [result, ...prev]);
+          updateDriveStats(result);
+        }
+        updateQuarterScores();
+        forceUpdate({});
+      }, interval);
+
+      return () => {
+        if (autoPlayIntervalRef.current) {
+          clearInterval(autoPlayIntervalRef.current);
+          autoPlayIntervalRef.current = null;
+        }
+      };
+    } else {
+      if (autoPlayIntervalRef.current) {
+        clearInterval(autoPlayIntervalRef.current);
+        autoPlayIntervalRef.current = null;
+      }
+    }
+  }, [isAutoPlay, isStarted, simSpeed, updateQuarterScores, updateDriveStats]);
 
   if (loading) {
     return (
@@ -193,8 +387,22 @@ export default function SimulatorPage() {
 
   const sim = getSimulator();
 
+  // Flash animation classes
+  const getFlashClass = () => {
+    switch (flashType) {
+      case 'touchdown':
+        return 'ring-4 ring-green-500 ring-opacity-75 animate-pulse';
+      case 'turnover':
+        return 'ring-4 ring-red-500 ring-opacity-75 animate-pulse';
+      case 'big_play':
+        return 'ring-2 ring-yellow-400 ring-opacity-50';
+      default:
+        return '';
+    }
+  };
+
   return (
-    <div className="space-y-4">
+    <div className={`space-y-4 transition-all duration-300 rounded-lg ${getFlashClass()}`}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <Button variant="ghost" onClick={() => router.push('/dashboard/dev-tools')}>
@@ -346,6 +554,7 @@ export default function SimulatorPage() {
             awayTeam={awayTeam}
             homeTeam={homeTeam}
             isStarted={isStarted}
+            quarterScores={quarterScores}
           />
 
           {/* Context Badges */}
@@ -386,7 +595,36 @@ export default function SimulatorPage() {
             )}
           </div>
 
-          <FieldView state={sim.state} />
+          {/* Speed Control */}
+          {isStarted && (
+            <SimSpeedControl
+              speed={simSpeed}
+              isAutoPlay={isAutoPlay}
+              onSpeedChange={setSimSpeed}
+              onAutoPlayChange={setIsAutoPlay}
+              disabled={sim.state.isOver}
+            />
+          )}
+
+          {/* Drive Summary */}
+          {isStarted && (
+            <DriveSummary
+              drive={driveStats}
+              awayAbbrev={awayTeam?.abbrev}
+              homeAbbrev={homeTeam?.abbrev}
+            />
+          )}
+
+          <FieldView
+            state={sim.state}
+            awayAbbrev={awayTeam?.abbrev}
+            homeAbbrev={homeTeam?.abbrev}
+          />
+
+          {/* Active Effects */}
+          {isStarted && activeEffects.length > 0 && (
+            <ActiveEffects effects={activeEffects} />
+          )}
 
           <Card>
             <CardHeader className="pb-2">

@@ -112,6 +112,14 @@ export type PlayResultType =
   | 'touchback'
   | 'penalty';
 
+export interface TriggeredEffect {
+  type: 'trait' | 'badge';
+  name: string;
+  playerName: string;
+  modifier: number;
+  tier?: 'bronze' | 'silver' | 'gold' | 'hof';
+}
+
 export interface PlayResult {
   type: PlayType;
   result: PlayResultType;
@@ -121,6 +129,7 @@ export interface PlayResult {
   playerId?: string; // primary player involved
   defenderId?: string; // defender involved (for sacks, INTs, etc.)
   debug?: string[];
+  triggeredEffects?: TriggeredEffect[];
 }
 
 // ============================================================================
