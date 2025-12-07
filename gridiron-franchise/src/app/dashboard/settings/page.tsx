@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, User, Save, Cloud, Home } from "lucide-react";
+import { LogOut, User, Save, Cloud, Home, Wrench } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useAuth } from "@/components/auth/auth-provider";
 import { signOut } from "@/lib/supabase/auth";
@@ -111,6 +111,22 @@ export default function SettingsPage() {
             Appearance
           </h2>
           <ThemeToggle />
+        </section>
+
+        {/* Developer Section */}
+        <section className="space-y-3">
+          <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
+            Developer
+          </h2>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push("/dashboard/dev-tools")}
+            className="w-full"
+          >
+            <Wrench className="w-4 h-4 mr-2" />
+            Dev Tools
+          </Button>
         </section>
 
         {/* Navigation Section */}

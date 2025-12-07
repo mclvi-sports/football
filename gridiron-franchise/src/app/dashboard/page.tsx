@@ -47,11 +47,6 @@ export default function DashboardPage() {
             href="/dashboard/roster"
           />
           <NavCard
-            title="Dev Tools"
-            icon="DEV"
-            href="/dashboard/dev-tools"
-          />
-          <NavCard
             title="Settings"
             icon={<Settings className="w-6 h-6" />}
             href="/dashboard/settings"
