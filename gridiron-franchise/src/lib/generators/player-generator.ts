@@ -12,7 +12,7 @@ import { Position, Archetype, Player, PlayerAttributes, PlayerBadge, BadgeTier }
 import { ARCHETYPE_TEMPLATES, POSITION_ARCHETYPES, ARCHETYPE_RARITY } from '../data/archetype-templates';
 import { generatePhysicals as generatePhysicalMeasurables } from '../data/physical-ranges';
 import { TRAITS, TRAITS_BY_RARITY, POSITIVE_TRAITS, NEGATIVE_TRAITS, traitsConflict } from '../data/traits';
-import { BADGES, getBadgesForPosition, getBadgeCount, BADGE_TIER_WEIGHTS } from '../data/badges';
+import { BADGES, getBadgesForPosition, getBadgeCount, BADGE_TIER_WEIGHTS, UNIVERSAL_BADGES } from '../data/badges';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -87,6 +87,21 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
+/**
+ * Pick a name weighted by rarity (common names are more likely)
+ */
+function pickNameByRarity(names: NameEntry[]): string {
+  if (names.length === 0) {
+    throw new Error('pickNameByRarity: Cannot select from empty array');
+  }
+  // Weight common names 5x more likely than uncommon
+  const weighted = names.map(n => ({
+    item: n.name,
+    weight: n.rarity === 'common' ? 10 : 2,
+  }));
+  return weightedRandom(weighted);
+}
+
 // --- Identity Generation ---
 
 function generateIdentity(position: Position): {
@@ -97,8 +112,9 @@ function generateIdentity(position: Position): {
 } {
   loadNameDatabase();
 
-  const firstName = getRandomItem(firstNames).name;
-  const lastName = getRandomItem(lastNames).name;
+  // Use rarity-weighted name selection (common names more frequent)
+  const firstName = pickNameByRarity(firstNames);
+  const lastName = pickNameByRarity(lastNames);
 
   // College list (can be expanded)
   const colleges = [
@@ -210,12 +226,12 @@ function generateAttributes(archetype: Archetype, targetOvr: number): PlayerAttr
   const attributes = {} as PlayerAttributes;
   const basePoints = getBasePoints(targetOvr);
 
-  // Calculate points per tier
+  // Calculate points per tier (50/35/15 split)
   const primaryPoints = basePoints * 0.50;
   const secondaryPoints = basePoints * 0.35;
   const tertiaryPoints = basePoints * 0.15;
 
-  // Calculate attribute values per tier
+  // Calculate points per attribute in each tier
   const primaryCount = Math.max(template.primary.length, 1);
   const secondaryCount = Math.max(template.secondary.length, 1);
   const tertiaryCount = Math.max(template.tertiary.length, 1);
@@ -224,34 +240,51 @@ function generateAttributes(archetype: Archetype, targetOvr: number): PlayerAttr
   const secondaryValue = Math.round(secondaryPoints / secondaryCount);
   const tertiaryValue = Math.round(tertiaryPoints / tertiaryCount);
 
-  // Convert points to attribute ratings (simplified formula)
-  // Higher points per attribute = higher rating
-  const primaryRating = clamp(Math.round(targetOvr + 5 + (Math.random() * 6 - 3)), 40, 99);
-  const secondaryRating = clamp(Math.round(targetOvr - 3 + (Math.random() * 6 - 3)), 40, 99);
-  const tertiaryRating = clamp(Math.round(targetOvr - 12 + (Math.random() * 8 - 4)), 40, 99);
-  const baseRating = clamp(Math.round(55 + (Math.random() * 10 - 5)), 40, 75);
+  // Convert point values to tier boosts (higher points = bigger boost)
+  // Scale: 20 points = +5 boost, 80 points = +25 boost (linear scaling)
+  const pointsToBoost = (points: number): number => {
+    return Math.round(5 + (points - 20) * (20 / 60)); // Maps 20-80 points to 5-25 boost
+  };
 
-  // Initialize all attributes to base
+  const primaryBoost = clamp(pointsToBoost(primaryValue), 18, 30);
+  const secondaryBoost = clamp(pointsToBoost(secondaryValue), 10, 20);
+  const tertiaryBoost = clamp(pointsToBoost(tertiaryValue), 2, 12);
+
+  // Base rating scales with OVR (not fixed at 55)
+  // OVR 60 -> base 35, OVR 80 -> base 50, OVR 99 -> base 65
+  const baseRating = clamp(
+    Math.round((targetOvr - 25) + (Math.random() * 10 - 5)),
+    40,
+    75
+  );
+
+  // Initialize all attributes to base rating
   ALL_ATTRIBUTE_KEYS.forEach(key => {
     attributes[key] = baseRating;
   });
 
-  // Apply tier-specific ratings
+  // Apply tier-specific boosts on top of base
+  // Primary: base + primaryBoost (highest ratings)
   template.primary.forEach(key => {
     if (ALL_ATTRIBUTE_KEYS.includes(key)) {
-      attributes[key] = clamp(primaryRating + Math.floor(Math.random() * 4 - 2), 40, 99);
+      const rating = baseRating + primaryBoost + Math.floor(Math.random() * 6 - 3);
+      attributes[key] = clamp(rating, 40, 99);
     }
   });
 
+  // Secondary: base + secondaryBoost (medium ratings)
   template.secondary.forEach(key => {
     if (ALL_ATTRIBUTE_KEYS.includes(key)) {
-      attributes[key] = clamp(secondaryRating + Math.floor(Math.random() * 4 - 2), 40, 99);
+      const rating = baseRating + secondaryBoost + Math.floor(Math.random() * 6 - 3);
+      attributes[key] = clamp(rating, 40, 99);
     }
   });
 
+  // Tertiary: base + tertiaryBoost (lower ratings, but still above base)
   template.tertiary.forEach(key => {
     if (ALL_ATTRIBUTE_KEYS.includes(key)) {
-      attributes[key] = clamp(tertiaryRating + Math.floor(Math.random() * 4 - 2), 40, 99);
+      const rating = baseRating + tertiaryBoost + Math.floor(Math.random() * 4 - 2);
+      attributes[key] = clamp(rating, 40, 99);
     }
   });
 
@@ -301,12 +334,15 @@ function calculatePotential(ovr: number, age: number): number {
     minGap = 3; maxGap = 8;
   } else if (age <= 29) {
     minGap = 0; maxGap = 4;
+  } else if (age <= 32) {
+    minGap = -3; maxGap = 1; // Veterans start declining
   } else {
-    minGap = -2; maxGap = 2;
+    minGap = -8; maxGap = -2; // Older veterans have declining potential
   }
 
   const gap = Math.floor(Math.random() * (maxGap - minGap + 1)) + minGap;
-  return clamp(ovr + gap, ovr, 99);
+  // Allow potential to be below OVR for older players (not clamped to ovr)
+  return clamp(ovr + gap, 40, 99);
 }
 
 // --- Trait Generation ---
@@ -342,14 +378,32 @@ function generateTraits(archetype: Archetype, position: Position, ovr: number): 
 
   const traitCount = minTraits + Math.floor(Math.random() * (maxTraits - minTraits + 1));
 
-  // Get available positive traits
+  // Build trait pool using TRAITS_BY_RARITY for OVR-based access
+  // Higher OVR players have better chance at rare positive traits
+  // Use TRAITS_BY_RARITY to check available rarity tiers
+  const rareTraitsAvailable = TRAITS_BY_RARITY['rare']?.length > 0;
+  const veryRareTraitsAvailable = TRAITS_BY_RARITY['very_rare']?.length > 0;
+
+  const getRarityMultiplier = (rarity: string): number => {
+    // Elite players get boosted rare trait odds, lower OVR get boosted common odds
+    if (ovr >= 90 && rareTraitsAvailable) {
+      return rarity === 'rare' || (rarity === 'very_rare' && veryRareTraitsAvailable) ? 2.0 : 1.0;
+    } else if (ovr >= 80 && rareTraitsAvailable) {
+      return rarity === 'rare' ? 1.5 : 1.0;
+    } else if (ovr < 70) {
+      return rarity === 'common' ? 1.5 : 0.7;
+    }
+    return 1.0;
+  };
+
+  // Get available positive traits with rarity-adjusted weights
   const availablePositive = TRAITS.filter(t => POSITIVE_TRAITS.includes(t.id));
 
-  // Build weighted trait pool
+  // Build weighted trait pool using TRAITS_BY_RARITY structure for rarity awareness
   const buildTraitPool = () => {
     return availablePositive.map(t => ({
       item: t.id,
-      weight: t.rarityWeight,
+      weight: t.rarityWeight * getRarityMultiplier(t.rarity),
     }));
   };
 
@@ -427,36 +481,49 @@ function generateBadges(position: Position, ovr: number, experience: number): Pl
   const badgeCount = getBadgeCount(ovr, experience);
   if (badgeCount === 0) return badges;
 
-  // Get available badges for this position
-  const availableBadges = getBadgesForPosition(position);
+  // Get position-specific badges (excludes universal)
+  const positionBadges = getBadgesForPosition(position).filter(b => b.type === 'position');
+  // Universal badges available to all positions
+  const universalBadges = UNIVERSAL_BADGES;
 
-  // Select badges
+  // Select badges with 70/30 split (position-specific vs universal)
   const selectedBadgeIds = new Set<string>();
 
-  for (let i = 0; i < badgeCount && selectedBadgeIds.size < availableBadges.length; i++) {
-    // Pick a random badge not already selected
-    const remaining = availableBadges.filter(b => !selectedBadgeIds.has(b.id));
+  // Build tier weight pool with OVR/experience bonus
+  // Higher OVR and experience = better chance at higher tiers
+  const tierBonus = Math.max(0, (ovr - 75) / 5 + experience / 3); // 0-10 bonus
+  const getTierWeights = (): { item: BadgeTier; weight: number }[] => {
+    return [
+      { item: 'bronze', weight: Math.max(10, BADGE_TIER_WEIGHTS.bronze - tierBonus * 4) },
+      { item: 'silver', weight: BADGE_TIER_WEIGHTS.silver + tierBonus },
+      { item: 'gold', weight: BADGE_TIER_WEIGHTS.gold + tierBonus * 0.5 },
+      { item: 'hof', weight: BADGE_TIER_WEIGHTS.hof + tierBonus * 0.3 },
+    ];
+  };
+
+  for (let i = 0; i < badgeCount; i++) {
+    // 70% chance for position-specific, 30% for universal
+    const usePositionSpecific = Math.random() < 0.70;
+
+    // Select pool based on 70/30 split
+    let pool = usePositionSpecific ? positionBadges : universalBadges;
+
+    // Filter out already selected badges
+    let remaining = pool.filter(b => !selectedBadgeIds.has(b.id));
+
+    // Fallback: if preferred pool is empty, try the other pool
+    if (remaining.length === 0) {
+      pool = usePositionSpecific ? universalBadges : positionBadges;
+      remaining = pool.filter(b => !selectedBadgeIds.has(b.id));
+    }
+
     if (remaining.length === 0) break;
 
     const badge = getRandomItem(remaining);
     selectedBadgeIds.add(badge.id);
 
-    // Determine tier based on weighted random
-    const tierRoll = Math.random() * 100;
-    let tier: BadgeTier;
-
-    // Higher OVR and experience = better chance at higher tiers
-    const tierBonus = (ovr - 75) / 5 + experience / 3; // 0-10 bonus
-
-    if (tierRoll < 60 - tierBonus * 2) {
-      tier = 'bronze';
-    } else if (tierRoll < 85 - tierBonus) {
-      tier = 'silver';
-    } else if (tierRoll < 97 - tierBonus / 2) {
-      tier = 'gold';
-    } else {
-      tier = 'hof';
-    }
+    // Determine tier using BADGE_TIER_WEIGHTS via weightedRandom
+    const tier = weightedRandom(getTierWeights());
 
     badges.push({ id: badge.id, tier });
   }
@@ -497,6 +564,11 @@ export function generatePlayer(
     position = positionOrOptions;
     targetOvr = targetOvrParam!;
     slot = 1;
+  }
+
+  // Validate OVR range
+  if (targetOvr < 40 || targetOvr > 99) {
+    throw new Error(`generatePlayer: targetOvr must be between 40-99, got ${targetOvr}`);
   }
 
   // 1. Select Archetype (if not provided)
