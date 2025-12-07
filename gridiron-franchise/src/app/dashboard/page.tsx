@@ -42,7 +42,7 @@ export default function DashboardPage() {
             href="/dashboard/schedule"
           />
           <NavCard
-            title="Roster"
+            title="Roster Management"
             icon={<Users className="w-6 h-6" />}
             href="/dashboard/roster"
           />
