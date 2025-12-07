@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Users, Settings } from "lucide-react";
+import { Calendar, Users } from "lucide-react";
 import { TeamCard } from "@/components/dashboard/team-card";
 import { NavCard } from "@/components/dashboard/nav-card";
 import { useCareerStore } from "@/stores/career-store";
@@ -45,11 +45,6 @@ export default function DashboardPage() {
             title="Roster"
             icon={<Users className="w-6 h-6" />}
             href="/dashboard/roster"
-          />
-          <NavCard
-            title="Settings"
-            icon={<Settings className="w-6 h-6" />}
-            href="/dashboard/settings"
           />
         </div>
       </main>

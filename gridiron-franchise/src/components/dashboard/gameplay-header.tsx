@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, Home, Calendar, Info, Users } from "lucide-react";
+import { Menu, X, Home, Calendar, Info, Users, Settings } from "lucide-react";
 import { useUIStore } from "@/stores/ui-store";
 import { getRouteTitle } from "@/lib/constants/route-titles";
 
@@ -27,6 +27,7 @@ export function GameplayHeader() {
     { label: "Dashboard", href: "/dashboard", icon: Home },
     { label: "Roster", href: "/dashboard/roster", icon: Users },
     { label: "Schedule", href: "/dashboard/schedule", icon: Calendar },
+    { label: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
   const handleNavClick = (href: string) => {
