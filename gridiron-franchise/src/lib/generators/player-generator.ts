@@ -30,6 +30,15 @@ interface NameEntry {
 let firstNames: NameEntry[] = [];
 let lastNames: NameEntry[] = [];
 
+/**
+ * Reset the name database (for testing purposes).
+ * Clears cached names so loadNameDatabase() will reload from CSV.
+ */
+export function resetNameDatabase(): void {
+  firstNames = [];
+  lastNames = [];
+}
+
 export function loadNameDatabase() {
   if (firstNames.length > 0) return; // Already loaded
 
@@ -112,6 +121,18 @@ function pickNameByRarity(names: NameEntry[]): string {
   return weightedRandom(weighted);
 }
 
+// --- Constants ---
+
+/**
+ * College programs for player generation (expandable)
+ */
+const COLLEGES = [
+  'Alabama', 'Ohio State', 'Georgia', 'Clemson', 'Michigan',
+  'LSU', 'Florida', 'Texas', 'USC', 'Oklahoma',
+  'Notre Dame', 'Penn State', 'Oregon', 'Auburn', 'Texas A&M',
+  'Wisconsin', 'Miami', 'Florida State', 'Tennessee', 'Nebraska',
+];
+
 // --- Identity Generation ---
 
 function generateIdentity(position: Position): {
@@ -126,14 +147,7 @@ function generateIdentity(position: Position): {
   const firstName = pickNameByRarity(firstNames);
   const lastName = pickNameByRarity(lastNames);
 
-  // College list (can be expanded)
-  const colleges = [
-    'Alabama', 'Ohio State', 'Georgia', 'Clemson', 'Michigan',
-    'LSU', 'Florida', 'Texas', 'USC', 'Oklahoma',
-    'Notre Dame', 'Penn State', 'Oregon', 'Auburn', 'Texas A&M',
-    'Wisconsin', 'Miami', 'Florida State', 'Tennessee', 'Nebraska',
-  ];
-  const college = getRandomItem(colleges);
+  const college = getRandomItem(COLLEGES);
 
   // Jersey number based on position (NFL rules)
   const jerseyNumber = generateJerseyNumber(position);
@@ -332,6 +346,20 @@ function calculateExperience(age: number): number {
 
 // --- Potential System ---
 
+/**
+ * Calculate potential rating based on OVR and age.
+ *
+ * Design assumptions:
+ * - Young players (≤22): High upside, 8-15 points above OVR
+ * - Prime players (23-29): Moderate upside, gradually decreasing
+ * - Veterans (30-32): Minimal upside, potential can equal or slightly exceed OVR
+ * - Older veterans (33+): Declining potential, can be BELOW current OVR
+ *   (reflects physical decline trajectory)
+ *
+ * @param ovr - Current overall rating
+ * @param age - Player age
+ * @returns Potential rating (40-99), may be below OVR for older players
+ */
 function calculatePotential(ovr: number, age: number): number {
   // Potential gap by age
   let minGap: number, maxGap: number;
@@ -474,10 +502,25 @@ function generateTraits(archetype: Archetype, position: Position, ovr: number): 
 // --- Badge Generation ---
 
 /**
+ * Build badge tier weights adjusted by OVR/experience bonus.
+ * Hoisted for efficiency - computed once per generateBadges call.
+ */
+function buildTierWeights(ovr: number, experience: number): { item: BadgeTier; weight: number }[] {
+  // Higher OVR and experience = better chance at higher tiers
+  const tierBonus = Math.max(0, (ovr - 75) / 5 + experience / 3); // 0-10 bonus
+  return [
+    { item: 'bronze', weight: Math.max(10, BADGE_TIER_WEIGHTS.bronze - tierBonus * 4) },
+    { item: 'silver', weight: BADGE_TIER_WEIGHTS.silver + tierBonus },
+    { item: 'gold', weight: BADGE_TIER_WEIGHTS.gold + tierBonus * 0.5 },
+    { item: 'hof', weight: BADGE_TIER_WEIGHTS.hof + tierBonus * 0.3 },
+  ];
+}
+
+/**
  * Generate badges for a player based on position, OVR, and experience
  *
  * Algorithm from FINAL spec:
- * 1. Rookies (experience = 0): No badges
+ * 1. Rookies (experience = 0): No badges - badges are earned through play, not drafted with
  * 2. Veterans: Badge count based on OVR + experience
  * 3. Tier distribution: 70% Bronze, 30% Silver for 1 badge; scales up
  * 4. 70% position-specific badges, 30% universal
@@ -485,7 +528,7 @@ function generateTraits(archetype: Archetype, position: Position, ovr: number): 
 function generateBadges(position: Position, ovr: number, experience: number): PlayerBadge[] {
   const badges: PlayerBadge[] = [];
 
-  // Rookies have no badges
+  // Rookies have no badges - they earn them through gameplay
   if (experience === 0) return badges;
 
   const badgeCount = getBadgeCount(ovr, experience);
@@ -499,17 +542,8 @@ function generateBadges(position: Position, ovr: number, experience: number): Pl
   // Select badges with 70/30 split (position-specific vs universal)
   const selectedBadgeIds = new Set<string>();
 
-  // Build tier weight pool with OVR/experience bonus
-  // Higher OVR and experience = better chance at higher tiers
-  const tierBonus = Math.max(0, (ovr - 75) / 5 + experience / 3); // 0-10 bonus
-  const getTierWeights = (): { item: BadgeTier; weight: number }[] => {
-    return [
-      { item: 'bronze', weight: Math.max(10, BADGE_TIER_WEIGHTS.bronze - tierBonus * 4) },
-      { item: 'silver', weight: BADGE_TIER_WEIGHTS.silver + tierBonus },
-      { item: 'gold', weight: BADGE_TIER_WEIGHTS.gold + tierBonus * 0.5 },
-      { item: 'hof', weight: BADGE_TIER_WEIGHTS.hof + tierBonus * 0.3 },
-    ];
-  };
+  // Compute tier weights once (not per badge)
+  const tierWeights = buildTierWeights(ovr, experience);
 
   for (let i = 0; i < badgeCount; i++) {
     // 70% chance for position-specific, 30% for universal
@@ -532,8 +566,8 @@ function generateBadges(position: Position, ovr: number, experience: number): Pl
     const badge = getRandomItem(remaining);
     selectedBadgeIds.add(badge.id);
 
-    // Determine tier using BADGE_TIER_WEIGHTS via weightedRandom
-    const tier = weightedRandom(getTierWeights());
+    // Determine tier using pre-computed weights
+    const tier = weightedRandom(tierWeights);
 
     badges.push({ id: badge.id, tier });
   }
