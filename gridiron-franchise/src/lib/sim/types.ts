@@ -336,3 +336,34 @@ export interface GameResult {
   /** Debug log (optional) */
   debugLog?: string[];
 }
+
+// ============================================================================
+// GAME SIMULATOR COMPONENT TYPES
+// ============================================================================
+
+export interface GameSimulatorConfig {
+  /** Layout variant */
+  layout?: 'full' | 'compact' | 'minimal';
+  /** Show simulation controls (Play, Drive, Quarter, Game buttons) */
+  showControls?: boolean;
+  /** Show debug toggle and debug info */
+  showDebug?: boolean;
+  /** Show speed control and auto-play */
+  showSpeedControl?: boolean;
+  /** Show drive summary panel */
+  showDriveSummary?: boolean;
+  /** Show active effects panel */
+  showActiveEffects?: boolean;
+  /** Show team selection UI */
+  showTeamSelection?: boolean;
+  /** Show game settings (type, weather, home advantage) */
+  showGameSettings?: boolean;
+  /** Show quarter-by-quarter scores */
+  showQuarterScores?: boolean;
+  /** Show context badges (CLUTCH, PRIMETIME, etc.) */
+  showContextBadges?: boolean;
+  /** Custom header content */
+  header?: React.ReactNode;
+  /** Hide the entire header */
+  hideHeader?: boolean;
+}
