@@ -262,6 +262,8 @@ export class Simulator {
   private getCurrentSituation(team: 'away' | 'home'): GameSituation {
     const teamScore = team === 'away' ? this.state.awayScore : this.state.homeScore;
     const oppScore = team === 'away' ? this.state.homeScore : this.state.awayScore;
+    const oppTeam = team === 'away' ? this.settings.home : this.settings.away;
+    const isHome = team === 'home';
 
     return detectSituation(
       this.state.quarter,
@@ -273,8 +275,24 @@ export class Simulator {
       oppScore,
       this.settings.gameType === 'playoff' || this.settings.gameType === 'championship',
       this.settings.gameType === 'primetime',
-      this.state.possession || 'away'
+      this.state.possession || 'away',
+      {
+        isHome,
+        weather: this.settings.weather,
+        isDivisionGame: this.isDivisionGame(),
+        opponentOvr: oppTeam?.ovr ?? 75,
+      }
     );
+  }
+
+  /**
+   * Check if this is a division game (teams share same division)
+   */
+  private isDivisionGame(): boolean {
+    const away = this.settings.away;
+    const home = this.settings.home;
+    if (!away?.division || !home?.division) return false;
+    return away.division === home.division;
   }
 
   isClutch(): boolean {

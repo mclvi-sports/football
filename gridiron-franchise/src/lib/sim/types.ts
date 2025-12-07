@@ -134,6 +134,8 @@ export interface SimTeam {
   abbrev: string;
   tier: Tier;
   ovr: number;
+  conference?: string;
+  division?: string;
   offense: {
     qb: number;
     rb: number;
@@ -216,6 +218,11 @@ export interface GameSituation {
   inRedZone: boolean;
   inGoalLine: boolean;
   possession: 'away' | 'home';
+  // Context for badge/trait activation
+  isHome: boolean;
+  weather: Weather;
+  isDivisionGame: boolean;
+  opponentOvr: number;
 }
 
 // ============================================================================

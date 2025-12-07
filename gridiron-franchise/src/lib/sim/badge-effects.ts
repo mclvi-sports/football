@@ -212,7 +212,7 @@ export const BADGE_EFFECTS: BadgeEffect[] = [
   {
     id: 'home_field_hero',
     name: 'Home Field Hero',
-    condition: () => true, // Requires isHome context
+    condition: (s) => s.isHome,
     tierBonuses: { bronze: 2, silver: 3, gold: 5, hof: 7 },
     description: 'Bonus in home games',
     category: 'universal',
@@ -220,7 +220,7 @@ export const BADGE_EFFECTS: BadgeEffect[] = [
   {
     id: 'road_warrior',
     name: 'Road Warrior',
-    condition: () => true, // Requires isAway context
+    condition: (s) => !s.isHome,
     tierBonuses: { bronze: 0, silver: 1, gold: 3, hof: 5 },
     description: 'Negates away penalty / bonus in away games',
     category: 'universal',
@@ -228,7 +228,7 @@ export const BADGE_EFFECTS: BadgeEffect[] = [
   {
     id: 'weather_proof',
     name: 'Weather Proof',
-    condition: () => true, // Requires weather context
+    condition: (s) => s.weather !== 'clear',
     tierBonuses: { bronze: 0, silver: 0, gold: 2, hof: 5 },
     description: 'Reduces/negates weather penalty',
     category: 'universal',
@@ -238,7 +238,7 @@ export const BADGE_EFFECTS: BadgeEffect[] = [
   {
     id: 'division_rival_killer',
     name: 'Division Rival Killer',
-    condition: () => true, // Requires division game context
+    condition: (s) => s.isDivisionGame,
     tierBonuses: { bronze: 2, silver: 4, gold: 6, hof: 8 },
     description: 'Bonus vs division rivals',
     category: 'universal',
@@ -254,7 +254,7 @@ export const BADGE_EFFECTS: BadgeEffect[] = [
   {
     id: 'underdog_mentality',
     name: 'Underdog Mentality',
-    condition: () => true, // Requires team OVR comparison
+    condition: (s) => s.opponentOvr > 80, // Team is underdog vs higher OVR opponent
     tierBonuses: { bronze: 2, silver: 4, gold: 6, hof: 8 },
     description: 'Bonus when team is underdog',
     category: 'universal',
@@ -262,7 +262,7 @@ export const BADGE_EFFECTS: BadgeEffect[] = [
   {
     id: 'giant_slayer',
     name: 'Giant Slayer',
-    condition: () => true, // Requires opponent OVR check
+    condition: (s) => s.opponentOvr >= 85,
     tierBonuses: { bronze: 3, silver: 5, gold: 7, hof: 10 },
     description: 'Bonus vs 85+ OVR opponents',
     category: 'universal',

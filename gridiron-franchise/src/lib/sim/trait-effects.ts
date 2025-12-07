@@ -284,6 +284,16 @@ export const TRAIT_EFFECTS: TraitEffect[] = [
 // ============================================================================
 
 /**
+ * Additional context for badge/trait activation
+ */
+export interface SituationContext {
+  isHome: boolean;
+  weather: 'clear' | 'rain' | 'snow' | 'wind';
+  isDivisionGame: boolean;
+  opponentOvr: number;
+}
+
+/**
  * Detect current game situation from state
  */
 export function detectSituation(
@@ -296,7 +306,8 @@ export function detectSituation(
   opponentScore: number,
   isPlayoffs: boolean,
   isPrimeTime: boolean,
-  possession: 'away' | 'home'
+  possession: 'away' | 'home',
+  context: SituationContext = { isHome: false, weather: 'clear', isDivisionGame: false, opponentOvr: 75 }
 ): GameSituation {
   const isClutch =
     quarter >= 4 && clock <= 120 && Math.abs(teamScore - opponentScore) <= 8;
@@ -327,6 +338,11 @@ export function detectSituation(
     inRedZone,
     inGoalLine,
     possession,
+    // New context fields
+    isHome: context.isHome,
+    weather: context.weather,
+    isDivisionGame: context.isDivisionGame,
+    opponentOvr: context.opponentOvr,
   };
 }
 
