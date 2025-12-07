@@ -545,9 +545,9 @@ export default function SimulatorPage() {
         </CardContent>
       </Card>
 
-      {/* Main Content - Two Column Layout */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_420px]">
-        {/* Left Column - Game View */}
+      {/* Main Content - Stacked Layout */}
+      <div className="space-y-6">
+        {/* Game View */}
         <div className="space-y-4">
           <Scoreboard
             state={sim.state}
@@ -639,7 +639,7 @@ export default function SimulatorPage() {
           </Card>
         </div>
 
-        {/* Right Column - Stats Stacked Vertically */}
+        {/* Stats */}
         <div className="space-y-4">
           <TeamStatsCard
             awayStats={sim.stats.away}

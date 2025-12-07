@@ -1,0 +1,235 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "sim-modular-refactor",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Opus 4.5",
+    "has_context": true,
+    "has_analysis": false,
+    "workorder_id": "WO-SIM-MODULAR-REFACTOR-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "source_files": [
+        "src/app/dashboard/dev-tools/sim/page.tsx",
+        "src/lib/sim/simulator.ts",
+        "src/lib/sim/types.ts",
+        "src/components/sim/scoreboard.tsx",
+        "src/components/sim/field-view.tsx",
+        "src/components/sim/play-log.tsx",
+        "src/components/sim/stats-panel.tsx",
+        "src/components/sim/team-select.tsx",
+        "src/components/sim/drive-summary.tsx",
+        "src/components/sim/sim-speed-control.tsx",
+        "src/components/sim/active-effects.tsx"
+      ],
+      "reference_patterns": [
+        "src/stores/career-store.ts",
+        "src/stores/scouting-store.ts"
+      ],
+      "key_observations": [
+        "Current page.tsx is 660 lines with 17 useState hooks",
+        "4 useRef instances for simulator, autoplay, scores, and drive tracking",
+        "8 useCallback functions for game actions",
+        "Existing display components are already modular and reusable",
+        "Simulator class is well-separated in lib/sim/simulator.ts"
+      ]
+    },
+    "1_executive_summary": {
+      "objective": "Refactor the 660-line monolithic sim page into reusable modular components",
+      "goal": "Make the game simulator importable and reusable for the real game, not just dev-tools",
+      "approach": "Extract state management into a useSimulator hook, create a composable GameSimulator component with configuration props, and simplify the dev-tools page to be a thin wrapper",
+      "expected_outcome": "A modular sim system that can be imported anywhere with configurable layout, callbacks, and pre-selected teams"
+    },
+    "2_risk_assessment": {
+      "complexity": "medium",
+      "estimated_tasks": 6,
+      "risks": [
+        {
+          "risk": "Breaking existing functionality during refactor",
+          "mitigation": "Test thoroughly after each phase, keep dev-tools page functional throughout"
+        },
+        {
+          "risk": "Ref-based state causing stale closure issues in hook",
+          "mitigation": "Use useCallback with proper dependencies, consider reducer pattern if needed"
+        },
+        {
+          "risk": "Auto-play interval cleanup not working correctly",
+          "mitigation": "Ensure cleanup in useEffect return, test start/stop multiple times"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        { "path": "src/hooks/use-simulator.ts", "purpose": "Core hook encapsulating all simulation state and callbacks" },
+        { "path": "src/components/sim/game-simulator.tsx", "purpose": "Composable UI component with configuration props" },
+        { "path": "src/components/sim/game-controls.tsx", "purpose": "Extracted control buttons (Play/Drive/Qtr/Game/Reset)" },
+        { "path": "src/components/sim/game-context-badges.tsx", "purpose": "Extracted context badges (weather, clutch, coaching, facilities)" }
+      ],
+      "files_to_modify": [
+        { "path": "src/lib/sim/types.ts", "changes": "Add GameSimulatorConfig, DriveStats, QuarterScores interfaces" },
+        { "path": "src/app/dashboard/dev-tools/sim/page.tsx", "changes": "Simplify to team loading + GameSimulator component" }
+      ],
+      "files_unchanged": [
+        "src/lib/sim/simulator.ts",
+        "src/components/sim/scoreboard.tsx",
+        "src/components/sim/field-view.tsx",
+        "src/components/sim/play-log.tsx",
+        "src/components/sim/stats-panel.tsx",
+        "src/components/sim/team-select.tsx",
+        "src/components/sim/drive-summary.tsx",
+        "src/components/sim/sim-speed-control.tsx",
+        "src/components/sim/active-effects.tsx"
+      ]
+    },
+    "4_key_features": [
+      {
+        "id": "HOOK",
+        "name": "useSimulator Hook",
+        "description": "Core hook encapsulating all 17 state variables, 4 refs, and all callbacks from page.tsx"
+      },
+      {
+        "id": "COMP",
+        "name": "GameSimulator Component",
+        "description": "Composable UI component with layout variants (full/compact/minimal) and configuration props"
+      },
+      {
+        "id": "SUB",
+        "name": "Sub-Components",
+        "description": "Extracted game-controls.tsx and game-context-badges.tsx for cleaner composition"
+      },
+      {
+        "id": "PAGE",
+        "name": "Page Refactor",
+        "description": "Simplify dev-tools page to ~80 lines using new modular components"
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SIM-MODULAR-REFACTOR-001",
+        "name": "Sim Modular Refactor",
+        "feature_dir": "coderef/working/sim-modular-refactor"
+      },
+      "tasks": [
+        {
+          "id": "HOOK-001",
+          "workorder_id": "WO-SIM-MODULAR-REFACTOR-001",
+          "description": "Create useSimulator hook with all state, refs, and callbacks",
+          "file": "src/hooks/use-simulator.ts",
+          "estimated_loc": 250,
+          "dependencies": []
+        },
+        {
+          "id": "COMP-001",
+          "workorder_id": "WO-SIM-MODULAR-REFACTOR-001",
+          "description": "Create game-controls.tsx sub-component",
+          "file": "src/components/sim/game-controls.tsx",
+          "estimated_loc": 80,
+          "dependencies": []
+        },
+        {
+          "id": "COMP-002",
+          "workorder_id": "WO-SIM-MODULAR-REFACTOR-001",
+          "description": "Create game-context-badges.tsx sub-component",
+          "file": "src/components/sim/game-context-badges.tsx",
+          "estimated_loc": 60,
+          "dependencies": []
+        },
+        {
+          "id": "COMP-003",
+          "workorder_id": "WO-SIM-MODULAR-REFACTOR-001",
+          "description": "Create GameSimulator component composing all pieces",
+          "file": "src/components/sim/game-simulator.tsx",
+          "estimated_loc": 200,
+          "dependencies": ["HOOK-001", "COMP-001", "COMP-002"]
+        },
+        {
+          "id": "TYPE-001",
+          "workorder_id": "WO-SIM-MODULAR-REFACTOR-001",
+          "description": "Add new interfaces to types.ts",
+          "file": "src/lib/sim/types.ts",
+          "estimated_loc": 40,
+          "dependencies": []
+        },
+        {
+          "id": "PAGE-001",
+          "workorder_id": "WO-SIM-MODULAR-REFACTOR-001",
+          "description": "Refactor page.tsx to use new components",
+          "file": "src/app/dashboard/dev-tools/sim/page.tsx",
+          "estimated_loc": 80,
+          "dependencies": ["COMP-003", "TYPE-001"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Core Hook & Types",
+          "description": "Create the useSimulator hook and add new type definitions",
+          "tasks": ["HOOK-001", "TYPE-001"],
+          "deliverables": ["src/hooks/use-simulator.ts", "Updated src/lib/sim/types.ts"]
+        },
+        {
+          "phase": 2,
+          "name": "Sub-Components",
+          "description": "Extract control buttons and context badges into separate components",
+          "tasks": ["COMP-001", "COMP-002"],
+          "deliverables": ["src/components/sim/game-controls.tsx", "src/components/sim/game-context-badges.tsx"]
+        },
+        {
+          "phase": 3,
+          "name": "Main Component & Integration",
+          "description": "Create GameSimulator component and refactor the dev-tools page",
+          "tasks": ["COMP-003", "PAGE-001"],
+          "deliverables": ["src/components/sim/game-simulator.tsx", "Refactored page.tsx"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_tests": [
+        "Load dev-tools sim page - verify all functionality works as before",
+        "Test Play/Drive/Quarter/Game buttons",
+        "Test auto-play with speed changes",
+        "Test game reset",
+        "Verify quarter scores update correctly",
+        "Verify drive stats reset on possession change",
+        "Test flash animations for TDs/turnovers",
+        "Verify all context badges appear correctly"
+      ],
+      "type_checking": [
+        "Run npx tsc --noEmit to verify no type errors"
+      ]
+    },
+    "8_success_criteria": [
+      "Dev-tools sim page works identically to before refactor",
+      "useSimulator hook is importable and usable independently",
+      "GameSimulator component accepts configuration props",
+      "page.tsx reduced from 660 lines to ~80 lines",
+      "No TypeScript errors",
+      "onGameEnd and onPlayComplete callbacks fire correctly"
+    ],
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Create src/hooks/use-simulator.ts with UseSimulatorOptions and UseSimulatorReturn interfaces",
+        "[ ] Move all useState hooks from page.tsx to hook",
+        "[ ] Move all useRef instances to hook",
+        "[ ] Move all useCallback functions to hook",
+        "[ ] Move auto-play useEffect to hook",
+        "[ ] Add DriveStats, QuarterScores, GameSimulatorConfig interfaces to types.ts"
+      ],
+      "phase_2": [
+        "[ ] Create game-controls.tsx with control button props",
+        "[ ] Create game-context-badges.tsx with context badge props"
+      ],
+      "phase_3": [
+        "[ ] Create game-simulator.tsx with GameSimulatorProps interface",
+        "[ ] Implement layout variants (full, compact, minimal)",
+        "[ ] Implement all show* configuration options",
+        "[ ] Refactor page.tsx to use GameSimulator component",
+        "[ ] Test all functionality end-to-end"
+      ]
+    }
+  }
+}

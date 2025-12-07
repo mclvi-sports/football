@@ -1,0 +1,389 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "sim-ui-improvements",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": true,
+    "has_analysis": true,
+    "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "architecture": "coderef/foundation-docs/ARCHITECTURE.md",
+        "components": "coderef/foundation-docs/COMPONENTS.md",
+        "schema": "coderef/foundation-docs/SCHEMA.md"
+      },
+      "key_files": {
+        "main_page": "src/app/dashboard/dev-tools/sim/page.tsx",
+        "scoreboard": "src/components/sim/scoreboard.tsx",
+        "field_view": "src/components/sim/field-view.tsx",
+        "play_log": "src/components/sim/play-log.tsx",
+        "stats_panel": "src/components/sim/stats-panel.tsx",
+        "simulator": "src/lib/sim/simulator.ts",
+        "types": "src/lib/sim/types.ts",
+        "trait_effects": "src/lib/sim/trait-effects.ts",
+        "badge_effects": "src/lib/sim/badge-effects.ts"
+      },
+      "patterns_to_follow": {
+        "component_style": "React 19 + Shadcn/UI with Tailwind CSS",
+        "state_management": "React useState/useRef with forceUpdate pattern",
+        "utility": "cn() for className merging from @/lib/utils"
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Sim UI Improvements",
+      "description": "Enhance the game simulation UI with visual polish, better information display, and UX improvements to make it more engaging and informative",
+      "goal": "Make the sim UI more visually engaging, informative, and easier to use with better feedback on game events",
+      "scope": {
+        "in_scope": [
+          "Fix scoreboard ordinal display bug",
+          "Add current drive summary panel",
+          "Add quarter-by-quarter scoring summary",
+          "Improve field view with team labels in endzones",
+          "Add simulation speed control",
+          "Show active traits/badges when they trigger",
+          "Add visual feedback for big plays (touchdowns, turnovers)"
+        ],
+        "out_of_scope": [
+          "Sound effects",
+          "Team logo images",
+          "Full redesign of stats panels"
+        ]
+      },
+      "constraints": [
+        "Keep existing component structure - enhance don't rewrite",
+        "Maintain performance - no heavy animations that lag simulation",
+        "Mobile responsiveness must be maintained"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity": "medium",
+      "estimated_tasks": 12,
+      "risks": [
+        {
+          "risk": "Animation performance during rapid simulation",
+          "mitigation": "Use CSS transitions with will-change, debounce state updates",
+          "severity": "medium"
+        },
+        {
+          "risk": "Cluttered UI with new panels",
+          "mitigation": "Use collapsible sections and prioritize information hierarchy",
+          "severity": "low"
+        }
+      ],
+      "dependencies": [
+        "Existing simulator class API",
+        "Trait/badge effect system (recently synced)"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/components/sim/scoreboard.tsx",
+          "changes": "Fix ordinal bug, add quarter scoring summary"
+        },
+        {
+          "path": "src/components/sim/field-view.tsx",
+          "changes": "Add team endzone labels, improve visual design"
+        },
+        {
+          "path": "src/components/sim/play-log.tsx",
+          "changes": "Add badge/trait activation display"
+        },
+        {
+          "path": "src/app/dashboard/dev-tools/sim/page.tsx",
+          "changes": "Add drive summary, sim speed control, visual feedback state"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "src/components/sim/drive-summary.tsx",
+          "purpose": "Current drive stats panel (plays, yards, time, start position)"
+        },
+        {
+          "path": "src/components/sim/sim-speed-control.tsx",
+          "purpose": "Slider control for simulation speed with auto-play toggle"
+        },
+        {
+          "path": "src/components/sim/active-effects.tsx",
+          "purpose": "Display recently triggered traits/badges"
+        }
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "FT-01",
+          "name": "Scoreboard Bug Fix & Enhancement",
+          "description": "Fix ordinal display bug and add quarter-by-quarter scoring"
+        },
+        {
+          "id": "FT-02",
+          "name": "Enhanced Field View",
+          "description": "Larger field with team labels in endzones"
+        },
+        {
+          "id": "FT-03",
+          "name": "Drive Summary Panel",
+          "description": "Show current drive stats: plays, yards, time elapsed, starting position"
+        },
+        {
+          "id": "FT-04",
+          "name": "Simulation Speed Control",
+          "description": "Slider to control sim speed with auto-play toggle"
+        },
+        {
+          "id": "FT-05",
+          "name": "Active Effects Display",
+          "description": "Show traits/badges that triggered on each play"
+        },
+        {
+          "id": "FT-06",
+          "name": "Big Play Visual Feedback",
+          "description": "Flash effects for touchdowns, turnovers, and big gains"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SIM-UI-IMPROVEMENTS-001",
+        "name": "Sim UI Improvements",
+        "feature_dir": "coderef/working/sim-ui-improvements"
+      },
+      "tasks": [
+        {
+          "id": "SCORE-001",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Fix ordinal function in scoreboard - currently shows '11st' instead of '1st'",
+          "file": "src/components/sim/scoreboard.tsx",
+          "feature": "FT-01",
+          "priority": "high",
+          "estimated_loc": 5
+        },
+        {
+          "id": "SCORE-002",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Add quarter-by-quarter scoring display below main scores",
+          "file": "src/components/sim/scoreboard.tsx",
+          "feature": "FT-01",
+          "priority": "medium",
+          "estimated_loc": 30
+        },
+        {
+          "id": "FIELD-001",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Add team abbreviation labels in endzones",
+          "file": "src/components/sim/field-view.tsx",
+          "feature": "FT-02",
+          "priority": "medium",
+          "estimated_loc": 20
+        },
+        {
+          "id": "FIELD-002",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Increase field height and improve visual styling",
+          "file": "src/components/sim/field-view.tsx",
+          "feature": "FT-02",
+          "priority": "low",
+          "estimated_loc": 15
+        },
+        {
+          "id": "DRIVE-001",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Create DriveSummary component showing current drive stats",
+          "file": "src/components/sim/drive-summary.tsx",
+          "feature": "FT-03",
+          "priority": "medium",
+          "estimated_loc": 60
+        },
+        {
+          "id": "DRIVE-002",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Track drive stats in simulator (plays, yards, start position, time)",
+          "file": "src/lib/sim/simulator.ts",
+          "feature": "FT-03",
+          "priority": "medium",
+          "estimated_loc": 40
+        },
+        {
+          "id": "SPEED-001",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Create SimSpeedControl component with slider and auto-play toggle",
+          "file": "src/components/sim/sim-speed-control.tsx",
+          "feature": "FT-04",
+          "priority": "medium",
+          "estimated_loc": 50
+        },
+        {
+          "id": "SPEED-002",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Integrate speed control into page with useInterval hook",
+          "file": "src/app/dashboard/dev-tools/sim/page.tsx",
+          "feature": "FT-04",
+          "priority": "medium",
+          "estimated_loc": 30
+        },
+        {
+          "id": "EFFECTS-001",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Create ActiveEffects component to display triggered traits/badges",
+          "file": "src/components/sim/active-effects.tsx",
+          "feature": "FT-05",
+          "priority": "medium",
+          "estimated_loc": 70
+        },
+        {
+          "id": "EFFECTS-002",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Extend PlayResult type to include triggered effects",
+          "file": "src/lib/sim/types.ts",
+          "feature": "FT-05",
+          "priority": "medium",
+          "estimated_loc": 10
+        },
+        {
+          "id": "EFFECTS-003",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Return triggered effects from simulator play results",
+          "file": "src/lib/sim/simulator.ts",
+          "feature": "FT-05",
+          "priority": "medium",
+          "estimated_loc": 25
+        },
+        {
+          "id": "VISUAL-001",
+          "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+          "description": "Add flash animation state and CSS for big plays",
+          "file": "src/app/dashboard/dev-tools/sim/page.tsx",
+          "feature": "FT-06",
+          "priority": "low",
+          "estimated_loc": 40
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Bug Fixes & Quick Wins",
+          "description": "Fix existing bugs and add simple enhancements",
+          "tasks": ["SCORE-001", "SCORE-002", "FIELD-001", "FIELD-002"],
+          "deliverables": [
+            "Fixed ordinal display in scoreboard",
+            "Quarter-by-quarter scoring summary",
+            "Team labels in field endzones",
+            "Improved field visual styling"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Drive Summary & Speed Control",
+          "description": "Add new panels for drive tracking and simulation control",
+          "tasks": ["DRIVE-001", "DRIVE-002", "SPEED-001", "SPEED-002"],
+          "deliverables": [
+            "DriveSummary component with current drive stats",
+            "Drive tracking in simulator",
+            "SimSpeedControl component with slider",
+            "Auto-play functionality with configurable speed"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Effects Display & Visual Feedback",
+          "description": "Show active traits/badges and add visual feedback for big plays",
+          "tasks": ["EFFECTS-001", "EFFECTS-002", "EFFECTS-003", "VISUAL-001"],
+          "deliverables": [
+            "ActiveEffects component displaying triggered traits/badges",
+            "Extended PlayResult with effect data",
+            "Simulator returning effect activations",
+            "Visual flash effects for touchdowns and turnovers"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_testing": [
+        "Run full game simulation and verify scoreboard displays correctly",
+        "Verify quarter scoring updates after each score",
+        "Check field view shows correct team labels in endzones",
+        "Test drive summary resets on possession change",
+        "Test speed slider at all speeds (0.5x to 4x)",
+        "Verify auto-play starts/stops correctly",
+        "Check traits/badges display when they activate",
+        "Verify touchdown/turnover flash animations trigger"
+      ],
+      "edge_cases": [
+        "Overtime quarter display",
+        "Drive summary during kickoffs",
+        "Speed control during rapid clicking",
+        "Mobile layout with new components"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        {
+          "id": "SC-01",
+          "description": "Scoreboard shows correct ordinals (1st, 2nd, 3rd, 4th)",
+          "verification": "Visual inspection during game"
+        },
+        {
+          "id": "SC-02",
+          "description": "Quarter scores visible and update on each score",
+          "verification": "Run game to completion, check all quarters"
+        },
+        {
+          "id": "SC-03",
+          "description": "Team abbreviations visible in field endzones",
+          "verification": "Visual inspection"
+        },
+        {
+          "id": "SC-04",
+          "description": "Drive summary shows plays, yards, time for current drive",
+          "verification": "Manual testing during simulation"
+        },
+        {
+          "id": "SC-05",
+          "description": "Speed control adjusts simulation pace correctly",
+          "verification": "Test at 0.5x, 1x, 2x, 4x speeds"
+        },
+        {
+          "id": "SC-06",
+          "description": "Active traits/badges display when triggered",
+          "verification": "Sim game with players that have traits, verify display"
+        },
+        {
+          "id": "SC-07",
+          "description": "Touchdown and turnover flash effects visible",
+          "verification": "Sim until TD/INT occurs, verify animation"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Fix ordinal function in scoreboard.tsx",
+        "[ ] Add quarterScores state to page.tsx",
+        "[ ] Add quarter scoring display to Scoreboard",
+        "[ ] Add team props to FieldView for endzone labels",
+        "[ ] Add endzone label elements",
+        "[ ] Increase field height and styling"
+      ],
+      "phase_2_checklist": [
+        "[ ] Create DriveSummary component",
+        "[ ] Add drive tracking to Simulator class",
+        "[ ] Create SimSpeedControl component",
+        "[ ] Add speed state and useInterval to page",
+        "[ ] Wire up auto-play toggle"
+      ],
+      "phase_3_checklist": [
+        "[ ] Extend PlayResult type with triggeredEffects",
+        "[ ] Update simulator to return effect activations",
+        "[ ] Create ActiveEffects component",
+        "[ ] Add flash animation state to page",
+        "[ ] Add CSS animations for touchdowns/turnovers"
+      ]
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "feature_name": "sim-ui-improvements",
+  "description": "Improve the game simulation UI with visual polish, better information display, and UX enhancements",
+  "goal": "Make the sim UI more visually engaging, informative, and easier to use with better feedback on game events",
+  "requirements": [
+    "Fix scoreboard ordinal display bug",
+    "Add current drive summary panel",
+    "Add quarter-by-quarter scoring summary",
+    "Improve field view with team labels in endzones",
+    "Add simulation speed control",
+    "Show active traits/badges when they trigger",
+    "Add visual feedback for big plays (touchdowns, turnovers)"
+  ],
+  "out_of_scope": [
+    "Sound effects",
+    "Team logo images",
+    "Full redesign of stats panels"
+  ],
+  "constraints": [
+    "Keep existing component structure - enhance don't rewrite",
+    "Maintain performance - no heavy animations that lag simulation",
+    "Mobile responsiveness must be maintained"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-SIM-UI-IMPROVEMENTS-001",
+    "workorder_assigned_at": "2025-12-07T02:03:54.532077+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

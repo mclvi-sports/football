@@ -39,6 +39,25 @@
           "reason": "Feature completion: about-update",
           "impact": "Documentation now reflects 0.2.0 changes",
           "breaking": false
+        },
+        {
+          "id": "change-004",
+          "type": "feature",
+          "severity": "minor",
+          "title": "Sim UI improvements: fixed scoreboard ordinal bug, added quarter-by-quarter scoring, drive summary panel, speed control with auto-play, active effects display for traits/badges, and visual flash feedback for big plays",
+          "description": "Workorder WO-SIM-UI-IMPROVEMENTS-001: Sim UI improvements: fixed scoreboard ordinal bug, added quarter-by-quarter scoring, drive summary panel, speed control with auto-play, active effects display for traits/badges, and visual flash feedback for big plays",
+          "files": [
+            "src/components/sim/scoreboard.tsx",
+            "src/components/sim/field-view.tsx",
+            "src/components/sim/drive-summary.tsx",
+            "src/components/sim/sim-speed-control.tsx",
+            "src/components/sim/active-effects.tsx",
+            "src/app/dashboard/dev-tools/sim/page.tsx",
+            "src/lib/sim/types.ts"
+          ],
+          "reason": "Feature completion: sim-ui-improvements",
+          "impact": "Documentation now reflects 0.2.0 changes",
+          "breaking": false
         }
       ],
       "contributors": []

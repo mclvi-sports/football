@@ -1,0 +1,28 @@
+{
+  "feature_name": "sim-modular-refactor",
+  "description": "Refactor the 660-line monolithic sim page into reusable modular components",
+  "goal": "Make the game simulator importable and reusable for the real game, not just dev-tools",
+  "requirements": [
+    "Create useSimulator hook encapsulating all state and callbacks",
+    "Create GameSimulator component with configurable props",
+    "Create game-controls.tsx sub-component",
+    "Create game-context-badges.tsx sub-component",
+    "Simplify dev-tools page to use new components",
+    "Support layout variants (full, compact, minimal)",
+    "Support onGameEnd and onPlayComplete callbacks"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Do not use Zustand - this is session-specific state",
+    "Do not modify the Simulator class",
+    "Do not modify existing display components",
+    "Maintain all existing functionality"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-SIM-MODULAR-REFACTOR-001",
+    "workorder_assigned_at": "2025-12-07T03:32:18.927540+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

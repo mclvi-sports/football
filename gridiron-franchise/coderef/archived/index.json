@@ -9,8 +9,13 @@
       "feature_name": "About Update",
       "folder_name": "about-update",
       "archived_at": "2025-12-06T22:38:08.023714+00:00"
+    },
+    {
+      "feature_name": "Sim Ui Improvements",
+      "folder_name": "sim-ui-improvements",
+      "archived_at": "2025-12-07T02:37:28.689814+00:00"
     }
   ],
-  "total_archived": 2,
-  "last_updated": "2025-12-06T22:38:08.023714+00:00"
+  "total_archived": 3,
+  "last_updated": "2025-12-07T02:37:28.689814+00:00"
 }
