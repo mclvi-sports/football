@@ -165,6 +165,118 @@ export const TRAIT_EFFECTS: TraitEffect[] = [
     isNegative: false,
     description: '+5% INT chance',
   },
+
+  // === MISSING TRAITS FROM traits.ts (sim-relevant only) ===
+
+  // Leadership
+  {
+    name: 'Diva',
+    condition: () => true, // Special: +3 when featured (10+ touches)
+    modifier: 3,
+    isNegative: false,
+    description: '+3 all attributes when getting 10+ touches',
+  },
+
+  // Work Ethic
+  {
+    name: "Winner's Mentality",
+    condition: (s) => s.isLeading,
+    modifier: 5,
+    isNegative: false,
+    description: '+5 all attributes on winning teams',
+  },
+
+  // On-Field Mentality
+  {
+    name: 'Cool Under Pressure',
+    condition: (s) => s.isClutch,
+    modifier: 5,
+    isNegative: false,
+    description: '+5 all attributes in clutch moments',
+  },
+  {
+    name: 'Showboat',
+    condition: () => true,
+    modifier: 0, // Special: +10% taunting penalty
+    isNegative: true,
+    description: '+10% taunting penalty chance',
+  },
+  {
+    name: 'Business-Like',
+    condition: () => true,
+    modifier: 0, // Special: -25% penalty, +10% consistency
+    isNegative: false,
+    description: '-25% penalty chance, +10% consistency',
+  },
+  {
+    name: 'Conservative',
+    condition: () => true,
+    modifier: 0, // Special: -10% big play, -10% turnover
+    isNegative: false,
+    description: '-10% big play chance, -10% turnover chance',
+  },
+  {
+    name: 'Trash Talker',
+    condition: () => true,
+    modifier: 0, // Special: +20% penalty, +15% draw opponent penalty
+    isNegative: true,
+    description: '+20% penalty, +15% draw opponent penalties',
+  },
+
+  // Durability
+  {
+    name: 'Plays Through Pain',
+    condition: () => true, // Special: -5 OVR when injured
+    modifier: -5,
+    isNegative: false, // Positive trait despite penalty
+    description: '-5 OVR when playing injured, +10% team morale',
+  },
+  {
+    name: 'Fragile',
+    condition: () => true,
+    modifier: 0, // Special: +40% injury chance
+    isNegative: true,
+    description: '+40% injury chance',
+  },
+
+  // Clutch & Pressure
+  {
+    name: 'Stage Fright',
+    condition: (s) => s.isPrimeTime || s.isPlayoffs,
+    modifier: -5,
+    isNegative: true,
+    description: '-5 OVR in prime time/playoff games',
+  },
+  {
+    name: 'Closer',
+    condition: (s) => s.isLeading && s.quarter === 4,
+    modifier: 5,
+    isNegative: false,
+    description: '+5 all attributes when protecting lead in 4th quarter',
+  },
+
+  // Character & Discipline
+  {
+    name: 'Undisciplined',
+    condition: () => true,
+    modifier: 0, // Special: +75% penalty, +50% mental errors
+    isNegative: true,
+    description: '+75% penalty chance, +50% mental errors',
+  },
+  {
+    name: 'Low Football IQ',
+    condition: () => true,
+    modifier: -3,
+    isNegative: true,
+    description: '-3 Awareness, Play Recognition',
+  },
+  {
+    name: 'Football Genius',
+    condition: () => true,
+    modifier: 5,
+    isNegative: false,
+    description: '+5 Awareness, +25% scheme recognition',
+  },
 ];
 
 // ============================================================================
@@ -326,6 +438,66 @@ export function getBallHawkModifier(
   playerId: string
 ): number {
   if (hasTrait(traits, playerId, 'Ball Hawk')) return 0.05;
+  return 0;
+}
+
+/**
+ * Get conservative/aggressive modifiers for big play/turnover chances
+ */
+export function getPlayStyleModifiers(
+  traits: SimTrait[],
+  playerId: string
+): { bigPlayMod: number; turnoverMod: number } {
+  if (hasTrait(traits, playerId, 'Conservative')) {
+    return { bigPlayMod: -0.10, turnoverMod: -0.10 };
+  }
+  if (hasTrait(traits, playerId, 'Aggressive')) {
+    return { bigPlayMod: 0.10, turnoverMod: 0.10 };
+  }
+  return { bigPlayMod: 0, turnoverMod: 0 };
+}
+
+/**
+ * Get injury chance modifier including Fragile trait
+ */
+export function getFullInjuryModifier(
+  traits: SimTrait[],
+  playerId: string
+): number {
+  if (hasTrait(traits, playerId, 'Iron Man')) return -0.75;
+  if (hasTrait(traits, playerId, 'Durable')) return -0.40;
+  if (hasTrait(traits, playerId, 'Injury Prone')) return 0.75;
+  if (hasTrait(traits, playerId, 'Fragile')) return 0.40;
+  return 0;
+}
+
+/**
+ * Get penalty chance modifier including new traits
+ */
+export function getFullPenaltyModifier(
+  traits: SimTrait[],
+  playerId: string
+): number {
+  let modifier = 0;
+
+  if (hasTrait(traits, playerId, 'Disciplined')) modifier -= 0.75;
+  if (hasTrait(traits, playerId, 'Business-Like')) modifier -= 0.25;
+  if (hasTrait(traits, playerId, 'Hot Head')) modifier += 0.50;
+  if (hasTrait(traits, playerId, 'Undisciplined')) modifier += 0.75;
+  if (hasTrait(traits, playerId, 'Showboat')) modifier += 0.10;
+  if (hasTrait(traits, playerId, 'Trash Talker')) modifier += 0.20;
+
+  return modifier;
+}
+
+/**
+ * Get opponent penalty draw chance (Trash Talker)
+ */
+export function getOpponentPenaltyDrawModifier(
+  traits: SimTrait[],
+  playerId: string
+): number {
+  if (hasTrait(traits, playerId, 'Trash Talker')) return 0.15;
   return 0;
 }
 

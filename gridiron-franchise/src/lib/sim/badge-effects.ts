@@ -205,6 +205,250 @@ export const BADGE_EFFECTS: BadgeEffect[] = [
     description: 'FG accuracy in clutch',
     category: 'st',
   },
+
+  // === MISSING BADGES FROM badges.ts ===
+
+  // Universal - Home/Away/Weather
+  {
+    id: 'home_field_hero',
+    name: 'Home Field Hero',
+    condition: () => true, // Requires isHome context
+    tierBonuses: { bronze: 2, silver: 3, gold: 5, hof: 7 },
+    description: 'Bonus in home games',
+    category: 'universal',
+  },
+  {
+    id: 'road_warrior',
+    name: 'Road Warrior',
+    condition: () => true, // Requires isAway context
+    tierBonuses: { bronze: 0, silver: 1, gold: 3, hof: 5 },
+    description: 'Negates away penalty / bonus in away games',
+    category: 'universal',
+  },
+  {
+    id: 'weather_proof',
+    name: 'Weather Proof',
+    condition: () => true, // Requires weather context
+    tierBonuses: { bronze: 0, silver: 0, gold: 2, hof: 5 },
+    description: 'Reduces/negates weather penalty',
+    category: 'universal',
+  },
+
+  // Universal - Situational
+  {
+    id: 'division_rival_killer',
+    name: 'Division Rival Killer',
+    condition: () => true, // Requires division game context
+    tierBonuses: { bronze: 2, silver: 4, gold: 6, hof: 8 },
+    description: 'Bonus vs division rivals',
+    category: 'universal',
+  },
+  {
+    id: 'big_game_player',
+    name: 'Big Game Player',
+    condition: (s) => s.isPlayoffs,
+    tierBonuses: { bronze: 3, silver: 5, gold: 7, hof: 10 },
+    description: 'Bonus in playoff-implication games',
+    category: 'universal',
+  },
+  {
+    id: 'underdog_mentality',
+    name: 'Underdog Mentality',
+    condition: () => true, // Requires team OVR comparison
+    tierBonuses: { bronze: 2, silver: 4, gold: 6, hof: 8 },
+    description: 'Bonus when team is underdog',
+    category: 'universal',
+  },
+  {
+    id: 'giant_slayer',
+    name: 'Giant Slayer',
+    condition: () => true, // Requires opponent OVR check
+    tierBonuses: { bronze: 3, silver: 5, gold: 7, hof: 10 },
+    description: 'Bonus vs 85+ OVR opponents',
+    category: 'universal',
+  },
+
+  // WR Additional
+  {
+    id: 'slot_specialist',
+    name: 'Slot Specialist',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Route running bonus in slot',
+    category: 'wr',
+  },
+
+  // TE Badges
+  {
+    id: 'red_zone_weapon',
+    name: 'Red Zone Weapon',
+    condition: (s) => s.inRedZone,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'TE catching bonus in red zone',
+    category: 'te',
+  },
+  {
+    id: 'seam_router',
+    name: 'Seam Router',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Medium route running bonus',
+    category: 'te',
+  },
+  {
+    id: 'run_blocking_te',
+    name: 'Run Blocking TE',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Run blocking bonus',
+    category: 'te',
+  },
+
+  // OL Badges
+  {
+    id: 'pass_protector',
+    name: 'Pass Protector',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Pass blocking bonus',
+    category: 'ol',
+  },
+  {
+    id: 'road_grader',
+    name: 'Road Grader',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Run blocking bonus',
+    category: 'ol',
+  },
+  {
+    id: 'pulling_guard',
+    name: 'Pulling Guard',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Lead blocking bonus on pulls',
+    category: 'ol',
+  },
+  {
+    id: 'short_yardage_specialist',
+    name: 'Short Yardage Specialist',
+    condition: (s) => (s.down === 3 || s.down === 4) && s.yardsToGo <= 2,
+    tierBonuses: { bronze: 5, silver: 8, gold: 12, hof: 15 },
+    description: 'Run blocking bonus in short yardage',
+    category: 'ol',
+  },
+
+  // DL Additional
+  {
+    id: 'pass_rush_elite',
+    name: 'Pass Rush Elite',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Pass rush move bonus',
+    category: 'dl',
+  },
+  {
+    id: 'third_down_rusher',
+    name: 'Third Down Rusher',
+    condition: (s) => s.down === 3,
+    tierBonuses: { bronze: 5, silver: 8, gold: 12, hof: 15 },
+    description: 'Pass rush bonus on 3rd down',
+    category: 'dl',
+  },
+
+  // LB Additional
+  {
+    id: 'coverage_lb',
+    name: 'Coverage Linebacker',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Coverage bonus',
+    category: 'lb',
+  },
+  {
+    id: 'blitz_specialist',
+    name: 'Blitz Specialist',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Pass rush bonus when blitzing',
+    category: 'lb',
+  },
+  {
+    id: 'run_stopper_lb',
+    name: 'Run Stopper',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Tackling/block shed bonus',
+    category: 'lb',
+  },
+
+  // DB Additional
+  {
+    id: 'lockdown_corner',
+    name: 'Lockdown Corner',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Man coverage bonus',
+    category: 'db',
+  },
+  {
+    id: 'zone_defender',
+    name: 'Zone Defender',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Zone coverage bonus',
+    category: 'db',
+  },
+  {
+    id: 'run_support',
+    name: 'Run Support',
+    condition: () => true,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Tackling bonus in run defense',
+    category: 'db',
+  },
+
+  // Kicker/Punter Additional
+  {
+    id: 'ice_in_veins_k',
+    name: 'Ice in Veins',
+    condition: (s) => s.isClutch,
+    tierBonuses: { bronze: 3, silver: 5, gold: 8, hof: 12 },
+    description: 'Accuracy in clutch kicks',
+    category: 'st',
+  },
+  {
+    id: 'long_range_sniper',
+    name: 'Long Range Sniper',
+    condition: () => true, // 50+ yard FGs
+    tierBonuses: { bronze: 5, silver: 8, gold: 12, hof: 15 },
+    description: 'Kick power for 50+ yard FGs',
+    category: 'st',
+  },
+  {
+    id: 'short_range_specialist',
+    name: 'Short Range Specialist',
+    condition: () => true, // Inside 40 yard FGs
+    tierBonuses: { bronze: 5, silver: 8, gold: 12, hof: 15 },
+    description: 'Accuracy for inside 40 FGs',
+    category: 'st',
+  },
+  {
+    id: 'coffin_corner',
+    name: 'Coffin Corner',
+    condition: () => true,
+    tierBonuses: { bronze: 5, silver: 8, gold: 12, hof: 15 },
+    description: 'Punt accuracy inside 20',
+    category: 'st',
+  },
+  {
+    id: 'big_leg',
+    name: 'Big Leg',
+    condition: () => true,
+    tierBonuses: { bronze: 5, silver: 8, gold: 12, hof: 15 },
+    description: 'Punt power bonus',
+    category: 'st',
+  },
 ];
 
 // ============================================================================
