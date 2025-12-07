@@ -120,6 +120,9 @@ export function GameCard({
 
         {/* Center Info */}
         <div className="flex flex-col items-center px-2 min-w-[80px]">
+          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+            Week {game.week}
+          </span>
           {isPrimeTime && <PrimeTimeBadge timeSlot={game.timeSlot} />}
           <span className="text-xs text-muted-foreground mt-1">
             {isFinished ? 'FINAL' : formatTimeSlot(game.timeSlot, game.dayOfWeek)}
