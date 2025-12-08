@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useCareerStore } from "@/stores/career-store";
 import { getFullGameData, TeamRosterData } from "@/lib/dev-player-store";
@@ -96,24 +95,11 @@ export default function TeamSelectionPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-40px)]">
-      {/* Header */}
-      <div className="flex items-center gap-4 py-4">
-        <Link
-          href="/"
-          className="text-muted-foreground hover:text-foreground transition-colors text-xl"
-        >
-          ←
-        </Link>
-        <div>
-          <h1 className="text-xl font-bold">Pick Your Team</h1>
-          <p className="text-xs text-muted-foreground">
-            As owner, you'll inherit the team's GM
-          </p>
-        </div>
-      </div>
+      {/* Safe area spacer for phone notches */}
+      <div className="shrink-0 bg-background" style={{ paddingTop: 'env(safe-area-inset-top)' }} />
 
       {/* Team Grid */}
-      <div className="flex-1 overflow-y-auto pb-24">
+      <div className="flex-1 overflow-y-auto pb-40 pt-4">
         <div className="grid grid-cols-1 gap-2">
           {teamsData.map((teamData) => {
             const isSelected = selectedTeam?.id === teamData.staticTeam?.id;
@@ -176,18 +162,25 @@ export default function TeamSelectionPage() {
       </div>
 
       {/* Footer */}
-      <div className="fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-background via-background to-transparent">
-        <div className="max-w-[400px] mx-auto">
+      <footer className="fixed bottom-0 left-0 right-0 p-5 bg-background border-t border-border z-50">
+        <div className="max-w-[400px] mx-auto space-y-3">
+          <Button
+            variant="outline"
+            onClick={() => router.push("/")}
+            className="w-full"
+          >
+            Main Menu
+          </Button>
           <Button
             onClick={handleNext}
             disabled={!selectedTeam}
             className="w-full"
             size="lg"
           >
-            Next
+            Continue
           </Button>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

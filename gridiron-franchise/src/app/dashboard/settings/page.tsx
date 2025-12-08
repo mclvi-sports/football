@@ -8,6 +8,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { signOut } from "@/lib/supabase/auth";
 import { saveGame } from "@/lib/supabase/save-game";
 import { Button } from "@/components/ui/button";
+import { NavCard } from "@/components/dashboard/nav-card";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -37,6 +38,33 @@ export default function SettingsPage() {
   return (
     <div>
       <main className="px-5 pt-4 space-y-6">
+        {/* Theme Section */}
+        <section className="space-y-3">
+          <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
+            Appearance
+          </h2>
+          <ThemeToggle />
+        </section>
+
+        {/* Quick Links */}
+        <section className="space-y-3">
+          <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
+            Quick Links
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            <NavCard
+              title="Dev Tools"
+              icon={<Wrench className="w-6 h-6" />}
+              href="/dashboard/dev-tools"
+            />
+            <NavCard
+              title="Main Menu"
+              icon={<Home className="w-6 h-6" />}
+              href="/"
+            />
+          </div>
+        </section>
+
         {/* Account Section */}
         <section className="space-y-3">
           <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
@@ -103,46 +131,6 @@ export default function SettingsPage() {
               </div>
             )}
           </div>
-        </section>
-
-        {/* Theme Section */}
-        <section className="space-y-3">
-          <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
-            Appearance
-          </h2>
-          <ThemeToggle />
-        </section>
-
-        {/* Developer Section */}
-        <section className="space-y-3">
-          <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
-            Developer
-          </h2>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push("/dashboard/dev-tools")}
-            className="w-full"
-          >
-            <Wrench className="w-4 h-4 mr-2" />
-            Dev Tools
-          </Button>
-        </section>
-
-        {/* Navigation Section */}
-        <section className="space-y-3">
-          <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
-            Navigation
-          </h2>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push("/")}
-            className="w-full"
-          >
-            <Home className="w-4 h-4 mr-2" />
-            Main Menu
-          </Button>
         </section>
       </main>
     </div>

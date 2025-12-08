@@ -184,6 +184,9 @@ export async function saveGame(
   name: string
 ): Promise<SaveGameResult> {
   const supabase = createClient();
+  if (!supabase) {
+    return { success: false, error: "Supabase not configured" };
+  }
 
   // Get current user
   const {
@@ -241,6 +244,13 @@ export async function saveGame(
  */
 export async function listSaves(): Promise<SaveSlot[]> {
   const supabase = createClient();
+  if (!supabase) {
+    // Return 5 empty slots if Supabase not configured
+    return Array.from({ length: 5 }, (_, i) => ({
+      slotNumber: i + 1,
+      isEmpty: true as const,
+    }));
+  }
 
   const {
     data: { user },
@@ -310,6 +320,9 @@ export interface LoadGameResult {
  */
 export async function loadGame(saveId: string): Promise<LoadGameResult> {
   const supabase = createClient();
+  if (!supabase) {
+    return { success: false, error: "Supabase not configured" };
+  }
 
   const {
     data: { user },
@@ -353,6 +366,9 @@ export interface DeleteSaveResult {
  */
 export async function deleteSave(saveId: string): Promise<DeleteSaveResult> {
   const supabase = createClient();
+  if (!supabase) {
+    return { success: false, error: "Supabase not configured" };
+  }
 
   const {
     data: { user },

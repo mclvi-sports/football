@@ -17,8 +17,16 @@ import { RosterSortSheet, SortOption } from "@/components/roster/roster-sort-she
 import { RosterPlayerCard } from "@/components/roster/roster-player-card";
 import { PlayerDetailModal } from "@/components/player/player-detail-modal";
 import { useCareerStore } from "@/stores/career-store";
-import { getTeamById, TeamRosterData } from "@/lib/dev-player-store";
-import { Position } from "@/lib/types";
+import { getTeamById, getFullGameData, TeamRosterData } from "@/lib/dev-player-store";
+import { LEAGUE_TEAMS } from "@/lib/data/teams";
+import { Player, Position } from "@/lib/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const OFFENSE_POSITIONS = [
   Position.QB,
@@ -66,11 +74,14 @@ const POSITION_FILTER_MAP: Record<PositionFilter, Position[]> = {
 
 export default function RosterPage() {
   const router = useRouter();
-  const { playerTeamId, _hasHydrated } = useCareerStore();
+  const { playerTeamId, selectedTeam, _hasHydrated } = useCareerStore();
 
   // Data state
   const [teamData, setTeamData] = useState<TeamRosterData | null>(null);
+  const [allPlayers, setAllPlayers] = useState<Player[]>([]);
+  const [playerTeamMap, setPlayerTeamMap] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
+  const [selectedTeamId, setSelectedTeamId] = useState<string>("");
 
   // UI state
   const [activeTab, setActiveTab] = useState<TabType>("all");
@@ -79,23 +90,54 @@ export default function RosterPage() {
   const [sortSheetOpen, setSortSheetOpen] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
 
-  // Load team data - wait for hydration
+  // Initialize selectedTeamId from career store
   useEffect(() => {
-    if (!_hasHydrated) return;
+    if (_hasHydrated && playerTeamId && !selectedTeamId) {
+      setSelectedTeamId(playerTeamId);
+    }
+  }, [_hasHydrated, playerTeamId, selectedTeamId]);
 
-    if (playerTeamId) {
-      const data = getTeamById(playerTeamId);
+  // Load team data based on selected team
+  useEffect(() => {
+    if (!_hasHydrated || !selectedTeamId) return;
+
+    if (selectedTeamId === "all") {
+      // Load all players from all teams with team mapping
+      const fullGame = getFullGameData();
+      if (fullGame?.teams) {
+        const all: Player[] = [];
+        const teamMap = new Map<string, string>();
+
+        for (const team of fullGame.teams) {
+          for (const player of team.roster.players) {
+            all.push(player);
+            teamMap.set(player.id, team.team.id);
+          }
+        }
+
+        setAllPlayers(all);
+        setPlayerTeamMap(teamMap);
+        setTeamData(null);
+      }
+    } else {
+      const data = getTeamById(selectedTeamId);
       setTeamData(data);
+      setAllPlayers([]);
     }
     setLoading(false);
-  }, [playerTeamId, _hasHydrated]);
+  }, [selectedTeamId, _hasHydrated]);
+
+  // Get viewed team info for colors
+  const viewedTeam = useMemo(() => {
+    return LEAGUE_TEAMS.find(t => t.id === selectedTeamId);
+  }, [selectedTeamId]);
 
   // Reset position filter when tab changes
   useEffect(() => {
     setPositionFilter("ALL");
   }, [activeTab]);
 
-  const players = teamData?.roster.players || [];
+  const players = selectedTeamId === "all" ? allPlayers : (teamData?.roster.players || []);
 
   // Filter and sort players
   const filteredPlayers = useMemo(() => {
@@ -153,7 +195,7 @@ export default function RosterPage() {
     );
   }
 
-  if (!teamData) {
+  if (!teamData && allPlayers.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] px-5 text-center">
         <div className="text-5xl mb-4 opacity-30">🏈</div>
@@ -172,6 +214,32 @@ export default function RosterPage() {
 
   return (
     <div className="pb-24">
+      {/* Team Dropdown */}
+      <div className="px-4 py-3">
+        <Select value={selectedTeamId} onValueChange={setSelectedTeamId}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select team" />
+          </SelectTrigger>
+          <SelectContent>
+            {/* All Teams option */}
+            <SelectItem value="all">All Teams</SelectItem>
+            {/* User's team */}
+            {selectedTeam && (
+              <SelectItem value={selectedTeam.id}>My Team</SelectItem>
+            )}
+            {/* Other teams A-Z */}
+            {LEAGUE_TEAMS
+              .filter((team) => team.id !== selectedTeam?.id)
+              .sort((a, b) => `${a.city} ${a.name}`.localeCompare(`${b.city} ${b.name}`))
+              .map((team) => (
+                <SelectItem key={team.id} value={team.id}>
+                  {team.city} {team.name}
+                </SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* Tabs */}
       <RosterTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -185,13 +253,20 @@ export default function RosterPage() {
 
       {/* Player List */}
       <div className="px-4 space-y-3">
-        {filteredPlayers.map((player) => (
-          <RosterPlayerCard
-            key={player.id}
-            player={player}
-            onClick={() => handlePlayerClick(player.id)}
-          />
-        ))}
+        {filteredPlayers.map((player) => {
+          // Get team colors - use viewedTeam for single team, or look up from map for "all"
+          const playerTeamId = selectedTeamId === "all" ? playerTeamMap.get(player.id) : selectedTeamId;
+          const playerTeam = playerTeamId ? LEAGUE_TEAMS.find(t => t.id === playerTeamId) : null;
+
+          return (
+            <RosterPlayerCard
+              key={player.id}
+              player={player}
+              onClick={() => handlePlayerClick(player.id)}
+              teamColors={playerTeam?.colors || viewedTeam?.colors}
+            />
+          );
+        })}
       </div>
 
       {/* No Results */}
@@ -216,6 +291,7 @@ export default function RosterPage() {
         <PlayerDetailModal
           playerId={selectedPlayerId}
           onClose={() => setSelectedPlayerId(null)}
+          teamColors={viewedTeam?.colors}
         />
       )}
     </div>

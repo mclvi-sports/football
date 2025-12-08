@@ -38,6 +38,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const supabase = createClient();
 
+    // If Supabase is not configured, skip auth
+    if (!supabase) {
+      setIsLoading(false);
+      return;
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);

@@ -18,6 +18,9 @@ export async function signIn(
   password: string
 ): Promise<AuthResult> {
   const supabase = createClient();
+  if (!supabase) {
+    return { data: null, error: { message: "Supabase not configured" } };
+  }
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -45,6 +48,9 @@ export async function signUp(
   password: string
 ): Promise<AuthResult> {
   const supabase = createClient();
+  if (!supabase) {
+    return { data: null, error: { message: "Supabase not configured" } };
+  }
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -69,6 +75,9 @@ export async function signUp(
  */
 export async function signOut(): Promise<AuthResult> {
   const supabase = createClient();
+  if (!supabase) {
+    return { data: null, error: { message: "Supabase not configured" } };
+  }
 
   const { error } = await supabase.auth.signOut();
 
@@ -93,6 +102,9 @@ export async function resetPasswordForEmail(
   redirectTo?: string
 ): Promise<AuthResult> {
   const supabase = createClient();
+  if (!supabase) {
+    return { data: null, error: { message: "Supabase not configured" } };
+  }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: redirectTo || `${window.location.origin}/auth/reset-password`,
@@ -118,6 +130,9 @@ export async function updatePassword(
   newPassword: string
 ): Promise<AuthResult> {
   const supabase = createClient();
+  if (!supabase) {
+    return { data: null, error: { message: "Supabase not configured" } };
+  }
 
   const { error } = await supabase.auth.updateUser({
     password: newPassword,
@@ -141,6 +156,9 @@ export async function updatePassword(
  */
 export async function getSession() {
   const supabase = createClient();
+  if (!supabase) {
+    return { session: null, error: { message: "Supabase not configured" } };
+  }
   const { data: { session }, error } = await supabase.auth.getSession();
 
   if (error) {
@@ -155,6 +173,9 @@ export async function getSession() {
  */
 export async function getUser() {
   const supabase = createClient();
+  if (!supabase) {
+    return { user: null, error: { message: "Supabase not configured" } };
+  }
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error) {
