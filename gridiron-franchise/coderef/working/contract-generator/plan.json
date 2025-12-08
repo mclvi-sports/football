@@ -1,0 +1,230 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "contract-generator",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "source_file": "src/lib/generators/roster-generator.ts",
+      "target_file": "src/lib/generators/contract-generator.ts",
+      "functions_to_extract": [
+        "VETERAN_MINIMUM constant",
+        "getMinimumSalary()",
+        "calculateSalary()",
+        "calculateContractLength()",
+        "generateContract()"
+      ],
+      "dependencies": ["src/lib/types.ts (Position, Player)"]
+    },
+    "1_executive_summary": {
+      "feature": "Contract Generator Module",
+      "description": "Extract contract generation logic from roster-generator.ts into a standalone module for reuse across FA signings, extensions, trades, and rookie contracts",
+      "goal": "Create a reusable contract-generator.ts that can be imported by multiple systems",
+      "scope": "Extract and refactor only - no new features",
+      "estimated_effort": "30 minutes"
+    },
+    "2_risk_assessment": {
+      "complexity": "Low",
+      "risks": [
+        {
+          "risk": "Breaking roster generation",
+          "mitigation": "Update imports immediately after extraction",
+          "severity": "Low"
+        }
+      ],
+      "dependencies_affected": ["roster-generator.ts"]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        {
+          "path": "src/lib/generators/contract-generator.ts",
+          "purpose": "New standalone contract generation module"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "src/lib/generators/roster-generator.ts",
+          "changes": "Remove contract functions, add import from contract-generator"
+        }
+      ],
+      "files_to_delete": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Salary Calculation",
+          "description": "OVR-based salary with position premiums and experience minimums"
+        },
+        {
+          "id": "F2",
+          "name": "Contract Length",
+          "description": "Age and OVR-based contract duration calculation"
+        },
+        {
+          "id": "F3",
+          "name": "Generate Contract",
+          "description": "Main export function combining salary and length"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-CONTRACT-GENERATOR-001",
+        "name": "Contract Generator",
+        "feature_dir": "coderef/working/contract-generator"
+      },
+      "tasks": [
+        {
+          "id": "EXTRACT-001",
+          "workorder_id": "WO-CONTRACT-GENERATOR-001",
+          "description": "Create contract-generator.ts with VETERAN_MINIMUM constant",
+          "type": "create",
+          "file": "src/lib/generators/contract-generator.ts",
+          "priority": "high",
+          "estimated_minutes": 5
+        },
+        {
+          "id": "EXTRACT-002",
+          "workorder_id": "WO-CONTRACT-GENERATOR-001",
+          "description": "Move getMinimumSalary() function",
+          "type": "create",
+          "file": "src/lib/generators/contract-generator.ts",
+          "priority": "high",
+          "estimated_minutes": 2
+        },
+        {
+          "id": "EXTRACT-003",
+          "workorder_id": "WO-CONTRACT-GENERATOR-001",
+          "description": "Move calculateSalary() function with Position import",
+          "type": "create",
+          "file": "src/lib/generators/contract-generator.ts",
+          "priority": "high",
+          "estimated_minutes": 3
+        },
+        {
+          "id": "EXTRACT-004",
+          "workorder_id": "WO-CONTRACT-GENERATOR-001",
+          "description": "Move calculateContractLength() function",
+          "type": "create",
+          "file": "src/lib/generators/contract-generator.ts",
+          "priority": "high",
+          "estimated_minutes": 2
+        },
+        {
+          "id": "EXTRACT-005",
+          "workorder_id": "WO-CONTRACT-GENERATOR-001",
+          "description": "Move generateContract() function with Player import",
+          "type": "create",
+          "file": "src/lib/generators/contract-generator.ts",
+          "priority": "high",
+          "estimated_minutes": 3
+        },
+        {
+          "id": "UPDATE-001",
+          "workorder_id": "WO-CONTRACT-GENERATOR-001",
+          "description": "Remove contract functions from roster-generator.ts",
+          "type": "modify",
+          "file": "src/lib/generators/roster-generator.ts",
+          "priority": "high",
+          "estimated_minutes": 5
+        },
+        {
+          "id": "UPDATE-002",
+          "workorder_id": "WO-CONTRACT-GENERATOR-001",
+          "description": "Add import { generateContract } from './contract-generator' to roster-generator.ts",
+          "type": "modify",
+          "file": "src/lib/generators/roster-generator.ts",
+          "priority": "high",
+          "estimated_minutes": 2
+        },
+        {
+          "id": "VERIFY-001",
+          "workorder_id": "WO-CONTRACT-GENERATOR-001",
+          "description": "Run TypeScript type check",
+          "type": "verify",
+          "priority": "high",
+          "estimated_minutes": 2
+        },
+        {
+          "id": "VERIFY-002",
+          "workorder_id": "WO-CONTRACT-GENERATOR-001",
+          "description": "Run build to verify no errors",
+          "type": "verify",
+          "priority": "high",
+          "estimated_minutes": 3
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Extract",
+          "description": "Create new contract-generator.ts module with all functions",
+          "tasks": ["EXTRACT-001", "EXTRACT-002", "EXTRACT-003", "EXTRACT-004", "EXTRACT-005"],
+          "deliverables": ["src/lib/generators/contract-generator.ts"]
+        },
+        {
+          "phase": 2,
+          "name": "Update",
+          "description": "Update roster-generator.ts to use new module",
+          "tasks": ["UPDATE-001", "UPDATE-002"],
+          "deliverables": ["Updated roster-generator.ts"]
+        },
+        {
+          "phase": 3,
+          "name": "Verify",
+          "description": "Type check and build verification",
+          "tasks": ["VERIFY-001", "VERIFY-002"],
+          "deliverables": ["Passing type check", "Successful build"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "getMinimumSalary returns correct values for experience 0-7+",
+        "calculateSalary returns minimum for low OVR players",
+        "calculateSalary applies position premiums correctly",
+        "calculateContractLength returns appropriate years by age/OVR"
+      ],
+      "integration_tests": [
+        "generateTeamRoster still produces valid rosters with contracts"
+      ],
+      "manual_verification": [
+        "Generate a roster and verify contracts are populated"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "contract-generator.ts exists with all exported functions",
+        "roster-generator.ts imports from contract-generator",
+        "TypeScript compiles without errors",
+        "Roster generation produces same results as before"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Create contract-generator.ts",
+        "[ ] Add VETERAN_MINIMUM constant",
+        "[ ] Add getMinimumSalary()",
+        "[ ] Add calculateSalary()",
+        "[ ] Add calculateContractLength()",
+        "[ ] Add generateContract() export"
+      ],
+      "phase_2": [
+        "[ ] Remove functions from roster-generator.ts",
+        "[ ] Add import from contract-generator"
+      ],
+      "phase_3": [
+        "[ ] Run npx tsc --noEmit",
+        "[ ] Run build"
+      ]
+    }
+  }
+}

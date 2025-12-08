@@ -1,0 +1,212 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (coderef/foundation-docs)",
+      "ARCHITECTURE.md (coderef/foundation-docs)",
+      "COMPONENTS.md (coderef/foundation-docs)",
+      "SCHEMA.md (coderef/foundation-docs)"
+    ],
+    "missing": [
+      "USER-GUIDE.md"
+    ]
+  },
+  "foundation_doc_content": {
+    "ARCHITECTURE.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Architecture\n\n**Gridiron Franchise System Design**\n\nDate: December 2025\nVersion: 0.1.0\n\n---\n\n## System Topology\n\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502                        CLIENT (Browser)                          \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u2502\n\u2502  \u2502   React 19  \u2502  \u2502  Zustand    \u2502  \u2502    Service Worker       \u2502  \u2502\n\u2502  \u2502  Components \u2502  \u2502   Store     \u2502  \u2502  ",
+      "headers": [
+        "Architecture",
+        "System Topology",
+        "Module Boundaries",
+        "Layer 1: Presentation (`src/app/`, `src/components/`)",
+        "Layer 2: State Management (`src/stores/`)",
+        "Layer 3: Game Logic (`src/lib/`)",
+        "Layer 4: Backend Integration (`src/lib/supabase/`)",
+        "Data Flow",
+        "Career Creation Flow",
+        "Player Generation Flow"
+      ],
+      "size": 9491
+    },
+    "API.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# API Reference\n\n**Gridiron Franchise API Documentation**\n\nDate: December 2025\nVersion: 0.1.0\n\n---\n\n## Overview\n\nGridiron Franchise uses Next.js API Routes for server-side functionality. Currently, the API provides development endpoints for testing data generators.\n\n**Base URL:** `http://localhost:3000/api`\n\n---\n\n## Authentication\n\nAPI routes currently do not require authentication. Production deployment should implement Supabase auth middleware.\n\n---\n\n## Development Endpoints\n\nThese endpoints a",
+      "headers": [
+        "API Reference",
+        "Overview",
+        "Authentication",
+        "Development Endpoints",
+        "POST /api/dev/generate-roster",
+        "POST /api/dev/generate-fa",
+        "POST /api/dev/generate-draft",
+        "POST /api/dev/generate-full",
+        "Error Handling",
+        "Error Codes"
+      ],
+      "size": 5999
+    },
+    "COMPONENTS.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Components Reference\n\n**Gridiron Franchise Component Library**\n\nFramework: React 19 + Shadcn/UI\nVersion: 0.1.0\n\n---\n\n## Overview\n\nComponents follow Shadcn/UI conventions with Tailwind CSS styling. All components use the `cn()` utility for className merging.\n\n```typescript\nimport { cn } from '@/lib/utils'\n```\n\n---\n\n## UI Primitives (`src/components/ui/`)\n\nBase components from Shadcn/UI. Do not modify directly.\n\n### Button\n\n```tsx\nimport { Button } from '@/components/ui/button'\n\n// Variants: def",
+      "headers": [
+        "Components Reference",
+        "Overview",
+        "UI Primitives (`src/components/ui/`)",
+        "Button",
+        "Card",
+        "Dialog",
+        "Tabs",
+        "Select",
+        "Badge",
+        "Progress"
+      ],
+      "size": 9368
+    },
+    "SCHEMA.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Schema Reference\n\n**Gridiron Franchise Data Schema Documentation**\n\nDate: December 2025\nSchema Version: 0.1.0\n\n---\n\n## Overview\n\nThis document defines all TypeScript interfaces and data structures used in Gridiron Franchise. The primary type definitions are in `src/lib/types.ts` with GM-specific types in `src/types/gm-persona.ts`.\n\n---\n\n## Core Game Types\n\n### Position\n\nAll 18 NFL positions.\n\n```typescript\ntype Position =\n  | 'QB' | 'RB' | 'WR' | 'TE'           // Offense Skill\n  | 'LT' | 'LG'",
+      "headers": [
+        "Schema Reference",
+        "Overview",
+        "Core Game Types",
+        "Position",
+        "Tier",
+        "Player Schema",
+        "Player",
+        "PlayerAttributes",
+        "PlayerBadge",
+        "Contract"
+      ],
+      "size": 11338
+    },
+    "README.md": {
+      "location": "root",
+      "preview": "# Gridiron Franchise\n\n**NFL Franchise Management Simulation Game**\n\nVersion: 0.1.0\nDate: December 2025\nMaintainer: willh\n\n---\n\n## Overview\n\nGridiron Franchise is a mobile-first web application for NFL team franchise management simulation. Create a GM persona, select your team, and build a dynasty through drafting, free agency, and player development.\n\n### Key Features\n\n- **GM Persona System**: Choose from 6 backgrounds and 6 archetypes with synergy bonuses\n- **70 Player Archetypes**: Across 18 N",
+      "headers": [
+        "Gridiron Franchise",
+        "Overview",
+        "Key Features",
+        "Quickstart",
+        "Prerequisites",
+        "Installation",
+        "Clone repository",
+        "Install dependencies",
+        "Set up environment variables",
+        "Edit .env.local with your Supabase credentials"
+      ],
+      "size": 3629
+    }
+  },
+  "inventory_data": {
+    "file_inventory": {
+      "total_files": 510,
+      "categories": [],
+      "high_risk_files": 19
+    },
+    "dependencies": {
+      "total_dependencies": 41,
+      "ecosystems": [],
+      "security_vulnerabilities": 0,
+      "outdated_count": 14
+    },
+    "api_endpoints": {
+      "total_endpoints": 0,
+      "frameworks": [],
+      "undocumented_endpoints": 0
+    },
+    "database_schemas": {
+      "total_tables": 0,
+      "database_systems": [],
+      "migration_files": 0
+    },
+    "configuration": {
+      "total_files": 0,
+      "formats_detected": [],
+      "sensitive_values_found": 0
+    },
+    "test_infrastructure": {
+      "total_test_files": 0,
+      "frameworks": [],
+      "coverage": "unknown",
+      "test_readiness_score": 0
+    },
+    "documentation": {
+      "total_files": 1284,
+      "formats": [
+        "html",
+        "markdown"
+      ],
+      "quality_score": 100,
+      "coverage_percentage": 54
+    },
+    "available": [
+      "manifest.json",
+      "dependencies.json",
+      "api.json",
+      "database.json",
+      "config.json",
+      "tests.json",
+      "documentation.json"
+    ],
+    "missing": []
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "note": "Reference component matching requires feature name - not yet implemented"
+  },
+  "key_patterns_identified": [
+    "Error handling: try-catch blocks found in 9 files",
+    "File organization: barrel exports (export from) found in 18 files",
+    "Naming: camelCase for functions (687/791 functions)"
+  ],
+  "technology_stack": {
+    "language": "JavaScript/TypeScript",
+    "framework": "React",
+    "database": "unknown",
+    "testing": "Vitest",
+    "build": "Vite"
+  },
+  "project_structure": {
+    "main_directories": [
+      "context\\FINALS",
+      "context\\list",
+      "src\\components\\franchise",
+      "src\\components\\sim",
+      "src\\components\\ui",
+      "src\\lib\\data",
+      "src\\lib\\sim",
+      "src\\components\\modules\\views"
+    ],
+    "file_counts": {
+      "context\\FINALS": 19,
+      "src\\components\\ui": 15,
+      "src\\components\\sim": 14,
+      "src\\components\\franchise": 13,
+      "context\\list": 12,
+      "src\\lib\\data": 12,
+      "src\\components\\modules\\views": 12,
+      "src\\lib\\sim": 10,
+      "public": 8,
+      "context\\mocks": 8
+    },
+    "organization_pattern": "component-based"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: USER-GUIDE.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No test directory found (tests/, test/, or __tests__/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ]
+}
