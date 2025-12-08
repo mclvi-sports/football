@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useCareerStore } from "@/stores/career-store";
 import { getPlayerGM, GM, GM_BACKGROUNDS, GM_ARCHETYPES } from "@/lib/gm";
-import { getTeamById, TeamRosterData } from "@/lib/dev-player-store";
+import { getTeamById, getFullGameData, TeamRosterData } from "@/lib/dev-player-store";
+import { LEAGUE_TEAMS } from "@/lib/data/teams";
 import { getTeamCoachingById } from "@/lib/coaching/coaching-store";
 import { getTeamFacilitiesById } from "@/lib/facilities/facilities-store";
 import { CoachingStaff } from "@/lib/coaching/types";
@@ -108,6 +109,28 @@ export default function ConfirmCareerPage() {
     const defPlayers = teamData.roster.players.filter(p => DEFENSE_POSITIONS.includes(p.position));
     return getTopPlayers(defPlayers, 5);
   }, [teamData]);
+
+  // Get division rivals with their OVR
+  const divisionRivals = useMemo(() => {
+    if (!selectedTeam) return [];
+    const fullData = getFullGameData();
+    if (!fullData) return [];
+
+    // Find teams in same division, exclude selected team
+    return LEAGUE_TEAMS
+      .filter(t => t.division === selectedTeam.division && t.id !== selectedTeam.id)
+      .map(rival => {
+        const rivalData = fullData.teams.find(t => t.team.id === rival.id);
+        return {
+          id: rival.id,
+          city: rival.city,
+          name: rival.name,
+          colors: rival.colors,
+          avgOvr: rivalData?.stats.avgOvr || 0,
+        };
+      })
+      .sort((a, b) => b.avgOvr - a.avgOvr); // Sort by OVR descending
+  }, [selectedTeam]);
 
   function handleStartCareer() {
     router.push("/dashboard");
@@ -248,6 +271,30 @@ export default function ConfirmCareerPage() {
               <span className="text-xs font-medium">Synergy Active</span>
             </div>
           )}
+        </div>
+
+        {/* Division Rivals */}
+        <div className="bg-secondary/50 border border-border rounded-lg p-2">
+          <p className="text-[10px] text-muted-foreground uppercase mb-1.5">Division Rivals</p>
+          <div className="flex gap-2">
+            {divisionRivals.map((rival) => (
+              <div key={rival.id} className="flex-1 flex items-center gap-1.5 bg-background/50 rounded p-1.5">
+                <div
+                  className="w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold shrink-0"
+                  style={{
+                    backgroundColor: rival.colors.primary,
+                    color: rival.colors.secondary,
+                  }}
+                >
+                  {rival.id}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium truncate">{rival.name}</p>
+                  <p className="text-[10px] text-muted-foreground">{rival.avgOvr} OVR</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
