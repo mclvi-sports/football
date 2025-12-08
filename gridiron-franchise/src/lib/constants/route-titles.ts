@@ -7,7 +7,13 @@
 export const ROUTE_TITLES: Record<string, string> = {
   // Main dashboard pages
   '/dashboard': 'Dashboard',
-  '/dashboard/roster': 'Roster',
+  '/dashboard/roster-management': 'Roster',
+  '/dashboard/roster-management/roster': 'Team Roster',
+  '/dashboard/roster-management/fa': 'Free Agency',
+  '/dashboard/roster-management/ps': 'Practice Squad',
+  '/dashboard/roster-management/trades': 'Trades',
+  '/dashboard/roster-management/depth-chart': 'Depth Chart',
+  '/dashboard/roster-management/injuries': 'Injuries',
   '/dashboard/schedule': 'Schedule',
   '/dashboard/draft': 'Draft',
   '/dashboard/facilities': 'Facilities',
@@ -18,7 +24,8 @@ export const ROUTE_TITLES: Record<string, string> = {
   '/dashboard/saves': 'Cloud Saves',
   '/dashboard/my-gm': 'My GM',
   '/dashboard/about': 'About',
-  '/dashboard/next-task': 'Next Task',
+  '/dashboard/my-team': 'My Team',
+  '/dashboard/next-task': 'Next',
 };
 
 /**

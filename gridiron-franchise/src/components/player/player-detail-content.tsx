@@ -352,16 +352,17 @@ function formatSalary(salary: number): string {
 
 interface PlayerDetailContentProps {
   player: Player;
+  teamColors?: { primary: string; secondary: string };
 }
 
-export function PlayerDetailContent({ player }: PlayerDetailContentProps) {
+export function PlayerDetailContent({ player, teamColors }: PlayerDetailContentProps) {
   const [activeTab, setActiveTab] = useState<TabId>("attributes");
   const { selectedTeam } = useCareerStore();
   const positionAttrs = getPositionAttributes(player.position);
 
-  // Team colors for jersey number gradient
-  const primaryColor = selectedTeam?.colors.primary || "#2563eb";
-  const secondaryColor = selectedTeam?.colors.secondary || "#16a34a";
+  // Team colors for jersey number gradient - use passed colors, or team colors, or neutral defaults
+  const primaryColor = teamColors?.primary || selectedTeam?.colors.primary || "#6b7280";
+  const secondaryColor = teamColors?.secondary || selectedTeam?.colors.secondary || "#4b5563";
 
   const tabs: { id: TabId; label: string }[] = [
     { id: "attributes", label: "Attributes" },

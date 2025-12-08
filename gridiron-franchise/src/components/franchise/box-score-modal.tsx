@@ -43,6 +43,7 @@ export function BoxScoreModal({
           awayStats={game.awayStats}
           homeStats={game.homeStats}
           playerStats={game.playerStats}
+          scoringPlays={game.scoringPlays}
           isFinal={true}
           onBack={() => onOpenChange(false)}
         />

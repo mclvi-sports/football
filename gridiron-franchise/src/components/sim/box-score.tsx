@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ArrowLeft, MoreVertical } from 'lucide-react';
-import { SimStats, PlayerGameStats } from '@/lib/sim/types';
+import { SimStats, PlayerGameStats, ScoringPlay } from '@/lib/sim/types';
 import { cn } from '@/lib/utils';
 
 // ============================================================================
@@ -24,11 +24,12 @@ interface BoxScoreProps {
   awayStats: SimStats;
   homeStats: SimStats;
   playerStats: PlayerGameStats[];
+  scoringPlays?: ScoringPlay[];
   isFinal?: boolean;
   onBack?: () => void;
 }
 
-type TabType = 'team' | 'player' | 'plays';
+type TabType = 'team' | 'player' | 'scoring';
 
 // ============================================================================
 // STAT ROW COMPONENT
@@ -490,6 +491,183 @@ function TeamStatsTab({ awayStats, homeStats, awayColor, homeColor }: TeamStatsT
 }
 
 // ============================================================================
+// SCORING TAB
+// ============================================================================
+
+interface ScoringTabProps {
+  awayTeam: TeamInfo;
+  homeTeam: TeamInfo;
+  awayScore: number;
+  homeScore: number;
+  awayStats: SimStats;
+  homeStats: SimStats;
+  scoringPlays?: ScoringPlay[];
+  awayColor?: string;
+  homeColor?: string;
+}
+
+function ScoringTab({
+  awayTeam,
+  homeTeam,
+  awayScore,
+  homeScore,
+  awayStats,
+  homeStats,
+  scoringPlays = [],
+  awayColor = '#3b82f6',
+  homeColor = '#ef4444',
+}: ScoringTabProps) {
+  // Group scoring plays by quarter
+  const playsByQuarter = scoringPlays.reduce((acc, play) => {
+    if (!acc[play.quarter]) acc[play.quarter] = [];
+    acc[play.quarter].push(play);
+    return acc;
+  }, {} as Record<number, ScoringPlay[]>);
+
+  const quarters = Object.keys(playsByQuarter).map(Number).sort((a, b) => a - b);
+
+  return (
+    <div className="flex flex-col gap-4 pb-8">
+      {/* Score Header */}
+      <div className="px-3 sm:px-4 pt-3">
+        <div className="bg-zinc-900/50 rounded-lg overflow-hidden">
+          <div className="flex items-center justify-between p-4">
+            {/* Away Team */}
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                style={{ backgroundColor: awayColor }}
+              >
+                {awayTeam.abbrev.slice(0, 2)}
+              </div>
+              <div>
+                <div className="text-white font-semibold text-sm">{awayTeam.abbrev}</div>
+                <div className="text-zinc-400 text-xs">{awayTeam.name}</div>
+              </div>
+            </div>
+            {/* Score */}
+            <div className="text-center">
+              <div className="text-white text-2xl font-bold">
+                {awayScore} - {homeScore}
+              </div>
+              <div className="text-zinc-500 text-xs">Final</div>
+            </div>
+            {/* Home Team */}
+            <div className="flex items-center gap-3 flex-row-reverse">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                style={{ backgroundColor: homeColor }}
+              >
+                {homeTeam.abbrev.slice(0, 2)}
+              </div>
+              <div className="text-right">
+                <div className="text-white font-semibold text-sm">{homeTeam.abbrev}</div>
+                <div className="text-zinc-400 text-xs">{homeTeam.name}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Scoring Plays List */}
+      {scoringPlays.length > 0 ? (
+        <div className="px-3 sm:px-4">
+          <h3 className="text-white text-base font-bold mb-3">Scoring Plays</h3>
+          <div className="space-y-4">
+            {quarters.map((quarter) => (
+              <div key={quarter}>
+                <div className="text-zinc-400 text-xs font-semibold uppercase mb-2 px-1">
+                  {quarter <= 4 ? `${quarter === 1 ? '1st' : quarter === 2 ? '2nd' : quarter === 3 ? '3rd' : '4th'} Quarter` : 'Overtime'}
+                </div>
+                <div className="space-y-2">
+                  {playsByQuarter[quarter].map((play, idx) => {
+                    const teamColor = play.team === 'away' ? awayColor : homeColor;
+                    const teamAbbrev = play.team === 'away' ? awayTeam.abbrev : homeTeam.abbrev;
+                    const typeLabel = play.type === 'TD' ? 'TD' : play.type === 'FG' ? 'FG' : play.type === 'XP' ? 'XP' : play.type;
+
+                    return (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-3 p-3 rounded-lg bg-zinc-900/50 border border-zinc-800"
+                      >
+                        {/* Team badge */}
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                          style={{ backgroundColor: teamColor }}
+                        >
+                          {teamAbbrev.slice(0, 2)}
+                        </div>
+                        {/* Play info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300">
+                              {typeLabel}
+                            </span>
+                            <span className="text-zinc-500 text-xs">{play.clock}</span>
+                          </div>
+                          <p className="text-white text-sm leading-tight">{play.description}</p>
+                        </div>
+                        {/* Running Score */}
+                        <div className="text-right flex-shrink-0">
+                          <div className="text-white text-sm font-bold">
+                            {play.awayScore}-{play.homeScore}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        /* Fallback: Show summary when no scoring plays data */
+        <div className="px-3 sm:px-4">
+          <h3 className="text-white text-base font-bold mb-3">Scoring Summary</h3>
+          <div className="bg-zinc-900/50 rounded-lg p-4 space-y-3">
+            {/* Away */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                  style={{ backgroundColor: awayColor }}
+                >
+                  {awayTeam.abbrev.slice(0, 2)}
+                </div>
+                <span className="text-white text-sm">{awayTeam.name}</span>
+              </div>
+              <div className="text-zinc-400 text-xs">
+                {awayStats.passTDs > 0 && <span>{awayStats.passTDs} Pass TD{awayStats.passTDs > 1 ? 's' : ''}</span>}
+                {awayStats.passTDs > 0 && awayStats.rushTDs > 0 && <span>, </span>}
+                {awayStats.rushTDs > 0 && <span>{awayStats.rushTDs} Rush TD{awayStats.rushTDs > 1 ? 's' : ''}</span>}
+              </div>
+            </div>
+            {/* Home */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                  style={{ backgroundColor: homeColor }}
+                >
+                  {homeTeam.abbrev.slice(0, 2)}
+                </div>
+                <span className="text-white text-sm">{homeTeam.name}</span>
+              </div>
+              <div className="text-zinc-400 text-xs">
+                {homeStats.passTDs > 0 && <span>{homeStats.passTDs} Pass TD{homeStats.passTDs > 1 ? 's' : ''}</span>}
+                {homeStats.passTDs > 0 && homeStats.rushTDs > 0 && <span>, </span>}
+                {homeStats.rushTDs > 0 && <span>{homeStats.rushTDs} Rush TD{homeStats.rushTDs > 1 ? 's' : ''}</span>}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
 // MAIN BOX SCORE COMPONENT
 // ============================================================================
 
@@ -501,6 +679,7 @@ export function BoxScore({
   awayStats,
   homeStats,
   playerStats,
+  scoringPlays,
   isFinal = true,
   onBack,
 }: BoxScoreProps) {
@@ -584,15 +763,15 @@ export function BoxScore({
               Players
             </button>
             <button
-              onClick={() => setActiveTab('plays')}
+              onClick={() => setActiveTab('scoring')}
               className={cn(
                 'flex h-full grow items-center justify-center rounded-md px-2 text-xs sm:text-sm font-medium transition-all',
-                activeTab === 'plays'
+                activeTab === 'scoring'
                   ? 'bg-zinc-950 text-white shadow-sm'
                   : 'text-zinc-400 hover:text-zinc-300'
               )}
             >
-              Plays
+              Scoring
             </button>
           </div>
         </div>
@@ -614,10 +793,18 @@ export function BoxScore({
           homeTeam={homeTeam}
         />
       )}
-      {activeTab === 'plays' && (
-        <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
-          <p>Play-by-play coming soon</p>
-        </div>
+      {activeTab === 'scoring' && (
+        <ScoringTab
+          awayTeam={awayTeam}
+          homeTeam={homeTeam}
+          awayScore={awayScore}
+          homeScore={homeScore}
+          awayStats={awayStats}
+          homeStats={homeStats}
+          scoringPlays={scoringPlays}
+          awayColor={awayColor}
+          homeColor={homeColor}
+        />
       )}
     </div>
   );

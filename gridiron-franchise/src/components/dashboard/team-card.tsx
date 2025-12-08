@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import type { TeamInfo } from "@/lib/data/teams";
 
 interface TeamCardProps {
@@ -8,7 +10,10 @@ interface TeamCardProps {
 
 export function TeamCard({ team }: TeamCardProps) {
   return (
-    <div className="bg-secondary/50 border border-border rounded-2xl p-4">
+    <Link
+      href="/dashboard/my-team"
+      className="block bg-secondary/50 border border-border rounded-2xl p-4 transition-all hover:bg-secondary/70 active:scale-[0.98]"
+    >
       <div className="flex items-center gap-4">
         {/* Team Logo */}
         <div
@@ -27,7 +32,10 @@ export function TeamCard({ team }: TeamCardProps) {
           <h2 className="text-xl font-bold truncate">{team.name}</h2>
           <p className="text-xs text-muted-foreground">{team.division}</p>
         </div>
+
+        {/* Chevron */}
+        <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
       </div>
-    </div>
+    </Link>
   );
 }

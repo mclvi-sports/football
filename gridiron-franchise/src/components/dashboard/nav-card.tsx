@@ -10,6 +10,7 @@ interface NavCardProps {
   href: string;
   description?: string;
   variant?: "default" | "highlight";
+  disabled?: boolean;
 }
 
 export function NavCard({
@@ -18,7 +19,42 @@ export function NavCard({
   href,
   description,
   variant = "default",
+  disabled = false,
 }: NavCardProps) {
+  const content = (
+    <>
+      <div
+        className={cn(
+          "w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold mb-2",
+          variant === "default" && "bg-secondary text-foreground",
+          variant === "highlight" && "bg-primary/20 text-primary",
+          disabled && "opacity-50"
+        )}
+      >
+        {icon}
+      </div>
+      <span className={cn("font-semibold text-sm", disabled && "opacity-50")}>{title}</span>
+      {description && (
+        <span className="text-xs text-muted-foreground mt-1 text-center">
+          {description}
+        </span>
+      )}
+    </>
+  );
+
+  if (disabled) {
+    return (
+      <div
+        className={cn(
+          "flex flex-col items-center justify-center p-4 rounded-2xl border cursor-not-allowed",
+          "bg-secondary/30 border-border/50"
+        )}
+      >
+        {content}
+      </div>
+    );
+  }
+
   return (
     <Link
       href={href}
@@ -30,21 +66,7 @@ export function NavCard({
           "bg-primary/10 border-primary/30 hover:bg-primary/20"
       )}
     >
-      <div
-        className={cn(
-          "w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold mb-2",
-          variant === "default" && "bg-secondary text-foreground",
-          variant === "highlight" && "bg-primary/20 text-primary"
-        )}
-      >
-        {icon}
-      </div>
-      <span className="font-semibold text-sm">{title}</span>
-      {description && (
-        <span className="text-xs text-muted-foreground mt-1 text-center">
-          {description}
-        </span>
-      )}
+      {content}
     </Link>
   );
 }

@@ -2,7 +2,6 @@
 
 import { Player } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { useCareerStore } from "@/stores/career-store";
 
 function getOvrColor(ovr: number): string {
   if (ovr >= 90) return "text-yellow-400";
@@ -11,19 +10,12 @@ function getOvrColor(ovr: number): string {
   return "text-muted-foreground";
 }
 
-interface RosterPlayerCardProps {
+interface FAPlayerCardProps {
   player: Player;
   onClick?: () => void;
-  teamColors?: { primary: string; secondary: string };
 }
 
-export function RosterPlayerCard({ player, onClick, teamColors }: RosterPlayerCardProps) {
-  const { selectedTeam } = useCareerStore();
-
-  // Team colors for jersey number gradient - use passed colors, or user's team colors, or defaults
-  const primaryColor = teamColors?.primary || selectedTeam?.colors.primary || "#2563eb";
-  const secondaryColor = teamColors?.secondary || selectedTeam?.colors.secondary || "#16a34a";
-
+export function FAPlayerCard({ player, onClick }: FAPlayerCardProps) {
   return (
     <button
       onClick={onClick}
@@ -34,11 +26,11 @@ export function RosterPlayerCard({ player, onClick, teamColors }: RosterPlayerCa
         "hover:bg-secondary/80 active:scale-[0.99]"
       )}
     >
-      {/* Jersey Number - Team gradient, rounded square */}
+      {/* Jersey Number - Neutral gradient for free agents */}
       <div
         className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-xl text-lg font-bold shadow-md"
         style={{
-          background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+          background: "linear-gradient(135deg, #6b7280, #4b5563)",
           color: "#fff",
           textShadow: "0 1px 2px rgba(0,0,0,0.3)",
         }}

@@ -126,10 +126,22 @@ export interface PlayResult {
   description: string;
   yards: number;
   time: number; // seconds elapsed
+  possession: 'away' | 'home'; // which team has the ball
   playerId?: string; // primary player involved
   defenderId?: string; // defender involved (for sacks, INTs, etc.)
   debug?: string[];
   triggeredEffects?: TriggeredEffect[];
+}
+
+/** Scoring play for display in box score (minimal storage) */
+export interface ScoringPlay {
+  quarter: number;
+  clock: string; // formatted "MM:SS"
+  team: 'away' | 'home';
+  type: 'TD' | 'FG' | 'XP' | 'XP_MISS' | '2PT' | '2PT_FAIL' | 'SAFETY';
+  description: string;
+  awayScore: number; // running score after this play
+  homeScore: number;
 }
 
 // ============================================================================

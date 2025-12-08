@@ -5,7 +5,7 @@
  * all game modules (schemes, coaching, facilities, scouting).
  */
 
-import { SimTeam, SimStats, PlayerGameStats } from '../sim/types';
+import { SimTeam, SimStats, PlayerGameStats, ScoringPlay } from '../sim/types';
 import { WeekSchedule, ScheduledGame } from '../schedule/types';
 
 // ============================================================================
@@ -67,6 +67,7 @@ export interface GameResult {
   awayStats: SimStats;
   homeStats: SimStats;
   playerStats: PlayerGameStats[];
+  scoringPlays?: ScoringPlay[];
   isPrimetime: boolean;
   isPlayoff: boolean;
   playoffRound?: PlayoffRound;

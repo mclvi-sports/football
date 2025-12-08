@@ -111,6 +111,7 @@ export function GameSimulatorTab() {
         description: `${sim.settings[sim.state.possession]!.name} wins the toss and receives.`,
         yards: 0,
         time: 0,
+        possession: sim.state.possession,
       },
     ]);
     forceUpdate({});

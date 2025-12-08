@@ -21,9 +21,10 @@ import { cn } from "@/lib/utils";
 interface PlayerDetailModalProps {
   playerId: string;
   onClose: () => void;
+  teamColors?: { primary: string; secondary: string };
 }
 
-export function PlayerDetailModal({ playerId, onClose }: PlayerDetailModalProps) {
+export function PlayerDetailModal({ playerId, onClose, teamColors }: PlayerDetailModalProps) {
   const [player, setPlayer] = useState<Player | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -92,7 +93,7 @@ export function PlayerDetailModal({ playerId, onClose }: PlayerDetailModalProps)
             </div>
           </div>
         ) : (
-          <PlayerDetailContent player={player} />
+          <PlayerDetailContent player={player} teamColors={teamColors} />
         )}
       </div>
     </div>

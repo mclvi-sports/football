@@ -14,7 +14,7 @@ export type {
   Matchup,
   GameType,
   TimeSlot,
-  DayOfWeek,
+  GameDay,
   DivisionInfo,
   TeamStanding,
   ScheduleGeneratorConfig,
@@ -27,12 +27,10 @@ export { generateSchedule, getScheduleStats, validateSchedule } from './schedule
 
 // Store functions
 export {
-  initializeSchedule,
+  storeSchedule,
   getSchedule,
-  getTeamSchedule,
-  getWeekSchedule,
+  getTeamScheduleById,
   getWeekScheduleByNumber,
-  getUpcomingGame,
   clearSchedule,
 } from './schedule-store';
 

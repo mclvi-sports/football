@@ -433,9 +433,14 @@ export class Simulator {
       this.state.quarter++;
 
       if (this.state.quarter > 4) {
-        if (this.state.awayScore === this.state.homeScore) {
+        if (this.state.isOvertime) {
+          // End of overtime - game over (ties allowed after OT)
+          this.state.isOver = true;
+        } else if (this.state.awayScore === this.state.homeScore) {
+          // Tied at end of regulation - go to overtime
           this.state.clock = 600;
           this.state.isOvertime = true;
+          this.state.isKickoff = true;
         } else {
           this.state.isOver = true;
         }
@@ -475,6 +480,7 @@ export class Simulator {
       description: isTouchback ? 'Touchback. Ball at the 25.' : `Kickoff returned ${returnYards} yards.`,
       yards: isTouchback ? 0 : returnYards,
       time: 5,
+      possession: this.state.possession as 'away' | 'home', // Receiving team
     };
   }
 
@@ -487,6 +493,8 @@ export class Simulator {
     if (this.state.isKickoff) {
       const result = this.kickoff();
       this.advanceClock(5);
+      // Possession after kickoff is the receiving team
+      result.possession = this.state.possession as 'away' | 'home';
       return result;
     }
 
@@ -619,6 +627,7 @@ export class Simulator {
     this.advanceClock(time);
     this.stats[off].timeOfPossession += time;
     result.debug = [...this.debugLog];
+    result.possession = off;
 
     return result;
   }
@@ -633,7 +642,7 @@ export class Simulator {
 
     const rusher = this.selectRusher(offTeam); // Use rotation instead of always RB1
     if (!rusher) {
-      return { type: 'run', result: 'normal', description: 'Run play, no gain.', yards: 0, time: 25 };
+      return { type: 'run', result: 'normal', description: 'Run play, no gain.', yards: 0, time: 25, possession: off };
     }
 
     const rusherStats = this.getPlayerStats(rusher, off);
@@ -750,7 +759,7 @@ export class Simulator {
     const cb = getStarter(defTeam.roster, defDepthChart, Position.CB);
 
     if (!qb) {
-      return { type: 'pass', result: 'incomplete', description: 'Pass incomplete.', yards: 0, time: 5 };
+      return { type: 'pass', result: 'incomplete', description: 'Pass incomplete.', yards: 0, time: 5, possession: off };
     }
 
     const qbStats = this.getPlayerStats(qb, off);
@@ -915,7 +924,7 @@ export class Simulator {
         return this.turnover(off, 'interception', 0, qb, cb);
       }
 
-      return { type: 'pass', result: 'incomplete', description: 'Pass incomplete.', yards: 0, time: 5 };
+      return { type: 'pass', result: 'incomplete', description: 'Pass incomplete.', yards: 0, time: 5, possession: off };
     }
 
     // Completion!
@@ -1008,6 +1017,7 @@ export class Simulator {
       description: `Punt for ${distance} yards.${isTouchback ? ' Touchback.' : ''}`,
       yards: distance,
       time: 5,
+      possession: off,
       playerId: punter?.id,
     };
   }
@@ -1090,6 +1100,7 @@ export class Simulator {
         description: `${distance}-yard FG is GOOD!`,
         yards: 0,
         time: 5,
+        possession: off,
         playerId: kicker?.id,
       };
     }
@@ -1101,6 +1112,7 @@ export class Simulator {
       description: `${distance}-yard FG is NO GOOD.`,
       yards: 0,
       time: 5,
+      possession: off,
       playerId: kicker?.id,
     };
   }
@@ -1150,6 +1162,7 @@ export class Simulator {
         description: this.playDescription(type, yards, player),
         yards,
         time: Math.floor(Math.random() * 15) + 25,
+        possession: off,
         playerId: player?.id,
       };
     }
@@ -1166,6 +1179,7 @@ export class Simulator {
         description: this.playDescription(type, yards, player) + ' Turnover on downs.',
         yards,
         time: Math.floor(Math.random() * 15) + 25,
+        possession: off,
         playerId: player?.id,
       };
     }
@@ -1180,6 +1194,7 @@ export class Simulator {
       description: this.playDescription(type, yards, player),
       yards,
       time: Math.floor(Math.random() * 15) + 25,
+      possession: off,
       playerId: player?.id,
       defenderId: defender?.id,
     };
@@ -1236,6 +1251,7 @@ export class Simulator {
       description: `TOUCHDOWN! ${type === 'pass' ? 'Pass' : 'Rush'} for ${yards} yards by ${playerName}! XP ${xpSuccess ? 'GOOD' : 'NO GOOD'}.`,
       yards,
       time: 10,
+      possession: off,
       playerId: player?.id,
     };
   }
@@ -1252,6 +1268,7 @@ export class Simulator {
       description: `${desc}${defName ? ` by ${defName}` : ''}`,
       yards: 0,
       time: 5,
+      possession: off, // Team that lost possession
       playerId: offPlayer?.id,
       defenderId: defPlayer?.id,
     };
@@ -1310,6 +1327,7 @@ export class Simulator {
       description: `${penalty.name} on ${teamName}, ${penalty.yards} yards.`,
       yards: penalty.onOffense ? -penalty.yards : penalty.yards,
       time: 0,
+      possession: off,
     };
   }
 
@@ -1348,10 +1366,17 @@ export class Simulator {
 
   simulateGame(): PlayResult[] {
     const results: PlayResult[] = [];
+    const MAX_PLAYS = 500; // Safety limit to prevent infinite loops
 
-    while (!this.state.isOver) {
+    while (!this.state.isOver && this.plays < MAX_PLAYS) {
       const result = this.play();
       if (result) results.push(result);
+    }
+
+    // Force end game if max plays reached (safety)
+    if (this.plays >= MAX_PLAYS && !this.state.isOver) {
+      console.warn('Game ended due to max plays limit');
+      this.state.isOver = true;
     }
 
     return results;

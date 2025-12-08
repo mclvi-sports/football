@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { BoxScoreModal } from '@/components/franchise/box-score-modal';
 import { GameCard } from '@/components/schedule/game-card';
 import { GamePreviewModal } from '@/components/schedule/game-preview-modal';
@@ -16,6 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const SEASON_STATE_KEY = 'seasonState';
@@ -24,7 +26,7 @@ export default function SchedulePage() {
   const { selectedTeam } = useCareerStore();
   const [schedule, setSchedule] = useState<LeagueSchedule | null>(null);
   const [seasonState, setSeasonState] = useState<SeasonState | null>(null);
-  const [selectedTeamId, setSelectedTeamId] = useState<string>(selectedTeam?.id || '');
+  const [selectedTeamId, setSelectedTeamId] = useState<string>(selectedTeam?.id || 'all');
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
   const [isLoading, setIsLoading] = useState(true);
   const weekRefs = useRef<Map<number, HTMLDivElement>>(new Map());
@@ -33,7 +35,25 @@ export default function SchedulePage() {
   const [previewGame, setPreviewGame] = useState<ScheduledGame | null>(null);
   const [boxScoreGame, setBoxScoreGame] = useState<GameResult | null>(null);
 
-  // Load schedule and season state
+  // Function to load season state
+  const loadSeasonState = useCallback(() => {
+    const storedSeasonState = sessionStorage.getItem(SEASON_STATE_KEY);
+    if (storedSeasonState) {
+      try {
+        const parsed = JSON.parse(storedSeasonState);
+        console.log('Loaded season state:', parsed.week, 'week, ', parsed.completedGames?.length || 0, 'completed games');
+        setSeasonState(parsed);
+        return parsed;
+      } catch (e) {
+        console.error('Failed to parse season state:', e);
+      }
+    } else {
+      console.log('No season state found in storage');
+    }
+    return null;
+  }, []);
+
+  // Load schedule and season state on mount
   useEffect(() => {
     const loadedSchedule = getSchedule();
     setSchedule(loadedSchedule);
@@ -43,20 +63,41 @@ export default function SchedulePage() {
       setSelectedTeamId(selectedTeam.id);
     }
 
-    // Try to load season state for completed games
-    const storedSeasonState = sessionStorage.getItem(SEASON_STATE_KEY);
-    if (storedSeasonState) {
-      try {
-        const parsed = JSON.parse(storedSeasonState);
-        setSeasonState(parsed);
-        setSelectedWeek(parsed.week || 1);
-      } catch {
-        // Ignore parse errors
-      }
+    // Load season state
+    const state = loadSeasonState();
+    if (state?.week) {
+      setSelectedWeek(state.week);
     }
 
     setIsLoading(false);
-  }, [selectedTeam]);
+  }, [selectedTeam, loadSeasonState]);
+
+  // Refresh season state when page gains focus or season is simulated
+  useEffect(() => {
+    const handleFocus = () => {
+      loadSeasonState();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadSeasonState();
+      }
+    };
+
+    const handleSeasonUpdate = () => {
+      loadSeasonState();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('seasonStateUpdated', handleSeasonUpdate);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('seasonStateUpdated', handleSeasonUpdate);
+    };
+  }, [loadSeasonState]);
 
   // Get selected team's schedule (if specific team selected)
   const teamSchedule: TeamSchedule | null = useMemo(() => {
@@ -70,20 +111,30 @@ export default function SchedulePage() {
     return getWeekScheduleByNumber(selectedWeek);
   }, [schedule, selectedTeamId, selectedWeek]);
 
-  // Get completed games map
+  // Get completed games map (keyed by week-away-home for accurate lookup)
   const completedGamesMap = useMemo(() => {
     const map = new Map<string, GameResult>();
     if (!seasonState?.completedGames) return map;
 
+    console.log(`Building completed games map: ${seasonState.completedGames.length} games`);
+
     for (const game of seasonState.completedGames) {
-      map.set(`${game.awayTeamId}-${game.homeTeamId}`, game);
+      // Key by week + teams to handle potential rematches
+      const weekKey = `${game.week}-${game.awayTeamId}-${game.homeTeamId}`;
+      map.set(weekKey, game);
+      // Also key by gameId for direct lookup
+      if (game.gameId) {
+        map.set(game.gameId, game);
+      }
     }
     return map;
   }, [seasonState]);
 
   // Find result for a scheduled game
   const getGameResult = (game: ScheduledGame): GameResult | undefined => {
-    return completedGamesMap.get(`${game.awayTeamId}-${game.homeTeamId}`);
+    // Try gameId first, then week-teams key
+    return completedGamesMap.get(game.id) ||
+           completedGamesMap.get(`${game.week}-${game.awayTeamId}-${game.homeTeamId}`);
   };
 
   // Scroll to selected week
@@ -158,15 +209,18 @@ export default function SchedulePage() {
               {/* User's team first for easy access */}
               {selectedTeam && (
                 <SelectItem value={selectedTeam.id}>
-                  {selectedTeam.city} {selectedTeam.name}
+                  My Team
                 </SelectItem>
               )}
-              {/* Other teams */}
-              {LEAGUE_TEAMS.filter((team) => team.id !== selectedTeam?.id).map((team) => (
-                <SelectItem key={team.id} value={team.id}>
-                  {team.city} {team.name}
-                </SelectItem>
-              ))}
+              {/* Other teams (A-Z) */}
+              {LEAGUE_TEAMS
+                .filter((team) => team.id !== selectedTeam?.id)
+                .sort((a, b) => `${a.city} ${a.name}`.localeCompare(`${b.city} ${b.name}`))
+                .map((team) => (
+                  <SelectItem key={team.id} value={team.id}>
+                    {team.city} {team.name}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
 
@@ -187,8 +241,27 @@ export default function SchedulePage() {
             </SelectContent>
           </Select>
 
+          {/* Completed games count + Refresh Button */}
+          <div className="flex items-center gap-2 ml-auto">
+            {seasonState?.completedGames && seasonState.completedGames.length > 0 && (
+              <span className="text-xs text-muted-foreground">
+                {seasonState.completedGames.length} games played
+              </span>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                console.log('Manual refresh triggered');
+                loadSeasonState();
+              }}
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+          </div>
+
           {/* Game Indicator Key */}
-          <div className="flex items-center gap-3 text-xs text-muted-foreground ml-auto sm:ml-0">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground sm:ml-0">
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded border-2 border-primary" />
               <span>Your Game</span>
@@ -302,15 +375,13 @@ export default function SchedulePage() {
                   }}
                   className={cn(
                     'flex items-center gap-4 p-3 rounded-lg transition-colors',
-                    isSelected
-                      ? 'border-2 bg-primary/10 border-primary'
-                      : game?.isPrimeTime
-                        ? 'border-2 bg-secondary/30'
-                        : 'border bg-secondary/30 border-border',
+                    game?.isPrimeTime
+                      ? 'border-2 bg-secondary/30'
+                      : 'border bg-secondary/30 border-border',
                     (result || game) && 'cursor-pointer hover:bg-secondary/50',
-                    !isSelected && game?.timeSlot === 'thursday_night' && 'border-amber-600',
-                    !isSelected && game?.timeSlot === 'sunday_night' && 'border-blue-600',
-                    !isSelected && game?.timeSlot === 'monday_night' && 'border-green-600'
+                    game?.timeSlot === 'thursday_night' && 'border-amber-600',
+                    game?.timeSlot === 'sunday_night' && 'border-blue-600',
+                    game?.timeSlot === 'monday_night' && 'border-green-600'
                   )}
                 >
                   {/* Week Number */}

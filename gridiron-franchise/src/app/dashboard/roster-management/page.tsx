@@ -37,15 +37,14 @@ export default function RosterManagementPage() {
             href="/dashboard/roster-management/roster"
           />
           <NavCard
+            title="Depth Chart"
+            icon={<Layers className="w-6 h-6" />}
+            href="/dashboard/roster-management/depth-chart"
+          />
+          <NavCard
             title="Free Agency"
             icon={<UserPlus className="w-6 h-6" />}
             href="/dashboard/roster-management/fa"
-          />
-          <NavCard
-            title="Practice Squad"
-            icon={<ClipboardList className="w-6 h-6" />}
-            href="/dashboard/roster-management/ps"
-            disabled
           />
           <NavCard
             title="Trades"
@@ -54,9 +53,10 @@ export default function RosterManagementPage() {
             disabled
           />
           <NavCard
-            title="Depth Chart"
-            icon={<Layers className="w-6 h-6" />}
-            href="/dashboard/roster-management/depth-chart"
+            title="Practice Squad"
+            icon={<ClipboardList className="w-6 h-6" />}
+            href="/dashboard/roster-management/ps"
+            disabled
           />
           <NavCard
             title="Injuries"

@@ -171,3 +171,24 @@ export function clearDraftClass(): void {
     sessionStorage.removeItem(DRAFT_CLASS_KEY);
   }
 }
+
+// Update depth chart for a team
+export function updateTeamDepthChart(
+  teamId: string,
+  position: Position,
+  playerIds: string[]
+): void {
+  const fullGame = getFullGameData();
+  if (!fullGame) return;
+
+  const teamIndex = fullGame.teams.findIndex((t) => t.team.id === teamId);
+  if (teamIndex === -1) return;
+
+  // Update the depth chart for this position
+  fullGame.teams[teamIndex].roster.depthChart[position] = playerIds;
+
+  // Save back to storage
+  if (typeof window !== "undefined") {
+    sessionStorage.setItem(FULL_GAME_KEY, JSON.stringify(fullGame));
+  }
+}
