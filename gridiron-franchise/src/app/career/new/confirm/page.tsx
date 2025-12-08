@@ -265,12 +265,6 @@ export default function ConfirmCareerPage() {
               </span>
             </div>
           </div>
-          {gm.hasSynergy && (
-            <div className="mt-2 flex items-center gap-1 text-amber-500">
-              <span className="text-xs">⚡</span>
-              <span className="text-xs font-medium">Synergy Active</span>
-            </div>
-          )}
         </div>
 
         {/* Division Rivals */}
