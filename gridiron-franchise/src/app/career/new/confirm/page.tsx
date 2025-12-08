@@ -21,10 +21,12 @@ const DEFENSE_POSITIONS = [
   Position.DE, Position.DT, Position.MLB, Position.OLB,
   Position.CB, Position.FS, Position.SS,
 ];
+const SPECIAL_TEAMS_POSITIONS = [Position.K, Position.P];
 
 function calculateUnitRatings(players: Player[]) {
   const offPlayers = players.filter(p => OFFENSE_POSITIONS.includes(p.position));
   const defPlayers = players.filter(p => DEFENSE_POSITIONS.includes(p.position));
+  const stPlayers = players.filter(p => SPECIAL_TEAMS_POSITIONS.includes(p.position));
 
   const offAvg = offPlayers.length > 0
     ? Math.round(offPlayers.reduce((sum, p) => sum + p.overall, 0) / offPlayers.length)
@@ -32,8 +34,11 @@ function calculateUnitRatings(players: Player[]) {
   const defAvg = defPlayers.length > 0
     ? Math.round(defPlayers.reduce((sum, p) => sum + p.overall, 0) / defPlayers.length)
     : 0;
+  const stAvg = stPlayers.length > 0
+    ? Math.round(stPlayers.reduce((sum, p) => sum + p.overall, 0) / stPlayers.length)
+    : 0;
 
-  return { offense: offAvg, defense: defAvg };
+  return { offense: offAvg, defense: defAvg, specialTeams: stAvg };
 }
 
 function getTopPlayers(players: Player[], count = 5): Player[] {
@@ -88,7 +93,7 @@ export default function ConfirmCareerPage() {
 
   // Calculate derived data
   const unitRatings = useMemo(() => {
-    if (!teamData) return { offense: 0, defense: 0 };
+    if (!teamData) return { offense: 0, defense: 0, specialTeams: 0 };
     return calculateUnitRatings(teamData.roster.players);
   }, [teamData]);
 
@@ -139,20 +144,20 @@ export default function ConfirmCareerPage() {
             {selectedTeam.id}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold truncate">
-                {selectedTeam.city} {selectedTeam.name}
-              </h1>
-              <span className="shrink-0 px-2 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded">
-                {teamData?.stats.avgOvr || "--"} OVR
-              </span>
-            </div>
+            <h1 className="text-lg font-bold truncate">
+              {selectedTeam.city} {selectedTeam.name}
+            </h1>
             <p className="text-xs text-muted-foreground">{selectedTeam.division}</p>
           </div>
         </div>
 
-        {/* Ratings Row */}
+        {/* Ratings Grid - 2x4 */}
         <div className="grid grid-cols-4 gap-2">
+          {/* Row 1: Player Ratings */}
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">OVR</p>
+            <p className="text-lg font-bold">{teamData?.stats.avgOvr || "--"}</p>
+          </div>
           <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
             <p className="text-[10px] text-muted-foreground uppercase">OFF</p>
             <p className="text-lg font-bold">{unitRatings.offense || "--"}</p>
@@ -162,12 +167,25 @@ export default function ConfirmCareerPage() {
             <p className="text-lg font-bold">{unitRatings.defense || "--"}</p>
           </div>
           <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">ST</p>
+            <p className="text-lg font-bold">{unitRatings.specialTeams || "--"}</p>
+          </div>
+          {/* Row 2: Team Ratings */}
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
             <p className="text-[10px] text-muted-foreground uppercase">Staff</p>
             <p className="text-lg font-bold">{coaching?.avgOvr || "--"}</p>
           </div>
           <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
             <p className="text-[10px] text-muted-foreground uppercase">Facilities</p>
             <p className="text-lg font-bold">{facilities ? ratingToGrade(facilities.averageRating) : "--"}</p>
+          </div>
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">Avg Age</p>
+            <p className="text-lg font-bold">{teamData?.stats.avgAge ? Math.round(teamData.stats.avgAge) : "--"}</p>
+          </div>
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">Chemistry</p>
+            <p className="text-lg font-bold">{coaching?.staffChemistry || "--"}</p>
           </div>
         </div>
 
