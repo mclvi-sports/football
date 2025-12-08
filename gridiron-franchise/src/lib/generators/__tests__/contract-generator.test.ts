@@ -87,8 +87,8 @@ describe('calculateSalary', () => {
     const tier75Salaries: number[] = [];
 
     for (let i = 0; i < 30; i++) {
-      tier90Salaries.push(calculateSalary(90, Position.LB, 3));
-      tier75Salaries.push(calculateSalary(75, Position.LB, 3));
+      tier90Salaries.push(calculateSalary(90, Position.MLB, 3));
+      tier75Salaries.push(calculateSalary(75, Position.MLB, 3));
     }
 
     const avg90 = tier90Salaries.reduce((a, b) => a + b, 0) / tier90Salaries.length;
@@ -172,9 +172,10 @@ describe('generateContract', () => {
     experience: 3,
     height: 72,
     weight: 200,
+    fortyTime: 4.45,
     jerseyNumber: 88,
     college: 'Test U',
-    attributes: {},
+    attributes: {} as Player['attributes'],
     traits: [],
     badges: [],
     ...overrides,

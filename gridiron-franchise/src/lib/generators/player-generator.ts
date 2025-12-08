@@ -317,26 +317,137 @@ function generateAttributes(archetype: Archetype, targetOvr: number): PlayerAttr
 
 // --- Age and Experience ---
 
-function generateAge(slot: number = 1): number {
-  // Slot affects age distribution
-  // Slot 1 = starters (more experienced, older)
-  // Higher slots = more depth players (younger or older)
+/**
+ * Position career length categories
+ * Based on real NFL career patterns
+ */
+const POSITION_CAREER_CONFIG: Record<Position, {
+  peakStart: number;    // When prime begins
+  peakEnd: number;      // When prime ends
+  maxAge: number;       // Realistic max age
+  elderWeight: number;  // Multiplier for 34+ bracket
+  rookieWeight: number; // Multiplier for 21-22 bracket
+}> = {
+  // QBs: Long careers, peak 27-35, can play to 45
+  [Position.QB]: { peakStart: 27, peakEnd: 35, maxAge: 45, elderWeight: 2.5, rookieWeight: 0.6 },
+  // RBs: Short careers, peak 23-27, rare past 32
+  [Position.RB]: { peakStart: 23, peakEnd: 27, maxAge: 32, elderWeight: 0.2, rookieWeight: 1.4 },
+  // WRs: Medium careers, peak 25-30
+  [Position.WR]: { peakStart: 25, peakEnd: 30, maxAge: 36, elderWeight: 0.5, rookieWeight: 1.2 },
+  // TEs: Longer careers, peak 26-31
+  [Position.TE]: { peakStart: 26, peakEnd: 31, maxAge: 37, elderWeight: 0.8, rookieWeight: 0.9 },
+  // OL: Long careers, peak 26-32
+  [Position.LT]: { peakStart: 26, peakEnd: 32, maxAge: 38, elderWeight: 1.2, rookieWeight: 0.7 },
+  [Position.LG]: { peakStart: 26, peakEnd: 32, maxAge: 38, elderWeight: 1.2, rookieWeight: 0.7 },
+  [Position.C]: { peakStart: 26, peakEnd: 33, maxAge: 39, elderWeight: 1.3, rookieWeight: 0.6 },
+  [Position.RG]: { peakStart: 26, peakEnd: 32, maxAge: 38, elderWeight: 1.2, rookieWeight: 0.7 },
+  [Position.RT]: { peakStart: 26, peakEnd: 32, maxAge: 38, elderWeight: 1.2, rookieWeight: 0.7 },
+  // DL: Medium-long careers
+  [Position.DE]: { peakStart: 25, peakEnd: 30, maxAge: 36, elderWeight: 0.7, rookieWeight: 1.0 },
+  [Position.DT]: { peakStart: 26, peakEnd: 31, maxAge: 36, elderWeight: 0.8, rookieWeight: 0.9 },
+  // LBs: Medium careers
+  [Position.MLB]: { peakStart: 25, peakEnd: 30, maxAge: 35, elderWeight: 0.6, rookieWeight: 1.1 },
+  [Position.OLB]: { peakStart: 25, peakEnd: 30, maxAge: 35, elderWeight: 0.6, rookieWeight: 1.1 },
+  // DBs: CBs decline earlier, Safeties last longer
+  [Position.CB]: { peakStart: 24, peakEnd: 29, maxAge: 34, elderWeight: 0.4, rookieWeight: 1.3 },
+  [Position.FS]: { peakStart: 25, peakEnd: 31, maxAge: 36, elderWeight: 0.7, rookieWeight: 1.0 },
+  [Position.SS]: { peakStart: 25, peakEnd: 31, maxAge: 36, elderWeight: 0.7, rookieWeight: 1.0 },
+  // Specialists: Very long careers
+  [Position.K]: { peakStart: 26, peakEnd: 38, maxAge: 48, elderWeight: 3.0, rookieWeight: 0.4 },
+  [Position.P]: { peakStart: 26, peakEnd: 38, maxAge: 45, elderWeight: 2.5, rookieWeight: 0.5 },
+};
 
-  const baseAge = 21;
-  let ageRange: number;
+/**
+ * Age brackets representing NFL roster distribution
+ * Weights are base percentages that get modified by position/slot/OVR
+ */
+const AGE_BRACKETS = [
+  { min: 21, max: 22, label: 'rookie', baseWeight: 12 },
+  { min: 23, max: 25, label: 'young', baseWeight: 28 },
+  { min: 26, max: 29, label: 'prime', baseWeight: 32 },
+  { min: 30, max: 33, label: 'veteran', baseWeight: 20 },
+  { min: 34, max: 40, label: 'elder', baseWeight: 8 },
+];
 
-  if (slot === 1) {
-    // Starters: 24-30 typically
-    ageRange = Math.floor(Math.random() * 7) + 3; // 24-30
-  } else if (slot === 2) {
-    // Backups: 22-28
-    ageRange = Math.floor(Math.random() * 7) + 1; // 22-28
-  } else {
-    // Depth: 21-26 (younger developing players)
-    ageRange = Math.floor(Math.random() * 6); // 21-26
+/**
+ * Generate realistic age based on position, slot, and OVR
+ *
+ * Factors:
+ * - Position: QBs/K/P play longer, RBs/CBs decline early
+ * - Slot: Starters more likely to be prime, depth can be young OR veteran
+ * - OVR: Higher OVR = more likely prime age (but can be young star or aging vet)
+ */
+function generateAge(slot: number = 1, position: Position = Position.QB, targetOvr: number = 75): number {
+  const config = POSITION_CAREER_CONFIG[position];
+
+  // Calculate bracket weights adjusted for position
+  const adjustedBrackets = AGE_BRACKETS.map(bracket => {
+    let weight = bracket.baseWeight;
+
+    // Position adjustments
+    if (bracket.label === 'elder') {
+      weight *= config.elderWeight;
+    } else if (bracket.label === 'rookie') {
+      weight *= config.rookieWeight;
+    }
+
+    // Slot adjustments
+    if (slot === 1) {
+      // Starters: Boost prime/veteran, reduce rookie
+      if (bracket.label === 'prime') weight *= 1.4;
+      if (bracket.label === 'veteran') weight *= 1.3;
+      if (bracket.label === 'rookie') weight *= 0.6;
+    } else if (slot === 2) {
+      // Backups: Mix of young (developing) and veteran (experienced depth)
+      if (bracket.label === 'young') weight *= 1.2;
+      if (bracket.label === 'veteran') weight *= 1.1;
+    } else {
+      // Depth (slot 3+): Mostly young, some vet minimum guys
+      if (bracket.label === 'rookie') weight *= 1.5;
+      if (bracket.label === 'young') weight *= 1.3;
+      if (bracket.label === 'elder') weight *= 0.8; // Vet minimum journeymen
+    }
+
+    // OVR adjustments
+    if (targetOvr >= 85) {
+      // Elite players: More likely prime or veteran (proven)
+      if (bracket.label === 'prime') weight *= 1.3;
+      if (bracket.label === 'veteran') weight *= 1.2;
+      if (bracket.label === 'rookie') weight *= 0.7; // Rare elite rookies
+    } else if (targetOvr >= 75) {
+      // Good players: Balanced, slight prime boost
+      if (bracket.label === 'prime') weight *= 1.1;
+    } else if (targetOvr < 65) {
+      // Low OVR: Either young (developing) or old (declining)
+      if (bracket.label === 'rookie') weight *= 1.3;
+      if (bracket.label === 'young') weight *= 1.2;
+      if (bracket.label === 'elder') weight *= 1.4; // Aging vets hanging on
+      if (bracket.label === 'prime') weight *= 0.7;
+    }
+
+    return { ...bracket, weight: Math.max(1, weight) };
+  });
+
+  // Select bracket using weighted random
+  const bracketOptions = adjustedBrackets.map(b => ({ item: b, weight: b.weight }));
+  const selectedBracket = weightedRandom(bracketOptions);
+
+  // Generate age within bracket, respecting position max age
+  let minAge = selectedBracket.min;
+  let maxAge = Math.min(selectedBracket.max, config.maxAge);
+
+  // If bracket max exceeds position max, clamp it
+  if (minAge > config.maxAge) {
+    // This bracket is invalid for this position, use previous bracket
+    minAge = Math.max(21, config.maxAge - 3);
+    maxAge = config.maxAge;
   }
 
-  return baseAge + ageRange;
+  // Generate within range with slight bias toward middle of bracket
+  const range = maxAge - minAge;
+  const age = minAge + Math.floor(Math.random() * (range + 1));
+
+  return clamp(age, 21, config.maxAge);
 }
 
 function calculateExperience(age: number): number {
@@ -623,8 +734,8 @@ export function generatePlayer(
   // 2. Generate Identity
   const identity = generateIdentity(position);
 
-  // 3. Generate Age
-  const playerAge = age ?? generateAge(slot);
+  // 3. Generate Age (now considers position and OVR for realistic distribution)
+  const playerAge = age ?? generateAge(slot, position, targetOvr);
 
   // 4. Calculate Experience
   const experience = calculateExperience(playerAge);
