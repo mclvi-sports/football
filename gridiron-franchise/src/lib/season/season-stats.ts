@@ -408,3 +408,52 @@ export function formatDefenseLine(stats: PlayerSeasonStats): string {
   const d = stats.defense;
   return `${d.tackles} tkl, ${d.sacks} sacks, ${d.interceptions} INT, ${d.passDeflections} PD`;
 }
+
+// ============================================================================
+// CURRENT SEASON STATS (from sessionStorage)
+// ============================================================================
+
+const SEASON_STATE_KEY = 'seasonState';
+
+/**
+ * Get a player's current season stats from completed games in sessionStorage
+ */
+export function getPlayerCurrentSeasonStats(playerId: string): PlayerSeasonStats | null {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const stored = sessionStorage.getItem(SEASON_STATE_KEY);
+    if (!stored) return null;
+
+    const state = JSON.parse(stored);
+    if (!state.completedGames || state.completedGames.length === 0) return null;
+
+    // Aggregate all stats from completed games
+    const statsMap = aggregateSeasonStats(state.completedGames);
+
+    return statsMap.get(playerId) || null;
+  } catch (error) {
+    console.error('Error getting player season stats:', error);
+    return null;
+  }
+}
+
+/**
+ * Get all current season stats (from sessionStorage)
+ */
+export function getCurrentSeasonStats(): Map<string, PlayerSeasonStats> | null {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const stored = sessionStorage.getItem(SEASON_STATE_KEY);
+    if (!stored) return null;
+
+    const state = JSON.parse(stored);
+    if (!state.completedGames || state.completedGames.length === 0) return null;
+
+    return aggregateSeasonStats(state.completedGames);
+  } catch (error) {
+    console.error('Error getting season stats:', error);
+    return null;
+  }
+}

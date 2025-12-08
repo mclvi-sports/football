@@ -287,13 +287,12 @@ export default function RosterPage() {
       />
 
       {/* Player Detail Modal */}
-      {selectedPlayerId && (
-        <PlayerDetailModal
-          playerId={selectedPlayerId}
-          onClose={() => setSelectedPlayerId(null)}
-          teamColors={viewedTeam?.colors}
-        />
-      )}
+      <PlayerDetailModal
+        playerId={selectedPlayerId}
+        open={!!selectedPlayerId}
+        onOpenChange={(open) => !open && setSelectedPlayerId(null)}
+        teamColors={viewedTeam?.colors}
+      />
     </div>
   );
 }

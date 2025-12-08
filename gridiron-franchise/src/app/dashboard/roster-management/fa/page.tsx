@@ -213,13 +213,12 @@ export default function FreeAgencyPage() {
       />
 
       {/* Player Detail Modal - neutral colors for FA */}
-      {selectedPlayerId && (
-        <PlayerDetailModal
-          playerId={selectedPlayerId}
-          onClose={() => setSelectedPlayerId(null)}
-          teamColors={{ primary: "#6b7280", secondary: "#4b5563" }}
-        />
-      )}
+      <PlayerDetailModal
+        playerId={selectedPlayerId}
+        open={!!selectedPlayerId}
+        onOpenChange={(open) => !open && setSelectedPlayerId(null)}
+        teamColors={{ primary: "#6b7280", secondary: "#4b5563" }}
+      />
     </div>
   );
 }
