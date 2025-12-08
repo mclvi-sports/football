@@ -92,9 +92,16 @@ export default function ConfirmCareerPage() {
     return calculateUnitRatings(teamData.roster.players);
   }, [teamData]);
 
-  const topPlayers = useMemo(() => {
+  const topOffensePlayers = useMemo(() => {
     if (!teamData) return [];
-    return getTopPlayers(teamData.roster.players, 5);
+    const offPlayers = teamData.roster.players.filter(p => OFFENSE_POSITIONS.includes(p.position));
+    return getTopPlayers(offPlayers, 5);
+  }, [teamData]);
+
+  const topDefensePlayers = useMemo(() => {
+    if (!teamData) return [];
+    const defPlayers = teamData.roster.players.filter(p => DEFENSE_POSITIONS.includes(p.position));
+    return getTopPlayers(defPlayers, 5);
   }, [teamData]);
 
   function handleStartCareer() {
@@ -164,20 +171,37 @@ export default function ConfirmCareerPage() {
           </div>
         </div>
 
-        {/* Top 5 Players */}
-        <div className="bg-secondary/50 border border-border rounded-lg p-2">
-          <p className="text-[10px] text-muted-foreground uppercase mb-1.5">Top Players</p>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-            {topPlayers.map((player, idx) => (
-              <div key={player.id} className="flex items-center justify-between text-sm">
-                <span className="truncate">
-                  <span className="text-muted-foreground text-xs">{player.position}</span>{" "}
-                  <span className="font-medium">{player.firstName[0]}. {player.lastName}</span>
-                </span>
-                <span className="font-bold text-xs ml-1">{player.overall}</span>
-              </div>
-            ))}
-            {topPlayers.length === 5 && <div />} {/* Empty cell to balance grid */}
+        {/* Top Players - Offense & Defense */}
+        <div className="grid grid-cols-2 gap-2">
+          {/* Offense */}
+          <div className="bg-secondary/50 border border-border rounded-lg p-2">
+            <p className="text-[10px] text-muted-foreground uppercase mb-1">Offense</p>
+            <div className="space-y-0.5">
+              {topOffensePlayers.map((player) => (
+                <div key={player.id} className="flex items-center justify-between text-xs">
+                  <span className="truncate">
+                    <span className="text-muted-foreground">{player.position}</span>{" "}
+                    <span className="font-medium">{player.firstName[0]}. {player.lastName}</span>
+                  </span>
+                  <span className="font-bold ml-1">{player.overall}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Defense */}
+          <div className="bg-secondary/50 border border-border rounded-lg p-2">
+            <p className="text-[10px] text-muted-foreground uppercase mb-1">Defense</p>
+            <div className="space-y-0.5">
+              {topDefensePlayers.map((player) => (
+                <div key={player.id} className="flex items-center justify-between text-xs">
+                  <span className="truncate">
+                    <span className="text-muted-foreground">{player.position}</span>{" "}
+                    <span className="font-medium">{player.firstName[0]}. {player.lastName}</span>
+                  </span>
+                  <span className="font-bold ml-1">{player.overall}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
