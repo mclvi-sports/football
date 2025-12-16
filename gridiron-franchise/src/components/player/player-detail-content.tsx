@@ -24,6 +24,9 @@ import { cn } from "@/lib/utils";
 import { CareerStatsTab } from "@/components/player/career-stats-tab";
 import { useCareerStore } from "@/stores/career-store";
 import { getPlayerCurrentSeasonStats, PlayerSeasonStats } from "@/lib/season/season-stats";
+import { getPlayerCareerStats, savePlayerCareerStats } from "@/lib/career-stats/career-stats-store";
+import { generateCareerHistory } from "@/lib/generators/career-stats-generator";
+import { PlayerCareerStats, CareerSeasonEntry } from "@/lib/career-stats/types";
 
 type TabId =
   | "attributes"
@@ -359,14 +362,44 @@ interface PlayerDetailContentProps {
 export function PlayerDetailContent({ player, teamColors }: PlayerDetailContentProps) {
   const [activeTab, setActiveTab] = useState<TabId>("attributes");
   const [seasonStats, setSeasonStats] = useState<PlayerSeasonStats | null>(null);
+  const [careerStats, setCareerStats] = useState<PlayerCareerStats | null>(null);
+  const [mounted, setMounted] = useState(false);
   const { selectedTeam } = useCareerStore();
   const positionAttrs = getPositionAttributes(player.position);
 
-  // Fetch season stats when player changes
+  // Ensure component is mounted before accessing localStorage
   useEffect(() => {
-    const stats = getPlayerCurrentSeasonStats(player.id);
-    setSeasonStats(stats);
-  }, [player.id]);
+    setMounted(true);
+  }, []);
+
+  // Fetch season and career stats when player changes (only after mount)
+  useEffect(() => {
+    if (!mounted) return;
+
+    const currentStats = getPlayerCurrentSeasonStats(player.id);
+    setSeasonStats(currentStats);
+
+    // Try to get existing career stats
+    let career = getPlayerCareerStats(player.id);
+
+    // If player has experience but no career stats, generate them on-demand
+    if (!career && player.experience > 0) {
+      // Get player's team ID from the selected team or use a generic ID
+      const teamId = selectedTeam?.id || 'UNK';
+      career = generateCareerHistory(player, teamId);
+
+      if (career) {
+        // Save the generated stats for future use
+        savePlayerCareerStats(career);
+        console.log(`[Player Detail] Generated career stats on-demand for ${player.firstName} ${player.lastName}`);
+      }
+    }
+
+    setCareerStats(career);
+  }, [player.id, player.experience, mounted, selectedTeam?.id]);
+
+  // Get current year for display
+  const currentYear = new Date().getFullYear();
 
   // Team colors for jersey number gradient - use passed colors, or team colors, or neutral defaults
   const primaryColor = teamColors?.primary || selectedTeam?.colors.primary || "#6b7280";
@@ -633,11 +666,11 @@ export function PlayerDetailContent({ player, teamColors }: PlayerDetailContentP
           <div className="space-y-6">
             <div>
               <h3 className="text-sm font-black uppercase tracking-wide mb-3">
-                Season Stats
+                Statistics
               </h3>
-              {!seasonStats ? (
+              {!seasonStats && (!careerStats || careerStats.seasons.length === 0) ? (
                 <div className="bg-secondary/30 border border-border rounded-xl p-6 text-center text-muted-foreground text-sm">
-                  No game stats available yet.
+                  No stats available yet.
                   <br />
                   <span className="text-xs">
                     Stats will populate during season play.
@@ -646,191 +679,332 @@ export function PlayerDetailContent({ player, teamColors }: PlayerDetailContentP
               ) : (
                 <div className="space-y-4">
                   {/* Passing Stats */}
-                  {seasonStats.passing.attempts > 0 && (
+                  {((seasonStats?.passing.attempts ?? 0) > 0 || (careerStats?.careerTotals.passing.attempts ?? 0) > 0) && (
                     <div className="bg-secondary/30 border border-border rounded-xl overflow-hidden">
                       <div className="px-3 py-2 bg-secondary/50 border-b border-border">
                         <h4 className="text-xs font-bold text-muted-foreground uppercase">Passing</h4>
                       </div>
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-border/50">
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">GP</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">CMP</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">ATT</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">YDS</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">TD</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">INT</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">RTG</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td className="px-3 py-2 font-medium">{seasonStats.gamesPlayed}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.passing.completions}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.passing.attempts}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.passing.yards}</td>
-                            <td className={cn("px-3 py-2 font-medium", seasonStats.passing.touchdowns > 0 && "text-green-400")}>{seasonStats.passing.touchdowns}</td>
-                            <td className={cn("px-3 py-2 font-medium", seasonStats.passing.interceptions > 0 && "text-red-400")}>{seasonStats.passing.interceptions}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.passing.passerRating.toFixed(1)}</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border/50">
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">YEAR</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">TEAM</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">GP</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">CMP</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">ATT</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">YDS</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">TD</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">INT</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">RTG</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {/* Current Season Row */}
+                            {seasonStats && seasonStats.passing.attempts > 0 && (
+                              <tr className="border-b border-border/30">
+                                <td className="px-2 py-2 font-medium">{currentYear}</td>
+                                <td className="px-2 py-2 font-medium">{seasonStats.teamId}</td>
+                                <td className="px-2 py-2">{seasonStats.gamesPlayed}</td>
+                                <td className="px-2 py-2">{seasonStats.passing.completions}</td>
+                                <td className="px-2 py-2">{seasonStats.passing.attempts}</td>
+                                <td className="px-2 py-2">{seasonStats.passing.yards}</td>
+                                <td className={cn("px-2 py-2", seasonStats.passing.touchdowns > 0 && "text-green-400")}>{seasonStats.passing.touchdowns}</td>
+                                <td className={cn("px-2 py-2", seasonStats.passing.interceptions > 0 && "text-red-400")}>{seasonStats.passing.interceptions}</td>
+                                <td className="px-2 py-2">{seasonStats.passing.passerRating.toFixed(1)}</td>
+                              </tr>
+                            )}
+                            {/* Career History Rows */}
+                            {careerStats?.seasons.filter(s => s.passing.attempts > 0).map((season) => (
+                              <tr key={season.year} className="border-b border-border/30">
+                                <td className="px-2 py-2 font-medium">{season.year}</td>
+                                <td className="px-2 py-2 font-medium">{season.teamAbbrev}</td>
+                                <td className="px-2 py-2">{season.gamesPlayed}</td>
+                                <td className="px-2 py-2">{season.passing.completions}</td>
+                                <td className="px-2 py-2">{season.passing.attempts}</td>
+                                <td className="px-2 py-2">{season.passing.yards}</td>
+                                <td className={cn("px-2 py-2", season.passing.touchdowns > 0 && "text-green-400")}>{season.passing.touchdowns}</td>
+                                <td className={cn("px-2 py-2", season.passing.interceptions > 0 && "text-red-400")}>{season.passing.interceptions}</td>
+                                <td className="px-2 py-2">{season.passing.passerRating.toFixed(1)}</td>
+                              </tr>
+                            ))}
+                            {/* Totals Row */}
+                            {((seasonStats?.passing.attempts ?? 0) > 0 || (careerStats?.seasons.some(s => s.passing.attempts > 0))) && (
+                              <tr className="bg-secondary/50 font-bold">
+                                <td className="px-2 py-2">TOTAL</td>
+                                <td className="px-2 py-2"></td>
+                                <td className="px-2 py-2">{(seasonStats?.gamesPlayed ?? 0) + (careerStats?.careerTotals.gamesPlayed ?? 0)}</td>
+                                <td className="px-2 py-2">{(seasonStats?.passing.completions ?? 0) + (careerStats?.careerTotals.passing.completions ?? 0)}</td>
+                                <td className="px-2 py-2">{(seasonStats?.passing.attempts ?? 0) + (careerStats?.careerTotals.passing.attempts ?? 0)}</td>
+                                <td className="px-2 py-2">{(seasonStats?.passing.yards ?? 0) + (careerStats?.careerTotals.passing.yards ?? 0)}</td>
+                                <td className="px-2 py-2 text-green-400">{(seasonStats?.passing.touchdowns ?? 0) + (careerStats?.careerTotals.passing.touchdowns ?? 0)}</td>
+                                <td className="px-2 py-2 text-red-400">{(seasonStats?.passing.interceptions ?? 0) + (careerStats?.careerTotals.passing.interceptions ?? 0)}</td>
+                                <td className="px-2 py-2">-</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
 
                   {/* Rushing Stats */}
-                  {seasonStats.rushing.carries > 0 && (
+                  {((seasonStats?.rushing.carries ?? 0) > 0 || (careerStats?.careerTotals.rushing.carries ?? 0) > 0) && (
                     <div className="bg-secondary/30 border border-border rounded-xl overflow-hidden">
                       <div className="px-3 py-2 bg-secondary/50 border-b border-border">
                         <h4 className="text-xs font-bold text-muted-foreground uppercase">Rushing</h4>
                       </div>
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-border/50">
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">GP</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">CAR</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">YDS</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">AVG</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">TD</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">LNG</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">FUM</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td className="px-3 py-2 font-medium">{seasonStats.gamesPlayed}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.rushing.carries}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.rushing.yards}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.rushing.yardsPerCarry.toFixed(1)}</td>
-                            <td className={cn("px-3 py-2 font-medium", seasonStats.rushing.touchdowns > 0 && "text-green-400")}>{seasonStats.rushing.touchdowns}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.rushing.long}</td>
-                            <td className={cn("px-3 py-2 font-medium", seasonStats.rushing.fumbles > 0 && "text-red-400")}>{seasonStats.rushing.fumbles}</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border/50">
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">YEAR</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">TEAM</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">GP</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">CAR</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">YDS</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">AVG</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">TD</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">FUM</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {/* Current Season Row */}
+                            {seasonStats && seasonStats.rushing.carries > 0 && (
+                              <tr className="border-b border-border/30">
+                                <td className="px-2 py-2 font-medium">{currentYear}</td>
+                                <td className="px-2 py-2 font-medium">{seasonStats.teamId}</td>
+                                <td className="px-2 py-2">{seasonStats.gamesPlayed}</td>
+                                <td className="px-2 py-2">{seasonStats.rushing.carries}</td>
+                                <td className="px-2 py-2">{seasonStats.rushing.yards}</td>
+                                <td className="px-2 py-2">{seasonStats.rushing.yardsPerCarry.toFixed(1)}</td>
+                                <td className={cn("px-2 py-2", seasonStats.rushing.touchdowns > 0 && "text-green-400")}>{seasonStats.rushing.touchdowns}</td>
+                                <td className={cn("px-2 py-2", seasonStats.rushing.fumbles > 0 && "text-red-400")}>{seasonStats.rushing.fumbles}</td>
+                              </tr>
+                            )}
+                            {/* Career History Rows */}
+                            {careerStats?.seasons.filter(s => s.rushing.carries > 0).map((season) => (
+                              <tr key={season.year} className="border-b border-border/30">
+                                <td className="px-2 py-2 font-medium">{season.year}</td>
+                                <td className="px-2 py-2 font-medium">{season.teamAbbrev}</td>
+                                <td className="px-2 py-2">{season.gamesPlayed}</td>
+                                <td className="px-2 py-2">{season.rushing.carries}</td>
+                                <td className="px-2 py-2">{season.rushing.yards}</td>
+                                <td className="px-2 py-2">{season.rushing.yardsPerCarry.toFixed(1)}</td>
+                                <td className={cn("px-2 py-2", season.rushing.touchdowns > 0 && "text-green-400")}>{season.rushing.touchdowns}</td>
+                                <td className={cn("px-2 py-2", season.rushing.fumbles > 0 && "text-red-400")}>{season.rushing.fumbles}</td>
+                              </tr>
+                            ))}
+                            {/* Totals Row */}
+                            {((seasonStats?.rushing.carries ?? 0) > 0 || (careerStats?.seasons.some(s => s.rushing.carries > 0))) && (
+                              <tr className="bg-secondary/50 font-bold">
+                                <td className="px-2 py-2">TOTAL</td>
+                                <td className="px-2 py-2"></td>
+                                <td className="px-2 py-2">{(seasonStats?.gamesPlayed ?? 0) + (careerStats?.careerTotals.gamesPlayed ?? 0)}</td>
+                                <td className="px-2 py-2">{(seasonStats?.rushing.carries ?? 0) + (careerStats?.careerTotals.rushing.carries ?? 0)}</td>
+                                <td className="px-2 py-2">{(seasonStats?.rushing.yards ?? 0) + (careerStats?.careerTotals.rushing.yards ?? 0)}</td>
+                                <td className="px-2 py-2">-</td>
+                                <td className="px-2 py-2 text-green-400">{(seasonStats?.rushing.touchdowns ?? 0) + (careerStats?.careerTotals.rushing.touchdowns ?? 0)}</td>
+                                <td className="px-2 py-2 text-red-400">{(seasonStats?.rushing.fumbles ?? 0) + (careerStats?.careerTotals.rushing.fumbles ?? 0)}</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
 
                   {/* Receiving Stats */}
-                  {seasonStats.receiving.targets > 0 && (
+                  {((seasonStats?.receiving.targets ?? 0) > 0 || (careerStats?.careerTotals.receiving.targets ?? 0) > 0) && (
                     <div className="bg-secondary/30 border border-border rounded-xl overflow-hidden">
                       <div className="px-3 py-2 bg-secondary/50 border-b border-border">
                         <h4 className="text-xs font-bold text-muted-foreground uppercase">Receiving</h4>
                       </div>
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-border/50">
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">GP</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">REC</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">TGT</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">YDS</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">AVG</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">TD</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">LNG</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td className="px-3 py-2 font-medium">{seasonStats.gamesPlayed}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.receiving.catches}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.receiving.targets}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.receiving.yards}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.receiving.yardsPerCatch.toFixed(1)}</td>
-                            <td className={cn("px-3 py-2 font-medium", seasonStats.receiving.touchdowns > 0 && "text-green-400")}>{seasonStats.receiving.touchdowns}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.receiving.long}</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border/50">
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">YEAR</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">TEAM</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">GP</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">REC</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">TGT</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">YDS</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">AVG</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">TD</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {/* Current Season Row */}
+                            {seasonStats && seasonStats.receiving.targets > 0 && (
+                              <tr className="border-b border-border/30">
+                                <td className="px-2 py-2 font-medium">{currentYear}</td>
+                                <td className="px-2 py-2 font-medium">{seasonStats.teamId}</td>
+                                <td className="px-2 py-2">{seasonStats.gamesPlayed}</td>
+                                <td className="px-2 py-2">{seasonStats.receiving.catches}</td>
+                                <td className="px-2 py-2">{seasonStats.receiving.targets}</td>
+                                <td className="px-2 py-2">{seasonStats.receiving.yards}</td>
+                                <td className="px-2 py-2">{seasonStats.receiving.yardsPerCatch.toFixed(1)}</td>
+                                <td className={cn("px-2 py-2", seasonStats.receiving.touchdowns > 0 && "text-green-400")}>{seasonStats.receiving.touchdowns}</td>
+                              </tr>
+                            )}
+                            {/* Career History Rows */}
+                            {careerStats?.seasons.filter(s => s.receiving.targets > 0).map((season) => (
+                              <tr key={season.year} className="border-b border-border/30">
+                                <td className="px-2 py-2 font-medium">{season.year}</td>
+                                <td className="px-2 py-2 font-medium">{season.teamAbbrev}</td>
+                                <td className="px-2 py-2">{season.gamesPlayed}</td>
+                                <td className="px-2 py-2">{season.receiving.catches}</td>
+                                <td className="px-2 py-2">{season.receiving.targets}</td>
+                                <td className="px-2 py-2">{season.receiving.yards}</td>
+                                <td className="px-2 py-2">{season.receiving.yardsPerCatch.toFixed(1)}</td>
+                                <td className={cn("px-2 py-2", season.receiving.touchdowns > 0 && "text-green-400")}>{season.receiving.touchdowns}</td>
+                              </tr>
+                            ))}
+                            {/* Totals Row */}
+                            {((seasonStats?.receiving.targets ?? 0) > 0 || (careerStats?.seasons.some(s => s.receiving.targets > 0))) && (
+                              <tr className="bg-secondary/50 font-bold">
+                                <td className="px-2 py-2">TOTAL</td>
+                                <td className="px-2 py-2"></td>
+                                <td className="px-2 py-2">{(seasonStats?.gamesPlayed ?? 0) + (careerStats?.careerTotals.gamesPlayed ?? 0)}</td>
+                                <td className="px-2 py-2">{(seasonStats?.receiving.catches ?? 0) + (careerStats?.careerTotals.receiving.catches ?? 0)}</td>
+                                <td className="px-2 py-2">{(seasonStats?.receiving.targets ?? 0) + (careerStats?.careerTotals.receiving.targets ?? 0)}</td>
+                                <td className="px-2 py-2">{(seasonStats?.receiving.yards ?? 0) + (careerStats?.careerTotals.receiving.yards ?? 0)}</td>
+                                <td className="px-2 py-2">-</td>
+                                <td className="px-2 py-2 text-green-400">{(seasonStats?.receiving.touchdowns ?? 0) + (careerStats?.careerTotals.receiving.touchdowns ?? 0)}</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
 
                   {/* Defense Stats */}
-                  {(seasonStats.defense.tackles > 0 || seasonStats.defense.sacks > 0 || seasonStats.defense.interceptions > 0) && (
+                  {((seasonStats?.defense.tackles ?? 0) > 0 || (seasonStats?.defense.sacks ?? 0) > 0 || (seasonStats?.defense.interceptions ?? 0) > 0 || (careerStats?.careerTotals.defense.tackles ?? 0) > 0 || (careerStats?.careerTotals.defense.sacks ?? 0) > 0 || (careerStats?.careerTotals.defense.interceptions ?? 0) > 0) && (
                     <div className="bg-secondary/30 border border-border rounded-xl overflow-hidden">
                       <div className="px-3 py-2 bg-secondary/50 border-b border-border">
                         <h4 className="text-xs font-bold text-muted-foreground uppercase">Defense</h4>
                       </div>
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-border/50">
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">GP</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">TKL</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">SACK</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">INT</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">PD</th>
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">FR</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td className="px-3 py-2 font-medium">{seasonStats.gamesPlayed}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.defense.tackles}</td>
-                            <td className={cn("px-3 py-2 font-medium", seasonStats.defense.sacks > 0 && "text-green-400")}>{seasonStats.defense.sacks}</td>
-                            <td className={cn("px-3 py-2 font-medium", seasonStats.defense.interceptions > 0 && "text-green-400")}>{seasonStats.defense.interceptions}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.defense.passDeflections}</td>
-                            <td className="px-3 py-2 font-medium">{seasonStats.defense.fumbleRecoveries}</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border/50">
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">YEAR</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">TEAM</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">GP</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">TKL</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">SACK</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">INT</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">PD</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">FR</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {/* Current Season Row */}
+                            {seasonStats && (seasonStats.defense.tackles > 0 || seasonStats.defense.sacks > 0 || seasonStats.defense.interceptions > 0) && (
+                              <tr className="border-b border-border/30">
+                                <td className="px-2 py-2 font-medium">{currentYear}</td>
+                                <td className="px-2 py-2 font-medium">{seasonStats.teamId}</td>
+                                <td className="px-2 py-2">{seasonStats.gamesPlayed}</td>
+                                <td className="px-2 py-2">{seasonStats.defense.tackles}</td>
+                                <td className={cn("px-2 py-2", seasonStats.defense.sacks > 0 && "text-green-400")}>{seasonStats.defense.sacks}</td>
+                                <td className={cn("px-2 py-2", seasonStats.defense.interceptions > 0 && "text-green-400")}>{seasonStats.defense.interceptions}</td>
+                                <td className="px-2 py-2">{seasonStats.defense.passDeflections}</td>
+                                <td className="px-2 py-2">{seasonStats.defense.fumbleRecoveries}</td>
+                              </tr>
+                            )}
+                            {/* Career History Rows */}
+                            {careerStats?.seasons.filter(s => s.defense.tackles > 0 || s.defense.sacks > 0 || s.defense.interceptions > 0).map((season) => (
+                              <tr key={season.year} className="border-b border-border/30">
+                                <td className="px-2 py-2 font-medium">{season.year}</td>
+                                <td className="px-2 py-2 font-medium">{season.teamAbbrev}</td>
+                                <td className="px-2 py-2">{season.gamesPlayed}</td>
+                                <td className="px-2 py-2">{season.defense.tackles}</td>
+                                <td className={cn("px-2 py-2", season.defense.sacks > 0 && "text-green-400")}>{season.defense.sacks}</td>
+                                <td className={cn("px-2 py-2", season.defense.interceptions > 0 && "text-green-400")}>{season.defense.interceptions}</td>
+                                <td className="px-2 py-2">{season.defense.passDeflections}</td>
+                                <td className="px-2 py-2">{season.defense.fumbleRecoveries}</td>
+                              </tr>
+                            ))}
+                            {/* Totals Row */}
+                            <tr className="bg-secondary/50 font-bold">
+                              <td className="px-2 py-2">TOTAL</td>
+                              <td className="px-2 py-2"></td>
+                              <td className="px-2 py-2">{(seasonStats?.gamesPlayed ?? 0) + (careerStats?.careerTotals.gamesPlayed ?? 0)}</td>
+                              <td className="px-2 py-2">{(seasonStats?.defense.tackles ?? 0) + (careerStats?.careerTotals.defense.tackles ?? 0)}</td>
+                              <td className="px-2 py-2 text-green-400">{(seasonStats?.defense.sacks ?? 0) + (careerStats?.careerTotals.defense.sacks ?? 0)}</td>
+                              <td className="px-2 py-2 text-green-400">{(seasonStats?.defense.interceptions ?? 0) + (careerStats?.careerTotals.defense.interceptions ?? 0)}</td>
+                              <td className="px-2 py-2">{(seasonStats?.defense.passDeflections ?? 0) + (careerStats?.careerTotals.defense.passDeflections ?? 0)}</td>
+                              <td className="px-2 py-2">{(seasonStats?.defense.fumbleRecoveries ?? 0) + (careerStats?.careerTotals.defense.fumbleRecoveries ?? 0)}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
 
                   {/* Kicking Stats */}
-                  {(seasonStats.kicking.fgAttempts > 0 || seasonStats.kicking.punts > 0) && (
+                  {((seasonStats?.kicking.fgAttempts ?? 0) > 0 || (seasonStats?.kicking.punts ?? 0) > 0 || (careerStats?.careerTotals.kicking.fgAttempts ?? 0) > 0 || (careerStats?.careerTotals.kicking.punts ?? 0) > 0) && (
                     <div className="bg-secondary/30 border border-border rounded-xl overflow-hidden">
                       <div className="px-3 py-2 bg-secondary/50 border-b border-border">
                         <h4 className="text-xs font-bold text-muted-foreground uppercase">Kicking</h4>
                       </div>
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-border/50">
-                            <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">GP</th>
-                            {seasonStats.kicking.fgAttempts > 0 && (
-                              <>
-                                <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">FGM</th>
-                                <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">FGA</th>
-                                <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">FG%</th>
-                              </>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border/50">
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">YEAR</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">TEAM</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">GP</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">FGM</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">FGA</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">FG%</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">XPM</th>
+                              <th className="px-2 py-2 text-left text-xs text-muted-foreground font-medium">XPA</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {/* Current Season Row */}
+                            {seasonStats && (seasonStats.kicking.fgAttempts > 0 || seasonStats.kicking.punts > 0) && (
+                              <tr className="border-b border-border/30">
+                                <td className="px-2 py-2 font-medium">{currentYear}</td>
+                                <td className="px-2 py-2 font-medium">{seasonStats.teamId}</td>
+                                <td className="px-2 py-2">{seasonStats.gamesPlayed}</td>
+                                <td className="px-2 py-2">{seasonStats.kicking.fgMade}</td>
+                                <td className="px-2 py-2">{seasonStats.kicking.fgAttempts}</td>
+                                <td className="px-2 py-2">{seasonStats.kicking.fgAttempts > 0 ? `${seasonStats.kicking.fgPct.toFixed(0)}%` : '-'}</td>
+                                <td className="px-2 py-2">{seasonStats.kicking.xpMade}</td>
+                                <td className="px-2 py-2">{seasonStats.kicking.xpAttempts}</td>
+                              </tr>
                             )}
-                            {seasonStats.kicking.xpAttempts > 0 && (
-                              <>
-                                <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">XPM</th>
-                                <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">XPA</th>
-                              </>
-                            )}
-                            {seasonStats.kicking.punts > 0 && (
-                              <>
-                                <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">PUNTS</th>
-                                <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">AVG</th>
-                              </>
-                            )}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td className="px-3 py-2 font-medium">{seasonStats.gamesPlayed}</td>
-                            {seasonStats.kicking.fgAttempts > 0 && (
-                              <>
-                                <td className="px-3 py-2 font-medium">{seasonStats.kicking.fgMade}</td>
-                                <td className="px-3 py-2 font-medium">{seasonStats.kicking.fgAttempts}</td>
-                                <td className="px-3 py-2 font-medium">{seasonStats.kicking.fgPct.toFixed(0)}%</td>
-                              </>
-                            )}
-                            {seasonStats.kicking.xpAttempts > 0 && (
-                              <>
-                                <td className="px-3 py-2 font-medium">{seasonStats.kicking.xpMade}</td>
-                                <td className="px-3 py-2 font-medium">{seasonStats.kicking.xpAttempts}</td>
-                              </>
-                            )}
-                            {seasonStats.kicking.punts > 0 && (
-                              <>
-                                <td className="px-3 py-2 font-medium">{seasonStats.kicking.punts}</td>
-                                <td className="px-3 py-2 font-medium">{seasonStats.kicking.puntAvg.toFixed(1)}</td>
-                              </>
-                            )}
-                          </tr>
-                        </tbody>
-                      </table>
+                            {/* Career History Rows */}
+                            {careerStats?.seasons.filter(s => s.kicking.fgAttempts > 0 || s.kicking.punts > 0).map((season) => (
+                              <tr key={season.year} className="border-b border-border/30">
+                                <td className="px-2 py-2 font-medium">{season.year}</td>
+                                <td className="px-2 py-2 font-medium">{season.teamAbbrev}</td>
+                                <td className="px-2 py-2">{season.gamesPlayed}</td>
+                                <td className="px-2 py-2">{season.kicking.fgMade}</td>
+                                <td className="px-2 py-2">{season.kicking.fgAttempts}</td>
+                                <td className="px-2 py-2">{season.kicking.fgAttempts > 0 ? `${season.kicking.fgPct.toFixed(0)}%` : '-'}</td>
+                                <td className="px-2 py-2">{season.kicking.xpMade}</td>
+                                <td className="px-2 py-2">{season.kicking.xpAttempts}</td>
+                              </tr>
+                            ))}
+                            {/* Totals Row */}
+                            <tr className="bg-secondary/50 font-bold">
+                              <td className="px-2 py-2">TOTAL</td>
+                              <td className="px-2 py-2"></td>
+                              <td className="px-2 py-2">{(seasonStats?.gamesPlayed ?? 0) + (careerStats?.careerTotals.gamesPlayed ?? 0)}</td>
+                              <td className="px-2 py-2">{(seasonStats?.kicking.fgMade ?? 0) + (careerStats?.careerTotals.kicking.fgMade ?? 0)}</td>
+                              <td className="px-2 py-2">{(seasonStats?.kicking.fgAttempts ?? 0) + (careerStats?.careerTotals.kicking.fgAttempts ?? 0)}</td>
+                              <td className="px-2 py-2">-</td>
+                              <td className="px-2 py-2">{(seasonStats?.kicking.xpMade ?? 0) + (careerStats?.careerTotals.kicking.xpMade ?? 0)}</td>
+                              <td className="px-2 py-2">{(seasonStats?.kicking.xpAttempts ?? 0) + (careerStats?.careerTotals.kicking.xpAttempts ?? 0)}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
                 </div>

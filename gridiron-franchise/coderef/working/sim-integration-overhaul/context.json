@@ -1,0 +1,27 @@
+{
+  "feature_name": "sim-integration-overhaul",
+  "description": "Comprehensive fix for disconnected simulation systems - wire badge effects to all positions, apply scheme attribute bonuses, integrate coaching perks and facility XP bonuses into progression engine",
+  "goal": "Make the simulation modifier systems actually work - currently 85% of badges, 80% of coaching perks, and 100% of facility XP bonuses are dead code that's calculated but never applied",
+  "requirements": [
+    "Wire badge effects to all positions (not just QB) - add playTypes receive, block, rush",
+    "Call getSchemeAttributeBonuses() and calculateSchemeGameModifiers() in simulator",
+    "Apply defensive scheme effects to play outcomes",
+    "Connect calculateCoachingXpBonuses() to progression engine",
+    "Connect calculateFacilitySeasonalEffects() to training system",
+    "Add guaranteed money and dead cap to contracts",
+    "Implement age-based attribute decline curves by position"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Must not break existing game simulation flow",
+    "Badge multipliers should be meaningful (0.5x-1.0x not 0.01x)",
+    "Maintain backwards compatibility with existing save data"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+    "workorder_assigned_at": "2025-12-16T06:55:59.924484+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

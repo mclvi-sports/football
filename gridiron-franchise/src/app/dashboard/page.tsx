@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Users, GraduationCap, Briefcase, Building2, Newspaper, Play } from "lucide-react";
+import { Calendar, Users, GraduationCap, Briefcase, Building2, Newspaper, Play, BarChart3 } from "lucide-react";
 import { TeamCard } from "@/components/dashboard/team-card";
 import { NavCard } from "@/components/dashboard/nav-card";
 import { SimOptionsModal } from "@/components/sim/sim-options-modal";
@@ -62,6 +62,11 @@ export default function DashboardPage() {
             title="Facilities"
             icon={<Building2 className="w-6 h-6" />}
             href="/dashboard/facilities"
+          />
+          <NavCard
+            title="Stats"
+            icon={<BarChart3 className="w-6 h-6" />}
+            href="/dashboard/stats"
           />
           <NavCard
             title="News"

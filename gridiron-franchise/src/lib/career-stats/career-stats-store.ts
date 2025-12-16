@@ -87,6 +87,25 @@ export function savePlayerCareerStats(stats: PlayerCareerStats): void {
   saveCareerStatsStore(store);
 }
 
+/**
+ * Bulk save multiple player career stats at once.
+ * Much more efficient than calling savePlayerCareerStats repeatedly.
+ */
+export function bulkSaveCareerStats(allStats: PlayerCareerStats[]): void {
+  if (typeof window === "undefined") return;
+  if (allStats.length === 0) return;
+
+  const store = getCareerStatsStore();
+  const now = new Date().toISOString();
+
+  for (const stats of allStats) {
+    stats.lastUpdated = now;
+    store.players[stats.playerId] = stats;
+  }
+
+  saveCareerStatsStore(store);
+}
+
 export function deletePlayerCareerStats(playerId: string): void {
   const store = getCareerStatsStore();
   delete store.players[playerId];

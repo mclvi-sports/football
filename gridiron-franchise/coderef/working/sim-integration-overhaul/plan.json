@@ -1,0 +1,502 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "sim-integration-overhaul",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-16",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": [
+        "sim-logic/IMPROVEMENTS.md - Comprehensive list of disconnected systems",
+        "sim-logic/INDEX.md - File importance tiers",
+        "coderef/foundation-docs/ARCHITECTURE.md - System topology",
+        "coderef/foundation-docs/SCHEMA.md - Type definitions"
+      ],
+      "coding_standards": "camelCase for functions, try-catch error handling, barrel exports",
+      "reference_implementations": [
+        "src/lib/sim/simulator.ts - Main game engine",
+        "src/lib/sim/badge-effects.ts - Badge bonus calculation",
+        "src/lib/sim/scheme-modifiers.ts - Scheme bonus calculation",
+        "src/lib/sim/coaching-modifiers.ts - Coaching XP calculation",
+        "src/lib/sim/facility-modifiers.ts - Facility seasonal effects"
+      ],
+      "project_patterns": {
+        "modifier_pattern": "calculateXxxModifiers() returns interface, stored in simulator state",
+        "bonus_application": "Bonuses should flow through getEffectiveOvr() and play resolution",
+        "integration_point": "initializeGameModifiers() in simulator.ts"
+      }
+    },
+    "1_executive_summary": {
+      "feature_description": "Comprehensive fix for disconnected simulation systems - currently 85% of badges, 80% of coaching perks, and 100% of facility XP bonuses are calculated but never applied to gameplay or progression",
+      "primary_goal": "Wire all modifier systems to their intended integration points so that badges, schemes, coaching perks, and facility bonuses actually impact game simulation and player development",
+      "scope": {
+        "in_scope": [
+          "Badge integration for all positions (WR/TE/OL/DL/LB currently dead)",
+          "Scheme attribute bonus application in simulator",
+          "Defensive scheme effects on play outcomes",
+          "Coaching XP bonuses in progression engine",
+          "Facility seasonal effects in training system",
+          "Contract guaranteed money and dead cap",
+          "Age-based attribute decline"
+        ],
+        "out_of_scope": [
+          "New badge definitions",
+          "New scheme types",
+          "UI changes",
+          "Database schema changes"
+        ]
+      },
+      "impact_assessment": {
+        "high_impact": ["Badge integration", "Scheme integration"],
+        "medium_impact": ["Coaching XP", "Facility XP"],
+        "low_impact": ["Contracts", "Age decline"]
+      }
+    },
+    "2_risk_assessment": {
+      "complexity_estimate": "medium-high",
+      "risk_factors": [
+        {
+          "risk": "Breaking existing game simulation flow",
+          "likelihood": "medium",
+          "impact": "high",
+          "mitigation": "Add bonuses incrementally with feature flags for testing"
+        },
+        {
+          "risk": "Unbalanced gameplay from new modifier integration",
+          "likelihood": "high",
+          "impact": "medium",
+          "mitigation": "Start with conservative multipliers, tune based on testing"
+        },
+        {
+          "risk": "Performance impact from additional calculations",
+          "likelihood": "low",
+          "impact": "low",
+          "mitigation": "Profile simulator after changes"
+        }
+      ],
+      "dependencies": [
+        "No external dependencies - all systems already exist internally",
+        "badge-effects.ts, scheme-modifiers.ts already complete",
+        "coaching-modifiers.ts, facility-modifiers.ts already complete"
+      ],
+      "breaking_changes": []
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/lib/sim/simulator.ts",
+          "changes": "Add badge calls for all playTypes, add scheme modifier initialization, apply scheme bonuses to OVR"
+        },
+        {
+          "path": "src/lib/sim/team-adapter.ts",
+          "changes": "Assign offensiveScheme and defensiveScheme to SimTeam interface"
+        },
+        {
+          "path": "src/lib/training/progression-engine.ts",
+          "changes": "Import and apply coaching XP bonuses and facility seasonal effects"
+        },
+        {
+          "path": "src/lib/training/training-integration.ts",
+          "changes": "Replace hardcoded bonus thresholds with coaching perk system"
+        },
+        {
+          "path": "src/lib/generators/contract-generator.ts",
+          "changes": "Add guaranteed money, signing bonus, dead cap calculation"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "src/lib/sim/age-decline.ts",
+          "purpose": "Age-based attribute decline curves by position"
+        }
+      ],
+      "existing_patterns": {
+        "modifier_calculation": "All modifier functions exist and work correctly",
+        "missing_integration": "Functions calculated but never called in gameplay loop"
+      }
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Badge System Integration",
+          "description": "Wire badge effects to all positions - add playTypes receive, block, rush",
+          "priority": "high",
+          "requirements": [
+            "Call getPlayBonuses() with playType='receive' for WR/TE",
+            "Call getPlayBonuses() with playType='block' for OL",
+            "Call getPlayBonuses() with playType='rush' for DL",
+            "Increase multipliers from 0.01x to 0.5x-1.0x",
+            "Call getTeamBadgeBonus() and getTeamTraitModifier()"
+          ]
+        },
+        {
+          "id": "F2",
+          "name": "Scheme System Integration",
+          "description": "Apply scheme attribute bonuses and defensive scheme effects",
+          "priority": "high",
+          "requirements": [
+            "Call calculateSchemeGameModifiers() in initializeGameModifiers()",
+            "Apply scheme attribute bonuses in getEffectiveOvr()",
+            "Apply defensive scheme effects to completion rate and rushing yards",
+            "Assign offensiveScheme/defensiveScheme to SimTeam"
+          ]
+        },
+        {
+          "id": "F3",
+          "name": "Coaching XP Integration",
+          "description": "Connect coaching perks to progression engine",
+          "priority": "medium",
+          "requirements": [
+            "Import calculateCoachingXpBonuses() into progression engine",
+            "Apply position-specific XP bonuses (qbXpBonus, rbXpBonus, etc.)",
+            "Replace hardcoded thresholds in training-integration.ts"
+          ]
+        },
+        {
+          "id": "F4",
+          "name": "Facility XP Integration",
+          "description": "Connect facility seasonal effects to training system",
+          "priority": "medium",
+          "requirements": [
+            "Import calculateFacilitySeasonalEffects() into progression engine",
+            "Apply baseXpBonus to all XP calculations",
+            "Apply physicalXpBonus to physical attribute training",
+            "Apply ageDeclineReduction to attribute regression"
+          ]
+        },
+        {
+          "id": "F5",
+          "name": "Contract Enhancement",
+          "description": "Add guaranteed money, signing bonus, and dead cap",
+          "priority": "low",
+          "requirements": [
+            "Add guaranteedMoney, signingBonus, deadCapByYear fields",
+            "Calculate guaranteed portion based on position/tier",
+            "Add dead cap calculation for cuts"
+          ]
+        },
+        {
+          "id": "F6",
+          "name": "Age-Based Decline",
+          "description": "Implement position-specific attribute decline curves",
+          "priority": "low",
+          "requirements": [
+            "Define decline curves by position (RB starts at 27, QB at 34, etc.)",
+            "Apply in processSeasonEndProgression()",
+            "Integrate with facility ageDeclineReduction bonus"
+          ]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+        "name": "Sim Integration Overhaul",
+        "feature_dir": "coderef/working/sim-integration-overhaul"
+      },
+      "tasks": [
+        {
+          "id": "BADGE-001",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F1",
+          "description": "Add WR/TE badge calls with playType='receive' after pass completion",
+          "file": "src/lib/sim/simulator.ts",
+          "acceptance": "getPlayBonuses called for receiver on completed passes"
+        },
+        {
+          "id": "BADGE-002",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F1",
+          "description": "Add OL badge calls with playType='block' for run/pass plays",
+          "file": "src/lib/sim/simulator.ts",
+          "acceptance": "getPlayBonuses called for OL affecting sack chance and run blocking"
+        },
+        {
+          "id": "BADGE-003",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F1",
+          "description": "Add DL badge calls with playType='rush' for tackles/sacks",
+          "file": "src/lib/sim/simulator.ts",
+          "acceptance": "getPlayBonuses called for DL affecting sack chance"
+        },
+        {
+          "id": "BADGE-004",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F1",
+          "description": "Increase badge multipliers from 0.01x to meaningful values",
+          "file": "src/lib/sim/simulator.ts",
+          "acceptance": "Badge multipliers between 0.3x-1.0x based on impact type"
+        },
+        {
+          "id": "BADGE-005",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F1",
+          "description": "Call getTeamBadgeBonus() and getTeamTraitModifier() in OVR calculation",
+          "file": "src/lib/sim/simulator.ts",
+          "acceptance": "Team-wide badge and trait bonuses applied to effective OVR"
+        },
+        {
+          "id": "SCHEME-001",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F2",
+          "description": "Assign offensiveScheme and defensiveScheme to SimTeam in team-adapter",
+          "file": "src/lib/sim/team-adapter.ts",
+          "acceptance": "SimTeam has populated offensiveScheme and defensiveScheme properties"
+        },
+        {
+          "id": "SCHEME-002",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F2",
+          "description": "Call calculateSchemeGameModifiers() in initializeGameModifiers()",
+          "file": "src/lib/sim/simulator.ts",
+          "acceptance": "Scheme modifiers stored alongside coaching/facility modifiers"
+        },
+        {
+          "id": "SCHEME-003",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F2",
+          "description": "Apply scheme attribute bonuses in getEffectiveOvr()",
+          "file": "src/lib/sim/simulator.ts",
+          "acceptance": "Scheme bonuses added to team OVR calculation"
+        },
+        {
+          "id": "SCHEME-004",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F2",
+          "description": "Apply defensive scheme effects to play outcomes",
+          "file": "src/lib/sim/simulator.ts",
+          "acceptance": "Man Blitz reduces completion rate, 4-3 reduces rushing yards, etc."
+        },
+        {
+          "id": "COACH-001",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F3",
+          "description": "Import calculateCoachingXpBonuses into progression engine",
+          "file": "src/lib/training/progression-engine.ts",
+          "acceptance": "CoachingXpBonuses interface imported and callable"
+        },
+        {
+          "id": "COACH-002",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F3",
+          "description": "Apply position-specific XP bonuses in calculateDevelopmentModifiers()",
+          "file": "src/lib/training/progression-engine.ts",
+          "acceptance": "qbXpBonus, rbXpBonus, etc. applied to XP multiplier"
+        },
+        {
+          "id": "COACH-003",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F3",
+          "description": "Replace hardcoded thresholds in training-integration with perk system",
+          "file": "src/lib/training/training-integration.ts",
+          "acceptance": "awardPracticeXP uses CoachingXpBonuses instead of hardcoded values"
+        },
+        {
+          "id": "FACIL-001",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F4",
+          "description": "Import calculateFacilitySeasonalEffects into progression engine",
+          "file": "src/lib/training/progression-engine.ts",
+          "acceptance": "FacilitySeasonalEffects interface imported and callable"
+        },
+        {
+          "id": "FACIL-002",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F4",
+          "description": "Apply baseXpBonus and physicalXpBonus to XP calculations",
+          "file": "src/lib/training/progression-engine.ts",
+          "acceptance": "Facility XP bonuses reflected in player development"
+        },
+        {
+          "id": "FACIL-003",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F4",
+          "description": "Apply ageDeclineReduction to attribute regression",
+          "file": "src/lib/training/progression-engine.ts",
+          "acceptance": "Veterans decline slower with better facilities"
+        },
+        {
+          "id": "CONTRACT-001",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F5",
+          "description": "Add guaranteedMoney, signingBonus, deadCapByYear to contract interface",
+          "file": "src/lib/types.ts",
+          "acceptance": "Contract type includes new fields"
+        },
+        {
+          "id": "CONTRACT-002",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F5",
+          "description": "Calculate guaranteed portion based on position and tier",
+          "file": "src/lib/generators/contract-generator.ts",
+          "acceptance": "QBs get 40-60%, skill 30-50%, others 20-40% guaranteed"
+        },
+        {
+          "id": "CONTRACT-003",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F5",
+          "description": "Add dead cap calculation for player cuts",
+          "file": "src/lib/generators/contract-generator.ts",
+          "acceptance": "Dead cap calculated as prorated signing bonus remaining"
+        },
+        {
+          "id": "AGE-001",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F6",
+          "description": "Create age-decline.ts with position-specific decline curves",
+          "file": "src/lib/sim/age-decline.ts",
+          "acceptance": "Decline curves defined for all positions (RB at 27, QB at 34, etc.)"
+        },
+        {
+          "id": "AGE-002",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F6",
+          "description": "Apply age decline in processSeasonEndProgression()",
+          "file": "src/lib/training/progression-engine.ts",
+          "acceptance": "Veterans show appropriate attribute decline based on position"
+        },
+        {
+          "id": "AGE-003",
+          "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+          "feature": "F6",
+          "description": "Integrate facility ageDeclineReduction with decline system",
+          "file": "src/lib/training/progression-engine.ts",
+          "acceptance": "Better facilities slow age-related decline"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Badge Integration",
+          "description": "Wire badge effects to all positions - highest impact fix",
+          "tasks": ["BADGE-001", "BADGE-002", "BADGE-003", "BADGE-004", "BADGE-005"],
+          "deliverables": [
+            "All 7 playTypes called in simulator (pass, run, receive, block, rush, cover, kick)",
+            "Team badge and trait bonuses applied",
+            "Meaningful multipliers (0.3x-1.0x)"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Scheme Integration",
+          "description": "Apply scheme bonuses and defensive effects",
+          "tasks": ["SCHEME-001", "SCHEME-002", "SCHEME-003", "SCHEME-004"],
+          "deliverables": [
+            "offensiveScheme/defensiveScheme assigned to SimTeam",
+            "calculateSchemeGameModifiers() called per game",
+            "Defensive schemes affect play outcomes"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Progression Integration",
+          "description": "Connect coaching and facility XP bonuses to player development",
+          "tasks": ["COACH-001", "COACH-002", "COACH-003", "FACIL-001", "FACIL-002", "FACIL-003"],
+          "deliverables": [
+            "Coaching perks affect XP gain",
+            "Facility bonuses affect training",
+            "Age decline reduction working"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Contract and Age Systems",
+          "description": "Add contract depth and age-based decline",
+          "tasks": ["CONTRACT-001", "CONTRACT-002", "CONTRACT-003", "AGE-001", "AGE-002", "AGE-003"],
+          "deliverables": [
+            "Contracts have guaranteed money and dead cap",
+            "Players decline with age based on position",
+            "Facilities slow veteran decline"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "file": "src/lib/sim/__tests__/badge-integration.test.ts",
+          "coverage": ["getPlayBonuses called for all playTypes", "multipliers in expected range"]
+        },
+        {
+          "file": "src/lib/sim/__tests__/scheme-integration.test.ts",
+          "coverage": ["calculateSchemeGameModifiers returns valid modifiers", "defensive effects applied"]
+        },
+        {
+          "file": "src/lib/training/__tests__/xp-bonuses.test.ts",
+          "coverage": ["Coaching XP bonuses applied", "Facility bonuses applied"]
+        }
+      ],
+      "integration_tests": [
+        {
+          "scenario": "Simulate game and verify badge bonuses affect outcomes",
+          "validation": "WR with Deep Threat badge has higher deep completion rate"
+        },
+        {
+          "scenario": "Simulate season and verify XP bonuses accumulate",
+          "validation": "Player with QB Whisperer coach gains more XP"
+        }
+      ],
+      "manual_tests": [
+        "Run 100 game simulations and compare stats with/without badge integration",
+        "Simulate 3 seasons and verify age decline curves match expectations"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "All 7 badge playTypes called during simulation",
+        "calculateSchemeGameModifiers() invoked per game",
+        "Coaching XP bonuses reflected in progression",
+        "Facility seasonal effects applied to training",
+        "Contracts include guaranteed money and dead cap",
+        "Veterans show position-appropriate decline"
+      ],
+      "performance": [
+        "Game simulation time not increased by more than 10%",
+        "No memory leaks from additional modifier calculations"
+      ],
+      "quality": [
+        "No regression in existing simulation behavior",
+        "Badge/scheme/coaching effects are noticeable but not overwhelming"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] BADGE-001: WR/TE receive badge calls",
+        "[ ] BADGE-002: OL block badge calls",
+        "[ ] BADGE-003: DL rush badge calls",
+        "[ ] BADGE-004: Increase badge multipliers",
+        "[ ] BADGE-005: Team badge/trait bonuses"
+      ],
+      "phase_2_checklist": [
+        "[ ] SCHEME-001: Assign schemes to SimTeam",
+        "[ ] SCHEME-002: Call calculateSchemeGameModifiers",
+        "[ ] SCHEME-003: Apply scheme OVR bonuses",
+        "[ ] SCHEME-004: Defensive scheme effects"
+      ],
+      "phase_3_checklist": [
+        "[ ] COACH-001: Import coaching XP bonuses",
+        "[ ] COACH-002: Apply position XP bonuses",
+        "[ ] COACH-003: Replace hardcoded thresholds",
+        "[ ] FACIL-001: Import facility seasonal effects",
+        "[ ] FACIL-002: Apply XP bonuses",
+        "[ ] FACIL-003: Apply age decline reduction"
+      ],
+      "phase_4_checklist": [
+        "[ ] CONTRACT-001: Add contract fields",
+        "[ ] CONTRACT-002: Calculate guaranteed money",
+        "[ ] CONTRACT-003: Dead cap calculation",
+        "[ ] AGE-001: Create age-decline.ts",
+        "[ ] AGE-002: Apply in progression",
+        "[ ] AGE-003: Integrate facility bonus"
+      ]
+    }
+  }
+}
