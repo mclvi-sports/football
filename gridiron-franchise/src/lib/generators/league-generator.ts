@@ -25,6 +25,8 @@ import { storeFacilities, clearFacilities } from '@/lib/facilities/facilities-st
 import { storeSchedule, clearSchedule } from '@/lib/schedule/schedule-store';
 import { storeOwnerModeGMs, clearGMs } from '@/lib/gm';
 import { storeScouting, clearScouting } from '@/lib/scouting/scouting-store';
+import { clearCareerStatsStore } from '@/lib/career-stats/career-stats-store';
+import { generateCareerStatsForAllPlayers, generateCareerStatsForFreeAgents } from '@/lib/generators/career-stats-generator';
 import { Tier } from '@/lib/types';
 
 // ============================================================================
@@ -107,6 +109,7 @@ export async function generateLeagueData(
     clearFacilities();
     clearScouting();
     clearSchedule();
+    clearCareerStatsStore();
   }
 
   let rosterPlayers: TeamRosterData['roster']['players'] = [];
@@ -137,6 +140,14 @@ export async function generateLeagueData(
     };
     storeFullGameData(fullGameData);
 
+    // Generate career stats for experienced players (non-blocking)
+    try {
+      generateCareerStatsForAllPlayers(fullGameData);
+    } catch (error) {
+      console.error('Failed to generate career stats for roster players:', error);
+      // Don't fail roster generation if career stats fail
+    }
+
     rosterPlayers = rostersData.teams.flatMap(
       (t: TeamRosterData) => t.roster.players
     );
@@ -166,6 +177,15 @@ export async function generateLeagueData(
 
     faPlayers = faData.players;
     storeFreeAgents(faPlayers);
+
+    // Generate career stats for experienced free agents (non-blocking)
+    try {
+      generateCareerStatsForFreeAgents(faPlayers);
+    } catch (error) {
+      console.error('Failed to generate career stats for free agents:', error);
+      // Don't fail FA generation if career stats fail
+    }
+
     updateStep('freeagents', 'complete', callbacks);
 
     // ========================================

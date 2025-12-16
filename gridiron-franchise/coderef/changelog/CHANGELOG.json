@@ -94,6 +94,40 @@
           "reason": "Feature completion: codebase-cleanup",
           "impact": "Documentation now reflects 0.1.1 changes",
           "breaking": false
+        },
+        {
+          "id": "change-005",
+          "type": "enhancement",
+          "severity": "minor",
+          "title": "Schedule page improvements: restored primetime badges as colored outlines (TNF/SNF/MNF), added game indicator key legend, consistent card heights. Navigation cleanup: moved Dev Tools to Settings, About to header icon, Settings to hamburger menu. Dashboard simplified to Schedule and Roster cards only.",
+          "description": "Workorder WO-SCHEDULE-NAV-001: Schedule page improvements: restored primetime badges as colored outlines (TNF/SNF/MNF), added game indicator key legend, consistent card heights. Navigation cleanup: moved Dev Tools to Settings, About to header icon, Settings to hamburger menu. Dashboard simplified to Schedule and Roster cards only.",
+          "files": [
+            "src/app/dashboard/schedule/page.tsx",
+            "src/components/schedule/game-card.tsx",
+            "src/app/dashboard/page.tsx",
+            "src/app/dashboard/settings/page.tsx",
+            "src/components/dashboard/gameplay-header.tsx"
+          ],
+          "reason": "Feature completion: schedule-nav-improvements",
+          "impact": "Documentation now reflects 0.1.1 changes",
+          "breaking": false
+        },
+        {
+          "id": "change-006",
+          "type": "enhancement",
+          "severity": "minor",
+          "title": "Improved main menu UI with Lucide icons, simplified layout with proper mobile centering, removed footer, and added Main Menu navigation to settings page",
+          "description": "Workorder WO-MENU-UI-001: Improved main menu UI with Lucide icons, simplified layout with proper mobile centering, removed footer, and added Main Menu navigation to settings page",
+          "files": [
+            "src/app/(main)/page.tsx",
+            "src/app/(main)/layout.tsx",
+            "src/components/menu/menu-button-primary.tsx",
+            "src/components/menu/menu-footer.tsx",
+            "src/app/dashboard/settings/page.tsx"
+          ],
+          "reason": "Feature completion: menu-ui-improvements",
+          "impact": "Documentation now reflects 0.1.1 changes",
+          "breaking": false
         }
       ],
       "contributors": []
