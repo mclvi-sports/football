@@ -6,6 +6,10 @@ import {
   calculateSalary,
   calculateContractLength,
   generateContract,
+  calculateGuaranteedPortion,
+  calculateDeadCapByYear,
+  calculateDeadCap,
+  Contract,
 } from '../contract-generator';
 
 describe('VETERAN_MINIMUM', () => {
@@ -233,5 +237,172 @@ describe('generateContract', () => {
       const contract = generateContract(player, 3);
       expect(contract.years).toBe(1);
     }
+  });
+
+  it('includes guaranteedMoney field', () => {
+    const player = mockPlayer({ overall: 90, age: 27 });
+    const contract = generateContract(player, 1);
+
+    expect(contract).toHaveProperty('guaranteedMoney');
+    expect(contract.guaranteedMoney).toBeGreaterThan(0);
+    expect(contract.guaranteedMoney).toBeLessThanOrEqual(contract.totalValue);
+  });
+
+  it('includes signingBonus field', () => {
+    const player = mockPlayer({ overall: 90, age: 27 });
+    const contract = generateContract(player, 1);
+
+    expect(contract).toHaveProperty('signingBonus');
+    expect(contract.signingBonus).toBeGreaterThanOrEqual(0);
+    expect(contract.signingBonus).toBeLessThanOrEqual(contract.guaranteedMoney);
+  });
+
+  it('includes deadCapByYear array', () => {
+    const player = mockPlayer({ overall: 90, age: 27 });
+    const contract = generateContract(player, 1);
+
+    expect(contract).toHaveProperty('deadCapByYear');
+    expect(Array.isArray(contract.deadCapByYear)).toBe(true);
+    expect(contract.deadCapByYear.length).toBe(contract.years);
+  });
+
+  it('includes totalValue and averageAnnualValue', () => {
+    const player = mockPlayer({ overall: 85, age: 28 });
+    const contract = generateContract(player, 1);
+
+    expect(contract).toHaveProperty('totalValue');
+    expect(contract).toHaveProperty('averageAnnualValue');
+    expect(contract.totalValue).toBe(contract.salary * contract.years);
+    expect(contract.averageAnnualValue).toBe(contract.salary);
+  });
+});
+
+describe('calculateGuaranteedPortion (CONTRACT-002)', () => {
+  it('elite players (90+) get 50-80% guaranteed', () => {
+    const portions: number[] = [];
+    for (let i = 0; i < 50; i++) {
+      portions.push(calculateGuaranteedPortion(95, Position.QB));
+    }
+
+    portions.forEach(p => {
+      expect(p).toBeGreaterThanOrEqual(0.50);
+      expect(p).toBeLessThanOrEqual(0.90); // With premium position bonus
+    });
+  });
+
+  it('good players (80-89) get 30-60% guaranteed', () => {
+    const portions: number[] = [];
+    for (let i = 0; i < 50; i++) {
+      portions.push(calculateGuaranteedPortion(85, Position.MLB));
+    }
+
+    portions.forEach(p => {
+      expect(p).toBeGreaterThanOrEqual(0.30);
+      expect(p).toBeLessThanOrEqual(0.60);
+    });
+  });
+
+  it('average players (70-79) get 10-40% guaranteed', () => {
+    const portions: number[] = [];
+    for (let i = 0; i < 50; i++) {
+      portions.push(calculateGuaranteedPortion(75, Position.RB));
+    }
+
+    portions.forEach(p => {
+      expect(p).toBeGreaterThanOrEqual(0.10);
+      expect(p).toBeLessThanOrEqual(0.40);
+    });
+  });
+
+  it('low OVR players (<70) get 0-10% guaranteed', () => {
+    const portions: number[] = [];
+    for (let i = 0; i < 50; i++) {
+      portions.push(calculateGuaranteedPortion(65, Position.TE));
+    }
+
+    portions.forEach(p => {
+      expect(p).toBeGreaterThanOrEqual(0);
+      expect(p).toBeLessThanOrEqual(0.10);
+    });
+  });
+
+  it('premium positions get higher guaranteed portions', () => {
+    const premiumPortions: number[] = [];
+    const nonPremiumPortions: number[] = [];
+
+    for (let i = 0; i < 100; i++) {
+      premiumPortions.push(calculateGuaranteedPortion(85, Position.QB));
+      nonPremiumPortions.push(calculateGuaranteedPortion(85, Position.RB));
+    }
+
+    const avgPremium = premiumPortions.reduce((a, b) => a + b) / premiumPortions.length;
+    const avgNonPremium = nonPremiumPortions.reduce((a, b) => a + b) / nonPremiumPortions.length;
+
+    expect(avgPremium).toBeGreaterThan(avgNonPremium);
+  });
+});
+
+describe('calculateDeadCapByYear (CONTRACT-003)', () => {
+  it('returns array with correct length', () => {
+    const deadCap = calculateDeadCapByYear(4, 20, 40, 10);
+    expect(deadCap.length).toBe(4);
+  });
+
+  it('year 1 has highest dead cap', () => {
+    const deadCap = calculateDeadCapByYear(4, 20, 40, 10);
+    expect(deadCap[0]).toBeGreaterThan(deadCap[1]);
+    expect(deadCap[0]).toBeGreaterThan(deadCap[2]);
+    expect(deadCap[0]).toBeGreaterThan(deadCap[3]);
+  });
+
+  it('dead cap decreases over years', () => {
+    const deadCap = calculateDeadCapByYear(5, 25, 50, 15);
+
+    for (let i = 0; i < deadCap.length - 1; i++) {
+      expect(deadCap[i]).toBeGreaterThanOrEqual(deadCap[i + 1]);
+    }
+  });
+
+  it('handles 1-year contracts', () => {
+    const deadCap = calculateDeadCapByYear(1, 5, 3, 1);
+    expect(deadCap.length).toBe(1);
+    expect(deadCap[0]).toBeGreaterThan(0);
+  });
+
+  it('includes signing bonus proration', () => {
+    const withBonus = calculateDeadCapByYear(4, 20, 40, 20);
+    const withoutBonus = calculateDeadCapByYear(4, 20, 40, 0);
+
+    // With signing bonus should have higher dead cap
+    expect(withBonus[0]).toBeGreaterThan(withoutBonus[0]);
+  });
+});
+
+describe('calculateDeadCap (CONTRACT-003)', () => {
+  const mockContract: Contract = {
+    years: 4,
+    salary: 20,
+    guaranteedMoney: 40,
+    signingBonus: 10,
+    deadCapByYear: [35, 25, 15, 5],
+    totalValue: 80,
+    averageAnnualValue: 20,
+  };
+
+  it('returns correct dead cap for each year remaining', () => {
+    expect(calculateDeadCap(mockContract, 4)).toBe(35); // Year 1
+    expect(calculateDeadCap(mockContract, 3)).toBe(25); // Year 2
+    expect(calculateDeadCap(mockContract, 2)).toBe(15); // Year 3
+    expect(calculateDeadCap(mockContract, 1)).toBe(5);  // Year 4
+  });
+
+  it('returns 0 for expired contracts', () => {
+    expect(calculateDeadCap(mockContract, 0)).toBe(0);
+    expect(calculateDeadCap(mockContract, -1)).toBe(0);
+  });
+
+  it('returns 0 for invalid years remaining', () => {
+    expect(calculateDeadCap(mockContract, 5)).toBe(0);
+    expect(calculateDeadCap(mockContract, 10)).toBe(0);
   });
 });
