@@ -1,0 +1,115 @@
+[
+  {
+    "timestamp": "2025-12-16T14:12:49.595084",
+    "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+    "feature_name": "sim-integration-overhaul",
+    "task_count": 21,
+    "tasks": [
+      {
+        "content": "[ ] BADGE-001: WR/TE receive badge calls",
+        "activeForm": "[ ] BADGE-001: WR/TEing receive badge calls",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] BADGE-002: OL block badge calls",
+        "activeForm": "[ ] BADGE-002: OLing block badge calls",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] BADGE-003: DL rush badge calls",
+        "activeForm": "[ ] BADGE-003: DLing rush badge calls",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] BADGE-004: Increase badge multipliers",
+        "activeForm": "[ ] BADGE-004: Increaseing badge multipliers",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] BADGE-005: Team badge/trait bonuses",
+        "activeForm": "[ ] BADGE-005: Teaming badge/trait bonuses",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] SCHEME-001: Assign schemes to SimTeam",
+        "activeForm": "[ ] SCHEME-001: Assigning schemes to SimTeam",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] SCHEME-002: Call calculateSchemeGameModifiers",
+        "activeForm": "[ ] SCHEME-002: Calling calculateSchemeGameModifiers",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] SCHEME-003: Apply scheme OVR bonuses",
+        "activeForm": "[ ] SCHEME-003: Applying scheme OVR bonuses",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] SCHEME-004: Defensive scheme effects",
+        "activeForm": "[ ] SCHEME-004: Defensiveing scheme effects",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] COACH-001: Import coaching XP bonuses",
+        "activeForm": "[ ] COACH-001: Importing coaching XP bonuses",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] COACH-002: Apply position XP bonuses",
+        "activeForm": "[ ] COACH-002: Applying position XP bonuses",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] COACH-003: Replace hardcoded thresholds",
+        "activeForm": "[ ] COACH-003: Replaceing hardcoded thresholds",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] FACIL-001: Import facility seasonal effects",
+        "activeForm": "[ ] FACIL-001: Importing facility seasonal effects",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] FACIL-002: Apply XP bonuses",
+        "activeForm": "[ ] FACIL-002: Applying XP bonuses",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] FACIL-003: Apply age decline reduction",
+        "activeForm": "[ ] FACIL-003: Applying age decline reduction",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] CONTRACT-001: Add contract fields",
+        "activeForm": "[ ] CONTRACT-001: Adding contract fields",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] CONTRACT-002: Calculate guaranteed money",
+        "activeForm": "[ ] CONTRACT-002: Calculateing guaranteed money",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] CONTRACT-003: Dead cap calculation",
+        "activeForm": "[ ] CONTRACT-003: Deading cap calculation",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] AGE-001: Create age-decline.ts",
+        "activeForm": "[ ] AGE-001: Creating age-decline.ts",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] AGE-002: Apply in progression",
+        "activeForm": "[ ] AGE-002: Applying in progression",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] AGE-003: Integrate facility bonus",
+        "activeForm": "[ ] AGE-003: Integrateing facility bonus",
+        "status": "pending"
+      }
+    ]
+  }
+]
