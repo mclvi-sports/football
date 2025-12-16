@@ -12,7 +12,7 @@
  * but with module cards UI and manual trigger via "Generate All" button.
  */
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Check, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -42,6 +42,7 @@ const STEP_LABELS: Record<GenerationStep, string> = {
 
 export default function GenerateLeaguePage() {
   const router = useRouter();
+  const hasStarted = useRef(false);
   const [steps, setSteps] = useState<StepState[]>(
     GENERATION_STEPS.map((id) => ({
       id,
@@ -80,12 +81,15 @@ export default function GenerateLeaguePage() {
       },
     });
 
-    if (!success && !error) {
-      setError("Generation failed");
+    if (!success) {
+      setError((prev) => prev || "Generation failed");
     }
-  }, [router, updateStep, error]);
+  }, [router, updateStep]);
 
   useEffect(() => {
+    // Prevent double-execution in React StrictMode
+    if (hasStarted.current) return;
+    hasStarted.current = true;
     runGeneration();
   }, [runGeneration]);
 
