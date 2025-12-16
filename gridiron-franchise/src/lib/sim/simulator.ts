@@ -21,8 +21,8 @@ import {
   HOME_ADVANTAGE_VALUES,
 } from './types';
 import { getStarter, formatPlayerName } from './team-adapter';
-import { detectSituation, getTraitModifier, getInjuryChanceModifier, getPenaltyChanceModifier, getAggressiveModifiers, getBallHawkModifier } from './trait-effects';
-import { getPlayerBadgeBonus, getPlayBonuses } from './badge-effects';
+import { detectSituation, getTraitModifier, getInjuryChanceModifier, getPenaltyChanceModifier, getAggressiveModifiers, getBallHawkModifier, getTeamTraitModifier } from './trait-effects';
+import { getPlayerBadgeBonus, getPlayBonuses, getTeamBadgeBonus } from './badge-effects';
 import {
   calculateSchemeGameModifiers,
   shouldPass,
@@ -227,6 +227,66 @@ export class Simulator {
   initializeGameModifiers(): void {
     const { away, home, gameType } = this.settings;
 
+    // SCHEME-002: Calculate scheme modifiers for each possession scenario
+    // When away has ball: away offense vs home defense
+    // When home has ball: home offense vs away defense
+    if (away?.offensiveScheme && home?.defensiveScheme) {
+      const defaultSituation: GameSituation = {
+        quarter: 1,
+        clock: 900,
+        down: 1,
+        yardsToGo: 10,
+        ballPosition: 25,
+        teamScore: 0,
+        opponentScore: 0,
+        isClutch: false,
+        isPlayoffs: gameType === 'playoff' || gameType === 'championship',
+        isPrimeTime: gameType === 'primetime',
+        isTrailing: false,
+        isLeading: false,
+        inRedZone: false,
+        inGoalLine: false,
+        possession: 'away',
+        isHome: false,
+        weather: 'clear',
+        isDivisionGame: false,
+        opponentOvr: home?.ovr ?? 75,
+      };
+      this.schemeModifiers.away = calculateSchemeGameModifiers(
+        away.offensiveScheme,
+        home.defensiveScheme,
+        defaultSituation
+      );
+    }
+    if (home?.offensiveScheme && away?.defensiveScheme) {
+      const defaultSituation: GameSituation = {
+        quarter: 1,
+        clock: 900,
+        down: 1,
+        yardsToGo: 10,
+        ballPosition: 25,
+        teamScore: 0,
+        opponentScore: 0,
+        isClutch: false,
+        isPlayoffs: gameType === 'playoff' || gameType === 'championship',
+        isPrimeTime: gameType === 'primetime',
+        isTrailing: false,
+        isLeading: false,
+        inRedZone: false,
+        inGoalLine: false,
+        possession: 'home',
+        isHome: true,
+        weather: 'clear',
+        isDivisionGame: false,
+        opponentOvr: away?.ovr ?? 75,
+      };
+      this.schemeModifiers.home = calculateSchemeGameModifiers(
+        home.offensiveScheme,
+        away.defensiveScheme,
+        defaultSituation
+      );
+    }
+
     // Calculate coaching modifiers
     if (away?.coachingStaff) {
       this.coachingModifiers.away = calculateCoachingGameModifiers(away.coachingStaff, gameType);
@@ -244,6 +304,13 @@ export class Simulator {
     }
 
     this.debugLog.push('Game modifiers initialized');
+    // SCHEME-002: Log scheme modifiers
+    if (this.schemeModifiers.away) {
+      this.debugLog.push(`Away scheme: +${this.schemeModifiers.away.offenseMatchupBonus.toFixed(1)} offense matchup`);
+    }
+    if (this.schemeModifiers.home) {
+      this.debugLog.push(`Home scheme: +${this.schemeModifiers.home.offenseMatchupBonus.toFixed(1)} offense matchup`);
+    }
     if (this.coachingModifiers.away) {
       this.debugLog.push(`Away coaching: +${this.coachingModifiers.away.teamOvrBonus.toFixed(1)} OVR`);
     }
@@ -307,7 +374,7 @@ export class Simulator {
   // OVR CALCULATION WITH MODIFIERS
   // ============================================================================
 
-  private getEffectiveOvr(team: SimTeam, situation: GameSituation): number {
+  private getEffectiveOvr(team: SimTeam, situation: GameSituation, isOnOffense: boolean = true): number {
     let ovr = team.ovr;
     const isHome = team.id === this.settings.home?.id;
     const teamSide = isHome ? 'home' : 'away';
@@ -315,6 +382,29 @@ export class Simulator {
     // Home field advantage (base)
     if (isHome) {
       ovr += HOME_ADVANTAGE_VALUES[this.settings.homeAdvantage];
+    }
+
+    // SCHEME-003: Apply scheme matchup bonuses
+    const schemeMods = this.schemeModifiers[teamSide];
+    if (schemeMods) {
+      if (isOnOffense) {
+        // When on offense, apply offense matchup bonus
+        ovr += schemeMods.offenseMatchupBonus;
+        // Sum attribute bonuses as OVR boost (averaging key attributes)
+        const attrBonuses = Object.values(schemeMods.offenseAttributeBonuses);
+        if (attrBonuses.length > 0) {
+          const avgBonus = attrBonuses.reduce((sum, b) => sum + b, 0) / attrBonuses.length;
+          ovr += avgBonus * 0.5; // Scale attribute bonuses
+        }
+      } else {
+        // When on defense, apply defense matchup bonus
+        ovr += schemeMods.defenseMatchupBonus;
+        const attrBonuses = Object.values(schemeMods.defenseAttributeBonuses);
+        if (attrBonuses.length > 0) {
+          const avgBonus = attrBonuses.reduce((sum, b) => sum + b, 0) / attrBonuses.length;
+          ovr += avgBonus * 0.5;
+        }
+      }
     }
 
     // Facility modifiers (home team gets extra from stadium)
@@ -343,6 +433,11 @@ export class Simulator {
       ovr += getPlayerBadgeBonus(team.badges, qb.id, situation) * 0.2;
     }
 
+    // BADGE-005: Team-wide badge and trait bonuses (previously never called)
+    const teamBadgeBonus = getTeamBadgeBonus(team.badges, situation) * 0.5;
+    const teamTraitBonus = getTeamTraitModifier(team.traits, situation) * 0.5;
+    ovr += teamBadgeBonus + teamTraitBonus;
+
     return Math.round(ovr);
   }
 
@@ -352,8 +447,9 @@ export class Simulator {
     if (!off || !def) return 0;
 
     const situation = this.getCurrentSituation(offTeam);
-    const offOvr = this.getEffectiveOvr(off, situation);
-    const defOvr = this.getEffectiveOvr(def, situation);
+    // SCHEME-003: Pass isOnOffense flag to apply correct scheme bonuses
+    const offOvr = this.getEffectiveOvr(off, situation, true);  // offense team
+    const defOvr = this.getEffectiveOvr(def, situation, false); // defense team
 
     return (offOvr - defOvr) * 0.015;
   }
@@ -664,11 +760,22 @@ export class Simulator {
     let yards = baseYards + matchupYards;
     const yardsBreakdown: string[] = [`Base: ${baseYards}`, `Matchup: ${matchupYards >= 0 ? '+' : ''}${matchupYards}`];
 
-    // Badge bonus
-    const badgeBonus = Math.round(getPlayBonuses(offTeam.badges, rusher.id, situation, 'run') * 0.3);
-    if (badgeBonus > 0) {
-      yards += badgeBonus;
-      yardsBreakdown.push(`Badge: +${badgeBonus}`);
+    // RB badge bonus
+    const rbBadgeBonus = Math.round(getPlayBonuses(offTeam.badges, rusher.id, situation, 'run') * 0.5);
+    if (rbBadgeBonus > 0) {
+      yards += rbBadgeBonus;
+      yardsBreakdown.push(`RB badge: +${rbBadgeBonus}`);
+    }
+
+    // BADGE-002: OL block badges improve run blocking
+    const depthChart = offTeam.depthChart as Record<Position, string[]>;
+    const lg = getStarter(offTeam.roster, depthChart, Position.LG);
+    if (lg) {
+      const olRunBlockBonus = Math.round(getPlayBonuses(offTeam.badges, lg.id, situation, 'block') * 0.4);
+      if (olRunBlockBonus > 0) {
+        yards += olRunBlockBonus;
+        yardsBreakdown.push(`OL block: +${olRunBlockBonus}`);
+      }
     }
 
     // Apply coaching YPC bonus
@@ -684,6 +791,29 @@ export class Simulator {
       const rzBonus = Math.round(offCoaching.redZoneTdRate * 2);
       yards += rzBonus;
       yardsBreakdown.push(`Red zone coach: +${rzBonus}`);
+    }
+
+    // BADGE-003: DL rush badges reduce rushing yards (run stuffing)
+    const defDepthChart = defTeam.depthChart as Record<Position, string[]>;
+    const dt = getStarter(defTeam.roster, defDepthChart, Position.DT);
+    if (dt) {
+      const dlRunStuffBonus = Math.round(getPlayBonuses(defTeam.badges, dt.id, situation, 'rush') * 0.3);
+      if (dlRunStuffBonus > 0) {
+        yards -= dlRunStuffBonus;
+        yardsBreakdown.push(`DL stuff: -${dlRunStuffBonus}`);
+      }
+    }
+
+    // SCHEME-004: Defensive scheme run defense bonus (4-3 has +2 runDefense, +2 blockShedding)
+    const defSchemeMods = this.schemeModifiers[def];
+    if (defSchemeMods?.defenseAttributeBonuses) {
+      const runDefBonus = defSchemeMods.defenseAttributeBonuses['runDefense'] || 0;
+      const blockShedBonus = defSchemeMods.defenseAttributeBonuses['blockShedding'] || 0;
+      const schemeRunPenalty = Math.round((runDefBonus + blockShedBonus) * 0.15); // Each +1 = 0.15 yards lost
+      if (schemeRunPenalty > 0) {
+        yards -= schemeRunPenalty;
+        yardsBreakdown.push(`Scheme run D: -${schemeRunPenalty}`);
+      }
     }
 
     this.addDebug(`  Yards calculation: ${yardsBreakdown.join(', ')}`);
@@ -792,10 +922,41 @@ export class Simulator {
     let sackChance = 0.07 + (dlOvr - olOvr) * 0.005 - ovrDiff * 0.02;
     const sackBreakdown = [`Base: 7%`, `OL(${olOvr}) vs DL(${dlOvr}): ${((dlOvr - olOvr) * 0.5).toFixed(1)}%`];
 
+    // BADGE-002: OL block badges reduce sack chance
+    const lt = getStarter(offTeam.roster, offDepthChart, Position.LT);
+    if (lt) {
+      const olBlockBonus = getPlayBonuses(offTeam.badges, lt.id, situation, 'block') * 0.02;
+      if (olBlockBonus > 0) {
+        sackChance -= olBlockBonus;
+        sackBreakdown.push(`OL badges: -${(olBlockBonus * 100).toFixed(1)}%`);
+      }
+    }
+
+    // BADGE-003: DL rush badges increase sack chance
+    const de = getStarter(defTeam.roster, defDepthChart, Position.DE);
+    if (de) {
+      const dlRushBonus = getPlayBonuses(defTeam.badges, de.id, situation, 'rush') * 0.025;
+      if (dlRushBonus > 0) {
+        sackChance += dlRushBonus;
+        sackBreakdown.push(`DL rush: +${(dlRushBonus * 100).toFixed(1)}%`);
+      }
+    }
+
     // Defensive pass rush bonus
     if (defCoaching && defCoaching.passRushBonus > 0) {
       sackChance += defCoaching.passRushBonus * 0.02;
       sackBreakdown.push(`Pass rush coach: +${(defCoaching.passRushBonus * 2).toFixed(1)}%`);
+    }
+
+    // SCHEME-004: Defensive scheme pass rush bonus (4-3 has +3 passRush, 3-4 OLB has +3)
+    const defSchemeMods = this.schemeModifiers[def];
+    if (defSchemeMods?.defenseAttributeBonuses) {
+      const passRushBonus = defSchemeMods.defenseAttributeBonuses['passRush'] || 0;
+      if (passRushBonus > 0) {
+        const schemeRushBonus = passRushBonus * 0.005; // Each +1 passRush = 0.5% sack chance
+        sackChance += schemeRushBonus;
+        sackBreakdown.push(`Scheme passRush: +${(schemeRushBonus * 100).toFixed(1)}%`);
+      }
     }
 
     const finalSackChance = Math.max(0.02, sackChance);
@@ -850,10 +1011,19 @@ export class Simulator {
       compBreakdown.push(`Weather: ${weather.passAccuracy >= 0 ? '+' : ''}${(weather.passAccuracy * 100).toFixed(1)}%`);
     }
 
-    const badgeBonus = getPlayBonuses(offTeam.badges, qb.id, situation, 'pass') * 0.01;
-    if (badgeBonus > 0) {
-      compRate += badgeBonus;
-      compBreakdown.push(`QB badges: +${(badgeBonus * 100).toFixed(1)}%`);
+    const qbBadgeBonus = getPlayBonuses(offTeam.badges, qb.id, situation, 'pass') * 0.02;
+    if (qbBadgeBonus > 0) {
+      compRate += qbBadgeBonus;
+      compBreakdown.push(`QB badges: +${(qbBadgeBonus * 100).toFixed(1)}%`);
+    }
+
+    // BADGE-001: WR/TE receive badges affect catch probability
+    if (receiver) {
+      const receiverBadgeBonus = getPlayBonuses(offTeam.badges, receiver.id, situation, 'receive') * 0.03;
+      if (receiverBadgeBonus > 0) {
+        compRate += receiverBadgeBonus;
+        compBreakdown.push(`WR badges: +${(receiverBadgeBonus * 100).toFixed(1)}%`);
+      }
     }
 
     // Offensive coaching completion bonus
@@ -867,6 +1037,23 @@ export class Simulator {
       const coveragePenalty = defCoaching.coverageBonus * 0.5;
       compRate -= coveragePenalty;
       compBreakdown.push(`DC coverage: -${(coveragePenalty * 100).toFixed(1)}%`);
+    }
+
+    // SCHEME-004: Defensive scheme coverage effects (cover_2 has +4 zoneCoverage, cover_3 has +3)
+    if (defSchemeMods?.defenseAttributeBonuses) {
+      const zoneCoverageBonus = defSchemeMods.defenseAttributeBonuses['zoneCoverage'] || 0;
+      if (zoneCoverageBonus > 0) {
+        const schemeCoveragePenalty = zoneCoverageBonus * 0.008; // Each +1 zone = 0.8% harder completion
+        compRate -= schemeCoveragePenalty;
+        compBreakdown.push(`Scheme zone: -${(schemeCoveragePenalty * 100).toFixed(1)}%`);
+      }
+      // Man coverage schemes (positive bonus from scheme data) also reduce completion
+      const manCoverageBonus = defSchemeMods.defenseAttributeBonuses['manCoverage'] || 0;
+      if (manCoverageBonus > 0) {
+        const schemeManPenalty = manCoverageBonus * 0.01; // Man coverage more impactful per point
+        compRate -= schemeManPenalty;
+        compBreakdown.push(`Scheme man: -${(schemeManPenalty * 100).toFixed(1)}%`);
+      }
     }
 
     if (receiver) {
@@ -889,7 +1076,8 @@ export class Simulator {
       // Ball hawk bonus
       if (cb) {
         const ballHawk = getBallHawkModifier(defTeam.traits, cb.id);
-        const cbBadge = getPlayBonuses(defTeam.badges, cb.id, situation, 'cover') * 0.005;
+        // BADGE-004: Increased CB badge multiplier from 0.005 to 0.03 (6x)
+        const cbBadge = getPlayBonuses(defTeam.badges, cb.id, situation, 'cover') * 0.03;
         if (ballHawk > 0) {
           intChance += ballHawk;
           intBreakdown.push(`Ball Hawk: +${(ballHawk * 100).toFixed(1)}%`);
@@ -904,6 +1092,17 @@ export class Simulator {
       if (defCoaching && defCoaching.turnoverChance > 0) {
         intChance += defCoaching.turnoverChance * 0.01;
         intBreakdown.push(`DC turnover: +${(defCoaching.turnoverChance).toFixed(1)}%`);
+      }
+
+      // SCHEME-004: Defensive scheme interception/ballhawk bonuses (cover_3 has +2 interception, +2 ballHawk)
+      if (defSchemeMods?.defenseAttributeBonuses) {
+        const intBonus = defSchemeMods.defenseAttributeBonuses['interception'] || 0;
+        const ballHawkBonus = defSchemeMods.defenseAttributeBonuses['ballHawkAbility'] || 0;
+        const schemeIntBonus = (intBonus + ballHawkBonus) * 0.005; // Each +1 = 0.5% INT chance
+        if (schemeIntBonus > 0) {
+          intChance += schemeIntBonus;
+          intBreakdown.push(`Scheme INT: +${(schemeIntBonus * 100).toFixed(1)}%`);
+        }
       }
 
       const finalIntChance = Math.max(0.02, intChance);
@@ -957,6 +1156,15 @@ export class Simulator {
       const rzBonus = Math.round(offCoaching.redZoneTdRate * 1.5);
       yards += rzBonus;
       this.addDebug(`  Red zone coaching: +${rzBonus}`);
+    }
+
+    // BADGE-001: WR/TE receive badges add yards after catch (YAC)
+    if (receiver) {
+      const yacBadgeBonus = Math.round(getPlayBonuses(offTeam.badges, receiver.id, situation, 'receive') * 0.5);
+      if (yacBadgeBonus > 0) {
+        yards += yacBadgeBonus;
+        this.addDebug(`  WR badge YAC: +${yacBadgeBonus}`);
+      }
     }
 
     // Big play check
@@ -1063,9 +1271,9 @@ export class Simulator {
     if (this.isClutch()) {
       successRate -= 0.05;
       rateBreakdown.push('Clutch pressure: -5%');
-      // Clutch kicker badge bonus
+      // BADGE-004: Increased kicker badge multiplier from 0.02 to 0.05
       if (kicker) {
-        const clutchBonus = getPlayBonuses(offTeam.badges, kicker.id, situation, 'kick') * 0.02;
+        const clutchBonus = getPlayBonuses(offTeam.badges, kicker.id, situation, 'kick') * 0.05;
         if (clutchBonus > 0) {
           successRate += clutchBonus;
           rateBreakdown.push(`Clutch badge: +${(clutchBonus * 100).toFixed(1)}%`);

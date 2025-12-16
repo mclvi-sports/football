@@ -15,6 +15,29 @@ import {
   OFFENSIVE_WEIGHTS,
   DEFENSIVE_WEIGHTS,
 } from './types';
+import {
+  OffensiveScheme as SchemeOffensiveScheme,
+  DefensiveScheme as SchemeDefensiveScheme,
+} from '../schemes/types';
+
+// SCHEME-001: Map display names to scheme module IDs
+const OFFENSE_SCHEME_MAP: Record<OffensiveScheme, SchemeOffensiveScheme> = {
+  'West Coast': 'west_coast',
+  'Air Raid': 'air_raid',
+  'Spread': 'spread',
+  'Pro Style': 'pro_style',
+  'Power Run': 'power_run',
+  'Run Heavy': 'zone_run', // Map Run Heavy to zone_run
+};
+
+// Defensive schemes based on roster composition
+const DEFENSE_SCHEME_BY_TIER: Record<Tier, SchemeDefensiveScheme[]> = {
+  [Tier.Elite]: ['man_blitz', 'cover_3', '4-3'],
+  [Tier.Good]: ['cover_2', '4-3', '3-4'],
+  [Tier.Average]: ['4-3', 'cover_2', 'zone_blitz'],
+  [Tier.BelowAverage]: ['3-4', 'cover_2', 'zone_blitz'],
+  [Tier.Rebuilding]: ['4-3', '3-4', 'cover_3'],
+};
 
 // Position mapping from roster generator to sim engine
 const POSITION_GROUP_MAP: Record<string, Position[]> = {
@@ -316,6 +339,38 @@ function determineScheme(
 }
 
 /**
+ * SCHEME-001: Determine defensive scheme based on roster composition
+ */
+function determineDefensiveScheme(
+  roster: Player[],
+  depthChart: Record<Position, string[]>,
+  tier: Tier
+): SchemeDefensiveScheme {
+  const cb1 = getStarter(roster, depthChart, Position.CB, 0);
+  const mlb = getStarter(roster, depthChart, Position.MLB);
+  const de = getStarter(roster, depthChart, Position.DE);
+
+  // Elite CBs suggest man coverage schemes
+  if (cb1 && cb1.overall >= 85) {
+    return 'man_blitz';
+  }
+
+  // Strong pass rush suggests aggressive schemes
+  if (de && de.overall >= 85) {
+    return '4-3';
+  }
+
+  // Strong LB corps suggests 3-4
+  if (mlb && mlb.overall >= 85) {
+    return '3-4';
+  }
+
+  // Fall back to tier-based defaults
+  const schemes = DEFENSE_SCHEME_BY_TIER[tier];
+  return schemes[Math.floor(Math.random() * schemes.length)];
+}
+
+/**
  * Transform TeamRosterData to SimTeam format
  */
 export function adaptTeamRoster(teamData: TeamRosterData): SimTeam {
@@ -340,6 +395,11 @@ export function adaptTeamRoster(teamData: TeamRosterData): SimTeam {
   const defOvr = calculateDefenseOvr(players, depthChart);
   const teamOvr = Math.round((offOvr + defOvr) / 2);
 
+  // SCHEME-001: Determine schemes
+  const offSchemeDisplay = determineScheme(players, depthChart, tier);
+  const offSchemeId = OFFENSE_SCHEME_MAP[offSchemeDisplay] || 'pro_style';
+  const defSchemeId = determineDefensiveScheme(players, depthChart, tier);
+
   return {
     id: team.id,
     city: team.city,
@@ -363,7 +423,10 @@ export function adaptTeamRoster(teamData: TeamRosterData): SimTeam {
       k: kOvr,
       p: pOvr,
     },
-    scheme: determineScheme(players, depthChart, tier),
+    scheme: offSchemeDisplay,
+    // SCHEME-001: New scheme fields for schemes module integration
+    offensiveScheme: offSchemeId,
+    defensiveScheme: defSchemeId,
     badges: extractBadges(players),
     traits: extractTraits(players),
     roster: players,

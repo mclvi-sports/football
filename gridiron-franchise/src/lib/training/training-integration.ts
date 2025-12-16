@@ -8,6 +8,8 @@
 import { Player, Position, Team } from '../types';
 import { GameResult, WeekSummary } from '../season/types';
 import { PlayerGameStats } from '../sim/types';
+// COACH-003: Import coaching staff types for proper XP bonus calculation
+import { CoachingStaff } from '../coaching/types';
 import {
   // XP Calculator
   calculateGameXP,
@@ -235,6 +237,7 @@ function calculatePerformanceGrade(player: Player, stats: PlayerGameStats): numb
 
 /**
  * Award weekly practice XP to all players on a team
+ * COACH-003: Updated to use proper development modifiers instead of hardcoded thresholds
  */
 export function awardPracticeXP(
   teamId: string,
@@ -244,7 +247,9 @@ export function awardPracticeXP(
   gmPerkBonus: number,
   week: number,
   season: number,
-  isByeWeek: boolean = false
+  isByeWeek: boolean = false,
+  coachingStaff?: CoachingStaff, // COACH-003: Optional coaching staff for perk bonuses
+  schemeFit: 'perfect' | 'good' | 'neutral' | 'poor' | 'mismatch' = 'neutral'
 ): { playerId: string; xpEarned: number }[] {
   const results: { playerId: string; xpEarned: number }[] = [];
 
@@ -253,13 +258,21 @@ export function awardPracticeXP(
   const focus: PracticeFocusType = practiceFocus?.focus || 'conditioning';
   const intensity: PracticeIntensity = practiceFocus?.intensity || 'normal';
 
-  // Calculate facility/staff bonuses
-  const facilityBonus =
-    (facilities.trainingRoom * 0.05) +
-    (facilities.practiceFacility * 0.05);
-  const staffBonus = staff.positionCoachOVR >= 80 ? 0.1 : staff.positionCoachOVR >= 70 ? 0.05 : 0;
-
   for (const player of players) {
+    // COACH-003: Calculate player-specific development modifiers using proper system
+    const devModifiers = calculateDevelopmentModifiers(
+      player,
+      facilities,
+      staff,
+      schemeFit,
+      [], // GM perks handled separately
+      false, // Coach's favorite
+      coachingStaff
+    );
+
+    // Extract bonuses from calculated modifiers
+    const facilityBonus = devModifiers.facilityBonus;
+    const staffBonus = devModifiers.staffBonus;
     let xpResult;
 
     if (isByeWeek) {

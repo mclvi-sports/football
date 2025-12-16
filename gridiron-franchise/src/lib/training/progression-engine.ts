@@ -6,6 +6,14 @@
  */
 
 import { Player, PlayerAttributes, Position, BadgeTier } from '../types';
+// COACH-001: Import coaching XP bonus calculator
+import { calculateCoachingXpBonuses, CoachingXpBonuses } from '../sim/coaching-modifiers';
+import { CoachingStaff } from '../coaching/types';
+// FACIL-001: Import facility seasonal effects
+import { calculateFacilitySeasonalEffects, FacilitySeasonalEffects } from '../sim/facility-modifiers';
+import { TeamFacilities } from '../facilities/types';
+// AGE-002: Import position-specific age decline
+import { calculatePositionAgeDecline, applyAgeDecline, AgeDeclineResult } from '../sim/age-decline';
 
 // Helper to safely get attribute value from PlayerAttributes
 function getAttributeValue(attributes: PlayerAttributes, key: string): number | undefined {
@@ -200,27 +208,40 @@ export function applyAttributeUpgrade(
 }
 
 // =============================================================================
-// AGE PROGRESSION (PROG-003)
+// AGE PROGRESSION (PROG-003, AGE-002, AGE-003)
 // =============================================================================
 
 /**
  * Calculate yearly attribute changes based on age
+ * AGE-002: Uses position-specific decline curves from age-decline.ts
+ * AGE-003: Integrates facility ageDeclineReduction with decline system
+ * FACIL-003: Now accepts optional ageDeclineReduction from facilities
  */
-export function calculateAgeProgression(player: Player): OffseasonProgressionResult {
-  const ageCurve = getAgeCurve(player.age);
+export function calculateAgeProgression(
+  player: Player,
+  ageDeclineReduction: number = 0 // AGE-003: 0-0.30 reduction factor from facilities
+): OffseasonProgressionResult {
   const attributeChanges: OffseasonProgressionResult['attributeChanges'] = [];
 
-  // Get physical attributes
+  // AGE-002: Use position-specific decline curves instead of generic age curves
+  // AGE-003: Pass facility age reduction to the decline calculation
+  const positionDecline = calculatePositionAgeDecline(
+    player.position,
+    player.age,
+    ageDeclineReduction // AGE-003: Facility bonus reduces decline
+  );
+
+  // Get attribute lists by category
   const physicalAttrs = ATTRIBUTE_CATEGORY_CONFIGS.find(c => c.category === 'physical')?.attributes || [];
   const mentalAttrs = ATTRIBUTE_CATEGORY_CONFIGS.find(c => c.category === 'mental')?.attributes || [];
   const technicalAttrs = ATTRIBUTE_CATEGORY_CONFIGS.find(c => c.category === 'technical')?.attributes || [];
 
-  // Apply physical changes
+  // AGE-002: Apply physical decline based on position-specific curve
   for (const attr of physicalAttrs) {
     const currentValue = getAttributeValue(player.attributes, attr);
     if (currentValue === undefined) continue;
 
-    const change = ageCurve.physicalChange;
+    const change = positionDecline.physicalDecline;
     if (change !== 0) {
       const newValue = Math.max(40, Math.min(99, currentValue + change));
       if (newValue !== currentValue) {
@@ -234,12 +255,12 @@ export function calculateAgeProgression(player: Player): OffseasonProgressionRes
     }
   }
 
-  // Apply mental changes
+  // AGE-002: Apply mental changes (can be positive for experience gains)
   for (const attr of mentalAttrs) {
     const currentValue = getAttributeValue(player.attributes, attr);
     if (currentValue === undefined) continue;
 
-    const change = ageCurve.mentalChange;
+    const change = Math.round(positionDecline.mentalChange);
     if (change !== 0) {
       const newValue = Math.max(40, Math.min(99, currentValue + change));
       if (newValue !== currentValue) {
@@ -253,7 +274,7 @@ export function calculateAgeProgression(player: Player): OffseasonProgressionRes
     }
   }
 
-  // Apply technical changes (sample - apply to position-relevant attrs)
+  // AGE-002: Apply technical decline (position-relevant attrs only)
   const relevantTechnical = technicalAttrs.filter(attr => {
     const relevance = POSITION_ATTRIBUTE_RELEVANCE[player.position]?.[attr];
     return relevance === 'primary' || relevance === 'secondary';
@@ -263,7 +284,7 @@ export function calculateAgeProgression(player: Player): OffseasonProgressionRes
     const currentValue = getAttributeValue(player.attributes, attr);
     if (currentValue === undefined) continue;
 
-    const change = ageCurve.technicalChange;
+    const change = positionDecline.technicalDecline;
     if (change !== 0) {
       const newValue = Math.max(40, Math.min(99, currentValue + change));
       if (newValue !== currentValue) {
@@ -288,7 +309,18 @@ export function calculateAgeProgression(player: Player): OffseasonProgressionRes
     attributeChanges,
     ovrChange,
     newOVR: Math.max(40, Math.min(99, player.overall + ovrChange)),
+    // AGE-002: Include decline phase info for UI display
+    declinePhase: positionDecline.declinePhase,
+    isInPrimeYears: positionDecline.isInPrimeYears,
+    yearsUntilDecline: positionDecline.yearsUntilDecline,
   };
+}
+
+/**
+ * AGE-002: Get player's current decline phase description
+ */
+export function getPlayerDeclinePhase(player: Player): AgeDeclineResult {
+  return calculatePositionAgeDecline(player.position, player.age, 0);
 }
 
 // =============================================================================
@@ -311,6 +343,45 @@ export function calculateFacilityBonus(
   const weightBonus = forPhysical ? (WEIGHT_ROOM_BONUSES[weightRoomQuality] || 0) : 0;
 
   return trainingBonus + practiceBonus + weightBonus;
+}
+
+/**
+ * FACIL-002: Apply facility seasonal XP bonuses
+ * Uses facility-modifiers.ts for accurate seasonal effects
+ */
+export function applyFacilityXpBonus(
+  baseXp: number,
+  facilities: TeamFacilities,
+  attributeCategory: 'physical' | 'mental' | 'technical' = 'technical'
+): number {
+  const seasonalEffects = calculateFacilitySeasonalEffects(facilities);
+
+  // Apply base XP bonus to all XP
+  let bonusMultiplier = 1 + seasonalEffects.baseXpBonus;
+
+  // FACIL-002: Apply additional physical XP bonus for physical attributes
+  if (attributeCategory === 'physical') {
+    bonusMultiplier += seasonalEffects.physicalXpBonus;
+  }
+
+  return Math.round(baseXp * bonusMultiplier);
+}
+
+/**
+ * FACIL-002: Get total facility XP bonus multiplier
+ */
+export function getFacilityXpMultiplier(
+  facilities: TeamFacilities,
+  forPhysical: boolean = false
+): number {
+  const seasonalEffects = calculateFacilitySeasonalEffects(facilities);
+  let multiplier = 1 + seasonalEffects.baseXpBonus;
+
+  if (forPhysical) {
+    multiplier += seasonalEffects.physicalXpBonus;
+  }
+
+  return multiplier;
 }
 
 /**
@@ -380,7 +451,35 @@ export function calculateTraitModifier(player: Player): number {
 }
 
 /**
+ * COACH-002: Get position-specific coaching XP bonus
+ */
+function getPositionCoachingBonus(position: Position, bonuses: CoachingXpBonuses): number {
+  switch (position) {
+    case Position.QB:
+      return bonuses.qbXpBonus;
+    case Position.RB:
+      return bonuses.rbXpBonus;
+    case Position.WR:
+    case Position.TE:
+      return bonuses.wrTeXpBonus;
+    case Position.DE:
+    case Position.DT:
+      return bonuses.deDtXpBonus;
+    case Position.MLB:
+    case Position.OLB:
+      return bonuses.lbXpBonus;
+    case Position.CB:
+    case Position.FS:
+    case Position.SS:
+      return bonuses.cbSXpBonus;
+    default:
+      return 0; // OL, K, P don't have specific coaching bonuses
+  }
+}
+
+/**
  * Calculate all development modifiers for a player
+ * COACH-001: Now accepts optional coachingStaff for position XP bonuses
  */
 export function calculateDevelopmentModifiers(
   player: Player,
@@ -388,7 +487,8 @@ export function calculateDevelopmentModifiers(
   staff: { positionCoachOVR: number; coordinatorOVR: number },
   schemeFit: 'perfect' | 'good' | 'neutral' | 'poor' | 'mismatch',
   gmPerks: { name: string; tier: 'bronze' | 'silver' | 'gold' }[],
-  isCoachsFavorite: boolean
+  isCoachsFavorite: boolean,
+  coachingStaff?: CoachingStaff // COACH-001: Optional coaching staff for XP bonuses
 ): DevelopmentModifiers {
   const activeModifiers: DevelopmentModifier[] = [];
 
@@ -416,6 +516,21 @@ export function calculateDevelopmentModifiers(
       value: staffBonus,
       description: `Staff bonus: ${staffBonus >= 0 ? '+' : ''}${Math.round(staffBonus * 100)}%`,
     });
+  }
+
+  // COACH-001/COACH-002: Coaching staff perk XP bonuses
+  let coachingXpBonus = 0;
+  if (coachingStaff) {
+    const coachingBonuses = calculateCoachingXpBonuses(coachingStaff);
+    coachingXpBonus = getPositionCoachingBonus(player.position, coachingBonuses);
+    if (coachingXpBonus > 0) {
+      activeModifiers.push({
+        source: 'coach_coordinator',
+        type: 'xp_bonus',
+        value: coachingXpBonus,
+        description: `Coaching perks: +${Math.round(coachingXpBonus * 100)}%`,
+      });
+    }
   }
 
   // Scheme fit bonus
@@ -459,8 +574,8 @@ export function calculateDevelopmentModifiers(
   const ageCurve = getAgeCurve(player.age);
   const ageModifier = ageCurve.xpCostModifier;
 
-  // Calculate total multiplier (1 + all bonuses)
-  const totalMultiplier = 1 + facilityBonus + staffBonus + schemeFitBonus + gmPerkBonus + traitBonus;
+  // Calculate total multiplier (1 + all bonuses) - COACH-002: include coaching bonus
+  const totalMultiplier = 1 + facilityBonus + staffBonus + coachingXpBonus + schemeFitBonus + gmPerkBonus + traitBonus;
 
   return {
     facilityBonus,

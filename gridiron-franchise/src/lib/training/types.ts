@@ -248,8 +248,13 @@ export interface AttributeUpgradeResult {
 }
 
 // =============================================================================
-// OFFSEASON PROGRESSION
+// OFFSEASON PROGRESSION (AGE-002)
 // =============================================================================
+
+/**
+ * AGE-002: Position-specific decline phase
+ */
+export type DeclinePhase = 'growth' | 'prime' | 'early_decline' | 'steep_decline' | 'twilight';
 
 export interface OffseasonProgressionResult {
   playerId: string;
@@ -262,6 +267,10 @@ export interface OffseasonProgressionResult {
   }[];
   ovrChange: number;
   newOVR: number;
+  // AGE-002: Position-specific decline info for UI display
+  declinePhase?: DeclinePhase;
+  isInPrimeYears?: boolean;
+  yearsUntilDecline?: number;
 }
 
 // =============================================================================
