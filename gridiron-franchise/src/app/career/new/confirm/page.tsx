@@ -110,23 +110,24 @@ export default function ConfirmCareerPage() {
     return getTopPlayers(defPlayers, 5);
   }, [teamData]);
 
-  // Get division rivals with their OVR
-  const divisionRivals = useMemo(() => {
+  // Get division teams with their OVR (including user's team)
+  const divisionTeams = useMemo(() => {
     if (!selectedTeam) return [];
     const fullData = getFullGameData();
     if (!fullData) return [];
 
-    // Find teams in same division, exclude selected team
+    // Find all teams in same division
     return LEAGUE_TEAMS
-      .filter(t => t.division === selectedTeam.division && t.id !== selectedTeam.id)
-      .map(rival => {
-        const rivalData = fullData.teams.find(t => t.team.id === rival.id);
+      .filter(t => t.division === selectedTeam.division)
+      .map(team => {
+        const teamData = fullData.teams.find(t => t.team.id === team.id);
         return {
-          id: rival.id,
-          city: rival.city,
-          name: rival.name,
-          colors: rival.colors,
-          avgOvr: rivalData?.stats.avgOvr || 0,
+          id: team.id,
+          city: team.city,
+          name: team.name,
+          colors: team.colors,
+          avgOvr: teamData?.stats.avgOvr || 0,
+          isUserTeam: team.id === selectedTeam.id,
         };
       })
       .sort((a, b) => b.avgOvr - a.avgOvr); // Sort by OVR descending
@@ -215,9 +216,9 @@ export default function ConfirmCareerPage() {
         {/* Top Players - Offense & Defense */}
         <div className="grid grid-cols-2 gap-2">
           {/* Offense */}
-          <div className="bg-secondary/50 border border-border rounded-lg p-2">
-            <p className="text-[10px] text-muted-foreground uppercase mb-1">Offense</p>
-            <div className="space-y-0.5">
+          <div className="bg-secondary/50 border border-border rounded-lg p-3">
+            <p className="text-[10px] text-muted-foreground uppercase mb-2">Top Offense</p>
+            <div className="space-y-1">
               {topOffensePlayers.map((player) => (
                 <div key={player.id} className="flex items-center justify-between text-xs">
                   <span className="truncate">
@@ -230,9 +231,9 @@ export default function ConfirmCareerPage() {
             </div>
           </div>
           {/* Defense */}
-          <div className="bg-secondary/50 border border-border rounded-lg p-2">
-            <p className="text-[10px] text-muted-foreground uppercase mb-1">Defense</p>
-            <div className="space-y-0.5">
+          <div className="bg-secondary/50 border border-border rounded-lg p-3">
+            <p className="text-[10px] text-muted-foreground uppercase mb-2">Top Defense</p>
+            <div className="space-y-1">
               {topDefensePlayers.map((player) => (
                 <div key={player.id} className="flex items-center justify-between text-xs">
                   <span className="truncate">
@@ -267,24 +268,44 @@ export default function ConfirmCareerPage() {
           </div>
         </div>
 
-        {/* Division Rivals */}
-        <div className="bg-secondary/50 border border-border rounded-lg p-2">
-          <p className="text-[10px] text-muted-foreground uppercase mb-1.5">Division Rivals</p>
-          <div className="flex gap-2">
-            {divisionRivals.map((rival) => (
-              <div key={rival.id} className="flex-1 flex items-center gap-1.5 bg-background/50 rounded p-1.5">
+        {/* Division Standings */}
+        <div className="bg-secondary/50 border border-border rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground uppercase mb-2">
+            {selectedTeam.division} Standings
+          </p>
+          <div className="space-y-2">
+            {divisionTeams.map((team, index) => (
+              <div
+                key={team.id}
+                className={`flex items-center gap-2 p-2 rounded-lg ${
+                  team.isUserTeam ? 'bg-primary/10 border border-primary/30' : 'bg-background/50'
+                }`}
+              >
+                {/* Rank */}
+                <span className="text-xs text-muted-foreground w-4">{index + 1}.</span>
+
+                {/* Team Logo */}
                 <div
-                  className="w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold shrink-0"
+                  className="w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold shrink-0"
                   style={{
-                    backgroundColor: rival.colors.primary,
-                    color: rival.colors.secondary,
+                    backgroundColor: team.colors.primary,
+                    color: team.colors.secondary,
                   }}
                 >
-                  {rival.id}
+                  {team.id}
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium truncate">{rival.name}</p>
-                  <p className="text-[10px] text-muted-foreground">{rival.avgOvr} OVR</p>
+
+                {/* Team Name */}
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm truncate ${team.isUserTeam ? 'font-semibold' : 'font-medium'}`}>
+                    {team.city} {team.name}
+                  </p>
+                </div>
+
+                {/* OVR */}
+                <div className="text-right shrink-0">
+                  <p className="text-sm font-bold">{team.avgOvr}</p>
+                  <p className="text-[10px] text-muted-foreground">OVR</p>
                 </div>
               </div>
             ))}
