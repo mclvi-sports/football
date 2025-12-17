@@ -1,0 +1,39 @@
+{
+  "feature_name": "draft-experience",
+  "description": "Complete NFL Draft experience system with combine measurables, 130+ colleges, college stats/accolades, pre-draft interviews, combine/pro day events, full draft day UI with trades, and rookie camp integration",
+  "goal": "Transform the stub draft page into an elite, immersive draft experience that rivals console franchise games - covering the full journey from scouting season through rookie camp",
+  "requirements": [
+    "Full NFL Combine measurables system (40-yard, vertical, broad jump, 3-cone, shuttle, bench, arm length, hand size, wingspan)",
+    "Expanded college database with 130+ schools across 5 tiers (Blue Blood, Elite, Power 5, Group of 5, FCS)",
+    "College career stats and accolades (Heisman, All-American, position awards, bowl MVPs)",
+    "Pre-draft interview system with character/IQ/work ethic reveals",
+    "Combine week simulation (Week 19) with risers/fallers and storylines",
+    "Pro Day events (Week 20) with school visits and private workouts",
+    "Draft day UI with pick ticker, draft board, team needs panel, trade mechanics",
+    "7-round draft with 224 picks plus compensatory system",
+    "Trade up/down mechanics with value chart",
+    "Rookie camp integration with OVR reveal and development assignment",
+    "Mobile-first responsive design throughout"
+  ],
+  "out_of_scope": [
+    "Real-time multiplayer drafting (future feature)",
+    "Historical draft data import",
+    "External API integrations",
+    "Backend/database changes"
+  ],
+  "constraints": [
+    "Must integrate with existing scouting-store and its point system",
+    "Must work with current dev-player-store roster structure",
+    "Must follow existing UI patterns (Tailwind, shadcn components)",
+    "No backend changes - all client-side with Zustand stores",
+    "Must maintain mobile-first responsive design",
+    "Prospect generation must work with existing draft-generator.ts patterns"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+    "workorder_assigned_at": "2025-12-17T21:11:00.195220+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

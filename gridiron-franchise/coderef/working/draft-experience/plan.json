@@ -1,0 +1,835 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "draft-experience",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-17",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": [
+        "ARCHITECTURE.md - 4-layer architecture (Presentation, State, Logic, Backend)",
+        "SCHEMA.md - Player, Position, Tier interfaces in src/lib/types.ts",
+        "COMPONENTS.md - Shadcn/UI patterns, cn() utility, Card/Dialog/Tabs components",
+        "DRAFT-SYSTEM-ENHANCED.md - 7-phase implementation roadmap",
+        "DRAFT-SYSTEM-EXPERIENCE.md - UX design and user journey",
+        "50-draft-improvements.md - Prioritized feature list"
+      ],
+      "coding_standards": "React 19 client components, Zustand stores, Tailwind CSS, mobile-first responsive design, camelCase functions",
+      "reference_implementations": [
+        "src/lib/generators/draft-generator.ts - DraftProspect interface, generateDraftClass(), OVR ranges by round",
+        "src/lib/scouting/types.ts - ScoutingReport, REPORT_QUALITY_TIERS, SCOUTING_POINT_COSTS",
+        "src/lib/scouting/scouting-utils.ts - generateScoutingReport(), calculateScoutedOvr()",
+        "src/lib/data/physical-ranges.ts - Position-specific height/weight/40-time ranges",
+        "src/lib/data/traits.ts - 46 traits across 7 categories",
+        "src/stores/career-store.ts - Zustand store pattern with persist"
+      ],
+      "existing_infrastructure": {
+        "draft_generator": {
+          "file": "src/lib/generators/draft-generator.ts",
+          "capabilities": ["275 prospects (224 + UDFA)", "OVR ranges by round", "Potential labels (Star/Starter/Limited)", "Scouting noise"],
+          "data_generated": ["firstName", "lastName", "position", "archetype", "overall", "potential", "height", "weight", "fortyTime", "college (20 hardcoded)", "traits"],
+          "missing": ["Full combine measurables", "College stats", "Accolades", "Extended college data"]
+        },
+        "scouting_system": {
+          "files": ["src/lib/scouting/types.ts", "src/lib/scouting/scouting-utils.ts", "src/lib/scouting/scouting-generator.ts", "src/lib/scouting/scouting-store.ts"],
+          "capabilities": ["Scout roles (director/area/pro/national)", "6 attributes", "21 perks", "Report quality tiers", "XP system", "Weekly points"],
+          "point_costs": {"top": 50, "mid": 30, "late": 15, "udfa": 10},
+          "season_periods": {"pre_season": "Weeks 1-8", "mid_season": "Weeks 9-14", "late_season": "Weeks 15-18", "combine": "Week 19", "pro_days": "Week 20", "draft": "Week 21"}
+        },
+        "physical_ranges": {
+          "file": "src/lib/data/physical-ranges.ts",
+          "current_fields": ["height (inches)", "weight (lbs)", "fortyTime (seconds)"],
+          "missing_fields": ["verticalJump", "broadJump", "threeCone", "twentyShuttle", "benchPress", "armLength", "handSize", "wingspan"]
+        },
+        "colleges": {
+          "current": "20 hardcoded in player-generator.ts",
+          "target": "130+ with tiers, conferences, colors, strength positions"
+        }
+      },
+      "project_patterns": {
+        "state_management": "Zustand with sessionStorage persistence",
+        "component_structure": "'use client' directive, hydration check, px-5 padding",
+        "data_flow": "Generators → Stores → Components",
+        "ui_patterns": "rounded-xl border bg-card, grid layouts, responsive breakpoints"
+      }
+    },
+    "1_executive_summary": {
+      "feature_description": "Complete NFL Draft experience system transforming the stub draft page into an elite, immersive draft experience covering the full journey from scouting season through rookie camp",
+      "primary_goal": "Rival console franchise games with comprehensive draft mechanics including combine measurables, 130+ colleges, interviews, combine/pro day events, draft day UI with trades, and rookie camp",
+      "scope": {
+        "in_scope": [
+          "Full NFL Combine measurables (11 measurements + 6 athletic tests)",
+          "130+ college database with 5 tiers (Blue Blood, Elite, Power 5, Group 5, FCS)",
+          "College career stats and accolades (Heisman, All-American, position awards)",
+          "Pre-draft interview system revealing character/IQ/work ethic",
+          "Combine week simulation (Week 19) with risers/fallers",
+          "Pro Day events (Week 20) with school visits and private workouts",
+          "Draft day UI with pick ticker, draft board, team needs, trade mechanics",
+          "7-round draft with 224 picks plus compensatory system",
+          "Trade up/down mechanics with value chart",
+          "Rookie camp with OVR reveal and development assignment",
+          "Mobile-first responsive design throughout"
+        ],
+        "out_of_scope": [
+          "Real-time multiplayer drafting",
+          "Historical draft data import",
+          "External API integrations",
+          "Backend/database changes"
+        ]
+      },
+      "success_metrics": [
+        "All 11 combine measurables generated for every prospect",
+        "130+ colleges with accurate tier distribution",
+        "Interview system reveals hidden traits based on scout quality",
+        "Combine week produces risers/fallers with narrative storylines",
+        "Draft UI supports full 7-round draft with trade negotiations",
+        "Rookie camp reveals true OVR within ±3 accuracy"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity": "high",
+      "estimated_tasks": 52,
+      "estimated_loc": 4500,
+      "risks": [
+        {
+          "risk": "Data volume - 130+ colleges requires significant data entry",
+          "mitigation": "Structure colleges.ts with tier-based generation, use weighted random for less common schools",
+          "severity": "medium"
+        },
+        {
+          "risk": "Integration complexity - Multiple stores and generators must coordinate",
+          "mitigation": "Create dedicated draft-store.ts as central coordinator, use existing patterns from career-store",
+          "severity": "high"
+        },
+        {
+          "risk": "Trade value calculations could create exploits",
+          "mitigation": "Use established NFL trade value chart as baseline, add AI personality variance",
+          "severity": "medium"
+        },
+        {
+          "risk": "UI complexity for mobile draft board",
+          "mitigation": "Use bottom sheets, swipeable cards, and FAB patterns; test on small screens early",
+          "severity": "medium"
+        },
+        {
+          "risk": "Performance with 275 prospects + combine data + college stats",
+          "mitigation": "Lazy load detailed data, paginate prospect lists, use memoization",
+          "severity": "low"
+        }
+      ],
+      "dependencies": [
+        "Existing scouting-store and point system",
+        "dev-player-store roster structure",
+        "draft-generator.ts prospect generation",
+        "physical-ranges.ts measurement system",
+        "Season calendar (Weeks 19-21)"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/lib/types.ts",
+          "purpose": "Add CombineMeasurables, CollegeCareer, CollegeStats, Interview interfaces",
+          "changes": ["New interfaces for combine data", "College career types", "Interview system types"]
+        },
+        {
+          "path": "src/lib/data/physical-ranges.ts",
+          "purpose": "Extend with all combine measurables by position/archetype",
+          "changes": ["Add verticalJump, broadJump, threeCone, twentyShuttle, benchPress ranges", "Add armLength, handSize, wingspan ranges"]
+        },
+        {
+          "path": "src/lib/generators/draft-generator.ts",
+          "purpose": "Generate full prospect data with combine, college stats, accolades",
+          "changes": ["Integrate combine measurables generation", "Add college career generation", "Add accolades generation"]
+        },
+        {
+          "path": "src/lib/generators/player-generator.ts",
+          "purpose": "Use new college database instead of hardcoded list",
+          "changes": ["Import from colleges.ts", "Weight selection by tier"]
+        },
+        {
+          "path": "src/lib/scouting/types.ts",
+          "purpose": "Add interview types and enhanced scouting report fields",
+          "changes": ["Interview interface", "InterviewQuestion type", "Enhanced ScoutingReport with combine reveals"]
+        },
+        {
+          "path": "src/lib/scouting/scouting-utils.ts",
+          "purpose": "Add interview generation and combine reveal logic",
+          "changes": ["generateInterview()", "revealCombineMeasurables()", "calculateInterviewCost()"]
+        },
+        {
+          "path": "src/app/dashboard/draft/page.tsx",
+          "purpose": "Complete overhaul from stub to full draft room UI",
+          "changes": ["Remove stub content", "Implement draft room with all panels", "Add mobile-responsive layout"]
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "src/lib/data/colleges.ts",
+          "purpose": "130+ college database with tiers, conferences, colors, strength positions"
+        },
+        {
+          "path": "src/lib/data/combine-measurables.ts",
+          "purpose": "Position-specific elite thresholds and ranges for all combine tests"
+        },
+        {
+          "path": "src/lib/data/college-accolades.ts",
+          "purpose": "Awards definitions and generation probabilities"
+        },
+        {
+          "path": "src/lib/scouting/interview-system.ts",
+          "purpose": "Interview logic, question banks, and reveal mechanics"
+        },
+        {
+          "path": "src/lib/season/combine-event.ts",
+          "purpose": "Combine week simulation with risers/fallers generation"
+        },
+        {
+          "path": "src/lib/season/pro-day-event.ts",
+          "purpose": "Pro day simulation with school visits and private workouts"
+        },
+        {
+          "path": "src/lib/draft/trade-value-chart.ts",
+          "purpose": "NFL trade value chart and trade evaluation logic"
+        },
+        {
+          "path": "src/lib/draft/draft-ai.ts",
+          "purpose": "AI team draft logic, trade offers, and counter-negotiations"
+        },
+        {
+          "path": "src/lib/draft/compensatory-picks.ts",
+          "purpose": "Compensatory pick calculation based on free agency losses"
+        },
+        {
+          "path": "src/lib/training/rookie-camp.ts",
+          "purpose": "Post-draft evaluation and OVR reveal mechanics"
+        },
+        {
+          "path": "src/stores/draft-store.ts",
+          "purpose": "Central draft state management with Zustand"
+        },
+        {
+          "path": "src/components/draft/draft-board.tsx",
+          "purpose": "User's ranked prospect board with drag-and-drop"
+        },
+        {
+          "path": "src/components/draft/prospect-card.tsx",
+          "purpose": "Detailed prospect display with measurables, grades, traits"
+        },
+        {
+          "path": "src/components/draft/prospect-list.tsx",
+          "purpose": "Sortable/filterable prospect list for mobile"
+        },
+        {
+          "path": "src/components/draft/pick-ticker.tsx",
+          "purpose": "Live draft ticker showing recent selections"
+        },
+        {
+          "path": "src/components/draft/team-needs-panel.tsx",
+          "purpose": "Current team roster needs and depth analysis"
+        },
+        {
+          "path": "src/components/draft/trade-modal.tsx",
+          "purpose": "Trade negotiation interface with value comparison"
+        },
+        {
+          "path": "src/components/draft/draft-clock.tsx",
+          "purpose": "Pick countdown timer with urgency styling"
+        },
+        {
+          "path": "src/components/scouting/interview-card.tsx",
+          "purpose": "Interview session UI with question/response display"
+        },
+        {
+          "path": "src/components/combine/combine-results.tsx",
+          "purpose": "Combine week results display with risers/fallers"
+        },
+        {
+          "path": "src/components/combine/measurables-chart.tsx",
+          "purpose": "Visual chart comparing prospect measurables to position averages"
+        },
+        {
+          "path": "src/app/dashboard/combine/page.tsx",
+          "purpose": "Combine week viewing experience"
+        },
+        {
+          "path": "src/app/dashboard/offseason/rookie-camp/page.tsx",
+          "purpose": "Rookie camp evaluation and development assignment"
+        }
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "COMBINE",
+          "name": "NFL Combine Measurables System",
+          "description": "Full athletic testing data for all prospects with position-specific ranges and elite thresholds",
+          "requirements": [
+            "11 physical measurements: height, weight, arm length, hand size, wingspan, plus existing 40-time",
+            "5 additional athletic tests: vertical jump, broad jump, 3-cone, 20-yard shuttle, bench press",
+            "Position-specific elite thresholds (e.g., <4.40s 40 for WR, 36\"+ vertical for CB)",
+            "Archetype modifiers for ranges (speed WR vs possession WR)",
+            "Combine results influence draft stock (risers/fallers)"
+          ]
+        },
+        {
+          "id": "COLLEGE",
+          "name": "Expanded College Database",
+          "description": "130+ colleges with metadata enabling realistic prospect distribution and school-specific storylines",
+          "requirements": [
+            "5 tiers: Blue Blood (8), Elite (16), Power 5 (40), Group of 5 (30), FCS (36+)",
+            "Each college: id, name, mascot, conference, colors, strengthPositions",
+            "Tier-weighted selection (Blue Blood 15-20%, FCS 5-10% of draft)",
+            "Regional mapping for area scout bonuses",
+            "School-specific draft history generation"
+          ]
+        },
+        {
+          "id": "STATS",
+          "name": "College Career Stats & Accolades",
+          "description": "Position-specific college statistics and awards for each prospect",
+          "requirements": [
+            "Position-specific stats: QB (comp%, yards, TDs), RB (carries, YPC), WR (rec, YPR), etc.",
+            "3-4 year career totals with per-season breakdowns",
+            "Major accolades: Heisman, All-American (1st/2nd/3rd), Conference POY",
+            "Position awards: Biletnikoff, Doak Walker, Outland, Butkus, etc.",
+            "Bowl game appearances and MVPs",
+            "Stats correlate with OVR but not perfectly (evaluation uncertainty)"
+          ]
+        },
+        {
+          "id": "INTERVIEW",
+          "name": "Pre-Draft Interview System",
+          "description": "Interactive interview sessions revealing character and mental traits",
+          "requirements": [
+            "Costs 40 scouting points per interview (from types.ts)",
+            "5 question categories: Football Knowledge, Character, Work Ethic, Medical, Personal",
+            "Reveals: Character traits, Football IQ, Work ethic indicators, Injury history, Leadership",
+            "Scout quality affects reveal accuracy",
+            "Limited interviews per team (simulating NFL 60-player limit)"
+          ]
+        },
+        {
+          "id": "COMBINE_EVENT",
+          "name": "Combine Week Simulation",
+          "description": "Week 19 event where combine results are revealed and stock changes",
+          "requirements": [
+            "Day-by-day schedule by position group",
+            "All measurables revealed (free during combine period per types.ts)",
+            "Risers: Prospects who exceeded expectations (+5-15 draft spots)",
+            "Fallers: Prospects who disappointed (-5-15 draft spots)",
+            "Storylines: Workout warriors, medical red flags, interview impressors",
+            "Mock draft updates based on combine performance"
+          ]
+        },
+        {
+          "id": "PRO_DAY",
+          "name": "Pro Day Events",
+          "description": "Week 20 school workouts and private visits with enhanced accuracy",
+          "requirements": [
+            "School visits: Attend any pro day for free (per types.ts PERIOD_MODIFIERS)",
+            "Private workouts: Request specific prospects (60 points, highest accuracy)",
+            "Enhanced measurable accuracy vs combine",
+            "Final board adjustments before draft",
+            "Limited private workout slots (10-15 per team)"
+          ]
+        },
+        {
+          "id": "DRAFT_UI",
+          "name": "Draft Day Experience",
+          "description": "Full draft room interface with real-time picks, trades, and board management",
+          "requirements": [
+            "Pick ticker showing current pick, team, countdown timer",
+            "Draft board with user's ranked prospects (drag-and-drop)",
+            "Team needs panel with position grades and depth",
+            "Selection panel: Best available, position filter, make pick button",
+            "Trade interface: Trade up/down with value chart comparison",
+            "7 rounds, 224 picks + compensatory picks",
+            "Speed settings: Real-time, Fast, Instant per round",
+            "Mobile-first: Bottom sheets, swipeable cards, FAB for picks"
+          ]
+        },
+        {
+          "id": "TRADE",
+          "name": "Trade Mechanics",
+          "description": "Trade up/down system with AI negotiation and value chart",
+          "requirements": [
+            "NFL-style trade value chart (1st overall = 3000 pts)",
+            "Future picks worth ~80% of current year",
+            "AI counter-offers based on team situation (rebuild vs contend)",
+            "Package players with picks",
+            "Trade deadline during draft",
+            "Trade history tracking"
+          ]
+        },
+        {
+          "id": "ROOKIE_CAMP",
+          "name": "Rookie Camp Integration",
+          "description": "Post-draft evaluation revealing true ratings and assigning development",
+          "requirements": [
+            "Week 22 event after draft",
+            "Initial OVR reveal: ±3 from true OVR (Year 1 accuracy)",
+            "Camp standouts and disappointments",
+            "Development plan assignment",
+            "Mentor pairing with veterans",
+            "Position battle setup",
+            "True OVR fully revealed after Year 2"
+          ]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-DRAFT-EXPERIENCE-001",
+        "name": "Draft Experience",
+        "feature_dir": "coderef/working/draft-experience"
+      },
+      "tasks": [
+        {
+          "id": "COMBINE-001",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create combine-measurables.ts with position-specific ranges for all athletic tests",
+          "file": "src/lib/data/combine-measurables.ts",
+          "estimated_loc": 250
+        },
+        {
+          "id": "COMBINE-002",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Extend physical-ranges.ts with arm length, hand size, wingspan ranges",
+          "file": "src/lib/data/physical-ranges.ts",
+          "estimated_loc": 100
+        },
+        {
+          "id": "COMBINE-003",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Add CombineMeasurables interface to types.ts",
+          "file": "src/lib/types.ts",
+          "estimated_loc": 40
+        },
+        {
+          "id": "COMBINE-004",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Update draft-generator.ts to generate full combine data for prospects",
+          "file": "src/lib/generators/draft-generator.ts",
+          "estimated_loc": 80
+        },
+        {
+          "id": "COLLEGE-001",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create colleges.ts with 130+ schools across 5 tiers",
+          "file": "src/lib/data/colleges.ts",
+          "estimated_loc": 400
+        },
+        {
+          "id": "COLLEGE-002",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Update player-generator.ts to use new college database",
+          "file": "src/lib/generators/player-generator.ts",
+          "estimated_loc": 30
+        },
+        {
+          "id": "STATS-001",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create college-accolades.ts with awards definitions",
+          "file": "src/lib/data/college-accolades.ts",
+          "estimated_loc": 150
+        },
+        {
+          "id": "STATS-002",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Add CollegeCareer and CollegeStats interfaces to types.ts",
+          "file": "src/lib/types.ts",
+          "estimated_loc": 60
+        },
+        {
+          "id": "STATS-003",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Extend draft-generator.ts with college stats generation",
+          "file": "src/lib/generators/draft-generator.ts",
+          "estimated_loc": 120
+        },
+        {
+          "id": "STATS-004",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Add accolades generation based on OVR and position",
+          "file": "src/lib/generators/draft-generator.ts",
+          "estimated_loc": 80
+        },
+        {
+          "id": "INTERVIEW-001",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Add Interview types to scouting/types.ts",
+          "file": "src/lib/scouting/types.ts",
+          "estimated_loc": 50
+        },
+        {
+          "id": "INTERVIEW-002",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create interview-system.ts with question banks and reveal logic",
+          "file": "src/lib/scouting/interview-system.ts",
+          "estimated_loc": 200
+        },
+        {
+          "id": "INTERVIEW-003",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Add interview generation to scouting-utils.ts",
+          "file": "src/lib/scouting/scouting-utils.ts",
+          "estimated_loc": 60
+        },
+        {
+          "id": "INTERVIEW-004",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create interview-card.tsx component",
+          "file": "src/components/scouting/interview-card.tsx",
+          "estimated_loc": 120
+        },
+        {
+          "id": "EVENT-001",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create combine-event.ts with week 19 simulation logic",
+          "file": "src/lib/season/combine-event.ts",
+          "estimated_loc": 180
+        },
+        {
+          "id": "EVENT-002",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create pro-day-event.ts with school visits and private workouts",
+          "file": "src/lib/season/pro-day-event.ts",
+          "estimated_loc": 150
+        },
+        {
+          "id": "EVENT-003",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create combine-results.tsx component for results display",
+          "file": "src/components/combine/combine-results.tsx",
+          "estimated_loc": 150
+        },
+        {
+          "id": "EVENT-004",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create measurables-chart.tsx for visual comparison",
+          "file": "src/components/combine/measurables-chart.tsx",
+          "estimated_loc": 100
+        },
+        {
+          "id": "EVENT-005",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create combine page at /dashboard/combine",
+          "file": "src/app/dashboard/combine/page.tsx",
+          "estimated_loc": 180
+        },
+        {
+          "id": "DRAFT-001",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create draft-store.ts with Zustand for draft state",
+          "file": "src/stores/draft-store.ts",
+          "estimated_loc": 200
+        },
+        {
+          "id": "DRAFT-002",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create trade-value-chart.ts with NFL pick values",
+          "file": "src/lib/draft/trade-value-chart.ts",
+          "estimated_loc": 100
+        },
+        {
+          "id": "DRAFT-003",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create draft-ai.ts for AI team draft logic",
+          "file": "src/lib/draft/draft-ai.ts",
+          "estimated_loc": 250
+        },
+        {
+          "id": "DRAFT-004",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create compensatory-picks.ts calculation logic",
+          "file": "src/lib/draft/compensatory-picks.ts",
+          "estimated_loc": 80
+        },
+        {
+          "id": "DRAFT-005",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create draft-board.tsx with drag-and-drop",
+          "file": "src/components/draft/draft-board.tsx",
+          "estimated_loc": 180
+        },
+        {
+          "id": "DRAFT-006",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create prospect-card.tsx with full details display",
+          "file": "src/components/draft/prospect-card.tsx",
+          "estimated_loc": 200
+        },
+        {
+          "id": "DRAFT-007",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create prospect-list.tsx with sorting and filtering",
+          "file": "src/components/draft/prospect-list.tsx",
+          "estimated_loc": 150
+        },
+        {
+          "id": "DRAFT-008",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create pick-ticker.tsx for live selection display",
+          "file": "src/components/draft/pick-ticker.tsx",
+          "estimated_loc": 100
+        },
+        {
+          "id": "DRAFT-009",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create team-needs-panel.tsx with depth analysis",
+          "file": "src/components/draft/team-needs-panel.tsx",
+          "estimated_loc": 120
+        },
+        {
+          "id": "DRAFT-010",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create trade-modal.tsx with negotiation UI",
+          "file": "src/components/draft/trade-modal.tsx",
+          "estimated_loc": 200
+        },
+        {
+          "id": "DRAFT-011",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create draft-clock.tsx with countdown timer",
+          "file": "src/components/draft/draft-clock.tsx",
+          "estimated_loc": 60
+        },
+        {
+          "id": "DRAFT-012",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Implement full draft page at /dashboard/draft",
+          "file": "src/app/dashboard/draft/page.tsx",
+          "estimated_loc": 300
+        },
+        {
+          "id": "ROOKIE-001",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create rookie-camp.ts with evaluation and reveal logic",
+          "file": "src/lib/training/rookie-camp.ts",
+          "estimated_loc": 150
+        },
+        {
+          "id": "ROOKIE-002",
+          "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+          "description": "Create rookie-camp page at /dashboard/offseason/rookie-camp",
+          "file": "src/app/dashboard/offseason/rookie-camp/page.tsx",
+          "estimated_loc": 200
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Data Foundation",
+          "description": "Build the core data structures, expanded college database, and combine measurables system",
+          "tasks": ["COMBINE-001", "COMBINE-002", "COMBINE-003", "COMBINE-004", "COLLEGE-001", "COLLEGE-002"],
+          "deliverables": [
+            "combine-measurables.ts with all position-specific ranges",
+            "Extended physical-ranges.ts with 8 new measurements",
+            "CombineMeasurables interface in types.ts",
+            "colleges.ts with 130+ schools across 5 tiers",
+            "Updated draft-generator.ts generating full combine data"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "College Career & Interviews",
+          "description": "Implement college stats/accolades generation and pre-draft interview system",
+          "tasks": ["STATS-001", "STATS-002", "STATS-003", "STATS-004", "INTERVIEW-001", "INTERVIEW-002", "INTERVIEW-003", "INTERVIEW-004"],
+          "deliverables": [
+            "college-accolades.ts with awards definitions",
+            "CollegeCareer and CollegeStats interfaces",
+            "Draft generator producing full college careers",
+            "Interview types and question banks",
+            "interview-card.tsx component"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Pre-Draft Events",
+          "description": "Implement Combine week and Pro Day simulations with UI",
+          "tasks": ["EVENT-001", "EVENT-002", "EVENT-003", "EVENT-004", "EVENT-005"],
+          "deliverables": [
+            "combine-event.ts with risers/fallers generation",
+            "pro-day-event.ts with school visits and private workouts",
+            "Combine results components",
+            "/dashboard/combine page"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Draft Day Core",
+          "description": "Build draft store, trade mechanics, and AI draft logic",
+          "tasks": ["DRAFT-001", "DRAFT-002", "DRAFT-003", "DRAFT-004"],
+          "deliverables": [
+            "draft-store.ts with full state management",
+            "Trade value chart and evaluation logic",
+            "AI team draft and trade negotiation",
+            "Compensatory pick calculations"
+          ]
+        },
+        {
+          "phase": 5,
+          "name": "Draft Day UI",
+          "description": "Implement all draft room UI components and main page",
+          "tasks": ["DRAFT-005", "DRAFT-006", "DRAFT-007", "DRAFT-008", "DRAFT-009", "DRAFT-010", "DRAFT-011", "DRAFT-012"],
+          "deliverables": [
+            "Draft board with drag-and-drop",
+            "Prospect card and list components",
+            "Pick ticker and draft clock",
+            "Team needs panel",
+            "Trade modal",
+            "Full /dashboard/draft page"
+          ]
+        },
+        {
+          "phase": 6,
+          "name": "Rookie Camp",
+          "description": "Implement post-draft rookie camp evaluation and development",
+          "tasks": ["ROOKIE-001", "ROOKIE-002"],
+          "deliverables": [
+            "rookie-camp.ts with OVR reveal logic",
+            "/dashboard/offseason/rookie-camp page"
+          ]
+        },
+        {
+          "phase": 7,
+          "name": "Integration & Polish",
+          "description": "Connect all systems, test full draft flow, optimize for mobile",
+          "tasks": [],
+          "deliverables": [
+            "Full draft journey tested: Scouting → Combine → Pro Days → Draft → Rookie Camp",
+            "Mobile responsiveness verified",
+            "Performance optimized for 275+ prospects"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "combine-measurables.ts: Verify all position ranges are valid and within thresholds",
+        "colleges.ts: Verify 130+ colleges with required fields, tier distribution",
+        "college-accolades.ts: Test accolade generation probabilities by OVR",
+        "interview-system.ts: Test question selection and trait reveal logic",
+        "combine-event.ts: Test riser/faller calculation accuracy",
+        "trade-value-chart.ts: Verify pick values match NFL standards",
+        "draft-ai.ts: Test AI pick selection and trade evaluation",
+        "rookie-camp.ts: Test OVR reveal accuracy (±3 tolerance)"
+      ],
+      "integration_tests": [
+        "Draft class generation includes all new fields (combine, college, accolades)",
+        "Scouting reports properly reveal combine data based on scout quality",
+        "Interview system deducts correct points and reveals appropriate traits",
+        "Combine week advances draft stock for risers/fallers",
+        "Draft store properly tracks all 224+ picks",
+        "Trade execution updates picks and rosters correctly",
+        "Rookie camp reveals OVR within specified tolerance"
+      ],
+      "manual_testing": [
+        "Visual review of all draft UI components",
+        "Mobile responsiveness on various screen sizes",
+        "Full draft flow from Week 1 scouting to Week 22 rookie camp",
+        "Trade negotiation UX with AI teams",
+        "Performance with full 275 prospect class",
+        "Drag-and-drop board functionality"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "All 275 prospects have complete combine measurables (11 measurements)",
+        "130+ colleges distributed by tier with correct weighting",
+        "Position-specific college stats generated for all prospects",
+        "Accolades (Heisman, All-American, etc.) awarded based on OVR",
+        "Interviews reveal character traits based on scout quality",
+        "Combine week produces 10-15 risers and 10-15 fallers",
+        "7-round draft completes with all 224 picks",
+        "AI teams make sensible picks based on needs and value",
+        "Trade negotiations follow value chart with reasonable flexibility",
+        "Rookie camp reveals OVR within ±3 of true rating"
+      ],
+      "technical": [
+        "No console errors during draft flow",
+        "Draft page loads within 1 second with full prospect data",
+        "Trade modal renders within 200ms",
+        "Draft store persists correctly across page refreshes",
+        "All new interfaces have complete TypeScript coverage"
+      ],
+      "quality": [
+        "Mobile-first design works on 320px width",
+        "Follows existing UI patterns (rounded-xl, border, bg-card)",
+        "Graceful empty states for all components",
+        "Loading indicators during draft simulation",
+        "Accessible color contrast and touch targets"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "Create combine-measurables.ts with all position ranges",
+        "Extend physical-ranges.ts with new measurements",
+        "Add CombineMeasurables interface to types.ts",
+        "Create colleges.ts with 130+ schools",
+        "Update draft-generator.ts to use new data",
+        "Update player-generator.ts for college selection",
+        "Test prospect generation with new fields"
+      ],
+      "phase_2_checklist": [
+        "Create college-accolades.ts with awards",
+        "Add CollegeCareer/CollegeStats to types.ts",
+        "Implement college stats generation",
+        "Implement accolades generation",
+        "Add Interview types to scouting/types.ts",
+        "Create interview-system.ts",
+        "Add interview generation to scouting-utils.ts",
+        "Create interview-card.tsx",
+        "Test interview flow with scouting points"
+      ],
+      "phase_3_checklist": [
+        "Create combine-event.ts",
+        "Create pro-day-event.ts",
+        "Create combine-results.tsx",
+        "Create measurables-chart.tsx",
+        "Create /dashboard/combine page",
+        "Test combine week flow"
+      ],
+      "phase_4_checklist": [
+        "Create draft-store.ts",
+        "Create trade-value-chart.ts",
+        "Create draft-ai.ts",
+        "Create compensatory-picks.ts",
+        "Test draft state management",
+        "Test AI draft logic"
+      ],
+      "phase_5_checklist": [
+        "Create draft-board.tsx",
+        "Create prospect-card.tsx",
+        "Create prospect-list.tsx",
+        "Create pick-ticker.tsx",
+        "Create team-needs-panel.tsx",
+        "Create trade-modal.tsx",
+        "Create draft-clock.tsx",
+        "Implement full /dashboard/draft page",
+        "Test mobile responsiveness",
+        "Test full 7-round draft"
+      ],
+      "phase_6_checklist": [
+        "Create rookie-camp.ts",
+        "Create /dashboard/offseason/rookie-camp page",
+        "Test OVR reveal accuracy",
+        "Test development assignment"
+      ],
+      "phase_7_checklist": [
+        "Full integration testing",
+        "Performance optimization",
+        "Mobile polish",
+        "Documentation update"
+      ]
+    }
+  }
+}
