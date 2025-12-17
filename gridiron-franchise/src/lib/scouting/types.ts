@@ -572,3 +572,75 @@ export const RETIREMENT_RISK_BY_AGE: Record<string, number> = {
 };
 
 export const RETENTION_BONUS_RANGE: [number, number] = [0.025, 0.1]; // $25K-$100K
+
+// ============================================================================
+// INTERVIEW SYSTEM (Draft Experience)
+// ============================================================================
+
+export type InterviewCategory =
+  | 'football_iq'
+  | 'character'
+  | 'work_ethic'
+  | 'leadership'
+  | 'medical'
+  | 'personal';
+
+export type InterviewRevealType =
+  | 'trait' // Reveals a hidden trait
+  | 'attribute_hint' // Gives insight into an attribute
+  | 'bust_risk' // Reveals bust risk level
+  | 'work_ethic_indicator' // Work ethic insight
+  | 'leadership_quality' // Leadership assessment
+  | 'injury_concern' // Injury history info
+  | 'scheme_fit' // Scheme fit assessment
+  | 'character_flag' // Character red/green flag;
+
+export interface InterviewQuestion {
+  id: string;
+  category: InterviewCategory;
+  question: string;
+  reveals: InterviewRevealType;
+  difficulty: number; // 1-5, higher = harder to get info from
+}
+
+export interface InterviewResponse {
+  questionId: string;
+  quality: 'excellent' | 'good' | 'neutral' | 'poor' | 'red_flag';
+  revealedInfo: string | null; // What was revealed (trait ID, attribute, etc.)
+  confidence: number; // How confident scout is in assessment (0-100)
+}
+
+export interface Interview {
+  id: string;
+  prospectId: string;
+  scoutId: string;
+  teamId: string;
+  week: number;
+  pointsSpent: number;
+  questions: InterviewQuestion[];
+  responses: InterviewResponse[];
+  overallImpression: 'excellent' | 'good' | 'average' | 'concerning' | 'poor';
+  traitsRevealed: string[];
+  redFlagsIdentified: string[];
+  greenFlagsIdentified: string[];
+  completedAt: number;
+}
+
+// Interview point costs (from scouting budget)
+export const INTERVIEW_POINT_COST = 15; // Per interview session
+
+// Questions per interview based on scout quality
+export const INTERVIEW_QUESTION_COUNT: Record<string, number> = {
+  '90-99': 5, // Elite scouts get 5 questions
+  '80-89': 4,
+  '70-79': 3,
+  '60-69': 2,
+};
+
+// Reveal quality based on scout OVR and question difficulty
+export const INTERVIEW_REVEAL_ACCURACY: Record<string, number> = {
+  '90-99': 0.95, // 95% accurate reveals
+  '80-89': 0.80,
+  '70-79': 0.65,
+  '60-69': 0.50,
+};

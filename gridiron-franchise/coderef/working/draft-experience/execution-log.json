@@ -236,5 +236,243 @@
         "status": "pending"
       }
     ]
+  },
+  {
+    "timestamp": "2025-12-17T18:18:35.492407",
+    "workorder_id": "WO-DRAFT-EXPERIENCE-001",
+    "feature_name": "draft-experience",
+    "task_count": 46,
+    "tasks": [
+      {
+        "content": "PHASE-1--001: Create combine-measurables.ts with all position ranges",
+        "activeForm": "PHASE-1--001: Creating combine-measurables.ts with all position ranges",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--002: Extend physical-ranges.ts with new measurements",
+        "activeForm": "PHASE-1--002: Extending physical-ranges.ts with new measurements",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--003: Add CombineMeasurables interface to types.ts",
+        "activeForm": "PHASE-1--003: Adding CombineMeasurables interface to types.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--004: Create colleges.ts with 130+ schools",
+        "activeForm": "PHASE-1--004: Creating colleges.ts with 130+ schools",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--005: Update draft-generator.ts to use new data",
+        "activeForm": "PHASE-1--005: Updating draft-generator.ts to use new data",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--006: Update player-generator.ts for college selection",
+        "activeForm": "PHASE-1--006: Updating player-generator.ts for college selection",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--007: Test prospect generation with new fields",
+        "activeForm": "PHASE-1--007: Testing prospect generation with new fields",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--001: Create college-accolades.ts with awards",
+        "activeForm": "PHASE-2--001: Creating college-accolades.ts with awards",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--002: Add CollegeCareer/CollegeStats to types.ts",
+        "activeForm": "PHASE-2--002: Adding CollegeCareer/CollegeStats to types.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--003: Implement college stats generation",
+        "activeForm": "PHASE-2--003: Implementing college stats generation",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--004: Implement accolades generation",
+        "activeForm": "PHASE-2--004: Implementing accolades generation",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--005: Add Interview types to scouting/types.ts",
+        "activeForm": "PHASE-2--005: Adding Interview types to scouting/types.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--006: Create interview-system.ts",
+        "activeForm": "PHASE-2--006: Creating interview-system.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--007: Add interview generation to scouting-utils.ts",
+        "activeForm": "PHASE-2--007: Adding interview generation to scouting-utils.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--008: Create interview-card.tsx",
+        "activeForm": "PHASE-2--008: Creating interview-card.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--009: Test interview flow with scouting points",
+        "activeForm": "PHASE-2--009: Testing interview flow with scouting points",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--001: Create combine-event.ts",
+        "activeForm": "PHASE-3--001: Creating combine-event.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--002: Create pro-day-event.ts",
+        "activeForm": "PHASE-3--002: Creating pro-day-event.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--003: Create combine-results.tsx",
+        "activeForm": "PHASE-3--003: Creating combine-results.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--004: Create measurables-chart.tsx",
+        "activeForm": "PHASE-3--004: Creating measurables-chart.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--005: Create /dashboard/combine page",
+        "activeForm": "PHASE-3--005: Creating /dashboard/combine page",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--006: Test combine week flow",
+        "activeForm": "PHASE-3--006: Testing combine week flow",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--001: Create draft-store.ts",
+        "activeForm": "PHASE-4--001: Creating draft-store.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--002: Create trade-value-chart.ts",
+        "activeForm": "PHASE-4--002: Creating trade-value-chart.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--003: Create draft-ai.ts",
+        "activeForm": "PHASE-4--003: Creating draft-ai.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--004: Create compensatory-picks.ts",
+        "activeForm": "PHASE-4--004: Creating compensatory-picks.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--005: Test draft state management",
+        "activeForm": "PHASE-4--005: Testing draft state management",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--006: Test AI draft logic",
+        "activeForm": "PHASE-4--006: Testing AI draft logic",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-5--001: Create draft-board.tsx",
+        "activeForm": "PHASE-5--001: Creating draft-board.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-5--002: Create prospect-card.tsx",
+        "activeForm": "PHASE-5--002: Creating prospect-card.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-5--003: Create prospect-list.tsx",
+        "activeForm": "PHASE-5--003: Creating prospect-list.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-5--004: Create pick-ticker.tsx",
+        "activeForm": "PHASE-5--004: Creating pick-ticker.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-5--005: Create team-needs-panel.tsx",
+        "activeForm": "PHASE-5--005: Creating team-needs-panel.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-5--006: Create trade-modal.tsx",
+        "activeForm": "PHASE-5--006: Creating trade-modal.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-5--007: Create draft-clock.tsx",
+        "activeForm": "PHASE-5--007: Creating draft-clock.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-5--008: Implement full /dashboard/draft page",
+        "activeForm": "PHASE-5--008: Implementing full /dashboard/draft page",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-5--009: Test mobile responsiveness",
+        "activeForm": "PHASE-5--009: Testing mobile responsiveness",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-5--010: Test full 7-round draft",
+        "activeForm": "PHASE-5--010: Testing full 7-round draft",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-6--001: Create rookie-camp.ts",
+        "activeForm": "PHASE-6--001: Creating rookie-camp.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-6--002: Create /dashboard/offseason/rookie-camp page",
+        "activeForm": "PHASE-6--002: Creating /dashboard/offseason/rookie-camp page",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-6--003: Test OVR reveal accuracy",
+        "activeForm": "PHASE-6--003: Testing OVR reveal accuracy",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-6--004: Test development assignment",
+        "activeForm": "PHASE-6--004: Testing development assignment",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-7--001: Full integration testing",
+        "activeForm": "PHASE-7--001: Fulling integration testing",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-7--002: Performance optimization",
+        "activeForm": "PHASE-7--002: Performanceing optimization",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-7--003: Mobile polish",
+        "activeForm": "PHASE-7--003: Mobileing polish",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-7--004: Documentation update",
+        "activeForm": "PHASE-7--004: Documentationing update",
+        "status": "pending"
+      }
+    ]
   }
 ]

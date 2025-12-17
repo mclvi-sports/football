@@ -23,6 +23,7 @@ import {
   PERIOD_MODIFIERS,
   SEASON_PERIODS,
   XP_GAIN_VALUES,
+  INTERVIEW_POINT_COST,
 } from './types';
 
 // ============================================================================
@@ -488,4 +489,32 @@ export function getBestAvailable(
   available.sort((a, b) => b.scoutedOvr - a.scoutedOvr);
 
   return available[0];
+}
+
+// ============================================================================
+// INTERVIEW UTILITIES (Draft Experience)
+// ============================================================================
+
+// Re-export interview functions for convenience
+export {
+  conductInterview,
+  selectInterviewQuestions,
+  generateInterviewResponse,
+  getInterviewCost,
+  getQuestionCategories,
+  formatInterviewImpression,
+} from './interview-system';
+
+/**
+ * Check if team can afford an interview
+ */
+export function canAffordInterview(availablePoints: number): boolean {
+  return availablePoints >= INTERVIEW_POINT_COST;
+}
+
+/**
+ * Calculate remaining interviews possible with current points
+ */
+export function getRemainingInterviewCount(availablePoints: number): number {
+  return Math.floor(availablePoints / INTERVIEW_POINT_COST);
 }

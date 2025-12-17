@@ -7,10 +7,11 @@
  * Source: FINAL-draft-class-system.md
  */
 
-import { Player, Position, CombineMeasurables } from '../types';
+import { Player, Position, CombineMeasurables, CollegeCareer } from '../types';
 import { generatePlayer } from './player-generator';
 import { generateCombineMeasurables } from '../data/combine-measurables';
 import { selectRandomCollege, type College } from '../data/colleges';
+import { generateCollegeCareer } from './college-stats-generator';
 
 /**
  * Potential label for draft prospects (per FINALS)
@@ -28,6 +29,7 @@ export interface DraftProspect extends Player {
   scoutedOvr: number; // What scouts think (may differ from true OVR)
   combineMeasurables: CombineMeasurables; // Full combine data
   collegeData: College; // Detailed college info with tier
+  collegeCareer: CollegeCareer; // College stats and accolades
 }
 
 interface DraftClassConfig {
@@ -246,6 +248,9 @@ export function generateDraftClass(config: DraftClassConfig = {}): DraftProspect
       // Generate combine measurables for this position
       const combineMeasurables = generateCombineMeasurables(position);
 
+      // Generate college career with stats and accolades
+      const collegeCareer = generateCollegeCareer(position, round, collegeData.tier);
+
       // Create prospect with extended fields
       const prospect: DraftProspect = {
         ...basePlayer,
@@ -261,6 +266,7 @@ export function generateDraftClass(config: DraftClassConfig = {}): DraftProspect
         badges: [], // Prospects start with 0 badges per FINALS
         combineMeasurables,
         collegeData,
+        collegeCareer,
       };
 
       // Remove contract (assigned at draft)
@@ -282,6 +288,7 @@ export function generateDraftClass(config: DraftClassConfig = {}): DraftProspect
     const collegeData = selectRandomCollege(7);
     const basePlayer = generatePlayer({ position, targetOvr: trueOvr, age, college: collegeData.name });
     const combineMeasurables = generateCombineMeasurables(position);
+    const collegeCareer = generateCollegeCareer(position, 'UDFA', collegeData.tier);
 
     const prospect: DraftProspect = {
       ...basePlayer,
@@ -297,6 +304,7 @@ export function generateDraftClass(config: DraftClassConfig = {}): DraftProspect
       badges: [],
       combineMeasurables,
       collegeData,
+      collegeCareer,
     };
 
     delete prospect.contract;

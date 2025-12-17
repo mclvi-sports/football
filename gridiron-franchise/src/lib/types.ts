@@ -286,3 +286,52 @@ export interface CombineMeasurables {
   twentyShuttle: number;  // seconds
   benchPress: number;     // reps at 225 lbs
 }
+
+// College career statistics - position-specific stats
+export interface CollegeStats {
+  // Common stats
+  gamesPlayed: number;
+  gamesStarted: number;
+  years: number; // 1-5 (redshirt possible)
+
+  // Offensive stats (QB, RB, WR, TE)
+  passingYards?: number;
+  passingTDs?: number;
+  interceptions?: number;
+  completionPct?: number;
+  rushingYards?: number;
+  rushingTDs?: number;
+  carries?: number;
+  receptions?: number;
+  receivingYards?: number;
+  receivingTDs?: number;
+
+  // Offensive line stats
+  sacksAllowed?: number;
+  pancakeBlocks?: number;
+
+  // Defensive stats (DL, LB, DB)
+  tackles?: number;
+  tacklesForLoss?: number;
+  sacks?: number;
+  forcedFumbles?: number;
+  interceptionsDef?: number;
+  passesDefended?: number;
+
+  // Special teams
+  fieldGoalsMade?: number;
+  fieldGoalsAttempted?: number;
+  longFieldGoal?: number;
+  punts?: number;
+  puntAverage?: number;
+}
+
+// Complete college career information for draft prospects
+export interface CollegeCareer {
+  stats: CollegeStats;
+  accolades: string[]; // IDs from college-accolades.ts
+  yearsStarted: number;
+  captain: boolean;
+  bowlGamesPlayed: number;
+  bowlWins: number;
+}
