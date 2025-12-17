@@ -16,7 +16,21 @@
       "mcp__docs-mcp__api_inventory",
       "Bash(npx tsx:*)",
       "WebFetch(domain:operations.nfl.com)",
-      "mcp__docs-mcp__create_plan"
+      "mcp__docs-mcp__create_plan",
+      "mcp__docs-mcp__generate_deliverables_template",
+      "mcp__docs-mcp__archive_feature",
+      "mcp__docs-mcp__test_inventory",
+      "Bash(vercel --prod --yes:*)",
+      "Bash(npm test)",
+      "Bash(npm install:*)",
+      "mcp__docs-mcp__gather_context",
+      "mcp__docs-mcp__analyze_project_for_planning",
+      "mcp__personas-mcp__use_persona",
+      "Bash(node:*)",
+      "Bash(curl:*)",
+      "Bash(done)",
+      "WebSearch",
+      "WebFetch(domain:www.espn.com)"
     ],
     "deny": [],
     "ask": []

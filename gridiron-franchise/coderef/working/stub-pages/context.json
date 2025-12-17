@@ -1,0 +1,25 @@
+{
+  "feature_name": "stub-pages",
+  "description": "Implement real content for 4 stub dashboard pages: my-team, news, draft, and next-task",
+  "goal": "Replace placeholder 'coming soon' pages with functional UI that displays real data from existing stores and generators",
+  "requirements": [
+    "my-team page: Display team stats, roster overview, stadium info, division standings",
+    "news page: Show generated league events, transactions, injuries, milestones",
+    "draft page: Display draft prospects, scouting reports, draft order, pick interface",
+    "next-task page: Show contextual next action based on game state (play game, sign FA, advance week)"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Use existing data stores (dev-player-store, career-store, schedule-store)",
+    "Follow existing UI patterns from completed pages (stats, facilities, staff)",
+    "Mobile-first responsive design",
+    "No new API endpoints - use client-side data"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-STUB-PAGES-001",
+    "workorder_assigned_at": "2025-12-17T04:55:31.593806+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

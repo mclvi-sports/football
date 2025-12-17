@@ -14,8 +14,23 @@
       "feature_name": "Sim Ui Improvements",
       "folder_name": "sim-ui-improvements",
       "archived_at": "2025-12-07T02:37:28.689814+00:00"
+    },
+    {
+      "feature_name": "Sim Integration Overhaul",
+      "folder_name": "sim-integration-overhaul",
+      "archived_at": "2025-12-17T03:58:57.327360+00:00"
+    },
+    {
+      "feature_name": "Contract Generator",
+      "folder_name": "contract-generator",
+      "archived_at": "2025-12-17T03:58:57.415131+00:00"
+    },
+    {
+      "feature_name": "Sim Modular Refactor",
+      "folder_name": "sim-modular-refactor",
+      "archived_at": "2025-12-17T03:58:57.528746+00:00"
     }
   ],
-  "total_archived": 3,
-  "last_updated": "2025-12-07T02:37:28.689814+00:00"
+  "total_archived": 6,
+  "last_updated": "2025-12-17T03:58:57.528746+00:00"
 }

@@ -12,7 +12,7 @@ console.log(`Running ${ITERATIONS} iterations...`);
 
 for (let i = 0; i < ITERATIONS; i++) {
   const start = Date.now();
-  const schedule = generateSchedule({ season: 2025 });
+  const schedule = generateSchedule({ season: 2025, randomizeStandings: true });
   const elapsed = Date.now() - start;
   times.push(elapsed);
 

@@ -1,0 +1,386 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "stub-pages",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-16",
+    "has_context": true,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": [
+        "Existing page patterns: stats, facilities, staff, my-gm",
+        "Data stores: dev-player-store, career-store, schedule-store, scouting-store",
+        "UI components: components/dashboard/, components/player/"
+      ],
+      "coding_standards": "React client components, Zustand stores, Tailwind CSS, mobile-first",
+      "reference_implementations": [
+        "src/app/dashboard/stats/page.tsx - Tab-based data display",
+        "src/app/dashboard/facilities/page.tsx - Card grid layout",
+        "src/app/dashboard/staff/page.tsx - Staff cards with ratings",
+        "src/app/dashboard/my-gm/page.tsx - GM profile with perks"
+      ],
+      "project_patterns": {
+        "page_structure": "use client, hydration check, main content with px-5 padding",
+        "data_loading": "useEffect with store hydration, loading states",
+        "card_pattern": "rounded-xl border bg-card with hover states"
+      }
+    },
+    "1_executive_summary": {
+      "feature_description": "Implement real content for 4 stub dashboard pages that currently show 'coming soon' placeholders",
+      "primary_goal": "Replace placeholder pages with functional UI displaying real data from existing stores",
+      "scope": {
+        "in_scope": [
+          "my-team: Team stats, roster overview, division standings",
+          "news: League events, transactions, milestones feed",
+          "draft: Prospect list, scouting reports, draft order",
+          "next-task: Contextual action guidance based on game state"
+        ],
+        "out_of_scope": [
+          "New API endpoints",
+          "Backend changes",
+          "New data generators"
+        ]
+      },
+      "success_metrics": [
+        "All 4 pages display meaningful data",
+        "Pages follow existing UI patterns",
+        "Mobile-responsive layouts"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity": "medium",
+      "estimated_tasks": 16,
+      "risks": [
+        {
+          "risk": "Missing data in stores for some features",
+          "mitigation": "Use graceful fallbacks and empty states",
+          "severity": "low"
+        },
+        {
+          "risk": "News system requires event generation logic",
+          "mitigation": "Start with static news types, add generation later",
+          "severity": "medium"
+        }
+      ],
+      "dependencies": [
+        "dev-player-store for roster data",
+        "schedule-store for standings",
+        "scouting-store for draft prospects"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/app/dashboard/my-team/page.tsx",
+          "purpose": "Replace stub with team overview UI"
+        },
+        {
+          "path": "src/app/dashboard/news/page.tsx",
+          "purpose": "Replace stub with news feed UI"
+        },
+        {
+          "path": "src/app/dashboard/draft/page.tsx",
+          "purpose": "Replace stub with draft room UI"
+        },
+        {
+          "path": "src/app/dashboard/next-task/page.tsx",
+          "purpose": "Replace stub with contextual task UI"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "src/components/team/team-overview.tsx",
+          "purpose": "Team stats and info display component"
+        },
+        {
+          "path": "src/components/team/division-standings.tsx",
+          "purpose": "Division standings table component"
+        },
+        {
+          "path": "src/components/news/news-feed.tsx",
+          "purpose": "News feed list component"
+        },
+        {
+          "path": "src/components/news/news-item.tsx",
+          "purpose": "Individual news item card"
+        },
+        {
+          "path": "src/lib/news/news-generator.ts",
+          "purpose": "Generate league news events"
+        },
+        {
+          "path": "src/components/draft/prospect-list.tsx",
+          "purpose": "Draft prospect table component"
+        },
+        {
+          "path": "src/components/draft/prospect-card.tsx",
+          "purpose": "Individual prospect display"
+        },
+        {
+          "path": "src/components/task/next-task-card.tsx",
+          "purpose": "Contextual task suggestion component"
+        }
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "TEAM",
+          "name": "My Team Page",
+          "description": "Team overview with stats, roster summary, and division standings",
+          "requirements": [
+            "Team logo and colors header",
+            "Record and division rank",
+            "Top players by position",
+            "Division standings widget"
+          ]
+        },
+        {
+          "id": "NEWS",
+          "name": "News Page",
+          "description": "League news feed with transactions, injuries, and milestones",
+          "requirements": [
+            "Scrollable news feed",
+            "News item categories (transaction, injury, milestone)",
+            "Timestamps and team badges",
+            "Empty state when no news"
+          ]
+        },
+        {
+          "id": "DRAFT",
+          "name": "Draft Page",
+          "description": "Draft room with prospects and scouting reports",
+          "requirements": [
+            "Prospect list with OVR, position, college",
+            "Sort by OVR, position, or projected round",
+            "Tap to view scouting report",
+            "Draft order display"
+          ]
+        },
+        {
+          "id": "TASK",
+          "name": "Next Task Page",
+          "description": "Contextual guidance for next game action",
+          "requirements": [
+            "Detect current game state",
+            "Suggest appropriate next action",
+            "Quick action buttons",
+            "Progress indicators"
+          ]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-STUB-PAGES-001",
+        "name": "Stub Pages Implementation",
+        "feature_dir": "coderef/working/stub-pages"
+      },
+      "tasks": [
+        {
+          "id": "TEAM-001",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Create team-overview.tsx component with team header and stats",
+          "file": "src/components/team/team-overview.tsx",
+          "estimated_loc": 80
+        },
+        {
+          "id": "TEAM-002",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Create division-standings.tsx component",
+          "file": "src/components/team/division-standings.tsx",
+          "estimated_loc": 60
+        },
+        {
+          "id": "TEAM-003",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Update my-team/page.tsx with real content",
+          "file": "src/app/dashboard/my-team/page.tsx",
+          "estimated_loc": 100
+        },
+        {
+          "id": "NEWS-001",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Create news-generator.ts for generating league events",
+          "file": "src/lib/news/news-generator.ts",
+          "estimated_loc": 120
+        },
+        {
+          "id": "NEWS-002",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Create news-item.tsx card component",
+          "file": "src/components/news/news-item.tsx",
+          "estimated_loc": 50
+        },
+        {
+          "id": "NEWS-003",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Create news-feed.tsx list component",
+          "file": "src/components/news/news-feed.tsx",
+          "estimated_loc": 60
+        },
+        {
+          "id": "NEWS-004",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Update news/page.tsx with real content",
+          "file": "src/app/dashboard/news/page.tsx",
+          "estimated_loc": 80
+        },
+        {
+          "id": "DRAFT-001",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Create prospect-card.tsx component",
+          "file": "src/components/draft/prospect-card.tsx",
+          "estimated_loc": 70
+        },
+        {
+          "id": "DRAFT-002",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Create prospect-list.tsx with sorting",
+          "file": "src/components/draft/prospect-list.tsx",
+          "estimated_loc": 100
+        },
+        {
+          "id": "DRAFT-003",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Update draft/page.tsx with draft room UI",
+          "file": "src/app/dashboard/draft/page.tsx",
+          "estimated_loc": 120
+        },
+        {
+          "id": "TASK-001",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Create next-task-card.tsx with action suggestions",
+          "file": "src/components/task/next-task-card.tsx",
+          "estimated_loc": 80
+        },
+        {
+          "id": "TASK-002",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Add game state detection logic",
+          "file": "src/lib/game-state.ts",
+          "estimated_loc": 60
+        },
+        {
+          "id": "TASK-003",
+          "workorder_id": "WO-STUB-PAGES-001",
+          "description": "Update next-task/page.tsx with contextual UI",
+          "file": "src/app/dashboard/next-task/page.tsx",
+          "estimated_loc": 100
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "My Team Page",
+          "description": "Implement team overview with stats and standings",
+          "tasks": ["TEAM-001", "TEAM-002", "TEAM-003"],
+          "deliverables": [
+            "Team overview component with header and stats",
+            "Division standings widget",
+            "Fully functional my-team page"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "News Page",
+          "description": "Implement news feed with event generation",
+          "tasks": ["NEWS-001", "NEWS-002", "NEWS-003", "NEWS-004"],
+          "deliverables": [
+            "News event generator",
+            "News item and feed components",
+            "Fully functional news page"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Draft Page",
+          "description": "Implement draft room with prospect display",
+          "tasks": ["DRAFT-001", "DRAFT-002", "DRAFT-003"],
+          "deliverables": [
+            "Prospect card and list components",
+            "Sortable prospect table",
+            "Fully functional draft page"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Next Task Page",
+          "description": "Implement contextual task guidance",
+          "tasks": ["TASK-001", "TASK-002", "TASK-003"],
+          "deliverables": [
+            "Game state detection",
+            "Task suggestion component",
+            "Fully functional next-task page"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "news-generator.ts: Test event generation for each type",
+        "game-state.ts: Test state detection logic"
+      ],
+      "integration_tests": [
+        "Each page renders without errors",
+        "Data loads correctly from stores"
+      ],
+      "manual_testing": [
+        "Visual review of all 4 pages",
+        "Mobile responsiveness check",
+        "Empty state handling"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "my-team page shows team stats and division standings",
+        "news page displays generated league events",
+        "draft page shows sortable prospect list",
+        "next-task page suggests contextual actions"
+      ],
+      "technical": [
+        "No console errors on any page",
+        "Pages load within 500ms",
+        "Mobile-responsive on all screen sizes"
+      ],
+      "quality": [
+        "Follows existing UI patterns",
+        "Graceful empty states",
+        "Loading indicators where needed"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "Create team-overview.tsx",
+        "Create division-standings.tsx",
+        "Update my-team/page.tsx",
+        "Test my-team page"
+      ],
+      "phase_2_checklist": [
+        "Create news-generator.ts",
+        "Create news-item.tsx",
+        "Create news-feed.tsx",
+        "Update news/page.tsx",
+        "Test news page"
+      ],
+      "phase_3_checklist": [
+        "Create prospect-card.tsx",
+        "Create prospect-list.tsx",
+        "Update draft/page.tsx",
+        "Test draft page"
+      ],
+      "phase_4_checklist": [
+        "Create next-task-card.tsx",
+        "Create game-state.ts",
+        "Update next-task/page.tsx",
+        "Test next-task page"
+      ]
+    }
+  }
+}

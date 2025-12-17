@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2025-12-08T00:58:59.956027+00:00",
+  "total_experts": 1,
+  "experts": [
+    {
+      "expert_id": "CE-src-lib-generators-player-gene-001",
+      "name": "CORE Expert: Player Generator",
+      "resource_path": "src/lib/generators/player-generator.ts",
+      "domain": "core",
+      "status": "active",
+      "staleness_score": 0.0
+    }
+  ],
+  "auto_suggestions": []
+}

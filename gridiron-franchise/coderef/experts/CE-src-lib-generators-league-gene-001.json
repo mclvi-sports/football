@@ -1,0 +1,140 @@
+{
+  "expert_id": "CE-src-lib-generators-league-gene-001",
+  "name": "CORE Expert: League Generator",
+  "version": "1.0.0",
+  "created_at": "2025-12-08T01:13:57.032548+00:00",
+  "updated_at": "2025-12-08T01:13:57.032548+00:00",
+  "resource_type": "file",
+  "resource_path": "src/lib/generators/league-generator.ts",
+  "resource_hash": "e1f438c6bef870c1",
+  "code_structure": {
+    "functions": [
+      "updateStep",
+      "handleError",
+      "generateLeagueData",
+      "generateLeagueData"
+    ],
+    "classes": [],
+    "imports": [
+      "@/lib/facilities/facilities-store",
+      "@/lib/scouting/scouting-store",
+      "@/lib/gm",
+      "@/lib/coaching/coaching-store",
+      "@/lib/types",
+      "@/lib/schedule/schedule-store"
+    ],
+    "exports": [
+      "GENERATION_STEPS"
+    ],
+    "line_count": 297,
+    "complexity_score": 13.97
+  },
+  "git_history": [],
+  "relationships": {
+    "dependencies": [
+      "@/lib/facilities/facilities-store",
+      "@/lib/scouting/scouting-store",
+      "@/lib/gm",
+      "@/lib/coaching/coaching-store",
+      "@/lib/types",
+      "@/lib/schedule/schedule-store"
+    ],
+    "dependents": [
+      "coderef/archived/unified-league-generator/plan.json",
+      "coderef/inventory/tests.json",
+      "coderef/working/testing-critical-files/plan.json",
+      "src/app/career/new/generate/page.tsx",
+      "coderef/inventory/config.json",
+      "src/components/franchise/game-setup-dashboard.tsx",
+      "coderef/inventory/manifest.json",
+      "coderef/archived/unified-league-generator/DELIVERABLES.md",
+      "coderef/working/testing-critical-files/DELIVERABLES.md",
+      "coderef/inventory/documentation.json"
+    ],
+    "test_files": [],
+    "doc_files": [],
+    "config_files": []
+  },
+  "usage_patterns": {
+    "call_sites": [
+      "coderef/archived/unified-league-generator/DELIVERABLES.md:1",
+      "coderef/archived/unified-league-generator/DELIVERABLES.md:4",
+      "coderef/archived/unified-league-generator/DELIVERABLES.md:23",
+      "coderef/archived/unified-league-generator/DELIVERABLES.md:28",
+      "coderef/archived/unified-league-generator/DELIVERABLES.md:75",
+      "coderef/archived/unified-league-generator/DELIVERABLES.md:87",
+      "coderef/archived/unified-league-generator/plan.json:3",
+      "coderef/archived/unified-league-generator/plan.json:27",
+      "coderef/archived/unified-league-generator/plan.json:48",
+      "coderef/archived/unified-league-generator/plan.json:92",
+      "coderef/archived/unified-league-generator/plan.json:98",
+      "coderef/archived/unified-league-generator/plan.json:151",
+      "coderef/archived/unified-league-generator/plan.json:153",
+      "coderef/archived/unified-league-generator/plan.json:189",
+      "coderef/inventory/config.json:14499",
+      "coderef/inventory/config.json:14508",
+      "coderef/inventory/config.json:14532",
+      "coderef/inventory/config.json:14553",
+      "coderef/inventory/config.json:14597",
+      "coderef/inventory/config.json:14603",
+      "coderef/inventory/config.json:14656",
+      "coderef/inventory/config.json:14663",
+      "coderef/inventory/config.json:14712",
+      "coderef/inventory/config.json:25016",
+      "coderef/inventory/config.json:25027",
+      "coderef/inventory/config.json:28536",
+      "coderef/inventory/config.json:28537",
+      "coderef/inventory/config.json:30636",
+      "coderef/inventory/config.json:30645",
+      "coderef/inventory/config.json:30669",
+      "coderef/inventory/config.json:30690",
+      "coderef/inventory/config.json:30734",
+      "coderef/inventory/config.json:30740",
+      "coderef/inventory/config.json:30793",
+      "coderef/inventory/config.json:30800",
+      "coderef/inventory/config.json:30849",
+      "coderef/inventory/config.json:32061",
+      "coderef/inventory/config.json:42767",
+      "coderef/inventory/config.json:45087",
+      "coderef/inventory/config.json:45098",
+      "coderef/inventory/config.json:49412",
+      "coderef/inventory/config.json:49413",
+      "coderef/inventory/config.json:50389",
+      "coderef/inventory/documentation.json:770",
+      "coderef/inventory/documentation.json:12959",
+      "coderef/inventory/manifest.json:1265",
+      "coderef/inventory/manifest.json:1276",
+      "coderef/inventory/manifest.json:5590",
+      "coderef/inventory/manifest.json:5591",
+      "coderef/inventory/tests.json:247"
+    ],
+    "usage_count": 61,
+    "hot_paths": [
+      "coderef/inventory/config.json",
+      "coderef/archived/unified-league-generator/plan.json",
+      "coderef/archived/unified-league-generator/DELIVERABLES.md",
+      "coderef/inventory/manifest.json",
+      "coderef/working/testing-critical-files/plan.json"
+    ],
+    "last_modified": "2025-12-06T07:58:05.028807+00:00"
+  },
+  "inline_docs": null,
+  "related_docs": [],
+  "capabilities": [
+    "answer_questions",
+    "review_changes",
+    "generate_docs"
+  ],
+  "expertise_areas": [
+    "functional",
+    "integrated"
+  ],
+  "domain": "core",
+  "onboarding": null,
+  "assignment_type": "auto_suggested",
+  "assigned_by": null,
+  "workorder_id": null,
+  "status": "active",
+  "last_refreshed": "2025-12-08T01:13:57.032548+00:00",
+  "staleness_score": 0.0
+}

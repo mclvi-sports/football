@@ -1,0 +1,47 @@
+{
+  "workorder_id": "WO-PAGE-CONTENT-001",
+  "feature_name": "page-content",
+  "created": "2025-12-16T00:00:00Z",
+  "type": "delegated",
+  "source": "orchestrator",
+  "handoff": {
+    "status": "pending_audit",
+    "assigned_to": "gridiron-agent",
+    "instructions": "Review all routes under /dashboard and identify which pages need actual content vs placeholder/stub content."
+  },
+  "task": {
+    "description": "Audit dashboard routes for content completeness",
+    "steps": [
+      "1. List all routes under src/app/dashboard/",
+      "2. For each page, check if it has real content or placeholder",
+      "3. Categorize: complete, partial, placeholder, empty",
+      "4. Create inventory of pages needing content",
+      "5. Prioritize based on gameplay loop importance"
+    ],
+    "output": {
+      "format": "page-inventory.md",
+      "location": "coderef/working/page-content/",
+      "template": "| Route | Status | Priority | Notes |"
+    }
+  },
+  "context": {
+    "related_stub": "STUB-029 (gridiron-pages-needed)",
+    "known_gaps": [
+      "/dashboard/schedule/game/[gameId] - Box score",
+      "/dashboard/stats - Stats page",
+      "/dashboard/roster-management/ps - Practice squad",
+      "/dashboard/roster-management/trades - Trades",
+      "/dashboard/roster-management/injuries - Injuries",
+      "/dashboard/draft - Draft",
+      "/dashboard/staff - Staff",
+      "/dashboard/facilities - Facilities"
+    ]
+  },
+  "communication_log": [
+    {
+      "timestamp": "2025-12-16T00:00:00Z",
+      "from": "orchestrator",
+      "message": "Created workorder. Agent to audit dashboard routes and produce page inventory."
+    }
+  ]
+}

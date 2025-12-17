@@ -73,7 +73,7 @@ function runSingleTest(iteration: number): TestResult {
   const startTime = Date.now();
 
   // Generate schedule
-  const schedule = generateSchedule({ season: 2025 });
+  const schedule = generateSchedule({ season: 2025, randomizeStandings: true });
 
   const timeMs = Date.now() - startTime;
 
@@ -245,7 +245,7 @@ async function main() {
 
   // Detailed stats for last run
   header('Detailed Stats (Last Run)');
-  const lastSchedule = generateSchedule({ season: 2025 });
+  const lastSchedule = generateSchedule({ season: 2025, randomizeStandings: true });
   printDetailedStats(lastSchedule);
 
   // Final result

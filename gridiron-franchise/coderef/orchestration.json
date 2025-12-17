@@ -1,0 +1,139 @@
+{
+  "handoff": {
+    "workorder_id": "WO-PLAN-AUDIT-GRIDIRON-001",
+    "type": "audit",
+    "from": "orchestrator-assistant",
+    "to": "gridiron-agent",
+    "initiated_at": "2025-12-16",
+    "status": "complete"
+  },
+  "instructions": {
+    "task": "Plan Status Audit",
+    "description": "Review all plan.json files in this coderef folder and report status",
+    "steps": [
+      {
+        "step": 1,
+        "action": "Scan working folder",
+        "description": "List all features in coderef/working/ with their plan.json status"
+      },
+      {
+        "step": 2,
+        "action": "Assess each plan",
+        "description": "For each plan, determine: Is it active? Stale? Complete? Blocked?"
+      },
+      {
+        "step": 3,
+        "action": "Report status",
+        "description": "Update this communication.json with findings in the audit_results section"
+      },
+      {
+        "step": 4,
+        "action": "Suggest archives",
+        "description": "Identify plans that should be archived (complete or abandoned)"
+      },
+      {
+        "step": 5,
+        "action": "Archive candidates",
+        "description": "Use /archive-feature workflow to move completed features to coderef/archived/"
+      }
+    ],
+    "output_format": {
+      "active_plans": "Plans currently being worked on",
+      "stale_plans": "Plans with no recent activity (>7 days)",
+      "archive_candidates": "Plans ready to archive (complete or abandoned)",
+      "blocked_plans": "Plans waiting on external dependencies"
+    }
+  },
+  "audit_results": {
+    "scanned_at": "2025-12-16T15:45:00Z",
+    "working_folder_count": 5,
+    "active_plans": [
+      {
+        "name": "testing-critical-files",
+        "status": "updated",
+        "last_activity": "2025-12-07",
+        "description": "Ongoing test coverage expansion - 201 tests now passing",
+        "notes": "Continuous effort, tests being added with each feature"
+      }
+    ],
+    "stale_plans": [
+      {
+        "name": "pages-needed",
+        "status": "stub_only",
+        "last_activity": "2025-12-08",
+        "description": "Only contains stub.json, no plan.json",
+        "recommendation": "Delete or convert to real plan"
+      }
+    ],
+    "archive_candidates": [
+      {
+        "name": "sim-integration-overhaul",
+        "status": "complete",
+        "workorder_id": "WO-SIM-INTEGRATION-OVERHAUL-001",
+        "completed_at": "2025-12-16",
+        "description": "All 21 tasks completed - badges, schemes, coaching, facilities, contracts, age decline",
+        "commits": ["3343dbd", "9a244a8", "ef3e67c", "b2c99b8"],
+        "recommendation": "Archive immediately"
+      },
+      {
+        "name": "contract-generator",
+        "status": "complete",
+        "description": "Contract extraction to standalone module - complete",
+        "last_activity": "2025-12-08",
+        "recommendation": "Archive"
+      },
+      {
+        "name": "sim-modular-refactor",
+        "status": "complete",
+        "workorder_id": "WO-SIM-MODULAR-REFACTOR-001",
+        "description": "Refactored 660-line sim page into useSimulator hook",
+        "last_activity": "2025-12-06",
+        "recommendation": "Archive"
+      }
+    ],
+    "blocked_plans": [],
+    "summary": {
+      "total_plans": 5,
+      "active": 1,
+      "stale": 1,
+      "ready_to_archive": 3,
+      "blocked": 0
+    },
+    "notes": "3 completed features should be archived to coderef/archived/. pages-needed folder should be cleaned up or formalized into a plan."
+  },
+  "communication_log": [
+    {
+      "timestamp": "2025-12-16T00:00:00Z",
+      "from": "orchestrator",
+      "action": "audit_requested",
+      "message": "Requesting plan status audit. Review all working/ plans, report status, suggest archives."
+    },
+    {
+      "timestamp": "2025-12-16T15:45:00Z",
+      "from": "gridiron-agent",
+      "action": "audit_complete",
+      "message": "Scanned 5 features. Found 3 archive candidates (sim-integration-overhaul, contract-generator, sim-modular-refactor), 1 active (testing-critical-files), 1 stale (pages-needed)."
+    },
+    {
+      "timestamp": "2025-12-16T15:58:00Z",
+      "from": "gridiron-agent",
+      "action": "archives_complete",
+      "message": "Archived 3 features to coderef/archived/: sim-integration-overhaul (5 files), contract-generator (4 files), sim-modular-refactor (3 files)."
+    }
+  ],
+  "final_status": {
+    "audit_complete": true,
+    "archives_complete": true,
+    "archived_features": [
+      "sim-integration-overhaul",
+      "contract-generator",
+      "sim-modular-refactor"
+    ],
+    "remaining_in_working": [
+      "testing-critical-files",
+      "pages-needed"
+    ],
+    "pending_cleanup": ["pages-needed"],
+    "completed_at": "2025-12-16T15:58:00Z"
+  }
+}

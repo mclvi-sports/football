@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2025-12-08T02:22:56.833704+00:00",
+  "total_experts": 3,
+  "experts": [
+    {
+      "expert_id": "CE-src-lib-generators-league-gene-001",
+      "name": "CORE Expert: League Generator",
+      "resource_path": "src/lib/generators/league-generator.ts",
+      "domain": "core",
+      "status": "active",
+      "staleness_score": 0.0
+    },
+    {
+      "expert_id": "CE-src-stores-career-store_ts-001",
+      "name": "CORE Expert: Career Store",
+      "resource_path": "src/stores/career-store.ts",
+      "domain": "core",
+      "status": "active",
+      "staleness_score": 0.0
+    },
+    {
+      "expert_id": "CE-src-lib-data-teams_ts-001",
+      "name": "DB Expert: Teams",
+      "resource_path": "src/lib/data/teams.ts",
+      "domain": "db",
+      "status": "active",
+      "staleness_score": 0.0
+    }
+  ],
+  "auto_suggestions": []
+}

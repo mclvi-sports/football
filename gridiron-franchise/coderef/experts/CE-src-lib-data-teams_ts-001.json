@@ -1,0 +1,79 @@
+{
+  "expert_id": "CE-src-lib-data-teams_ts-001",
+  "name": "DB Expert: Teams",
+  "version": "1.0.0",
+  "created_at": "2025-12-08T02:21:36.924407+00:00",
+  "updated_at": "2025-12-08T02:21:36.924407+00:00",
+  "resource_type": "file",
+  "resource_path": "src/lib/data/teams.ts",
+  "resource_hash": "e84593615eb18451",
+  "code_structure": {
+    "functions": [
+      "getTeamById",
+      "getTeamsByDivision",
+      "getTeamsByConference"
+    ],
+    "classes": [],
+    "imports": [],
+    "exports": [
+      "LEAGUE_TEAMS",
+      "getTeamsByConference",
+      "getTeamById",
+      "getTeamsByDivision"
+    ],
+    "line_count": 74,
+    "complexity_score": 6.74
+  },
+  "git_history": [],
+  "relationships": {
+    "dependencies": [],
+    "dependents": [
+      "coderef/archived/schedule-solver/context.json",
+      "README.md",
+      "coderef/archived/schedule-bye-optimization/plan.json",
+      ".claude/settings.local.json",
+      "coderef/archived/owner-model/plan.json",
+      "coderef/archived/codebase-cleanup/plan.json",
+      "coderef/archived/scheme-separation/plan.json",
+      "coderef/archived/new-career/context.json",
+      "coderef/archived/codebase-cleanup/DELIVERABLES.md",
+      "coderef/archived/sim-engine-integration/plan.json",
+      "coderef/archived/module-connections/plan.json",
+      "coderef/archived/gamestats-generator/plan.json",
+      "coderef/archived/schedule-solver/plan.json",
+      "coderef/archived/new-career/deliverables.json",
+      "coderef/archived/roster-module-update/plan.json",
+      "FINAL/schedule-report.md",
+      "coderef/archived/dashboard/plan.json",
+      "coderef/archived/new-career/plan.json",
+      "coderef/archived/module-architecture/plan.json",
+      "coderef/archived/owner-model/DELIVERABLES.md"
+    ],
+    "test_files": [],
+    "doc_files": [],
+    "config_files": []
+  },
+  "usage_patterns": {
+    "call_sites": [],
+    "usage_count": 0,
+    "hot_paths": [],
+    "last_modified": "2025-12-04T02:43:16.049443+00:00"
+  },
+  "inline_docs": null,
+  "related_docs": [],
+  "capabilities": [
+    "answer_questions",
+    "review_changes"
+  ],
+  "expertise_areas": [
+    "functional"
+  ],
+  "domain": "db",
+  "onboarding": null,
+  "assignment_type": "auto_suggested",
+  "assigned_by": null,
+  "workorder_id": null,
+  "status": "active",
+  "last_refreshed": "2025-12-08T02:21:36.924407+00:00",
+  "staleness_score": 0.0
+}

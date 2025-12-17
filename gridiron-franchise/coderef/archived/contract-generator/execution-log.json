@@ -1,0 +1,60 @@
+[
+  {
+    "timestamp": "2025-12-08T11:12:39.266410",
+    "workorder_id": "WO-CONTRACT-GENERATOR-001",
+    "feature_name": "contract-generator",
+    "task_count": 10,
+    "tasks": [
+      {
+        "content": "PHASE-1-001: [ ] Create contract-generator.ts",
+        "activeForm": "PHASE-1-001: [ing ] Create contract-generator.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-002: [ ] Add VETERAN_MINIMUM constant",
+        "activeForm": "PHASE-1-002: [ing ] Add VETERAN_MINIMUM constant",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-003: [ ] Add getMinimumSalary()",
+        "activeForm": "PHASE-1-003: [ing ] Add getMinimumSalary()",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-004: [ ] Add calculateSalary()",
+        "activeForm": "PHASE-1-004: [ing ] Add calculateSalary()",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-005: [ ] Add calculateContractLength()",
+        "activeForm": "PHASE-1-005: [ing ] Add calculateContractLength()",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-006: [ ] Add generateContract() export",
+        "activeForm": "PHASE-1-006: [ing ] Add generateContract() export",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-001: [ ] Remove functions from roster-generator.ts",
+        "activeForm": "PHASE-2-001: [ing ] Remove functions from roster-generator.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-002: [ ] Add import from contract-generator",
+        "activeForm": "PHASE-2-002: [ing ] Add import from contract-generator",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-001: [ ] Run npx tsc --noEmit",
+        "activeForm": "PHASE-3-001: [ing ] Run npx tsc --noEmit",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-002: [ ] Run build",
+        "activeForm": "PHASE-3-002: [ing ] Run build",
+        "status": "pending"
+      }
+    ]
+  }
+]

@@ -1,0 +1,75 @@
+[
+  {
+    "timestamp": "2025-12-06T22:37:11.075100",
+    "workorder_id": "WO-SIM-MODULAR-REFACTOR-001",
+    "feature_name": "sim-modular-refactor",
+    "task_count": 13,
+    "tasks": [
+      {
+        "content": "PHASE-1-001: [ ] Create src/hooks/use-simulator.ts with UseSimulatorOptions and UseSimulatorReturn interfaces",
+        "activeForm": "PHASE-1-001: [ing ] Create src/hooks/use-simulator.ts with UseSimulatorOptions and UseSimulatorReturn interfaces",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-002: [ ] Move all useState hooks from page.tsx to hook",
+        "activeForm": "PHASE-1-002: [ing ] Move all useState hooks from page.tsx to hook",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-003: [ ] Move all useRef instances to hook",
+        "activeForm": "PHASE-1-003: [ing ] Move all useRef instances to hook",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-004: [ ] Move all useCallback functions to hook",
+        "activeForm": "PHASE-1-004: [ing ] Move all useCallback functions to hook",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-005: [ ] Move auto-play useEffect to hook",
+        "activeForm": "PHASE-1-005: [ing ] Move auto-play useEffect to hook",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-006: [ ] Add DriveStats, QuarterScores, GameSimulatorConfig interfaces to types.ts",
+        "activeForm": "PHASE-1-006: [ing ] Add DriveStats, QuarterScores, GameSimulatorConfig interfaces to types.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-001: [ ] Create game-controls.tsx with control button props",
+        "activeForm": "PHASE-2-001: [ing ] Create game-controls.tsx with control button props",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-002: [ ] Create game-context-badges.tsx with context badge props",
+        "activeForm": "PHASE-2-002: [ing ] Create game-context-badges.tsx with context badge props",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-001: [ ] Create game-simulator.tsx with GameSimulatorProps interface",
+        "activeForm": "PHASE-3-001: [ing ] Create game-simulator.tsx with GameSimulatorProps interface",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-002: [ ] Implement layout variants (full, compact, minimal)",
+        "activeForm": "PHASE-3-002: [ing ] Implement layout variants (full, compact, minimal)",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-003: [ ] Implement all show* configuration options",
+        "activeForm": "PHASE-3-003: [ing ] Implement all show* configuration options",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-004: [ ] Refactor page.tsx to use GameSimulator component",
+        "activeForm": "PHASE-3-004: [ing ] Refactor page.tsx to use GameSimulator component",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-005: [ ] Test all functionality end-to-end",
+        "activeForm": "PHASE-3-005: [ing ] Test all functionality end-to-end",
+        "status": "pending"
+      }
+    ]
+  }
+]
