@@ -8,6 +8,14 @@
  */
 
 import { Position, Archetype } from '../types';
+import {
+  generateCombineMeasurables,
+  COMBINE_MEASURABLES_BY_POSITION,
+  type CombineMeasurablesRanges,
+} from './combine-measurables';
+
+// Re-export combine measurables for convenience
+export { generateCombineMeasurables, COMBINE_MEASURABLES_BY_POSITION, type CombineMeasurablesRanges };
 
 export interface PhysicalRange {
   height: { min: number; max: number }; // in inches

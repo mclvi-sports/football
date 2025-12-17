@@ -271,3 +271,18 @@ export interface Team {
   offense: number;
   defense: number;
 }
+
+// Combine measurables for draft prospects (extends base physical attributes)
+export interface CombineMeasurables {
+  // Body measurements (supplement height/weight on Player)
+  armLength: number;    // inches (30-36")
+  handSize: number;     // inches (8.5-11")
+  wingspan: number;     // inches (72-86")
+
+  // Athletic testing
+  verticalJump: number;   // inches
+  broadJump: number;      // inches
+  threeCone: number;      // seconds
+  twentyShuttle: number;  // seconds
+  benchPress: number;     // reps at 225 lbs
+}

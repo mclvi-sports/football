@@ -13,6 +13,7 @@ import { ARCHETYPE_TEMPLATES, POSITION_ARCHETYPES, ARCHETYPE_RARITY } from '../d
 import { generatePhysicals as generatePhysicalMeasurables } from '../data/physical-ranges';
 import { TRAITS, TRAITS_BY_RARITY, POSITIVE_TRAITS, NEGATIVE_TRAITS, traitsConflict } from '../data/traits';
 import { BADGES, getBadgesForPosition, getBadgeCount, BADGE_TIER_WEIGHTS, UNIVERSAL_BADGES } from '../data/badges';
+import { selectRandomCollege } from '../data/colleges';
 import * as fs from 'fs';
 import * as path from 'path';
 import { randomUUID } from 'crypto';
@@ -121,21 +122,14 @@ function pickNameByRarity(names: NameEntry[]): string {
   return weightedRandom(weighted);
 }
 
-// --- Constants ---
-
-/**
- * College programs for player generation (expandable)
- */
-const COLLEGES = [
-  'Alabama', 'Ohio State', 'Georgia', 'Clemson', 'Michigan',
-  'LSU', 'Florida', 'Texas', 'USC', 'Oklahoma',
-  'Notre Dame', 'Penn State', 'Oregon', 'Auburn', 'Texas A&M',
-  'Wisconsin', 'Miami', 'Florida State', 'Tennessee', 'Nebraska',
-];
-
 // --- Identity Generation ---
 
-function generateIdentity(position: Position): {
+/**
+ * Generate player identity (name, college, jersey)
+ * @param position - Player position
+ * @param providedCollege - Optional college name (used by draft-generator)
+ */
+function generateIdentity(position: Position, providedCollege?: string): {
   firstName: string;
   lastName: string;
   college: string;
@@ -147,7 +141,8 @@ function generateIdentity(position: Position): {
   const firstName = pickNameByRarity(firstNames);
   const lastName = pickNameByRarity(lastNames);
 
-  const college = getRandomItem(COLLEGES);
+  // Use provided college or select from database with proper weighting
+  const college = providedCollege ?? selectRandomCollege().name;
 
   // Jersey number based on position (NFL rules)
   const jerseyNumber = generateJerseyNumber(position);
@@ -694,6 +689,7 @@ export interface GeneratePlayerOptions {
   archetype?: Archetype;
   slot?: number; // Depth chart slot (1 = starter)
   age?: number;
+  college?: string; // Optional college name (for draft prospects)
 }
 
 export function generatePlayer(options: GeneratePlayerOptions): Player;
@@ -708,6 +704,7 @@ export function generatePlayer(
   let archetype: Archetype | undefined;
   let slot: number;
   let age: number | undefined;
+  let college: string | undefined;
 
   if (typeof positionOrOptions === 'object') {
     position = positionOrOptions.position;
@@ -715,6 +712,7 @@ export function generatePlayer(
     archetype = positionOrOptions.archetype;
     slot = positionOrOptions.slot || 1;
     age = positionOrOptions.age;
+    college = positionOrOptions.college;
   } else {
     position = positionOrOptions;
     targetOvr = targetOvrParam!;
@@ -731,8 +729,8 @@ export function generatePlayer(
     archetype = selectArchetype(position);
   }
 
-  // 2. Generate Identity
-  const identity = generateIdentity(position);
+  // 2. Generate Identity (with optional college from draft system)
+  const identity = generateIdentity(position, college);
 
   // 3. Generate Age (now considers position and OVR for realistic distribution)
   const playerAge = age ?? generateAge(slot, position, targetOvr);

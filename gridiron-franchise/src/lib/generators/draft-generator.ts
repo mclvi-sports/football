@@ -7,8 +7,10 @@
  * Source: FINAL-draft-class-system.md
  */
 
-import { Player, Position } from '../types';
+import { Player, Position, CombineMeasurables } from '../types';
 import { generatePlayer } from './player-generator';
+import { generateCombineMeasurables } from '../data/combine-measurables';
+import { selectRandomCollege, type College } from '../data/colleges';
 
 /**
  * Potential label for draft prospects (per FINALS)
@@ -24,6 +26,8 @@ export interface DraftProspect extends Player {
   potentialLabel: PotentialLabel;
   potentialGap: number;
   scoutedOvr: number; // What scouts think (may differ from true OVR)
+  combineMeasurables: CombineMeasurables; // Full combine data
+  collegeData: College; // Detailed college info with tier
 }
 
 interface DraftClassConfig {
@@ -233,8 +237,14 @@ export function generateDraftClass(config: DraftClassConfig = {}): DraftProspect
       const age = getProspectAge();
       const { label: potentialLabel, gap: potentialGap } = calculatePotential(round);
 
-      // Generate base player
-      const basePlayer = generatePlayer({ position, targetOvr: trueOvr, age });
+      // Select college based on round (early rounds favor better programs)
+      const collegeData = selectRandomCollege(round);
+
+      // Generate base player with selected college
+      const basePlayer = generatePlayer({ position, targetOvr: trueOvr, age, college: collegeData.name });
+
+      // Generate combine measurables for this position
+      const combineMeasurables = generateCombineMeasurables(position);
 
       // Create prospect with extended fields
       const prospect: DraftProspect = {
@@ -249,6 +259,8 @@ export function generateDraftClass(config: DraftClassConfig = {}): DraftProspect
         potentialGap,
         scoutedOvr: addScoutingNoise(trueOvr),
         badges: [], // Prospects start with 0 badges per FINALS
+        combineMeasurables,
+        collegeData,
       };
 
       // Remove contract (assigned at draft)
@@ -266,7 +278,10 @@ export function generateDraftClass(config: DraftClassConfig = {}): DraftProspect
     const age = getProspectAge();
     const { label: potentialLabel, gap: potentialGap } = calculatePotential('UDFA');
 
-    const basePlayer = generatePlayer({ position, targetOvr: trueOvr, age });
+    // UDFAs typically from lower-tier programs (round 7+ weighting)
+    const collegeData = selectRandomCollege(7);
+    const basePlayer = generatePlayer({ position, targetOvr: trueOvr, age, college: collegeData.name });
+    const combineMeasurables = generateCombineMeasurables(position);
 
     const prospect: DraftProspect = {
       ...basePlayer,
@@ -280,6 +295,8 @@ export function generateDraftClass(config: DraftClassConfig = {}): DraftProspect
       potentialGap,
       scoutedOvr: addScoutingNoise(trueOvr),
       badges: [],
+      combineMeasurables,
+      collegeData,
     };
 
     delete prospect.contract;
