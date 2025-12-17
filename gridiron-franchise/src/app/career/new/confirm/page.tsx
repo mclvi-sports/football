@@ -175,40 +175,40 @@ export default function ConfirmCareerPage() {
         </div>
 
         {/* Ratings Grid - 2x4 */}
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-4 gap-2">
           {/* Row 1: Player Ratings */}
-          <div className="bg-secondary/50 border border-border rounded-xl p-3 text-center">
-            <p className="text-xs text-muted-foreground uppercase">OVR</p>
-            <p className="text-2xl font-bold">{teamData?.stats.avgOvr || "--"}</p>
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">OVR</p>
+            <p className="text-lg font-bold">{teamData?.stats.avgOvr || "--"}</p>
           </div>
-          <div className="bg-secondary/50 border border-border rounded-xl p-3 text-center">
-            <p className="text-xs text-muted-foreground uppercase">OFF</p>
-            <p className="text-2xl font-bold">{unitRatings.offense || "--"}</p>
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">OFF</p>
+            <p className="text-lg font-bold">{unitRatings.offense || "--"}</p>
           </div>
-          <div className="bg-secondary/50 border border-border rounded-xl p-3 text-center">
-            <p className="text-xs text-muted-foreground uppercase">DEF</p>
-            <p className="text-2xl font-bold">{unitRatings.defense || "--"}</p>
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">DEF</p>
+            <p className="text-lg font-bold">{unitRatings.defense || "--"}</p>
           </div>
-          <div className="bg-secondary/50 border border-border rounded-xl p-3 text-center">
-            <p className="text-xs text-muted-foreground uppercase">ST</p>
-            <p className="text-2xl font-bold">{unitRatings.specialTeams || "--"}</p>
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">ST</p>
+            <p className="text-lg font-bold">{unitRatings.specialTeams || "--"}</p>
           </div>
           {/* Row 2: Team Ratings */}
-          <div className="bg-secondary/50 border border-border rounded-xl p-3 text-center">
-            <p className="text-xs text-muted-foreground uppercase">Staff</p>
-            <p className="text-2xl font-bold">{coaching?.avgOvr || "--"}</p>
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">Staff</p>
+            <p className="text-lg font-bold">{coaching?.avgOvr || "--"}</p>
           </div>
-          <div className="bg-secondary/50 border border-border rounded-xl p-3 text-center">
-            <p className="text-xs text-muted-foreground uppercase">Facilities</p>
-            <p className="text-2xl font-bold">{facilities ? ratingToGrade(facilities.averageRating) : "--"}</p>
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">Facilities</p>
+            <p className="text-lg font-bold">{facilities ? ratingToGrade(facilities.averageRating) : "--"}</p>
           </div>
-          <div className="bg-secondary/50 border border-border rounded-xl p-3 text-center">
-            <p className="text-xs text-muted-foreground uppercase">Avg Age</p>
-            <p className="text-2xl font-bold">{teamData?.stats.avgAge ? Math.round(teamData.stats.avgAge) : "--"}</p>
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">Avg Age</p>
+            <p className="text-lg font-bold">{teamData?.stats.avgAge ? Math.round(teamData.stats.avgAge) : "--"}</p>
           </div>
-          <div className="bg-secondary/50 border border-border rounded-xl p-3 text-center">
-            <p className="text-xs text-muted-foreground uppercase">Chemistry</p>
-            <p className="text-2xl font-bold">{coaching?.staffChemistry || "--"}</p>
+          <div className="bg-secondary/50 border border-border rounded-lg p-2 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">Chemistry</p>
+            <p className="text-lg font-bold">{coaching?.staffChemistry || "--"}</p>
           </div>
         </div>
 
