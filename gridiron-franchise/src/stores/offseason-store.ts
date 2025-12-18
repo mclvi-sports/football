@@ -227,7 +227,7 @@ export const PHASE_METADATA: Record<OffseasonPhase, {
     description: 'Watch prospects perform athletic tests',
     week: 'Week 19',
     icon: 'Timer',
-    href: '/dashboard/combine',
+    href: '/dashboard/offseason/combine',
   },
   'pro-days': {
     label: 'Pro Days',
