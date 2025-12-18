@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useDraftStore } from '@/stores/draft-store';
 import { useCareerStore } from '@/stores/career-store';
+import { useOffseasonStore } from '@/stores/offseason-store';
 import type { DraftProspect } from '@/lib/generators/draft-generator';
 import {
   runRookieCamp,
@@ -18,17 +18,27 @@ import {
   type RookieCampResult,
   type RookieCampSummary,
 } from '@/lib/training/rookie-camp';
+import { ChevronLeft, Trophy, CheckCircle2 } from 'lucide-react';
 
-export default function RookieCampPage() {
+/**
+ * Offseason Rookie Camp Page
+ *
+ * Evaluates all rookies (drafted + UDFAs) at Week 22.
+ * Integrates with offseason flow for phase completion.
+ */
+export default function OffseasonRookieCampPage() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [campResults, setCampResults] = useState<RookieCampSummary | null>(null);
   const [selectedRookie, setSelectedRookie] = useState<RookieCampResult | null>(null);
   const [campStarted, setCampStarted] = useState(false);
+  const [signedUDFAs, setSignedUDFAs] = useState<DraftProspect[]>([]);
 
   const career = useCareerStore();
   const draft = useDraftStore();
+  const { setPhaseStatus, completePhase, isPhaseCompleted } = useOffseasonStore();
 
-  const { selections, userTeamId, isComplete } = draft;
+  const { selections, userTeamId, isComplete, draftClass, availableProspects, _hasHydrated } = draft;
 
   // Get user's draft picks
   const userRookies = useMemo(() => {
@@ -38,16 +48,39 @@ export default function RookieCampPage() {
       .map((s) => s.prospect);
   }, [selections, userTeamId]);
 
+  // Combine drafted rookies + signed UDFAs
+  const allRookies = useMemo(() => {
+    return [...userRookies, ...signedUDFAs];
+  }, [userRookies, signedUDFAs]);
+
+  // Mark phase as in-progress
   useEffect(() => {
-    if (draft._hasHydrated) {
+    if (!isPhaseCompleted('rookie-camp')) {
+      setPhaseStatus('rookie-camp', 'in-progress');
+    }
+  }, [setPhaseStatus, isPhaseCompleted]);
+
+  // Load signed UDFAs from session storage
+  useEffect(() => {
+    if (_hasHydrated) {
+      const storedUDFAs = sessionStorage.getItem('signedUDFAs');
+      if (storedUDFAs) {
+        try {
+          const udfaIds: string[] = JSON.parse(storedUDFAs);
+          const udfaProspects = draftClass.filter(p => udfaIds.includes(p.id));
+          setSignedUDFAs(udfaProspects);
+        } catch {
+          // Ignore parse errors
+        }
+      }
       setIsLoading(false);
     }
-  }, [draft._hasHydrated]);
+  }, [_hasHydrated, draftClass]);
 
   const handleStartCamp = () => {
-    if (userRookies.length === 0) return;
+    if (allRookies.length === 0) return;
 
-    const results = runRookieCamp(userRookies, userTeamId || '', 2025, 22);
+    const results = runRookieCamp(allRookies, userTeamId || '', 2025, 22);
     setCampResults(results);
     setCampStarted(true);
 
@@ -55,6 +88,13 @@ export default function RookieCampPage() {
     if (results.rookies.length > 0) {
       setSelectedRookie(results.rookies[0]);
     }
+  };
+
+  const handleComplete = () => {
+    completePhase('rookie-camp');
+    // Clear the UDFA storage
+    sessionStorage.removeItem('signedUDFAs');
+    router.push('/dashboard/offseason');
   };
 
   if (isLoading) {
@@ -76,7 +116,7 @@ export default function RookieCampPage() {
           <p className="text-muted-foreground mb-6">
             Complete the draft first to begin rookie camp
           </p>
-          <Button variant="outline" onClick={() => window.location.href = '/dashboard/draft'}>
+          <Button variant="outline" onClick={() => router.push('/dashboard/offseason/draft')}>
             Go to Draft
           </Button>
         </div>
@@ -84,13 +124,25 @@ export default function RookieCampPage() {
     );
   }
 
-  if (userRookies.length === 0) {
+  if (allRookies.length === 0) {
     return (
       <div className="space-y-6 px-5 pt-4 pb-20">
+        {/* Header */}
+        <div className="flex items-center gap-3 py-2">
+          <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard/offseason')}>
+            <ChevronLeft className="w-5 h-5" />
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold">Rookie Camp</h1>
+            <p className="text-sm text-muted-foreground">Week 22</p>
+          </div>
+          <Button onClick={handleComplete}>
+            Done
+          </Button>
+        </div>
         <div className="text-center py-12">
-          <h1 className="text-2xl font-bold mb-2">Rookie Camp</h1>
           <p className="text-muted-foreground">
-            No rookies drafted. Complete the draft to add rookies.
+            No rookies to evaluate. Complete the draft and sign UDFAs.
           </p>
         </div>
       </div>
@@ -101,10 +153,22 @@ export default function RookieCampPage() {
   if (!campStarted || !campResults) {
     return (
       <div className="space-y-6 px-5 pt-4 pb-20">
+        {/* Header */}
+        <div className="flex items-center gap-3 py-2">
+          <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard/offseason')}>
+            <ChevronLeft className="w-5 h-5" />
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold">Rookie Camp</h1>
+            <p className="text-sm text-muted-foreground">Week 22</p>
+          </div>
+        </div>
+
         <div className="text-center py-8">
-          <h1 className="text-3xl font-bold mb-2">Rookie Camp</h1>
+          <h2 className="text-2xl font-bold mb-2">Ready for Evaluation</h2>
           <p className="text-muted-foreground mb-6">
-            Week 22 • {userRookies.length} rookies ready for evaluation
+            {allRookies.length} rookies ready for camp
+            {signedUDFAs.length > 0 && ` (${userRookies.length} drafted, ${signedUDFAs.length} UDFAs)`}
           </p>
 
           <Button size="lg" onClick={handleStartCamp}>
@@ -137,6 +201,23 @@ export default function RookieCampPage() {
                   <Badge variant="secondary">{rookie.potentialLabel}</Badge>
                 </div>
               ))}
+              {signedUDFAs.map((rookie) => (
+                <div
+                  key={rookie.id}
+                  className="flex items-center gap-3 rounded-lg bg-orange-500/10 border border-orange-500/20 p-3"
+                >
+                  <Badge variant="outline">{rookie.position}</Badge>
+                  <div className="flex-1">
+                    <p className="font-medium">
+                      {rookie.firstName} {rookie.lastName}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {rookie.collegeData?.name}
+                    </p>
+                  </div>
+                  <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">UDFA</Badge>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -148,21 +229,20 @@ export default function RookieCampPage() {
   return (
     <div className="space-y-6 px-5 pt-4 pb-20">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Rookie Camp Complete</h1>
-          <p className="text-muted-foreground">
+      <div className="flex items-center gap-3 py-2">
+        <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard/offseason')}>
+          <ChevronLeft className="w-5 h-5" />
+        </Button>
+        <div className="flex-1">
+          <h1 className="text-xl font-bold">Rookie Camp Complete</h1>
+          <p className="text-sm text-muted-foreground">
             Week 22 • {campResults.rookies.length} rookies evaluated
           </p>
         </div>
-        <div className="flex gap-2">
-          <Badge className="bg-green-500/20 text-green-400">
-            {campResults.standouts.length} Standouts
-          </Badge>
-          <Badge className="bg-red-500/20 text-red-400">
-            {campResults.concerns.length} Concerns
-          </Badge>
-        </div>
+        <Button onClick={handleComplete} className="gap-2">
+          <CheckCircle2 className="w-4 h-4" />
+          Complete Offseason
+        </Button>
       </div>
 
       {/* Summary Stats */}
@@ -206,6 +286,7 @@ export default function RookieCampPage() {
                 <div className="space-y-1 p-3 pt-0">
                   {campResults.rookies.map((result) => {
                     const isSelected = selectedRookie?.prospectId === result.prospectId;
+                    const isUDFA = signedUDFAs.some(u => u.id === result.prospectId);
 
                     return (
                       <div
@@ -224,12 +305,19 @@ export default function RookieCampPage() {
                           <p className="truncate text-sm font-medium">
                             {result.prospect.firstName} {result.prospect.lastName}
                           </p>
-                          <Badge
-                            variant="outline"
-                            className={cn('text-xs', getPerformanceBadgeClass(result.performance))}
-                          >
-                            {result.performance}
-                          </Badge>
+                          <div className="flex items-center gap-1">
+                            <Badge
+                              variant="outline"
+                              className={cn('text-xs', getPerformanceBadgeClass(result.performance))}
+                            >
+                              {result.performance}
+                            </Badge>
+                            {isUDFA && (
+                              <Badge className="text-xs bg-orange-500/20 text-orange-400 border-orange-500/30">
+                                UDFA
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                         <div className="text-right shrink-0">
                           <p className="text-sm font-bold">{result.revealedOvr}</p>
@@ -258,10 +346,15 @@ export default function RookieCampPage() {
                       <CardTitle>
                         {selectedRookie.prospect.firstName} {selectedRookie.prospect.lastName}
                       </CardTitle>
+                      {signedUDFAs.some(u => u.id === selectedRookie.prospectId) && (
+                        <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">
+                          UDFA
+                        </Badge>
+                      )}
                     </div>
                     <CardDescription className="mt-1">
-                      {selectedRookie.prospect.collegeData?.name} • Round{' '}
-                      {selectedRookie.prospect.round}
+                      {selectedRookie.prospect.collegeData?.name}
+                      {selectedRookie.prospect.round && ` • Round ${selectedRookie.prospect.round}`}
                     </CardDescription>
                   </div>
                   <Badge
