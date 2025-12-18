@@ -1,0 +1,453 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "scouting-hub",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd (AI Project Coordinator)",
+    "has_context": true,
+    "has_analysis": true,
+    "created_at": "2025-12-18T02:50:00Z"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": [
+        "ARCHITECTURE.md - React 19 + Zustand + Session Storage pattern",
+        "COMPONENTS.md - Component organization patterns"
+      ],
+      "coding_standards_reviewed": [],
+      "reference_components_identified": [
+        "src/app/dashboard/offseason/scouting/page.tsx - Current scouting page to replace",
+        "src/stores/scouting-store.ts - Scout department, attributes, perks",
+        "src/stores/draft-store.ts - UserBoard, AI boards, prospect data",
+        "src/lib/scouting/types.ts - SCOUT_PERKS definitions",
+        "src/lib/schemes/scheme-fit.ts - Archetype affinity calculations",
+        "src/lib/coaching/types.ts - Coach perks and attributes",
+        "src/lib/draft/draft-ai.ts - AI evaluation logic",
+        "src/lib/gm/types.ts - GM bonuses (sleepersPerDraft)"
+      ],
+      "key_patterns_identified": [
+        "Zustand stores with sessionStorage persistence",
+        "Mobile-first responsive design with Tailwind",
+        "Tabbed interfaces using shadcn/ui Tabs component",
+        "Card-based layouts for data display"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_name": "Enhanced Scouting Hub",
+      "description": "Transform the basic scouting page into a comprehensive Scouting Hub with staff-driven insights, coaching integration, visual big boards, mock drafts, and sleeper tracking",
+      "goal": "Make scouting more engaging by leveraging existing scout staff, coaching, GM, and draft systems to provide actionable insights and interactive features",
+      "scope": "Full feature implementation with 5 tabs replacing existing scouting page",
+      "estimated_complexity": "high",
+      "key_deliverables": [
+        "Scouting Hub Store for state management",
+        "Staff Insights tab with scout recommendations and perk activations",
+        "Big Board tab with tiered drag-drop board and position rankings",
+        "Mock Draft simulator with AI projections",
+        "Coaching Integration with scheme fit grades and wishlists",
+        "Sleepers & Alerts tab with hidden gems and combine movement"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity_score": 8,
+      "risk_level": "medium",
+      "risks": [
+        {
+          "risk": "Mock draft simulation performance",
+          "impact": "high",
+          "mitigation": "Use Web Worker for async simulation, limit default to 10 runs"
+        },
+        {
+          "risk": "State management complexity across tabs",
+          "impact": "medium",
+          "mitigation": "Single scouting-hub-store with clear separation of concerns"
+        },
+        {
+          "risk": "Integration with multiple existing stores",
+          "impact": "medium",
+          "mitigation": "Read-only from existing stores, write only to hub store"
+        }
+      ],
+      "dependencies": [
+        "scouting-store.ts - Scout department data",
+        "draft-store.ts - Prospect and user board data",
+        "coaching types - Coach perks for wishlist generation",
+        "scheme-fit.ts - Archetype affinity calculations"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "src/app/dashboard/offseason/scouting/page.tsx",
+          "purpose": "Replace with new tabbed scouting hub"
+        }
+      ],
+      "files_to_create": [
+        {"path": "src/stores/scouting-hub-store.ts", "purpose": "Central state management for hub"},
+        {"path": "src/lib/scouting-hub/types.ts", "purpose": "Type definitions for hub features"},
+        {"path": "src/lib/scouting-hub/scout-recommendation-engine.ts", "purpose": "Generate scout recommendations"},
+        {"path": "src/lib/scouting-hub/scheme-fit-calculator.ts", "purpose": "Calculate scheme fit grades"},
+        {"path": "src/lib/scouting-hub/coach-wishlist-generator.ts", "purpose": "Generate coach wishlists"},
+        {"path": "src/lib/scouting-hub/mock-draft-engine.ts", "purpose": "Run mock draft simulations"},
+        {"path": "src/lib/scouting-hub/mock-draft-consensus.ts", "purpose": "Aggregate simulation results"},
+        {"path": "src/lib/scouting-hub/combine-analysis.ts", "purpose": "Calculate risers/fallers"},
+        {"path": "src/lib/scouting-hub/sleeper-detector.ts", "purpose": "Identify hidden gems"},
+        {"path": "src/components/scouting-hub/scout-recommendations-panel.tsx", "purpose": "Display scout recommendations"},
+        {"path": "src/components/scouting-hub/director-big-board.tsx", "purpose": "Staff consensus board"},
+        {"path": "src/components/scouting-hub/perk-activation-feed.tsx", "purpose": "Perk trigger callouts"},
+        {"path": "src/components/scouting-hub/tiered-big-board.tsx", "purpose": "Drag-drop tier board"},
+        {"path": "src/components/scouting-hub/position-rankings-tab.tsx", "purpose": "Position-based rankings"},
+        {"path": "src/components/scouting-hub/prospect-comparison-tool.tsx", "purpose": "Side-by-side comparison"},
+        {"path": "src/components/scouting-hub/mock-draft-simulator.tsx", "purpose": "Mock draft UI"},
+        {"path": "src/components/scouting-hub/scheme-fit-grid.tsx", "purpose": "Scheme fit display"},
+        {"path": "src/components/scouting-hub/position-coach-wishlist.tsx", "purpose": "Coach wishlist display"},
+        {"path": "src/components/scouting-hub/coaching-meeting-notes.tsx", "purpose": "Flavor text notes"},
+        {"path": "src/components/scouting-hub/hidden-gem-tracker.tsx", "purpose": "Sleeper display"},
+        {"path": "src/components/scouting-hub/combine-risers-fallers.tsx", "purpose": "Stock movement display"}
+      ],
+      "files_to_delete": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "name": "Staff Insights Tab",
+          "description": "Scout recommendations, director big board, perk activations, confidence meters",
+          "priority": "high",
+          "components": ["scout-recommendations-panel", "director-big-board", "perk-activation-feed"]
+        },
+        {
+          "name": "Big Board Tab",
+          "description": "Tiered drag-drop board, position rankings, prospect comparison tool",
+          "priority": "high",
+          "components": ["tiered-big-board", "position-rankings-tab", "prospect-comparison-tool"]
+        },
+        {
+          "name": "Mock Draft Tab",
+          "description": "AI-powered mock draft simulations with consensus projections",
+          "priority": "high",
+          "components": ["mock-draft-simulator"]
+        },
+        {
+          "name": "Coaching Integration",
+          "description": "Scheme fit grades, position coach wishlists, meeting notes",
+          "priority": "medium",
+          "components": ["scheme-fit-grid", "position-coach-wishlist", "coaching-meeting-notes"]
+        },
+        {
+          "name": "Sleepers & Alerts Tab",
+          "description": "Hidden gem tracker, combine risers/fallers, steal alerts",
+          "priority": "medium",
+          "components": ["hidden-gem-tracker", "combine-risers-fallers"]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SCOUTING-HUB-001",
+        "name": "Enhanced Scouting Hub",
+        "feature_dir": "coderef/working/scouting-hub"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create scouting-hub types file with all interfaces",
+          "file": "src/lib/scouting-hub/types.ts",
+          "status": "pending",
+          "phase": 1
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create scouting-hub-store with Zustand",
+          "file": "src/stores/scouting-hub-store.ts",
+          "status": "pending",
+          "phase": 1
+        },
+        {
+          "id": "SETUP-003",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create tabbed hub page structure",
+          "file": "src/app/dashboard/offseason/scouting/page.tsx",
+          "status": "pending",
+          "phase": 1
+        },
+        {
+          "id": "STAFF-001",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create scout recommendation engine",
+          "file": "src/lib/scouting-hub/scout-recommendation-engine.ts",
+          "status": "pending",
+          "phase": 2
+        },
+        {
+          "id": "STAFF-002",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create scout recommendations panel component",
+          "file": "src/components/scouting-hub/scout-recommendations-panel.tsx",
+          "status": "pending",
+          "phase": 2
+        },
+        {
+          "id": "STAFF-003",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create director big board component",
+          "file": "src/components/scouting-hub/director-big-board.tsx",
+          "status": "pending",
+          "phase": 2
+        },
+        {
+          "id": "STAFF-004",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create perk activation feed component",
+          "file": "src/components/scouting-hub/perk-activation-feed.tsx",
+          "status": "pending",
+          "phase": 2
+        },
+        {
+          "id": "BOARD-001",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create tiered big board with drag-drop",
+          "file": "src/components/scouting-hub/tiered-big-board.tsx",
+          "status": "pending",
+          "phase": 3
+        },
+        {
+          "id": "BOARD-002",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create position rankings tab",
+          "file": "src/components/scouting-hub/position-rankings-tab.tsx",
+          "status": "pending",
+          "phase": 3
+        },
+        {
+          "id": "BOARD-003",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create prospect comparison tool",
+          "file": "src/components/scouting-hub/prospect-comparison-tool.tsx",
+          "status": "pending",
+          "phase": 3
+        },
+        {
+          "id": "MOCK-001",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create mock draft simulation engine",
+          "file": "src/lib/scouting-hub/mock-draft-engine.ts",
+          "status": "pending",
+          "phase": 4
+        },
+        {
+          "id": "MOCK-002",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create mock draft consensus calculator",
+          "file": "src/lib/scouting-hub/mock-draft-consensus.ts",
+          "status": "pending",
+          "phase": 4
+        },
+        {
+          "id": "MOCK-003",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create mock draft simulator UI",
+          "file": "src/components/scouting-hub/mock-draft-simulator.tsx",
+          "status": "pending",
+          "phase": 4
+        },
+        {
+          "id": "COACH-001",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create scheme fit calculator",
+          "file": "src/lib/scouting-hub/scheme-fit-calculator.ts",
+          "status": "pending",
+          "phase": 5
+        },
+        {
+          "id": "COACH-002",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create coach wishlist generator",
+          "file": "src/lib/scouting-hub/coach-wishlist-generator.ts",
+          "status": "pending",
+          "phase": 5
+        },
+        {
+          "id": "COACH-003",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create scheme fit grid component",
+          "file": "src/components/scouting-hub/scheme-fit-grid.tsx",
+          "status": "pending",
+          "phase": 5
+        },
+        {
+          "id": "COACH-004",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create position coach wishlist component",
+          "file": "src/components/scouting-hub/position-coach-wishlist.tsx",
+          "status": "pending",
+          "phase": 5
+        },
+        {
+          "id": "COACH-005",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create coaching meeting notes component",
+          "file": "src/components/scouting-hub/coaching-meeting-notes.tsx",
+          "status": "pending",
+          "phase": 5
+        },
+        {
+          "id": "SLEEP-001",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create sleeper detector logic",
+          "file": "src/lib/scouting-hub/sleeper-detector.ts",
+          "status": "pending",
+          "phase": 6
+        },
+        {
+          "id": "SLEEP-002",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create combine analysis logic",
+          "file": "src/lib/scouting-hub/combine-analysis.ts",
+          "status": "pending",
+          "phase": 6
+        },
+        {
+          "id": "SLEEP-003",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create hidden gem tracker component",
+          "file": "src/components/scouting-hub/hidden-gem-tracker.tsx",
+          "status": "pending",
+          "phase": 6
+        },
+        {
+          "id": "SLEEP-004",
+          "workorder_id": "WO-SCOUTING-HUB-001",
+          "description": "Create combine risers/fallers component",
+          "file": "src/components/scouting-hub/combine-risers-fallers.tsx",
+          "status": "pending",
+          "phase": 6
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Foundation",
+          "description": "Set up types, store, and page structure",
+          "tasks": ["SETUP-001", "SETUP-002", "SETUP-003"],
+          "deliverables": ["Types file", "Hub store", "Tabbed page shell"]
+        },
+        {
+          "phase": 2,
+          "name": "Staff Insights",
+          "description": "Scout recommendations and perk activations",
+          "tasks": ["STAFF-001", "STAFF-002", "STAFF-003", "STAFF-004"],
+          "deliverables": ["Recommendation engine", "Staff insights tab complete"]
+        },
+        {
+          "phase": 3,
+          "name": "Big Board",
+          "description": "Tiered board, rankings, and comparison",
+          "tasks": ["BOARD-001", "BOARD-002", "BOARD-003"],
+          "deliverables": ["Drag-drop board", "Position rankings", "Comparison tool"]
+        },
+        {
+          "phase": 4,
+          "name": "Mock Draft",
+          "description": "Simulation engine and projections UI",
+          "tasks": ["MOCK-001", "MOCK-002", "MOCK-003"],
+          "deliverables": ["Simulation engine", "Consensus calculator", "Mock draft tab complete"]
+        },
+        {
+          "phase": 5,
+          "name": "Coaching Integration",
+          "description": "Scheme fits and coach wishlists",
+          "tasks": ["COACH-001", "COACH-002", "COACH-003", "COACH-004", "COACH-005"],
+          "deliverables": ["Scheme fit calculator", "Wishlist generator", "Coaching tab complete"]
+        },
+        {
+          "phase": 6,
+          "name": "Sleepers & Alerts",
+          "description": "Hidden gems and combine movement",
+          "tasks": ["SLEEP-001", "SLEEP-002", "SLEEP-003", "SLEEP-004"],
+          "deliverables": ["Sleeper detector", "Combine analysis", "Sleepers tab complete"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "scout-recommendation-engine generates correct recommendations based on expertise",
+        "scheme-fit-calculator returns correct grades for archetypes",
+        "mock-draft-consensus calculates accurate projections",
+        "sleeper-detector identifies high-potential low-OVR prospects"
+      ],
+      "integration_tests": [
+        "Hub store persists state to sessionStorage",
+        "Staff insights tab renders recommendations from scouting-store",
+        "Mock draft uses draft-ai evaluation correctly"
+      ],
+      "manual_tests": [
+        "Drag-drop on tiered board works smoothly",
+        "Mock draft simulation completes in under 3 seconds",
+        "All tabs render correctly on mobile"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "All 5 tabs render and function correctly",
+        "Scout recommendations update based on scout expertise and perks",
+        "Mock draft simulations produce realistic projections",
+        "Scheme fit grades match existing archetype affinity system"
+      ],
+      "performance": [
+        "Mock draft 10 simulations complete in under 3 seconds",
+        "Page initial load under 1 second",
+        "Drag-drop on big board is smooth (60fps)"
+      ],
+      "quality": [
+        "TypeScript compiles with no errors",
+        "Build succeeds",
+        "Mobile responsive design"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Create types.ts with all interfaces",
+        "[ ] Create scouting-hub-store.ts",
+        "[ ] Update scouting page with tab structure",
+        "[ ] Verify store persistence works"
+      ],
+      "phase_2_checklist": [
+        "[ ] Create scout-recommendation-engine.ts",
+        "[ ] Create scout-recommendations-panel.tsx",
+        "[ ] Create director-big-board.tsx",
+        "[ ] Create perk-activation-feed.tsx",
+        "[ ] Test Staff Insights tab end-to-end"
+      ],
+      "phase_3_checklist": [
+        "[ ] Create tiered-big-board.tsx with drag-drop",
+        "[ ] Create position-rankings-tab.tsx",
+        "[ ] Create prospect-comparison-tool.tsx",
+        "[ ] Test Big Board tab end-to-end"
+      ],
+      "phase_4_checklist": [
+        "[ ] Create mock-draft-engine.ts",
+        "[ ] Create mock-draft-consensus.ts",
+        "[ ] Create mock-draft-simulator.tsx",
+        "[ ] Test mock draft performance"
+      ],
+      "phase_5_checklist": [
+        "[ ] Create scheme-fit-calculator.ts",
+        "[ ] Create coach-wishlist-generator.ts",
+        "[ ] Create scheme-fit-grid.tsx",
+        "[ ] Create position-coach-wishlist.tsx",
+        "[ ] Create coaching-meeting-notes.tsx"
+      ],
+      "phase_6_checklist": [
+        "[ ] Create sleeper-detector.ts",
+        "[ ] Create combine-analysis.ts",
+        "[ ] Create hidden-gem-tracker.tsx",
+        "[ ] Create combine-risers-fallers.tsx",
+        "[ ] Final integration test"
+      ]
+    }
+  }
+}

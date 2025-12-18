@@ -1,0 +1,183 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (coderef/foundation-docs)",
+      "ARCHITECTURE.md (coderef/foundation-docs)",
+      "COMPONENTS.md (coderef/foundation-docs)",
+      "SCHEMA.md (coderef/foundation-docs)"
+    ],
+    "missing": [
+      "USER-GUIDE.md"
+    ]
+  },
+  "foundation_doc_content": {
+    "ARCHITECTURE.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Architecture Documentation\n\n## Overview\n\n# Architecture\n\n**Gridiron Franchise System Design**\n\nDate: December 2025\nVersion: 0.1.0\n\n---\n\n## System Topology\n\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502                        CLIENT (Browser)                          \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u2502\n\u2502  \u2502   React 19  \u2502  \u2502  Zustand    \u2502  \u2502    Service Worker       \u2502 ",
+      "headers": [
+        "Architecture Documentation",
+        "Overview",
+        "Architecture",
+        "System Topology",
+        "Module Dependency Graph",
+        "Code Patterns"
+      ],
+      "size": 1206
+    },
+    "API.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# API Documentation\n\n## Overview\n\n- **Framework:** Unknown\n- **Authentication:** Unknown\n- **Error Format:** Unknown\n- **Total Endpoints:** 0\n\n## Endpoints\n\n*No API endpoints detected.*\n\n## Authentication\n\n*Authentication method not detected.*\n\n## Error Handling\n\n*Error format not detected.*\n\n*Generated: 2025-12-18T00:26:35.168206*",
+      "headers": [
+        "API Documentation",
+        "Overview",
+        "Endpoints",
+        "Authentication",
+        "Error Handling"
+      ],
+      "size": 333
+    },
+    "COMPONENTS.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Project Components\n\n## Detected Components\n\n*Note: Run `coderef index` for comprehensive module analysis with relationships.*\n\n| Component | Path | Type |\n|-----------|------|------|\n| theme-provider | `src\\components\\theme-provider.tsx` | tsx |\n| theme-toggle | `src\\components\\theme-toggle.tsx` | tsx |\n| auth-provider | `src\\components\\auth\\auth-provider.tsx` | tsx |\n| password-strength | `src\\components\\auth\\password-strength.tsx` | tsx |\n| sign-in-form | `src\\components\\auth\\sign-in-form.ts",
+      "headers": [
+        "Project Components",
+        "Detected Components"
+      ],
+      "size": 2302
+    },
+    "SCHEMA.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Schema Documentation\n\n*No database models detected.*\n\n\n*Generated: 2025-12-18T00:26:35.148777*",
+      "headers": [
+        "Schema Documentation"
+      ],
+      "size": 96
+    },
+    "README.md": {
+      "location": "root",
+      "preview": "# gridiron-franchise\n\n## Overview\n\n<!-- AGENT: Describe what this project does -->\n\n## Quick Stats\n\n| Metric | Value |\n|--------|-------|\n| Dependencies | 44 |\n\n## Quick Start\n\n<!-- AGENT: Installation and usage instructions -->\n\n## Documentation\n\n- [API Reference](coderef/foundation-docs/API.md)\n- [Architecture](coderef/foundation-docs/ARCHITECTURE.md)\n- [Components](coderef/foundation-docs/COMPONENTS.md)\n- [Schema](coderef/foundation-docs/SCHEMA.md)\n\n---\n\n*Generated: 2025-12-18T00:26:35.147651",
+      "headers": [
+        "gridiron-franchise",
+        "Overview",
+        "Quick Stats",
+        "Quick Start",
+        "Documentation"
+      ],
+      "size": 501
+    }
+  },
+  "inventory_data": {
+    "file_inventory": {
+      "total_files": 510,
+      "categories": [],
+      "high_risk_files": 19
+    },
+    "dependencies": {
+      "total_dependencies": 41,
+      "ecosystems": [],
+      "security_vulnerabilities": 0,
+      "outdated_count": 14
+    },
+    "api_endpoints": {
+      "total_endpoints": 0,
+      "frameworks": [],
+      "undocumented_endpoints": 0
+    },
+    "database_schemas": {
+      "total_tables": 0,
+      "database_systems": [],
+      "migration_files": 0
+    },
+    "configuration": {
+      "total_files": 0,
+      "formats_detected": [],
+      "sensitive_values_found": 0
+    },
+    "test_infrastructure": {
+      "total_test_files": 0,
+      "frameworks": [],
+      "coverage": "unknown",
+      "test_readiness_score": 0
+    },
+    "documentation": {
+      "total_files": 1284,
+      "formats": [
+        "html",
+        "markdown"
+      ],
+      "quality_score": 100,
+      "coverage_percentage": 54
+    },
+    "available": [
+      "manifest.json",
+      "dependencies.json",
+      "api.json",
+      "database.json",
+      "config.json",
+      "tests.json",
+      "documentation.json"
+    ],
+    "missing": []
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "note": "Reference component matching requires feature name - not yet implemented"
+  },
+  "key_patterns_identified": [
+    "Error handling: try-catch blocks found in 13 files",
+    "File organization: barrel exports (export from) found in 11 files",
+    "Naming: camelCase for functions (1150/1176 functions)"
+  ],
+  "technology_stack": {
+    "language": "JavaScript/TypeScript",
+    "framework": "React",
+    "database": "unknown",
+    "testing": "Vitest",
+    "build": "Vite"
+  },
+  "project_structure": {
+    "main_directories": [
+      "scripts",
+      "sim-logic",
+      "context\\FINALS",
+      "context\\list",
+      "src\\components\\franchise",
+      "src\\components\\sim",
+      "src\\components\\ui",
+      "src\\lib\\data",
+      "src\\lib\\sim",
+      "src\\components\\modules\\views"
+    ],
+    "file_counts": {
+      "sim-logic": 36,
+      "context\\FINALS": 19,
+      "src\\components\\sim": 15,
+      "src\\components\\ui": 15,
+      "src\\lib\\data": 15,
+      "scripts": 14,
+      "src\\components\\franchise": 13,
+      "context\\list": 12,
+      "src\\components\\modules\\views": 12,
+      "src\\lib\\sim": 11
+    },
+    "organization_pattern": "component-based"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: USER-GUIDE.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No test directory found (tests/, test/, or __tests__/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ]
+}

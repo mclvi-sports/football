@@ -1,0 +1,27 @@
+{
+  "feature_name": "scouting-hub",
+  "description": "Transform the basic scouting page into a comprehensive Scouting Hub with staff-driven insights, coaching integration, visual big boards, mock drafts, and sleeper tracking",
+  "goal": "Make scouting more engaging by leveraging existing scout staff, coaching, GM, and draft systems to provide actionable insights and interactive features",
+  "requirements": [
+    "Staff Insights tab with scout recommendations, director big board, perk activations, confidence meters",
+    "Big Board tab with tiered drag-drop board, position rankings, prospect comparison tool",
+    "Mock Draft simulator with AI-powered projections and consensus tracking",
+    "Coaching Integration with scheme fit grades, position coach wishlists, meeting notes",
+    "Sleepers and Alerts tab with hidden gem tracker, combine risers/fallers, steal alerts",
+    "Tabbed UI replacing existing scouting page at /dashboard/offseason/scouting"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Must leverage existing systems: scouting-store, draft-store, coaching types, scheme-fit, draft-ai, gm bonuses",
+    "Mock draft simulations should run in Web Worker for performance",
+    "Mobile-first responsive design consistent with existing UI patterns",
+    "Session storage persistence for hub state"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-SCOUTING-HUB-001",
+    "workorder_assigned_at": "2025-12-18T07:49:21.929065+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}
