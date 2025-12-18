@@ -1,0 +1,302 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "offseason-flow",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd (AI Project Coordinator)",
+    "has_context": true,
+    "has_analysis": true,
+    "created_at": "2025-12-18T05:27:00Z"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": ["ARCHITECTURE.md", "COMPONENTS.md", "API.md"],
+      "existing_patterns": [
+        "Dashboard navigation pattern from /dashboard/page.tsx",
+        "NavCard component for navigation tiles",
+        "Mobile-first responsive design with Tailwind",
+        "Zustand stores for state management"
+      ],
+      "reference_components": [
+        "src/app/dashboard/page.tsx - Hub page pattern",
+        "src/app/dashboard/draft/page.tsx - Activity page pattern",
+        "src/app/dashboard/offseason/rookie-camp/page.tsx - Existing offseason page",
+        "src/components/dashboard/nav-card.tsx - Navigation card component"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_name": "Offseason Flow Hub",
+      "description": "Create a unified offseason hub page at /dashboard/offseason that guides users through the complete offseason experience: Scouting, Free Agency, Draft, and Rookie Camp as a connected flow.",
+      "primary_goal": "Provide a hub page approach where users can navigate between offseason activities in a logical progression, rather than having them scattered across the dashboard.",
+      "scope": {
+        "in_scope": [
+          "Offseason hub page with navigation to all activities",
+          "Scouting page for prospect evaluation and draft board",
+          "Free Agency page for signing free agents",
+          "Draft page integration (existing)",
+          "Rookie Camp integration (existing)",
+          "Visual progress indicators",
+          "Mobile-first responsive design"
+        ],
+        "out_of_scope": [
+          "Contract negotiations and salary cap",
+          "Trade system between teams",
+          "Coaching staff changes"
+        ]
+      },
+      "success_metrics": [
+        "Users can navigate all offseason activities from one hub",
+        "Progress through offseason phases is visually trackable",
+        "Mobile experience is smooth and intuitive"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity": "medium",
+      "estimated_files": 8,
+      "risk_factors": [
+        {
+          "risk": "Storage quota constraints",
+          "mitigation": "Reuse existing stores, no new large data structures",
+          "severity": "medium"
+        },
+        {
+          "risk": "Draft page already exists at different path",
+          "mitigation": "Use redirect or keep both paths working",
+          "severity": "low"
+        },
+        {
+          "risk": "Scouting store doesn't have draft board data",
+          "mitigation": "Extend existing scouting store or use draft store",
+          "severity": "medium"
+        }
+      ],
+      "dependencies": [
+        "Existing draft store and components",
+        "Existing scouting store",
+        "Free agent store and data"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        { "path": "src/app/dashboard/offseason/page.tsx", "purpose": "Offseason hub page with navigation cards" },
+        { "path": "src/app/dashboard/offseason/scouting/page.tsx", "purpose": "Scouting page for prospect evaluation" },
+        { "path": "src/app/dashboard/offseason/free-agency/page.tsx", "purpose": "Free agency signing page" },
+        { "path": "src/app/dashboard/offseason/draft/page.tsx", "purpose": "Draft page (redirect or copy from existing)" },
+        { "path": "src/components/offseason/offseason-progress.tsx", "purpose": "Progress indicator component" },
+        { "path": "src/stores/offseason-store.ts", "purpose": "Track offseason phase progress" }
+      ],
+      "files_to_modify": [
+        { "path": "src/app/dashboard/page.tsx", "purpose": "Update nav to point to offseason hub" },
+        { "path": "src/stores/draft-store.ts", "purpose": "Add draft board functionality if needed" }
+      ],
+      "files_to_delete": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Offseason Hub Page",
+          "description": "Central hub with navigation to all offseason activities",
+          "requirements": ["NavCard for each activity", "Progress indicator", "Mobile-responsive grid"]
+        },
+        {
+          "id": "F2",
+          "name": "Scouting Page",
+          "description": "Evaluate draft prospects and build draft board",
+          "requirements": ["Prospect list with filters", "Add to draft board", "View prospect details"]
+        },
+        {
+          "id": "F3",
+          "name": "Free Agency Page",
+          "description": "Browse and sign free agents",
+          "requirements": ["FA list with position filters", "Sign player action", "Roster impact preview"]
+        },
+        {
+          "id": "F4",
+          "name": "Progress Tracking",
+          "description": "Visual indicators showing offseason phase completion",
+          "requirements": ["Phase status badges", "Checklist style progress", "Current phase highlight"]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-OFFSEASON-FLOW-001",
+        "name": "Offseason Flow",
+        "feature_dir": "coderef/working/offseason-flow"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-OFFSEASON-FLOW-001",
+          "description": "Create offseason store for tracking phase progress",
+          "feature": "F4",
+          "status": "pending",
+          "estimated_loc": 80
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-OFFSEASON-FLOW-001",
+          "description": "Create offseason-progress component",
+          "feature": "F4",
+          "status": "pending",
+          "estimated_loc": 60
+        },
+        {
+          "id": "HUB-001",
+          "workorder_id": "WO-OFFSEASON-FLOW-001",
+          "description": "Create offseason hub page with navigation cards",
+          "feature": "F1",
+          "status": "pending",
+          "estimated_loc": 120
+        },
+        {
+          "id": "HUB-002",
+          "workorder_id": "WO-OFFSEASON-FLOW-001",
+          "description": "Update main dashboard to link to offseason hub",
+          "feature": "F1",
+          "status": "pending",
+          "estimated_loc": 20
+        },
+        {
+          "id": "SCOUT-001",
+          "workorder_id": "WO-OFFSEASON-FLOW-001",
+          "description": "Create scouting page with prospect list",
+          "feature": "F2",
+          "status": "pending",
+          "estimated_loc": 200
+        },
+        {
+          "id": "SCOUT-002",
+          "workorder_id": "WO-OFFSEASON-FLOW-001",
+          "description": "Add draft board building functionality",
+          "feature": "F2",
+          "status": "pending",
+          "estimated_loc": 100
+        },
+        {
+          "id": "FA-001",
+          "workorder_id": "WO-OFFSEASON-FLOW-001",
+          "description": "Create free agency page with FA list",
+          "feature": "F3",
+          "status": "pending",
+          "estimated_loc": 180
+        },
+        {
+          "id": "FA-002",
+          "workorder_id": "WO-OFFSEASON-FLOW-001",
+          "description": "Add sign player functionality",
+          "feature": "F3",
+          "status": "pending",
+          "estimated_loc": 80
+        },
+        {
+          "id": "DRAFT-001",
+          "workorder_id": "WO-OFFSEASON-FLOW-001",
+          "description": "Create draft page under offseason route (redirect or integrate)",
+          "feature": "F1",
+          "status": "pending",
+          "estimated_loc": 50
+        },
+        {
+          "id": "POLISH-001",
+          "workorder_id": "WO-OFFSEASON-FLOW-001",
+          "description": "Mobile responsiveness testing and fixes",
+          "feature": "F1",
+          "status": "pending",
+          "estimated_loc": 40
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Foundation",
+          "description": "Set up offseason store and progress tracking",
+          "tasks": ["SETUP-001", "SETUP-002"],
+          "deliverables": ["offseason-store.ts", "offseason-progress.tsx"]
+        },
+        {
+          "phase": 2,
+          "name": "Hub & Navigation",
+          "description": "Create hub page and update dashboard navigation",
+          "tasks": ["HUB-001", "HUB-002", "DRAFT-001"],
+          "deliverables": ["offseason/page.tsx", "Updated dashboard/page.tsx"]
+        },
+        {
+          "phase": 3,
+          "name": "Scouting",
+          "description": "Build scouting page with prospect evaluation",
+          "tasks": ["SCOUT-001", "SCOUT-002"],
+          "deliverables": ["offseason/scouting/page.tsx"]
+        },
+        {
+          "phase": 4,
+          "name": "Free Agency & Polish",
+          "description": "Build free agency page and polish mobile experience",
+          "tasks": ["FA-001", "FA-002", "POLISH-001"],
+          "deliverables": ["offseason/free-agency/page.tsx"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "offseason-store state transitions",
+        "Progress calculation logic"
+      ],
+      "integration_tests": [
+        "Navigation flow between offseason pages",
+        "Draft board persistence across sessions"
+      ],
+      "manual_tests": [
+        "Complete offseason flow on mobile device",
+        "Verify all navigation paths work",
+        "Test with existing draft/rookie camp pages"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "Hub page displays all 4 offseason activities",
+        "Scouting page shows prospects and allows board building",
+        "Free agency page shows FAs and allows signing",
+        "Progress indicators update as activities complete"
+      ],
+      "non_functional": [
+        "Pages load under 500ms on mobile",
+        "No new sessionStorage quota issues",
+        "Touch-friendly on mobile devices"
+      ],
+      "acceptance": [
+        "User can complete full offseason: Scout → Sign FAs → Draft → Rookie Camp",
+        "Progress is visible and accurate throughout"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Create src/stores/offseason-store.ts",
+        "[ ] Create src/components/offseason/offseason-progress.tsx",
+        "[ ] Test progress tracking logic"
+      ],
+      "phase_2_checklist": [
+        "[ ] Create src/app/dashboard/offseason/page.tsx",
+        "[ ] Update src/app/dashboard/page.tsx navigation",
+        "[ ] Create src/app/dashboard/offseason/draft/page.tsx",
+        "[ ] Verify navigation flow"
+      ],
+      "phase_3_checklist": [
+        "[ ] Create src/app/dashboard/offseason/scouting/page.tsx",
+        "[ ] Implement prospect list with filters",
+        "[ ] Add draft board functionality",
+        "[ ] Test scouting → draft flow"
+      ],
+      "phase_4_checklist": [
+        "[ ] Create src/app/dashboard/offseason/free-agency/page.tsx",
+        "[ ] Implement FA list and signing",
+        "[ ] Mobile responsiveness pass",
+        "[ ] End-to-end testing"
+      ]
+    }
+  }
+}

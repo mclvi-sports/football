@@ -1,0 +1,31 @@
+{
+  "feature_name": "offseason-flow",
+  "description": "Create a unified offseason hub page at /dashboard/offseason that guides users through the complete offseason experience: Scouting, Free Agency, Draft, and Rookie Camp as a connected flow.",
+  "goal": "Provide a hub page approach where users can navigate between offseason activities in a logical progression, rather than having them scattered across the dashboard.",
+  "requirements": [
+    "Create /dashboard/offseason hub page with navigation to all offseason activities",
+    "Scouting page for prospect evaluation and draft board building",
+    "Free Agency page for signing free agents",
+    "Draft page integration (already exists, needs linking)",
+    "Rookie Camp integration (already exists at /dashboard/offseason/rookie-camp)",
+    "Visual progress indicators showing offseason phase status",
+    "Mobile-first responsive design"
+  ],
+  "out_of_scope": [
+    "Contract negotiations and salary cap details",
+    "Trade system between teams",
+    "Coaching staff changes during offseason"
+  ],
+  "constraints": [
+    "Mobile-first UI - must work well on phone screens",
+    "Reuse existing components where possible (draft components, rookie camp)",
+    "Stay within current sessionStorage limits (no additional large data stores)"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-OFFSEASON-FLOW-001",
+    "workorder_assigned_at": "2025-12-18T05:25:57.115830+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

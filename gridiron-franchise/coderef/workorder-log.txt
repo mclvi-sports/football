@@ -1,2 +1,3 @@
+WO-OFFSEASON-FLOW-001 | gridiron-franchise | offseason-flow implementation plan | 2025-12-18T05:28:42.285076+00:00
 WO-SIM-MODULAR-REFACTOR-001 | gridiron-franchise | Archived feature: Sim Modular Refactor | 2025-12-17T03:58:57.539876+00:00
 WO-SIM-UI-IMPROVEMENTS-001 | gridiron-franchise | Archived feature: Sim Ui Improvements | 2025-12-07T02:37:28.693056+00:00
