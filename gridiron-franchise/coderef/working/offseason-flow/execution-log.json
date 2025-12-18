@@ -1,0 +1,85 @@
+[
+  {
+    "timestamp": "2025-12-18T00:30:42.221281",
+    "workorder_id": "WO-OFFSEASON-FLOW-001",
+    "feature_name": "offseason-flow",
+    "task_count": 15,
+    "tasks": [
+      {
+        "content": "PHASE-1--001: [ ] Create src/stores/offseason-store.ts",
+        "activeForm": "PHASE-1--001: [ing ] Create src/stores/offseason-store.ts",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--002: [ ] Create src/components/offseason/offseason-progress.tsx",
+        "activeForm": "PHASE-1--002: [ing ] Create src/components/offseason/offseason-progress.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--003: [ ] Test progress tracking logic",
+        "activeForm": "PHASE-1--003: [ing ] Test progress tracking logic",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--001: [ ] Create src/app/dashboard/offseason/page.tsx",
+        "activeForm": "PHASE-2--001: [ing ] Create src/app/dashboard/offseason/page.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--002: [ ] Update src/app/dashboard/page.tsx navigation",
+        "activeForm": "PHASE-2--002: [ing ] Update src/app/dashboard/page.tsx navigation",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--003: [ ] Create src/app/dashboard/offseason/draft/page.tsx",
+        "activeForm": "PHASE-2--003: [ing ] Create src/app/dashboard/offseason/draft/page.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--004: [ ] Verify navigation flow",
+        "activeForm": "PHASE-2--004: [ing ] Verify navigation flow",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--001: [ ] Create src/app/dashboard/offseason/scouting/page.tsx",
+        "activeForm": "PHASE-3--001: [ing ] Create src/app/dashboard/offseason/scouting/page.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--002: [ ] Implement prospect list with filters",
+        "activeForm": "PHASE-3--002: [ing ] Implement prospect list with filters",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--003: [ ] Add draft board functionality",
+        "activeForm": "PHASE-3--003: [ing ] Add draft board functionality",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--004: [ ] Test scouting \u2192 draft flow",
+        "activeForm": "PHASE-3--004: [ing ] Test scouting \u2192 draft flow",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--001: [ ] Create src/app/dashboard/offseason/free-agency/page.tsx",
+        "activeForm": "PHASE-4--001: [ing ] Create src/app/dashboard/offseason/free-agency/page.tsx",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--002: [ ] Implement FA list and signing",
+        "activeForm": "PHASE-4--002: [ing ] Implement FA list and signing",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--003: [ ] Mobile responsiveness pass",
+        "activeForm": "PHASE-4--003: [ing ] Mobile responsiveness pass",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--004: [ ] End-to-end testing",
+        "activeForm": "PHASE-4--004: [ing ] End-to-end testing",
+        "status": "pending"
+      }
+    ]
+  }
+]

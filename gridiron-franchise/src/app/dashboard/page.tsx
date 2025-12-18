@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Users, GraduationCap, Briefcase, Building2, Newspaper, Play, BarChart3 } from "lucide-react";
+import { Calendar, Users, Snowflake, Briefcase, Building2, Newspaper, Play, BarChart3 } from "lucide-react";
 import { TeamCard } from "@/components/dashboard/team-card";
 import { NavCard } from "@/components/dashboard/nav-card";
 import { SimOptionsModal } from "@/components/sim/sim-options-modal";
@@ -49,9 +49,9 @@ export default function DashboardPage() {
             href="/dashboard/roster-management"
           />
           <NavCard
-            title="Draft"
-            icon={<GraduationCap className="w-6 h-6" />}
-            href="/dashboard/draft"
+            title="Offseason"
+            icon={<Snowflake className="w-6 h-6" />}
+            href="/dashboard/offseason"
           />
           <NavCard
             title="Staff"
