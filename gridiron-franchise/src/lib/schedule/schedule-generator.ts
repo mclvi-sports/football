@@ -3,6 +3,21 @@
  *
  * Generates NFL-style 18-week regular season schedules for all 32 teams.
  * Follows rules from FINAL-season-calendar-system.md
+ *
+ * ⚠️  WARNING: DO NOT MODIFY THE SCHEDULING LOGIC IN THIS FILE  ⚠️
+ *
+ * The algorithms here (hybrid greedy placement, bye week assignment, matchup
+ * generation, constraint checking) have been carefully tuned and tested.
+ * They correctly handle the complex NFL scheduling constraints:
+ * - 17 games per team across 18 weeks
+ * - Division games (6), rotating intra-conference (4), same-place conference (2)
+ * - Inter-conference (4), 17th game (1)
+ * - Bye weeks, home/away balance, prime time slots
+ *
+ * If generation fails, adjust ONLY the retry/timeout parameters:
+ * - MAX_ATTEMPTS, TIME_LIMIT_MS, MAX_RETRIES
+ *
+ * Do not refactor or "optimize" the core logic without extensive testing.
  */
 
 import { LEAGUE_TEAMS, TeamInfo } from '../data/teams';
@@ -413,9 +428,10 @@ function distributeGamesToWeeks(
 ): DistributionResult {
   console.log(`Attempting hybrid greedy + targeted repair for ${allGames.length} games...`);
 
-  // Try many attempts with different orderings
-  const MAX_ATTEMPTS = 10000;
-  const TIME_LIMIT_MS = 8000;
+  // ⚠️ TUNABLE PARAMETERS - Safe to adjust if generation fails
+  // Increase these values to improve success rate (at cost of speed)
+  const MAX_ATTEMPTS = 10000;  // Number of placement attempts per retry
+  const TIME_LIMIT_MS = 8000;  // Max time (ms) before giving up on current attempt
   const startTime = Date.now();
   let bestWeeks: WeekSchedule[] = [];
   let bestByeWeeks: Map<string, number> = initialByeWeeks;
@@ -1572,7 +1588,8 @@ export function generateSchedule(config: ScheduleGeneratorConfig): LeagueSchedul
   console.log(`Generated ${allGames.length} unique games from matchups`);
 
   // 5. Distribute games to weeks with retry until we get all 272
-  const MAX_RETRIES = 20;
+  // ⚠️ TUNABLE PARAMETER - Safe to adjust if generation fails
+  const MAX_RETRIES = 20;  // Number of full retry attempts with fresh bye weeks
   let weekSchedules: WeekSchedule[] = [];
   let byeWeeks: Map<string, number> = new Map();
 
