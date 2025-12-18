@@ -774,7 +774,7 @@ export function generateCareerStatsForAllPlayers(fullGameData: FullGameData): vo
     }
   }
 
-  // Single bulk save to localStorage
+  // Single bulk save to sessionStorage
   bulkSaveCareerStats(allStats);
 
   console.log(`Generated career stats for ${allStats.length} experienced players`);
@@ -799,7 +799,7 @@ export function generateCareerStatsForFreeAgents(freeAgents: Player[]): void {
     }
   }
 
-  // Single bulk save to localStorage
+  // Single bulk save to sessionStorage
   bulkSaveCareerStats(allStats);
 
   console.log(`Generated career stats for ${allStats.length} experienced free agents`);

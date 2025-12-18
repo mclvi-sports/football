@@ -1,8 +1,9 @@
 /**
  * Career Stats Store
  *
- * localStorage persistence for player career statistics.
- * Follows the same pattern as training-store.ts
+ * sessionStorage persistence for player career statistics.
+ * Uses sessionStorage to avoid quota issues - stats are regenerated
+ * when starting a new game anyway.
  */
 
 import { Position } from "../types";
@@ -28,7 +29,7 @@ export function getCareerStatsStore(): CareerStatsStore {
   if (typeof window === "undefined") return createEmptyStore();
 
   try {
-    const stored = localStorage.getItem(CAREER_STATS_STORAGE_KEY);
+    const stored = sessionStorage.getItem(CAREER_STATS_STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
       // Handle version migrations if needed
@@ -49,7 +50,7 @@ export function saveCareerStatsStore(store: CareerStatsStore): void {
 
   try {
     store.lastUpdated = new Date().toISOString();
-    localStorage.setItem(CAREER_STATS_STORAGE_KEY, JSON.stringify(store));
+    sessionStorage.setItem(CAREER_STATS_STORAGE_KEY, JSON.stringify(store));
   } catch (error) {
     console.error("Error saving career stats store:", error);
   }
@@ -378,7 +379,7 @@ function calculatePasserRating(
 
 export function clearCareerStatsStore(): void {
   if (typeof window === "undefined") return;
-  localStorage.removeItem(CAREER_STATS_STORAGE_KEY);
+  sessionStorage.removeItem(CAREER_STATS_STORAGE_KEY);
 }
 
 export function getAllCareerStats(): Record<string, PlayerCareerStats> {

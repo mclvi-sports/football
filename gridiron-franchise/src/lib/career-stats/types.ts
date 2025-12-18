@@ -2,7 +2,7 @@
  * Career Stats Types
  *
  * Stores year-by-year statistics for players with cumulative totals.
- * Uses localStorage for persistence across browser sessions.
+ * Uses sessionStorage to avoid quota issues.
  */
 
 import { Position } from "../types";
