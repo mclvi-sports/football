@@ -9,11 +9,11 @@ import {
 const mockFetch = vi.fn();
 
 describe('GENERATION_STEPS', () => {
-  it('has all 8 steps in correct order', () => {
+  // Note: draft is generated on-demand when visiting draft page, not during initial generation
+  it('has all 7 steps in correct order', () => {
     expect(GENERATION_STEPS).toEqual([
       'rosters',
       'freeagents',
-      'draft',
       'gms',
       'coaching',
       'facilities',
@@ -22,17 +22,17 @@ describe('GENERATION_STEPS', () => {
     ]);
   });
 
-  it('has 8 total steps', () => {
-    expect(GENERATION_STEPS.length).toBe(8);
+  it('has 7 total steps', () => {
+    expect(GENERATION_STEPS.length).toBe(7);
   });
 });
 
 describe('GenerationStep type', () => {
   it('allows all valid step values', () => {
+    // Note: draft is generated on-demand, not during initial league generation
     const steps: GenerationStep[] = [
       'rosters',
       'freeagents',
-      'draft',
       'gms',
       'coaching',
       'facilities',
@@ -72,16 +72,10 @@ describe('League Generation Flow', () => {
       expect(rostersIndex).toBeLessThan(faIndex);
     });
 
-    it('freeagents must complete before draft', () => {
+    it('freeagents must complete before parallel steps (gms, coaching, facilities, scouting)', () => {
       const faIndex = GENERATION_STEPS.indexOf('freeagents');
-      const draftIndex = GENERATION_STEPS.indexOf('draft');
-      expect(faIndex).toBeLessThan(draftIndex);
-    });
-
-    it('draft must complete before parallel steps (gms, coaching, facilities, scouting)', () => {
-      const draftIndex = GENERATION_STEPS.indexOf('draft');
       const gmsIndex = GENERATION_STEPS.indexOf('gms');
-      expect(draftIndex).toBeLessThan(gmsIndex);
+      expect(faIndex).toBeLessThan(gmsIndex);
     });
 
     it('schedule is the last step', () => {
@@ -90,27 +84,27 @@ describe('League Generation Flow', () => {
   });
 
   describe('sequential vs parallel steps', () => {
-    it('first 3 steps are sequential (rosters, freeagents, draft)', () => {
-      const sequentialSteps = GENERATION_STEPS.slice(0, 3);
-      expect(sequentialSteps).toEqual(['rosters', 'freeagents', 'draft']);
+    it('first 2 steps are sequential (rosters, freeagents)', () => {
+      const sequentialSteps = GENERATION_STEPS.slice(0, 2);
+      expect(sequentialSteps).toEqual(['rosters', 'freeagents']);
     });
 
-    it('steps 4-7 can run in parallel (gms, coaching, facilities, scouting)', () => {
-      const parallelSteps = GENERATION_STEPS.slice(3, 7);
+    it('steps 3-6 can run in parallel (gms, coaching, facilities, scouting)', () => {
+      const parallelSteps = GENERATION_STEPS.slice(2, 6);
       expect(parallelSteps).toEqual(['gms', 'coaching', 'facilities', 'scouting']);
     });
 
-    it('step 8 (schedule) is sequential', () => {
-      expect(GENERATION_STEPS[7]).toBe('schedule');
+    it('step 7 (schedule) is sequential', () => {
+      expect(GENERATION_STEPS[6]).toBe('schedule');
     });
   });
 });
 
 describe('Generation API endpoints', () => {
+  // Note: draft endpoint exists but is called on-demand from draft page, not during initial generation
   const endpoints: Record<GenerationStep, string> = {
     rosters: '/api/dev/generate-rosters',
     freeagents: '/api/dev/generate-fa',
-    draft: '/api/dev/generate-draft',
     gms: '/api/dev/generate-gm',
     coaching: '/api/dev/generate-coaching',
     facilities: '/api/dev/generate-facilities',
@@ -119,7 +113,7 @@ describe('Generation API endpoints', () => {
   };
 
   it('has correct endpoint mapping for each step', () => {
-    expect(Object.keys(endpoints)).toHaveLength(8);
+    expect(Object.keys(endpoints)).toHaveLength(7);
     GENERATION_STEPS.forEach(step => {
       expect(endpoints[step]).toBeDefined();
       expect(endpoints[step]).toMatch(/^\/api\/dev\/generate-/);

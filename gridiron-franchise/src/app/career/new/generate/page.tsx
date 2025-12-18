@@ -32,7 +32,6 @@ type StepState = {
 const STEP_LABELS: Record<GenerationStep, string> = {
   rosters: "Team Rosters",
   freeagents: "Free Agents",
-  draft: "Draft Class",
   gms: "General Managers",
   coaching: "Coaching Staffs",
   facilities: "Team Facilities",

@@ -12,7 +12,6 @@ import {
   storeFullGameData,
   storeDevPlayers,
   storeFreeAgents,
-  storeDraftClass,
   clearFullGameData,
   clearDevPlayers,
   clearFreeAgents,
@@ -26,7 +25,6 @@ import { storeSchedule, clearSchedule } from '@/lib/schedule/schedule-store';
 import { storeOwnerModeGMs, clearGMs } from '@/lib/gm';
 import { storeScouting, clearScouting } from '@/lib/scouting/scouting-store';
 import { clearCareerStatsStore } from '@/lib/career-stats/career-stats-store';
-import { generateCareerStatsForAllPlayers, generateCareerStatsForFreeAgents } from '@/lib/generators/career-stats-generator';
 import { Tier } from '@/lib/types';
 
 // ============================================================================
@@ -36,7 +34,6 @@ import { Tier } from '@/lib/types';
 export type GenerationStep =
   | 'rosters'
   | 'freeagents'
-  | 'draft'
   | 'gms'
   | 'coaching'
   | 'facilities'
@@ -51,10 +48,11 @@ export interface GenerationCallbacks {
   onComplete?: () => void;
 }
 
+// Draft is generated on-demand when visiting scouting/draft pages
+// to avoid sessionStorage quota issues during initial game creation
 export const GENERATION_STEPS: GenerationStep[] = [
   'rosters',
   'freeagents',
-  'draft',
   'gms',
   'coaching',
   'facilities',
@@ -114,7 +112,6 @@ export async function generateLeagueData(
 
   let rosterPlayers: TeamRosterData['roster']['players'] = [];
   let faPlayers: typeof rosterPlayers = [];
-  let draftPlayers: typeof rosterPlayers = [];
   let teamTiers: Record<string, Tier> = {};
 
   try {
@@ -140,13 +137,8 @@ export async function generateLeagueData(
     };
     storeFullGameData(fullGameData);
 
-    // Generate career stats for experienced players (non-blocking)
-    try {
-      generateCareerStatsForAllPlayers(fullGameData);
-    } catch (error) {
-      console.error('Failed to generate career stats for roster players:', error);
-      // Don't fail roster generation if career stats fail
-    }
+    // Career stats generation skipped during initial load to avoid quota issues.
+    // Stats are generated on-demand when viewing player profiles.
 
     rosterPlayers = rostersData.teams.flatMap(
       (t: TeamRosterData) => t.roster.players
@@ -178,40 +170,15 @@ export async function generateLeagueData(
     faPlayers = faData.players;
     storeFreeAgents(faPlayers);
 
-    // Generate career stats for experienced free agents (non-blocking)
-    try {
-      generateCareerStatsForFreeAgents(faPlayers);
-    } catch (error) {
-      console.error('Failed to generate career stats for free agents:', error);
-      // Don't fail FA generation if career stats fail
-    }
+    // Career stats for FAs also skipped - generated on-demand.
 
+    // Update dev players with roster + FA for profile viewing
+    // (Draft class is generated on-demand when visiting scouting/draft pages)
+    storeDevPlayers([...rosterPlayers, ...faPlayers]);
     updateStep('freeagents', 'complete', callbacks);
 
     // ========================================
-    // Step 3: Generate Draft Class
-    // ========================================
-    updateStep('draft', 'loading', callbacks);
-    const draftRes = await fetch('/api/dev/generate-draft', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({}),
-    });
-    const draftData = await draftRes.json();
-
-    if (!draftData.success) {
-      throw new Error('Failed to generate draft class');
-    }
-
-    draftPlayers = draftData.players;
-    storeDraftClass(draftPlayers);
-
-    // Update dev players with all players for profile viewing
-    storeDevPlayers([...rosterPlayers, ...faPlayers, ...draftPlayers]);
-    updateStep('draft', 'complete', callbacks);
-
-    // ========================================
-    // Steps 4-7: Generate in parallel (all depend on rosters/tiers)
+    // Steps 3-6: Generate in parallel (all depend on rosters/tiers)
     // ========================================
     updateStep('gms', 'loading', callbacks);
     updateStep('coaching', 'loading', callbacks);

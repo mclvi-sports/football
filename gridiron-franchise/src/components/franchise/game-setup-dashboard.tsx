@@ -318,10 +318,10 @@ export function GameSetupDashboard({ onStartSeason }: GameSetupDashboardProps) {
   };
 
   // Map GenerationStep to module IDs for UI updates
+  // Note: draft is generated on-demand when visiting the draft page
   const stepToModuleId: Record<GenerationStep, string> = {
     rosters: 'rosters',
     freeagents: 'freeagents',
-    draft: 'draft',
     gms: 'gm',
     coaching: 'coaching',
     facilities: 'facilities',

@@ -700,6 +700,12 @@ export const useDraftStore = create<DraftState>()(
     }),
     {
       name: 'draft-storage',
+      // Only persist settings and user board - not the full draft class
+      // Draft class is fetched fresh from API each session to avoid quota issues
+      partialize: (state) => ({
+        settings: state.settings,
+        userBoard: state.userBoard,
+      }),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
       },
