@@ -414,8 +414,8 @@ function distributeGamesToWeeks(
   console.log(`Attempting hybrid greedy + targeted repair for ${allGames.length} games...`);
 
   // Try many attempts with different orderings
-  const MAX_ATTEMPTS = 5000;
-  const TIME_LIMIT_MS = 4500;
+  const MAX_ATTEMPTS = 10000;
+  const TIME_LIMIT_MS = 8000;
   const startTime = Date.now();
   let bestWeeks: WeekSchedule[] = [];
   let bestByeWeeks: Map<string, number> = initialByeWeeks;
@@ -1572,7 +1572,7 @@ export function generateSchedule(config: ScheduleGeneratorConfig): LeagueSchedul
   console.log(`Generated ${allGames.length} unique games from matchups`);
 
   // 5. Distribute games to weeks with retry until we get all 272
-  const MAX_RETRIES = 10;
+  const MAX_RETRIES = 20;
   let weekSchedules: WeekSchedule[] = [];
   let byeWeeks: Map<string, number> = new Map();
 

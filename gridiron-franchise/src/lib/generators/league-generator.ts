@@ -296,7 +296,31 @@ export async function generateLeagueData(
     const scheduleData = await scheduleRes.json();
 
     if (!scheduleData.success) {
-      throw new Error(scheduleData.error || 'Failed to generate schedule');
+      // Schedule generation can fail due to constraint complexity - retry once
+      console.warn('Schedule generation failed, retrying...');
+      const retryRes = await fetch('/api/dev/generate-schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          season: new Date().getFullYear(),
+          randomizeStandings: true,
+        }),
+      });
+      const retryData = await retryRes.json();
+
+      if (!retryData.success) {
+        throw new Error(retryData.error || 'Failed to generate schedule after retry');
+      }
+
+      // Use retry data
+      if (retryData.validation && !retryData.validation.valid) {
+        throw new Error(`Schedule validation failed: ${retryData.validation.errors?.join(', ')}`);
+      }
+
+      storeSchedule(retryData.schedule);
+      updateStep('schedule', 'complete', callbacks);
+      callbacks?.onComplete?.();
+      return true;
     }
 
     // Double-check validation passed
