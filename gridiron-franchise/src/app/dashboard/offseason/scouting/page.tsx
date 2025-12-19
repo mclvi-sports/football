@@ -22,6 +22,7 @@ import { useCareerStore } from "@/stores/career-store";
 import { useDraftStore } from "@/stores/draft-store";
 import { useOffseasonStore } from "@/stores/offseason-store";
 import { useScoutingHubStore } from "@/stores/scouting-hub-store";
+import { useScoutingStore } from "@/stores/scouting-store";
 import {
   ProspectsTab,
   StaffInsightsTab,
@@ -45,6 +46,7 @@ export default function ScoutingHubPage() {
     setActiveTab,
     _hasHydrated: hubHydrated,
   } = useScoutingHubStore();
+  const { department, initializeDepartment } = useScoutingStore();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -85,6 +87,33 @@ export default function ScoutingHubPage() {
 
     loadDraft();
   }, [draftHydrated, draftClass.length, selectedTeam?.id, initializeDraft]);
+
+  // Load scouting department after draft class loads
+  useEffect(() => {
+    const loadScoutingDepartment = async () => {
+      // Skip if already loaded or no draft class
+      if (department || draftClass.length === 0) return;
+
+      try {
+        const response = await fetch("/api/dev/generate-scouting", {
+          method: "POST",
+        });
+        const data = await response.json();
+
+        if (data.success && data.scouting) {
+          const teamId = selectedTeam?.id || "BOS";
+          const teamDepartment = data.scouting.teams[teamId];
+          if (teamDepartment) {
+            initializeDepartment(teamDepartment, teamId);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading scouting department:", error);
+      }
+    };
+
+    loadScoutingDepartment();
+  }, [department, draftClass.length, selectedTeam?.id, initializeDepartment]);
 
   // Handle complete scouting
   const handleCompleteScouting = () => {
